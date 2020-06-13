@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.file;
 
+import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
 import com.ogerardin.xplane.XPManTestBase;
 import org.hamcrest.MatcherAssert;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith(TimingExtension.class)
+@DisabledIfNoXPlaneRootFolder
 class AcfFileTest extends XPManTestBase {
 
     @Test
