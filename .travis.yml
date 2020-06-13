@@ -1,11 +1,11 @@
 language: java
 
 os:
-  - mac
+  - osx
   - linux
   - windows
 
-dist: bionic
+dist: trusty
 
 jdk:
   - oraclejdk8
