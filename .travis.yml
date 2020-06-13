@@ -1,0 +1,25 @@
+language: java
+
+os:
+  - mac
+  - linux
+  - windows
+
+dist: bionic
+
+jdk:
+  - oraclejdk8
+
+#deploy:
+#  provider: releases
+#  api_key:
+#    secure: LiA9uMg3JgtpLioXFf5CAwhtTsjGoBLkgIq4p1KCPL7EaD+16zeux+NDHqc48vMARZR3dHIoJlprwHWcLyq70Lls42KucqEJBA5tBE2WwOJvO2C82d1MnkQVFs7L3FDBIOSXO7Eid8IRn/Wg7DZVmePLGrmQIEStVMC+BZqI9Uh9tN3lqwiNXlaMd89Q67wNELWfy4n1znfZXn0u43HtEZ1ls0NLPJloUedXuVkVOEpxJrsRK1fW4jpAkdGZr5pesOzP4vK0Y1G6uA+uDD3qFzYY+8x67fZDGoHfZEzeBi85YvbSGI4grL9HMLcsdk+NrkB/UyaOwGbBWVa9zCR8a2UWMSFAijTNydA9YlAWrggLycXQbXoH6nyEzxHNju4RTpmNDDHsiUEssq/+ajblLSiYH7ln/4GIXNSVkXWYd4NNgBW2pUU3MxBOq93TqCQjttzPYmANwYAdJF7JodZfAAXACVQr2oNtMdSshVAHyNCRLIaeyFmz/uvmtgX7CUQfUh+fWKfvUMW8BVSQwj5iAe4egT3IqbDVYH7a5bpiIJLZbbHNSKrkRs2mMe6BL4rj0j9cAuBO2Tden6lXlsyh7u1xtDjNMlrAhkfeAgZZxIG+wuy4PwQbjP+sxpmdZilMEeYCO9eTBQ1v4mV9wqNRDBrCnnmJxBcYMZqfvLs/Ysw=
+#  skip_cleanup: true
+#  file_glob: true
+#  file:
+#    - dist/target/back2back-dist-*.tar.gz
+#    - dist/target/back2back-dist-*.zip
+#    - dist/target/back2back-setup.exe
+#  overwrite: true
+#  on:
+#    tags: true

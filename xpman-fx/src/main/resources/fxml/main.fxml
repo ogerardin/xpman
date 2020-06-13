@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="529.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.XPmanFX">
+    <MenuBar VBox.vgrow="NEVER">
+        <Menu mnemonicParsing="false" text="File">
+            <MenuItem mnemonicParsing="false" onAction="#open" text="Select X-Plane folder…" />
+            <Menu fx:id="recentMenu" mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem id="quit" mnemonicParsing="false" onAction="#quit" text="Quit">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" code="Q" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                </accelerator>
+            </MenuItem>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+            <MenuItem mnemonicParsing="false" text="XPman Help" />
+            <MenuItem mnemonicParsing="false" onAction="#about" text="About XPman" />
+        </Menu>
+    </MenuBar>
+    <AnchorPane VBox.vgrow="ALWAYS">
+        <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <center>
+                <TabPane fx:id="tabPane" prefHeight="371.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                    <Tab text="X-Plane">
+                        <fx:include source="xplane.fxml" />
+                    </Tab>
+                    <Tab text="Aircrafts">
+                        <fx:include source="aircrafts.fxml" />
+                    </Tab>
+                    <Tab text="Airports">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="238.0" prefWidth="640.0" />
+                    </Tab>
+                    <Tab text="Scenery">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </Tab>
+                    <Tab text="Nav data">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </Tab>
+                    <Tab text="Plugins">
+                        <fx:include source="plugins.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    </Tab>
+                </TabPane>
+            </center>
+        </BorderPane>
+    </AnchorPane>
+</VBox>

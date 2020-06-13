@@ -1,0 +1,14 @@
+
+change aircraft category
+delete aircraft (with option to move to trash)
+disable/enable aircraft
+rename aircraft/studio
+get aircraft version
+install aircraft from zip
+recognise specific aircraft -> requirements, check update, home page, etc.
+list plugins
+install plugin from zip
+recognise specific plugin -> requirements, check update, home page, etc.
+list recognized navdata sets
+update navdata set
+

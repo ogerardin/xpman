@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ogerardin.xplane</groupId>
+        <artifactId>xpman</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>xpman-fx-dist</artifactId>
+    <packaging>jar</packaging>
+    <description>
+        This module packages the app in forms suitable for distribution.
+    </description>
+    <!-- References:
+          https://medium.com/@adam_carroll/java-packager-with-jdk11-31b3d620f4a8
+    -->
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ogerardin.xplane</groupId>
+            <artifactId>xpman-fx</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <app.mainClass>com.ogerardin.xpman.XPmanFX</app.mainClass>
+        <app.runnableJar>${project.build.finalName}-repackaged.jar</app.runnableJar>
+        <app.runnableMainClass>org.springframework.boot.loader.JarLauncher</app.runnableMainClass>
+        <app.copyright>(c) Olivier Gérardin 2020</app.copyright>
+        <app.vendor>Olivier Gérardin</app.vendor>
+        <app.name>X-Plane Manager</app.name>
+        <app.description>Configuration Manager for Laminar Research X-Plane</app.description>
+    </properties>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <!-- This profile generates an uber-jar by method of shading using Apache's maven-shade-plugin.
+            Jar dependencies are unpacked and merged into a single jar.
+            It works, but the resulting jar is a mess. Prefer the spring-boot-maven-plugin method.  -->
+        <profile>
+            <id>shaded-jar</id>
+            <!-- See https://maven.apache.org/plugins/maven-shade-plugin/examples/executable-jar.html -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.2.3</version>
+                        <executions>
+                            <execution>
+                                <id>generate-shaded-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>shaded</shadedClassifierName>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>${app.mainClass}</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- This profile generates an uber-jar by method of repackaging using Spring's spring-boot-maven-plugin.
+            Much cleaner than shading, the dependencies are not unpacked and merged, but embedded as is, and
+            a custom classloader takes care of accessing them. -->
+        <profile>
+            <id>repackaged-jar</id>
+            <!-- See https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/#repackage -->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>2.3.0.RELEASE</version>
+                        <executions>
+                            <execution>
+                                <id>generate-repackaged-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                                <configuration>
+                                    <!--                                    <finalName>XPman-${project.version}</finalName>-->
+                                    <mainClass>${app.mainClass}</mainClass>
+                                    <classifier>repackaged</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- This profile uses zenjava plugin https://github.com/javafx-maven-plugin/javafx-maven-plugin
+            "This plugin is essentially a Maven wrapper for the packaging tool that comes with JavaFX"
+        -->
+        <profile>
+            <id>zenjava</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.zenjava</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <version>8.8.3</version>
+                        <configuration>
+                            <mainClass>${app.mainClass}</mainClass>
+                            <vendor>${app.vendor}</vendor>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>native</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- This profile uses ant with fx-specific tasks to create a macOS app and a pkg installer.
+            The dmg generation is broken. Prefer io.github.fvarrui:javapackager plugin -->
+        <profile>
+            <id>ant-javafx-mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target xmlns:fx="javafx:com.sun.javafx.tools.ant">
+                                        <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+                                                 uri="javafx:com.sun.javafx.tools.ant"
+                                                 classpath="${java.home}/../lib/ant-javafx.jar"/>
+                                        <fx:application id="app" name="${app.name}" version="${project.version}"
+                                                        mainClass="${app.runnableMainClass}"/>
+                                        <fx:resources id="res">
+                                            <fx:fileset dir="${project.build.directory}"
+                                                        includes="${app.runnableJar}"/>
+                                        </fx:resources>
+
+                                        <echo message="generating Mac app bundle" level="info"/>
+                                        <fx:deploy verbose="true" nativeBundles="image"
+                                                   outdir="${project.build.directory}" outfile="X-Plane Manager">
+                                            <fx:application refid="app"/>
+                                            <fx:resources refid="res"/>
+                                            <fx:info title="${app.name} ${project.version}"
+                                                     vendor="${app.vendor}"
+                                                     copyright="${app.copyright}"/>
+                                        </fx:deploy>
+
+                                        <echo message="generating installable pkg" level="info"/>
+                                        <fx:deploy verbose="true" nativeBundles="pkg"
+                                                   outdir="${project.build.directory}" outfile="X-Plane Manager">
+                                            <fx:application refid="app"/>
+                                            <fx:resources refid="res"/>
+                                            <fx:info title="${app.name} ${project.version}"
+                                                     vendor="${app.vendor}"
+                                                     copyright="${app.copyright}"/>
+                                        </fx:deploy>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>ant-javafx-linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target xmlns:fx="javafx:com.sun.javafx.tools.ant">
+                                        <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+                                                 uri="javafx:com.sun.javafx.tools.ant"
+                                                 classpath="${java.home}/../lib/ant-javafx.jar"/>
+                                        <fx:application id="app" name="${app.name}" version="${project.version}"
+                                                        mainClass="${app.runnableMainClass}"/>
+                                        <fx:resources id="res">
+                                            <fx:fileset dir="${project.build.directory}"
+                                                        includes="${app.runnableJar}"/>
+                                        </fx:resources>
+
+                                        <echo message="generating Linux bundle" level="info"/>
+                                        <fx:deploy verbose="true" nativeBundles="image"
+                                                   outdir="${project.build.directory}" outfile="X-Plane Manager">
+                                            <fx:application refid="app"/>
+                                            <fx:resources refid="res"/>
+                                            <fx:info title="${app.name} ${project.version}"
+                                                     vendor="${app.vendor}"
+                                                     copyright="${app.copyright}"/>
+                                        </fx:deploy>
+
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            Build a Windows executable using Launch4j maven plugin https://github.com/lukaszlenart/launch4j-maven-plugin
+            This plugin is cross-platform and will generate en exe even on Mac or Linux.
+            The exe will use a previously installed JRE, or direct the user to a web page to download one.
+        -->
+        <profile>
+            <id>launch4j</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>1.7.25</version>
+                        <executions>
+                            <execution>
+                                <id>build-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <headerType>gui</headerType>
+                                    <jar>${project.build.directory}/${app.runnableJar}</jar>
+                                    <outfile>${project.build.directory}/${app.name}.exe</outfile>
+                                    <downloadUrl>http://java.com/download</downloadUrl>
+                                    <classPath>
+                                        <mainClass>${app.runnableMainClass}</mainClass>
+                                    </classPath>
+                                    <jre>
+                                        <path>${java.home}</path>
+                                        <bundledJre64Bit>false</bundledJre64Bit>
+                                        <bundledJreAsFallback>false</bundledJreAsFallback>
+                                        <minVersion>1.8.0</minVersion>
+                                        <jdkPreference>preferJre</jdkPreference>
+                                        <runtimeBits>32/64</runtimeBits>
+                                    </jre>
+                                    <versionInfo>
+                                        <fileVersion>1.0.0.0</fileVersion>
+                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <fileDescription>${app.description}</fileDescription>
+                                        <copyright>${app.copyright}</copyright>
+                                        <productVersion>1.0.0.0</productVersion>
+                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <productName>${app.name}</productName>
+                                        <internalName>xpman</internalName>
+                                        <originalFilename>${app.name}.exe</originalFilename>
+                                    </versionInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- This profile generates a macOS app with bundled JRE, a pkg installer and a dmg image
+            for drag-and-drop installation -->
+        <profile>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <id>fvarrui-javapackager-mac</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.github.fvarrui</groupId>
+                        <artifactId>javapackager</artifactId>
+                        <version>1.0.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                                <configuration>
+                                    <description>${app.description}</description>
+                                    <displayName>${app.name}</displayName>
+                                    <name>${app.name}</name>
+                                    <mainClass>${app.runnableMainClass}</mainClass>
+                                    <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
+                                    <copyDependencies>false</copyDependencies>
+                                    <bundleJre>true</bundleJre>
+                                    <jrePath>${java.home}</jrePath>
+                                    <generateInstaller>true</generateInstaller>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <id>fvarrui-javapackager-win</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.github.fvarrui</groupId>
+                        <artifactId>javapackager</artifactId>
+                        <version>1.0.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                                <configuration>
+                                    <description>${app.description}</description>
+                                    <displayName>${app.name}</displayName>
+                                    <name>${app.name}</name>
+                                    <organizationName>${app.vendor}</organizationName>
+                                    <mainClass>${app.runnableMainClass}</mainClass>
+                                    <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
+                                    <copyDependencies>false</copyDependencies>
+                                    <bundleJre>true</bundleJre>
+                                    <jrePath>${java.home}</jrePath>
+                                    <generateInstaller>true</generateInstaller>
+                                    <winConfig>
+                                        <generateMsi>false</generateMsi>
+                                    </winConfig>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- This profile generates a Linux launcher with bundled JRE, and a deb package.
+            The rpm generation is broken. -->
+        <profile>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <id>fvarrui-javapackager-linux</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.github.fvarrui</groupId>
+                        <artifactId>javapackager</artifactId>
+                        <version>1.0.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                                <configuration>
+                                    <description>${app.description}</description>
+                                    <displayName>${app.name}</displayName>
+                                    <name>xpman</name>
+                                    <mainClass>${app.runnableMainClass}</mainClass>
+                                    <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
+                                    <copyDependencies>false</copyDependencies>
+                                    <bundleJre>true</bundleJre>
+                                    <jrePath>${java.home}</jrePath>
+                                    <generateInstaller>true</generateInstaller>
+                                    <linuxConfig>
+                                        <generateRpm>false</generateRpm>
+                                    </linuxConfig>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- This profile uses jar2app to build a macOS app bundle. Requires python3.
+            Much simpler than other options, cross-platform.
+            TODO: bundle the JRE
+        -->
+        <profile>
+            <id>jar2app</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+
+                    <!-- Use ant to download and unzip jar2app.
+                        Would use download-maven-plugin but it chokes on the zip with error "A required privilege
+                        is not held by the client."
+                    -->
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <get dest="${project.build.directory}/jar2app">
+                                            <url url="https://github.com/Jorl17/jar2app/archive/master.zip"/>
+                                        </get>
+                                        <unzip src="${project.build.directory}/jar2app/master.zip"
+                                               dest="${project.build.directory}/jar2app"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Invoke jar2app using python. Requires python3 -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>jar2app</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>${project.build.directory}/jar2app</workingDirectory>
+                                    <executable>python3</executable>
+                                    <arguments>
+                                        <argument>jar2app-master/jar2app.py</argument>
+                                        <argument>${project.build.directory}/${app.runnableJar}</argument>
+                                        <argument>${project.build.directory}/jar2app/output/${app.name}.app</argument>
+                                        <argument>-v</argument> <argument>${project.version}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+    </profiles>
+
+    <repositories>
+        <!-- this repository has the JRE tgz -->
+        <!--
+                <repository>
+                    <id>alfresco</id>
+                    <url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+                </repository>
+        -->
+    </repositories>
+
+</project>

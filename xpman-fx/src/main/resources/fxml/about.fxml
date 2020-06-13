@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<DialogPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.AboutController">
+    <graphic>
+        <ImageView>
+         <image>
+            <Image url="@/fxml/logo.gif" />
+         </image>
+        </ImageView>
+    </graphic>
+   <ButtonType fx:constant="CLOSE" />
+   <content>
+      <AnchorPane>
+         <children>
+            <Text fx:id="text" text="X-Plane Manager&#10;bla bla" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+         </children>
+      </AnchorPane>
+   </content>
+</DialogPane>
