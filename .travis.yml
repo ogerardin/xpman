@@ -1,16 +1,28 @@
-language: java
 
-os:
-  - osx
-  - linux
-  - windows
+env:
+  global:
+    - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
+    - GRAVIS="$HOME/gravis"
 
-dist: trusty
-
-osx_image: xcode9.3
-
-jdk:
-  - oraclejdk8
+jobs:
+  include:
+    - os: linux
+      dist: trusty
+      language: java
+      jdk:
+        - oraclejdk8
+    - os: osx
+      osx_image: xcode9.3
+      language: java
+      jdk:
+        - oraclejdk8
+    - os: windows
+      language: shell
+      before_install:
+        - choco install jdk8 -params 'installdir=c:\\jdk8'
+        - export PATH=$PATH:"/c/jdk8/bin"
+        - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
+        - source $GRAVIS/install-maven
 
 #deploy:
 #  provider: releases
