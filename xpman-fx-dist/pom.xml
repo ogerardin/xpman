@@ -40,6 +40,29 @@
 
     <build>
         <plugins>
+
+            <!-- Generates an uber-jar by method of repackaging using Spring's spring-boot-maven-plugin.
+                Much cleaner than shading, the dependencies are not unpacked and merged, but embedded as is, and
+                a custom classloader takes care of accessing them. -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.0.RELEASE</version>
+                <executions>
+                    <execution>
+                        <id>generate-repackaged-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <!--                                    <finalName>XPman-${project.version}</finalName>-->
+                            <mainClass>${app.mainClass}</mainClass>
+                            <classifier>repackaged</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -58,7 +81,7 @@
                         <version>3.2.3</version>
                         <executions>
                             <execution>
-                                <id>generate-shaded-jar</id>
+                                <!--                                <id>generate-shaded-jar</id>-->
                                 <phase>package</phase>
                                 <goals>
                                     <goal>shade</goal>
@@ -68,44 +91,11 @@
                                     <shadedClassifierName>shaded</shadedClassifierName>
                                     <createDependencyReducedPom>false</createDependencyReducedPom>
                                     <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <transformer
+                                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                             <mainClass>${app.mainClass}</mainClass>
                                         </transformer>
                                     </transformers>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- This profile generates an uber-jar by method of repackaging using Spring's spring-boot-maven-plugin.
-            Much cleaner than shading, the dependencies are not unpacked and merged, but embedded as is, and
-            a custom classloader takes care of accessing them. -->
-        <profile>
-            <id>repackaged-jar</id>
-            <!-- See https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/#repackage -->
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>2.3.0.RELEASE</version>
-                        <executions>
-                            <execution>
-                                <id>generate-repackaged-jar</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>repackage</goal>
-                                </goals>
-                                <configuration>
-                                    <!--                                    <finalName>XPman-${project.version}</finalName>-->
-                                    <mainClass>${app.mainClass}</mainClass>
-                                    <classifier>repackaged</classifier>
                                 </configuration>
                             </execution>
                         </executions>
@@ -485,7 +475,8 @@
                                         <argument>jar2app-master/jar2app.py</argument>
                                         <argument>${project.build.directory}/${app.runnableJar}</argument>
                                         <argument>${project.build.directory}/jar2app/output/${app.name}.app</argument>
-                                        <argument>-v</argument> <argument>${project.version}</argument>
+                                        <argument>-v</argument>
+                                        <argument>${project.version}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
