@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.file.grammar;
 
+import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
 import com.ogerardin.xplane.XPManTestBase;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import static org.parboiled.support.Filters.rulesBelow;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
+@DisabledIfNoXPlaneRootFolder
 class AcfFileParserTest extends XPManTestBase {
 
     @SuppressWarnings("FieldCanBeLocal")

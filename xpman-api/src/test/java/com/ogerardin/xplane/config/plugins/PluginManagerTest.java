@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.config.plugins;
 
+import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
 import com.ogerardin.xplane.XPManTestBase;
 import com.ogerardin.xplane.config.InvalidConfig;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
+@DisabledIfNoXPlaneRootFolder
 public class PluginManagerTest extends XPManTestBase {
 
     @Test
