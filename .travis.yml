@@ -3,6 +3,7 @@ env:
   global:
     - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
     - GRAVIS="$HOME/gravis"
+    - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 jobs:
   include:
@@ -32,7 +33,7 @@ jobs:
       script: mvn test -B
 
 after_script:
-- ls -lR target
+- ls -lR xpman-fx-dist/target
 
 
 
