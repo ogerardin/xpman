@@ -17,8 +17,6 @@ jobs:
       language: java
       jdk:
         - oraclejdk8
-      after_failure:
-      - hdiutil attach -readwrite -noverify -noautoopen "/Users/travis/build/ogerardin/xpman/xpman-fx-dist/target/assets/X-Plane Manager_1.0-SNAPSHOT.dmg"
     # Java is not supported on Windows so we try to simulate it by using 'shell'
     - os: windows
       language: shell
