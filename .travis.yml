@@ -23,7 +23,7 @@ jobs:
         - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
         # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco
         - choco install jdk8 -params 'installdir=c:\\jdk8'
-#        - export PATH=$PATH:"/c/jdk8/bin"
+        - export PATH=$PATH:"/c/jdk8/bin"
         - choco install innosetup
         - source $GRAVIS/install-maven
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
