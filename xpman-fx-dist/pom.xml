@@ -358,6 +358,11 @@
                                     <bundleJre>true</bundleJre>
                                     <jrePath>${java.home}</jrePath>
                                     <generateInstaller>true</generateInstaller>
+                                    <macConfig>
+                                        <!-- FIXME dmg temporarily disabled because it failed on Travis-CI -->
+                                        <generateDmg>false</generateDmg>
+                                        <generatePkg>true</generatePkg>
+                                    </macConfig>
                                 </configuration>
                             </execution>
                         </executions>
@@ -366,6 +371,7 @@
             </build>
         </profile>
 
+        <!-- This profile generates a Windows EXE file, and a full installer. Requires Inno-setup. -->
         <profile>
             <activation>
                 <os>
@@ -437,6 +443,7 @@
                                     <jrePath>${java.home}</jrePath>
                                     <generateInstaller>true</generateInstaller>
                                     <linuxConfig>
+                                        <generateDeb>true</generateDeb>
                                         <generateRpm>false</generateRpm>
                                     </linuxConfig>
                                 </configuration>
@@ -447,8 +454,8 @@
             </build>
         </profile>
 
-        <!-- This profile uses jar2app to build a macOS app bundle. Requires python3.
-            Much simpler than other options, cross-platform.
+        <!-- This profile uses jar2app to build a macOS app bundle.
+            Much simpler than other options, cross-platform. Requires python3.
             TODO: bundle the JRE
         -->
         <profile>
