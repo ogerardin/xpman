@@ -34,6 +34,7 @@ jobs:
         # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
         - powershell Install-WindowsFeature Net-Framework-Core
         - choco install wixtoolset
+        - refreshenv
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       script: mvn test -B
 
