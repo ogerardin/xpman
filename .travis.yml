@@ -1,62 +1,56 @@
-
 env:
   global:
-    - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
-    - GRAVIS="$HOME/gravis"
-    - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
+  - GRAVIS="$HOME/gravis"
+  - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 jobs:
   include:
-    - os: linux
-      dist: trusty
-      language: java
-      jdk:
-        - oraclejdk8
-      addons:
-        apt:
-          packages:
-          - rpm
-    - os: osx
-      osx_image: xcode9.3 #latest image to support JDK8
-      language: java
-      jdk:
-        - oraclejdk8
-    - os: windows
-      # Java is not supported on Windows so we simulate it by using 'shell'
-      language: shell
-      before_install:
-        - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
-        # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco instead
-        - choco install jdk8 -params 'installdir=c:\\jdk8'
-        - export PATH=$PATH:"/c/jdk8/bin"
-        - source $GRAVIS/install-maven
-        - choco install innosetup
-        # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
-        - powershell Install-WindowsFeature Net-Framework-Core
-        # Need to pin WiX version because we hardcode the path
-        - choco install wixtoolset --version=3.11.2
-        #- cmd.exe //c "RefreshEnv.cmd & set"
-        #- ls -lR "/c/Program Files (x86)/WiX Toolset v3.11"
-        # This is where WiX binaries are to be found
-        - export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
-      install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-      script: mvn test -B
+  - os: linux
+    dist: trusty
+    language: java
+    jdk:
+    - oraclejdk8
+    addons:
+      apt:
+        packages:
+        - rpm
+  - os: osx
+    osx_image: xcode9.3 #latest image to support JDK8
+    language: java
+    jdk:
+    - oraclejdk8
+  - os: windows
+    # Java is not supported on Windows so we simulate it by using 'shell'
+    language: shell
+    before_install:
+    - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
+    # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco instead
+    - choco install jdk8 -params 'installdir=c:\\jdk8'
+    - export PATH=$PATH:"/c/jdk8/bin"
+    - source $GRAVIS/install-maven
+    - choco install innosetup
+    # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
+    - powershell Install-WindowsFeature Net-Framework-Core
+    # Need to pin WiX version because we hardcode the path
+    - choco install wixtoolset --version=3.11.2
+    #- cmd.exe //c "RefreshEnv.cmd & set"
+    #- ls -lR "/c/Program Files (x86)/WiX Toolset v3.11"
+    # This is where WiX binaries are to be found
+    - export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
+    install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    script: mvn test -B
 
 after_script:
 - ls -lR xpman-fx-dist/target
 
+deploy:
+  provider: releases
+  api_key:
+    secure: Q04eGB3BFTsHAM09q9VJGJPFTnliw/9yZFQL9XYTGe547rJNOJVAOGAkCzz4SlYhms++FMyER1gR0E6MBfUFtpaoHN081EhT/IQbsZYLGoBgA1cYjboWF9oFTGW/df4xnLjuzliXMedTDuhYlqsEsnhBCLaMzx8DzSjk9QZiab7W5gCOTTyvkuMLpLordaHsbuKrfcypv+tmPZ4zUPx0w/1FGENy0JYJNodJo7BjMzf5EDVynJe2IqLU/jQaQ3LhmeqwW3IRfyKR5knqnR+RfIqUORR+D24eNxftpLdjPDbJ8bVCPjemoK7ttEG3kT3jDrZS5NCi3a5BhebIl66o2tQ44HCJwQL1UmB/jxItPBchC5MZDodGyOuehFJdkD6346M+SaE5GvKhPyN7mk0fJ4uPa+VBVHGFMOcxsYQRJwOFPTV7tk7oFtisb393WXnzMr6nf20Y3qFoOZ3jPCAQv6+xpjN8imvhKa0GuyhFi360gygKsoyN0fHJsSUWIFuWL8nqF5FuJGAmnBB+iH0m/1+ziPVjwwczZXhZyBcq9GpopKRRC8VIGUDhRU7yQr1mlDin9cta2wT2/Lp2aEMq5MdBdF0MWuQc0NzP68lBowE+MX/lSiqzZubXdQ55s9yUkLZZ2Wr9lUFB+nipcxSqswFjc0eWVulu0ZAU4OTSlJ4=
+  file: xpman-fx-dist/target/xpman-fx-dist-1.0-SNAPSHOT-repackaged.jar
+  on:
+    tags: true
+  skip_cleanup: true
+  draft: true
 
-
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: LiA9uMg3JgtpLioXFf5CAwhtTsjGoBLkgIq4p1KCPL7EaD+16zeux+NDHqc48vMARZR3dHIoJlprwHWcLyq70Lls42KucqEJBA5tBE2WwOJvO2C82d1MnkQVFs7L3FDBIOSXO7Eid8IRn/Wg7DZVmePLGrmQIEStVMC+BZqI9Uh9tN3lqwiNXlaMd89Q67wNELWfy4n1znfZXn0u43HtEZ1ls0NLPJloUedXuVkVOEpxJrsRK1fW4jpAkdGZr5pesOzP4vK0Y1G6uA+uDD3qFzYY+8x67fZDGoHfZEzeBi85YvbSGI4grL9HMLcsdk+NrkB/UyaOwGbBWVa9zCR8a2UWMSFAijTNydA9YlAWrggLycXQbXoH6nyEzxHNju4RTpmNDDHsiUEssq/+ajblLSiYH7ln/4GIXNSVkXWYd4NNgBW2pUU3MxBOq93TqCQjttzPYmANwYAdJF7JodZfAAXACVQr2oNtMdSshVAHyNCRLIaeyFmz/uvmtgX7CUQfUh+fWKfvUMW8BVSQwj5iAe4egT3IqbDVYH7a5bpiIJLZbbHNSKrkRs2mMe6BL4rj0j9cAuBO2Tden6lXlsyh7u1xtDjNMlrAhkfeAgZZxIG+wuy4PwQbjP+sxpmdZilMEeYCO9eTBQ1v4mV9wqNRDBrCnnmJxBcYMZqfvLs/Ysw=
-#  skip_cleanup: true
-#  file_glob: true
-#  file:
-#    - dist/target/back2back-dist-*.tar.gz
-#    - dist/target/back2back-dist-*.zip
-#    - dist/target/back2back-setup.exe
-#  overwrite: true
-#  on:
-#    tags: true
