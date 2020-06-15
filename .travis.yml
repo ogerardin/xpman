@@ -26,12 +26,14 @@ jobs:
       language: shell
       before_install:
         - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
-        # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco
+        # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco instead
         - choco install jdk8 -params 'installdir=c:\\jdk8'
         - export PATH=$PATH:"/c/jdk8/bin"
-        - choco install innosetup
-        - choco install wixtoolset
         - source $GRAVIS/install-maven
+        - choco install innosetup
+        # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
+        - powershell Install-WindowsFeature Net-Framework-Core
+        - choco install wixtoolset
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       script: mvn test -B
 
