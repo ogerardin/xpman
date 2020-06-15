@@ -12,13 +12,17 @@ jobs:
       language: java
       jdk:
         - oraclejdk8
+      addons:
+        apt:
+          packages:
+          - rpm
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode9.3 #latest image to support JDK8
       language: java
       jdk:
         - oraclejdk8
-    # Java is not supported on Windows so we try to simulate it by using 'shell'
     - os: windows
+      # Java is not supported on Windows so we simulate it by using 'shell'
       language: shell
       before_install:
         - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
@@ -26,6 +30,7 @@ jobs:
         - choco install jdk8 -params 'installdir=c:\\jdk8'
         - export PATH=$PATH:"/c/jdk8/bin"
         - choco install innosetup
+        - choco install wixtoolset
         - source $GRAVIS/install-maven
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       script: mvn test -B
