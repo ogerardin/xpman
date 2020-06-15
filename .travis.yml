@@ -33,8 +33,8 @@ jobs:
         - choco install innosetup
         # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
         - powershell Install-WindowsFeature Net-Framework-Core
-        - choco install wixtoolset -params 'installdir=c:\\wixtoolset'
-        - ls -lR /c/wixtoolset
+        - choco install wixtoolset
+        - cat /c/ProgramData/chocolatey/logs/chocolatey.log
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       script: mvn test -B
 
