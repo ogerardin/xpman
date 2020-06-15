@@ -35,6 +35,7 @@ jobs:
         - powershell Install-WindowsFeature Net-Framework-Core
         - choco install wixtoolset
         - cmd.exe //c "RefreshEnv.cmd & set"
+        - ls -lR "/c/Program Files (x86)/WiX Toolset v3.11"
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       script: mvn test -B
 
