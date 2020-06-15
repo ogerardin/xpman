@@ -405,7 +405,17 @@
                                     <jrePath>${java.home}</jrePath>
                                     <generateInstaller>true</generateInstaller>
                                     <winConfig>
-                                        <generateMsi>false</generateMsi>
+                                        <fileVersion>1.0.0.0</fileVersion>
+                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <fileDescription>${app.description}</fileDescription>
+                                        <copyright>${app.copyright}</copyright>
+                                        <productVersion>1.0.0.0</productVersion>
+                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <productName>${app.name}</productName>
+                                        <internalName>xpman</internalName>
+                                        <originalFilename>${app.name}.exe</originalFilename>
+                                        <generateSetup>true</generateSetup>
+                                        <generateMsi>true</generateMsi>
                                     </winConfig>
                                 </configuration>
                             </execution>
@@ -448,7 +458,7 @@
                                     <generateInstaller>true</generateInstaller>
                                     <linuxConfig>
                                         <generateDeb>true</generateDeb>
-                                        <generateRpm>false</generateRpm>
+                                        <generateRpm>true</generateRpm>
                                     </linuxConfig>
                                 </configuration>
                             </execution>
