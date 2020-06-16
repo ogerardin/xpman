@@ -67,7 +67,7 @@
                 <plugin>
                     <groupId>io.github.fvarrui</groupId>
                     <artifactId>javapackager</artifactId>
-                    <version>1.0.2</version>
+                    <version>1.0.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -205,6 +205,18 @@
                                                      copyright="${app.copyright}"/>
                                         </fx:deploy>
 
+<!--
+                                        <echo message="generating dmg" level="info"/>
+                                        <fx:deploy verbose="true" nativeBundles="dmg"
+                                                   outdir="${project.build.directory}" outfile="X-Plane Manager">
+                                            <fx:application refid="app"/>
+                                            <fx:resources refid="res"/>
+                                            <fx:info title="${app.name} ${project.version}"
+                                                     vendor="${app.vendor}"
+                                                     copyright="${app.copyright}"/>
+                                        </fx:deploy>
+-->
+
                                         <echo message="generating installable pkg" level="info"/>
                                         <fx:deploy verbose="true" nativeBundles="pkg"
                                                    outdir="${project.build.directory}" outfile="X-Plane Manager">
@@ -226,6 +238,7 @@
             </build>
         </profile>
 
+        <!-- This profile uses ant with fx-specific tasks to create a Linux bundle. -->
         <profile>
             <id>ant-javafx-linux</id>
             <activation>
@@ -351,8 +364,7 @@
                                 <configuration>
                                     <description>${app.description}</description>
                                     <displayName>${app.name}</displayName>
-                                    <!-- no spaces in app name otherwise it won't open: https://github.com/fvarrui/JavaPackager/issues/39 -->
-                                    <name>XPlaneManager</name>
+                                    <name>${app.name}</name>
                                     <organizationName>${app.copyright}</organizationName>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
@@ -360,10 +372,9 @@
                                     <bundleJre>true</bundleJre>
                                     <jrePath>${java.home}</jrePath>
                                     <generateInstaller>true</generateInstaller>
-                                    <iconFile>${project.basedir}/assets/mac/X-Plane Manager.icns</iconFile>
                                     <macConfig>
                                         <!-- FIXME dmg temporarily disabled because it fails on Travis-CI -->
-                                        <generateDmg>false</generateDmg>
+                                        <generateDmg>true</generateDmg>
                                         <generatePkg>true</generatePkg>
                                     </macConfig>
                                 </configuration>
@@ -536,6 +547,41 @@
             </build>
         </profile>
 
+        <profile>
+            <id>create-icon-mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>sips</executable>
+                                    <arguments>
+                                        <argument>-s</argument>
+                                        <argument>format</argument>
+                                        <argument>icns</argument>
+                                        <argument>${project.basedir}/assets/common/icon.png</argument>
+                                        <argument>--out</argument>
+                                        <argument>${project.basedir}/assets/mac/${app.name}.icns</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
     </profiles>
 
