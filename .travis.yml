@@ -41,6 +41,8 @@ jobs:
 
 after_script:
 #  - ls -lR xpman-fx-dist/target
+
+before_deploy:
   - git config --local user.name "Olivier"
   - git config --local user.email "ogerardin@yahoo.com"
   # If we don't have a tag, use the Maven project version. Tag with -f to make sure a previous tag is replaced
@@ -49,7 +51,7 @@ after_script:
 deploy:
   - provider: releases
     on:
-      condition: "$TRAVIS_TAG =~ -SNAPSHOT$"
+      tags: false
     draft: false
     overwrite: true
     token:
@@ -66,7 +68,7 @@ deploy:
       - xpman-fx-dist/target/*.msi
   - provider: releases
     on:
-      condition: " ! $TRAVIS_TAG =~ -SNAPSHOT$"
+      tags: true
     draft: true
     overwrite: true
     token:
