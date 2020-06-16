@@ -40,9 +40,7 @@ jobs:
       script: mvn test -B
 
 after_script:
-  - ls -lR xpman-fx-dist/target
-
-before_deploy:
+#  - ls -lR xpman-fx-dist/target
   - git config --local user.name "Olivier"
   - git config --local user.email "ogerardin@yahoo.com"
   # If we don't have a tag, use the Maven project version. Tag with -f to make sure a previous tag is replaced
