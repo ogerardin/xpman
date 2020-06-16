@@ -52,8 +52,8 @@ before_deploy:
   - if [[ -z "$TRAVIS_TAG" ]]; then export TRAVIS_TAG=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); git tag -f $TRAVIS_TAG; fi
 
 deploy:
-  on:
-    tags: true
+#  on:
+#    tags: true
   provider: releases
   draft: false
   overwrite: true
