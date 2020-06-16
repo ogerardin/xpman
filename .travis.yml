@@ -1,59 +1,54 @@
 env:
   global:
-  - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
-  - GRAVIS="$HOME/gravis"
-  - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+    - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
+    - GRAVIS="$HOME/gravis"
+    - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 jobs:
   include:
-  - os: linux
-    dist: trusty
-    language: java
-    jdk:
-    - oraclejdk8
-    addons:
-      apt:
-        packages:
-        - rpm
-  - os: osx
-    osx_image: xcode9.3 #latest image to support JDK8
-    language: java
-    jdk:
-    - oraclejdk8
-  - os: windows
-    # Java is not supported on Windows so we simulate it by using 'shell'
-    language: shell
-    before_install:
-    - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
-    # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco instead
-    - choco install jdk8 -params 'installdir=c:\\jdk8'
-    - export PATH=$PATH:"/c/jdk8/bin"
-    - source $GRAVIS/install-maven
-    - choco install innosetup
-    # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
-    - powershell Install-WindowsFeature Net-Framework-Core
-    # Need to pin WiX version because we hardcode the path
-    - choco install wixtoolset --version=3.11.2
-    #- cmd.exe //c "RefreshEnv.cmd & set"
-    #- ls -lR "/c/Program Files (x86)/WiX Toolset v3.11"
-    # This is where WiX binaries are to be found
-    - export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
-    install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-    script: mvn test -B
+    - os: linux
+      dist: trusty
+      language: java
+      jdk:
+        - oraclejdk8
+      addons:
+        apt:
+          packages:
+            - rpm
+    - os: osx
+      osx_image: xcode9.3 #latest image to support JDK8
+      language: java
+      jdk:
+        - oraclejdk8
+    - os: windows
+      # Java is not supported on Windows so we simulate it by using 'shell'
+      language: shell
+      before_install:
+        - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
+        # Gravis uses Jabba to install JDK, which does not support Oracle JDK8, so we use choco instead
+        - choco install jdk8 -params 'installdir=c:\\jdk8'
+        - export PATH=$PATH:"/c/jdk8/bin"
+        - source $GRAVIS/install-maven
+        - choco install innosetup
+        # Pre-install .NET 3.5 because Choco is unable to install dependency by itself
+        - powershell Install-WindowsFeature Net-Framework-Core
+        # Need to pin WiX version because we hardcode the path
+        - choco install wixtoolset --version=3.11.2
+        #- cmd.exe //c "RefreshEnv.cmd & set"
+        #- ls -lR "/c/Program Files (x86)/WiX Toolset v3.11"
+        # This is where WiX binaries are to be found
+        - export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
+      install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+      script: mvn test -B
 
 after_script:
-- ls -lR xpman-fx-dist/target
-
-before_deploy:
-  - git config --local user.name "Olivier"
-  - git config --local user.email "ogerardin@yahoo.com"
+  - ls -lR xpman-fx-dist/target
   # If we don't have a tag, use the Maven project version
-  # Tag with -f to make sure a previous tag is replaced
-  - if [[ -z "$TRAVIS_TAG" ]]; then export TRAVIS_TAG=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); git tag -f $TRAVIS_TAG; fi
+  - if [[ -z "$TRAVIS_TAG" ]]; then export TRAVIS_TAG=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); fi
 
 deploy:
-#  on:
-#    tags: true
+  on:
+    tags: true
   provider: releases
   draft: false
   overwrite: true
