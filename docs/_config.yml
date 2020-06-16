@@ -28,7 +28,7 @@ twitter_username: ogerardin
 github_username:  ogerardin
 
 # Build settings
-theme: jekyll-theme-tactile
+theme: minima
 plugins:
   - jekyll-feed
 
