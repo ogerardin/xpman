@@ -29,7 +29,7 @@ public class GoogleDriveClient {
 
         // Print the names and IDs for up to 10 files.
         FileList result = drive.files().list()
-                .setPageSize(10)
+//                .setPageSize(10)
                 .setFields("nextPageToken, files(id, name)")
                 .setQ(String.format("'%s' in parents", folderId))
                 .execute();

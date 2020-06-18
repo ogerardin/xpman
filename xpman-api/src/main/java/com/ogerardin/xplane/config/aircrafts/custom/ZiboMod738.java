@@ -6,6 +6,7 @@ import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.GoogleDriveClient;
 import com.ogerardin.xplane.util.Maps;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -19,17 +20,18 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class ZiboMod738 extends Aircraft implements CustomAircraft {
 
+    /** The Google Drive folder ID of the folder containing published updates */
     public static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
 
-    public ZiboMod738(AcfFile acfFile) {
+    @Getter(lazy = true)
+    private final String version = loadVersion();
+
+    public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "ZIBO Mod 737-800X");
-        if (! acfFile.getNotes().startsWith("ZIBOmod")) {
-            throw new IllegalArgumentException();
-        }
+        assertValid(acfFile.getNotes().startsWith("ZIBOmod"));
     }
 
-    @Override
-    public String getVersion() {
+    public String loadVersion() {
         String notes = getNotes();
         Pattern pattern = Pattern.compile("(.+ )*v([0-9a-zA-Z.]+)$");
         Matcher matcher = pattern.matcher(notes);
@@ -49,6 +51,9 @@ public class ZiboMod738 extends Aircraft implements CustomAircraft {
     }
 
     public String getLatestVersion() throws GeneralSecurityException, IOException {
+        // The aircraft is published on a Google drive: https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ
+        // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
+        // Patches are published as invremental files B737-800X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
         GoogleDriveClient client = new GoogleDriveClient();
         List<File> files = client.getFiles(ZIBO_FOLDER_ID);
         Pattern pattern = Pattern.compile("B737-800X_([\\d_]+)_full.zip");

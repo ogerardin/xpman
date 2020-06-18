@@ -51,6 +51,12 @@ public class Aircraft implements DiagProvider {
         return thumbFile;
     }
 
+    protected void assertValid(boolean valid) throws InstantiationException {
+        if (! valid) {
+            throw new InstantiationException();
+        }
+    }
+
     public Map<LinkType, URL> getLinks() {
         return Collections.emptyMap();
     }

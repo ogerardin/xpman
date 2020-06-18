@@ -1,14 +1,17 @@
 package com.ogerardin.xplane.config;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-public class LinkType {
+public enum LinkType {
+    HOMEPAGE("Homepage"),
+    SUPPORT("Support"),
+    DOWNLOAD("Download page"),
+    XPLANE_FORUM("X-Plane forum");
 
-    private final String name;
+    @Getter
+    private final String label;
 
-    public static final LinkType HOMEPAGE = new LinkType("Homepage");
-    public static final LinkType DOWNLOAD = new LinkType("Download page");
-    public static final LinkType XPLANE_FORUM = new LinkType("X-Plane forum");
-
+    LinkType(String label) {
+        this.label = label;
+    }
 }
