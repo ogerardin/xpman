@@ -52,7 +52,6 @@ after_success:
 deploy:
   - provider: releases
     on:
-      tags: true
       condition: '$TRAVIS_TAG =~ SNAPSHOT'
     draft: false
     overwrite: true
@@ -70,7 +69,6 @@ deploy:
       - xpman-fx-dist/target/*.msi
   - provider: releases
     on:
-      tags: true
       condition: '! $TRAVIS_TAG =~ SNAPSHOT'
     draft: true
     overwrite: true
