@@ -45,14 +45,15 @@ jobs:
 after_success:
   - git config --local user.name "Olivier"
   - git config --local user.email "ogerardin@yahoo.com"
-  # If we don't have a tag, use the Maven project version.
+  # If we don't have a tag, use the Maven project version to tag the current commit
+  # This build will not deploy but the triggered tagged build will.
   - export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-  - if [[ -z "$TRAVIS_TAG" ]]; then export TRAVIS_TAG=$VERSION-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1); git tag $TRAVIS_TAG; fi
+  - if [[ -z "$TRAVIS_TAG" ]]; then git tag -t $VERSION; fi
 
 deploy:
   - provider: releases
     on:
-      all_branches: true
+      tags: true
       condition: '$TRAVIS_TAG =~ SNAPSHOT'
     draft: false
     overwrite: true
@@ -70,7 +71,7 @@ deploy:
       - xpman-fx-dist/target/*.msi
   - provider: releases
     on:
-      all_branches: true
+      tags: true
       condition: '! $TRAVIS_TAG =~ SNAPSHOT'
     draft: true
     overwrite: true
