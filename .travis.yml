@@ -53,7 +53,7 @@ deploy:
   - provider: releases
     on:
       all_branches: true
-      condition: "$TRAVIS_TAG ~= SNAPSHOT"
+      condition: '$TRAVIS_TAG ~= SNAPSHOT'
     draft: false
     overwrite: true
     token:
@@ -71,7 +71,7 @@ deploy:
   - provider: releases
     on:
       all_branches: true
-      condition: " ! $TRAVIS_TAG ~= SNAPSHOT"
+      condition: '! $TRAVIS_TAG ~= SNAPSHOT'
     draft: true
     overwrite: true
     token:
