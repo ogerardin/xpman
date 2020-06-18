@@ -50,37 +50,19 @@ after_success:
   - if [[ -z "$TRAVIS_TAG" ]]; then export TRAVIS_TAG=$VERSION-$(git log --format=%h -1); git tag $TRAVIS_TAG; $fi
 
 deploy:
-  - provider: releases
-    on:
-      condition: '$TRAVIS_TAG =~ SNAPSHOT'
-    draft: false
-    overwrite: true
-    token:
-      secure: Q04eGB3BFTsHAM09q9VJGJPFTnliw/9yZFQL9XYTGe547rJNOJVAOGAkCzz4SlYhms++FMyER1gR0E6MBfUFtpaoHN081EhT/IQbsZYLGoBgA1cYjboWF9oFTGW/df4xnLjuzliXMedTDuhYlqsEsnhBCLaMzx8DzSjk9QZiab7W5gCOTTyvkuMLpLordaHsbuKrfcypv+tmPZ4zUPx0w/1FGENy0JYJNodJo7BjMzf5EDVynJe2IqLU/jQaQ3LhmeqwW3IRfyKR5knqnR+RfIqUORR+D24eNxftpLdjPDbJ8bVCPjemoK7ttEG3kT3jDrZS5NCi3a5BhebIl66o2tQ44HCJwQL1UmB/jxItPBchC5MZDodGyOuehFJdkD6346M+SaE5GvKhPyN7mk0fJ4uPa+VBVHGFMOcxsYQRJwOFPTV7tk7oFtisb393WXnzMr6nf20Y3qFoOZ3jPCAQv6+xpjN8imvhKa0GuyhFi360gygKsoyN0fHJsSUWIFuWL8nqF5FuJGAmnBB+iH0m/1+ziPVjwwczZXhZyBcq9GpopKRRC8VIGUDhRU7yQr1mlDin9cta2wT2/Lp2aEMq5MdBdF0MWuQc0NzP68lBowE+MX/lSiqzZubXdQ55s9yUkLZZ2Wr9lUFB+nipcxSqswFjc0eWVulu0ZAU4OTSlJ4=
-    skip_cleanup: true
-    file_glob: true
-    file:
-      - xpman-fx-dist/target/xpman-fx-dist-*-repackaged.jar
-      - xpman-fx-dist/target/*.pkg
-      - xpman-fx-dist/target/*.dmg
-      - xpman-fx-dist/target/*.deb
-      - xpman-fx-dist/target/*.rpm
-      - xpman-fx-dist/target/*.exe
-      - xpman-fx-dist/target/*.msi
-  - provider: releases
-    on:
-      condition: '! $TRAVIS_TAG =~ SNAPSHOT'
-    draft: true
-    overwrite: true
-    token:
-      secure: Q04eGB3BFTsHAM09q9VJGJPFTnliw/9yZFQL9XYTGe547rJNOJVAOGAkCzz4SlYhms++FMyER1gR0E6MBfUFtpaoHN081EhT/IQbsZYLGoBgA1cYjboWF9oFTGW/df4xnLjuzliXMedTDuhYlqsEsnhBCLaMzx8DzSjk9QZiab7W5gCOTTyvkuMLpLordaHsbuKrfcypv+tmPZ4zUPx0w/1FGENy0JYJNodJo7BjMzf5EDVynJe2IqLU/jQaQ3LhmeqwW3IRfyKR5knqnR+RfIqUORR+D24eNxftpLdjPDbJ8bVCPjemoK7ttEG3kT3jDrZS5NCi3a5BhebIl66o2tQ44HCJwQL1UmB/jxItPBchC5MZDodGyOuehFJdkD6346M+SaE5GvKhPyN7mk0fJ4uPa+VBVHGFMOcxsYQRJwOFPTV7tk7oFtisb393WXnzMr6nf20Y3qFoOZ3jPCAQv6+xpjN8imvhKa0GuyhFi360gygKsoyN0fHJsSUWIFuWL8nqF5FuJGAmnBB+iH0m/1+ziPVjwwczZXhZyBcq9GpopKRRC8VIGUDhRU7yQr1mlDin9cta2wT2/Lp2aEMq5MdBdF0MWuQc0NzP68lBowE+MX/lSiqzZubXdQ55s9yUkLZZ2Wr9lUFB+nipcxSqswFjc0eWVulu0ZAU4OTSlJ4=
-    skip_cleanup: true
-    file_glob: true
-    file:
-      - xpman-fx-dist/target/xpman-fx-dist-*-repackaged.jar
-      - xpman-fx-dist/target/*.pkg
-      - xpman-fx-dist/target/*.dmg
-      - xpman-fx-dist/target/*.deb
-      - xpman-fx-dist/target/*.rpm
-      - xpman-fx-dist/target/*.exe
-      - xpman-fx-dist/target/*.msi
+  provider: releases
+  tag_name: $TRAVIS_TAG
+  draft: true
+  overwrite: true
+  token:
+    secure: Q04eGB3BFTsHAM09q9VJGJPFTnliw/9yZFQL9XYTGe547rJNOJVAOGAkCzz4SlYhms++FMyER1gR0E6MBfUFtpaoHN081EhT/IQbsZYLGoBgA1cYjboWF9oFTGW/df4xnLjuzliXMedTDuhYlqsEsnhBCLaMzx8DzSjk9QZiab7W5gCOTTyvkuMLpLordaHsbuKrfcypv+tmPZ4zUPx0w/1FGENy0JYJNodJo7BjMzf5EDVynJe2IqLU/jQaQ3LhmeqwW3IRfyKR5knqnR+RfIqUORR+D24eNxftpLdjPDbJ8bVCPjemoK7ttEG3kT3jDrZS5NCi3a5BhebIl66o2tQ44HCJwQL1UmB/jxItPBchC5MZDodGyOuehFJdkD6346M+SaE5GvKhPyN7mk0fJ4uPa+VBVHGFMOcxsYQRJwOFPTV7tk7oFtisb393WXnzMr6nf20Y3qFoOZ3jPCAQv6+xpjN8imvhKa0GuyhFi360gygKsoyN0fHJsSUWIFuWL8nqF5FuJGAmnBB+iH0m/1+ziPVjwwczZXhZyBcq9GpopKRRC8VIGUDhRU7yQr1mlDin9cta2wT2/Lp2aEMq5MdBdF0MWuQc0NzP68lBowE+MX/lSiqzZubXdQ55s9yUkLZZ2Wr9lUFB+nipcxSqswFjc0eWVulu0ZAU4OTSlJ4=
+  skip_cleanup: true
+  file_glob: true
+  file:
+    - xpman-fx-dist/target/xpman-fx-dist-*-repackaged.jar
+    - xpman-fx-dist/target/*.pkg
+    - xpman-fx-dist/target/*.dmg
+    - xpman-fx-dist/target/*.deb
+    - xpman-fx-dist/target/*.rpm
+    - xpman-fx-dist/target/*.exe
+    - xpman-fx-dist/target/*.msi
