@@ -1,10 +1,12 @@
 package com.ogerardin.xpman.platform;
 
-import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 
 public interface Platform {
 
     /** Reveal in Finder / show in Explorer or equivalent */
-    void reveal(Path path) throws IOException;
+    default void reveal(Path path) {}
+
+    default void openInBrowser(URL url) {}
 }
