@@ -1,8 +1,10 @@
 package com.ogerardin.xpman.platform;
 
+import com.ogerardin.xpman.exec.ProcessExecutor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URL;
 import java.nio.file.Path;
 
 @Slf4j
@@ -12,9 +14,12 @@ public class MacPlatform implements Platform {
     @Override
     @UserLabel("Reveal in Finder")
     public void reveal(Path path) {
-        Process p = new ProcessBuilder("open", "-R", path.toString()).start();
-        log.debug("Started process {}", p);
-        int exitValue = p.waitFor();
-        log.debug("Process exited with value {}", exitValue);
+        ProcessExecutor.exec("open", "-R", path.toString());
+    }
+
+    @SneakyThrows
+    @Override
+    public void openInBrowser(URL url) {
+        ProcessExecutor.exec("open", url.toString());
     }
 }

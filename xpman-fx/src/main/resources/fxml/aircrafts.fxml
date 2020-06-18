@@ -5,70 +5,63 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.aircrafts.AircraftsController">
-   <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <center>
-      
-          <TableView fx:id="aircraftsTable" prefHeight="400.0" prefWidth="600.0">
-              <columns>
-                  <TableColumn fx:id="thumbColumn" editable="false" prefWidth="174.0" text="Thumbnail">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="thumb" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn editable="false" prefWidth="121.0" text="Name">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="name" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn prefWidth="105.0" text="Version">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="version" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn prefWidth="105.0" text="Latest Version">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="latestVersion" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn editable="false" prefWidth="134.0" text="Author">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="author" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn editable="false" prefWidth="150.0" text="Studio">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="studio" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn editable="false" prefWidth="150.0" text="Manufacturer">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="manufacturer" />
-                      </cellValueFactory>
-                  </TableColumn>
-                  <TableColumn editable="false" prefWidth="105.0" text="Category">
-                      <cellValueFactory>
-                          <PropertyValueFactory property="category" />
-                      </cellValueFactory>
-                  </TableColumn>
-              </columns>
-            <contextMenu>
-               <ContextMenu>
-                 <items>
-                   <MenuItem fx:id="revealMenuIem" mnemonicParsing="false" onAction="#reveal" text="Reveal in Finder" />
-                 </items>
-               </ContextMenu>
-            </contextMenu>
-          </TableView>
-      </center>
-      <top>
-         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-           <items>
-             <Button mnemonicParsing="false" text="Analyze" />
-               <Button mnemonicParsing="false" text="Check for updates" />
-               <Button mnemonicParsing="false" text="Install..." />
-               <ComboBox prefWidth="150.0" promptText="Filter" />
-           </items>
-         </ToolBar>
-      </top>
-   </BorderPane>
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <center>
+
+            <TableView fx:id="aircraftsTable" prefHeight="400.0" prefWidth="600.0">
+                <columns>
+                    <TableColumn fx:id="thumbColumn" editable="false" prefWidth="174.0" text="Thumbnail">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="thumb" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="121.0" text="Name">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="name" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="version" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Latest Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="latestVersion" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="134.0" text="Author">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="author" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="150.0" text="Studio">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="studio" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="150.0" text="Manufacturer">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="manufacturer" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="105.0" text="Category">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="category" />
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </center>
+        <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <items>
+                    <Button mnemonicParsing="false" text="Analyze" />
+                    <Button mnemonicParsing="false" text="Check for updates" />
+                    <Button mnemonicParsing="false" text="Install..." />
+                    <ComboBox prefWidth="150.0" promptText="Filter" />
+                </items>
+            </ToolBar>
+        </top>
+    </BorderPane>
 </AnchorPane>
