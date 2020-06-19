@@ -47,7 +47,8 @@ after_success:
   - git config --local user.email "ogerardin@yahoo.com"
   # If we don't have a tag, use the Maven project version
   - export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-  - export TRAVIS_TAG=${TRAVIS_TAG:-$VERSION-$(git log --format=%h -1)}
+#  - export TRAVIS_TAG=${TRAVIS_TAG:-$VERSION-$(git log --format=%h -1)}
+  - export TRAVIS_TAG=${TRAVIS_TAG:-$VERSION}
   - echo $TRAVIS_TAG
   - git tag $TRAVIS_TAG
 
