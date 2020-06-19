@@ -171,11 +171,13 @@
             The dmg generation is broken. Prefer io.github.fvarrui:javapackager plugin -->
         <profile>
             <id>ant-javafx-mac</id>
+<!--
             <activation>
                 <os>
                     <family>mac</family>
                 </os>
             </activation>
+-->
             <build>
                 <plugins>
                     <plugin>
@@ -241,11 +243,13 @@
         <!-- This profile uses ant with fx-specific tasks to create a Linux bundle. -->
         <profile>
             <id>ant-javafx-linux</id>
+<!--
             <activation>
                 <os>
                     <family>linux</family>
                 </os>
             </activation>
+-->
             <build>
                 <plugins>
                     <plugin>
@@ -485,9 +489,11 @@
         -->
         <profile>
             <id>jar2app</id>
+<!--
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+-->
             <build>
                 <plugins>
                     <!-- Use ant to download and unzip jar2app.
