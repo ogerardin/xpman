@@ -46,6 +46,8 @@ jobs:
 after_success: ./travis/handle_untagged.sh
 
 deploy:
+  on:
+    tags: true
   provider: releases
   tag_name: $TRAVIS_TAG
   name: $TRAVIS_TAG
