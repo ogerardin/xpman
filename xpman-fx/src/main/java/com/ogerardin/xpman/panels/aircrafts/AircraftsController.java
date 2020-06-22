@@ -9,6 +9,7 @@ import com.ogerardin.xpman.platform.Platforms;
 import com.ogerardin.xpman.platform.UserLabel;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +29,9 @@ import java.util.Map;
 public class AircraftsController extends DefaultPanelController<Aircraft> {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
+
+    private static Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
+
     @FXML
     @ToString.Exclude
     private TableColumn<Aircraft, Path> thumbColumn;
@@ -47,12 +51,12 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
         return new TableCell<Aircraft, Path>() {
             @Override
             protected void updateItem(Path thumbFile, boolean empty) {
-                ImageView imageView = null;
+                ImageView thumbnaiImageView = null;
                 if (thumbFile != null) {
                     Image image;
                     try (InputStream inputStream = Files.newInputStream(thumbFile)) {
                         image = new Image(inputStream);
-                        imageView = new ImageView(image);
+                        thumbnaiImageView = new ImageView(image);
 //                    imageView.setFitWidth(100);
 //                    imageView.setPreserveRatio(true);
 //                    imageView.setSmooth(true);
@@ -61,7 +65,15 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
                         log.warn("Failed to load thumbnail: {}", thumbFile);
                     }
                 }
-                setGraphic(imageView);
+                Aircraft aircraft = (Aircraft) getTableRow().getItem();
+                if (aircraft != null && ! aircraft.isEnabled()) {
+                    ImageView disabledImageView = new ImageView(DISABLED_IMAGE);
+                    Group group = thumbnaiImageView != null ? new Group(thumbnaiImageView, disabledImageView) : new Group(disabledImageView);
+                    setGraphic(group);
+                }
+                else {
+                    setGraphic(thumbnaiImageView);
+                }
             }
         };
     }

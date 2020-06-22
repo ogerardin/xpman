@@ -44,7 +44,7 @@ public class XpfrAircraft extends Aircraft implements CustomAircraft {
     @Override
     public Map<LinkType, URL> getLinks() {
         return Maps.mapOf(
-                LinkType.HOMEPAGE, new URL("http://www.xpfr.com")
+                LinkType.HOMEPAGE, new URL("http://www.xpfr.org")
         );
     }
 
