@@ -4,8 +4,8 @@ import com.ogerardin.xplane.config.LinkType;
 import com.ogerardin.xplane.diag.DiagItem;
 import com.ogerardin.xplane.diag.DiagProvider;
 import com.ogerardin.xplane.file.AcfFile;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class Aircraft implements DiagProvider {
 
@@ -24,6 +24,8 @@ public class Aircraft implements DiagProvider {
     private final AcfFile acfFile;
 
     public final String name;
+
+    public boolean enabled = false;
 
     public Aircraft(AcfFile acfFile) {
         this(acfFile, acfFile.getName());
