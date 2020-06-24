@@ -4,8 +4,9 @@ import com.ogerardin.xplane.config.LinkType;
 import com.ogerardin.xplane.diag.DiagItem;
 import com.ogerardin.xplane.diag.DiagProvider;
 import com.ogerardin.xplane.file.AcfFile;
+import lombok.AccessLevel;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,16 +17,22 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@RequiredArgsConstructor
 @Slf4j
 public class Aircraft implements DiagProvider {
 
+    // all AcfFile methods (except those defined in Named) are available on Aircraft
     @Delegate(excludes = Named.class)
-    private final AcfFile acfFile;
+    @Setter(AccessLevel.PACKAGE)
+    private AcfFile acfFile;
 
     public final String name;
 
     public boolean enabled = false;
+
+    public Aircraft(AcfFile acfFile, String name) {
+        this.acfFile = acfFile;
+        this.name = name;
+    }
 
     public Aircraft(AcfFile acfFile) {
         this(acfFile, acfFile.getName());
@@ -36,6 +43,7 @@ public class Aircraft implements DiagProvider {
         return null;
     }
 
+    //** Methods excluded from delegation */
     private interface Named {
         String getName();
     }
