@@ -36,7 +36,7 @@ public class XPmanFX extends Application {
 
     private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
 
-    private Config config = ConfigManager.INSTANCE.load();
+    private final Config config = ConfigManager.INSTANCE.load();
 
 
     @Override

@@ -30,7 +30,7 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
-    private static Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
+    private static final Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
 
     @FXML
     @ToString.Exclude
@@ -67,8 +67,9 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
                 }
                 Aircraft aircraft = (Aircraft) getTableRow().getItem();
                 if (aircraft != null && ! aircraft.isEnabled()) {
+                    // aircraft is disabled: add "disabled" icon
                     ImageView disabledImageView = new ImageView(DISABLED_IMAGE);
-                    Group group = thumbnaiImageView != null ? new Group(thumbnaiImageView, disabledImageView) : new Group(disabledImageView);
+                    Group group = (thumbnaiImageView != null) ? new Group(thumbnaiImageView, disabledImageView) : new Group(disabledImageView);
                     setGraphic(group);
                 }
                 else {
@@ -104,11 +105,28 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
                 .orElse("Show in files");
 
         // build context menu
-        final ContextMenu rowMenu = new ContextMenu();
+        ContextMenu rowMenu = new ContextMenu();
+        MenuItem enableItem = new MenuItem("Enable aircraft");
+        enableItem.setOnAction(event -> {
+            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
+            getXPlaneInstance().getAircraftManager().enableAircraft(aircraft);
+            //TODO don't call refresh, use ObservableProperty ?
+            getTableView().refresh();
+        });
+        MenuItem disableItem = new MenuItem("Disable aircraft");
+        disableItem.setOnAction(event -> {
+            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
+            getXPlaneInstance().getAircraftManager().disableAircraft(aircraft);
+            //TODO don't call refresh, use ObservableProperty ?
+            getTableView().refresh();
+        });
         Menu linksMenuItem = new Menu("Links");
         MenuItem revealItem = new MenuItem(revealLabel);
-        revealItem.setOnAction(event -> reveal(row.getItem()));
-        rowMenu.getItems().addAll(linksMenuItem, revealItem);
+        revealItem.setOnAction(event -> {
+            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
+            reveal(aircraft);
+        });
+        rowMenu.getItems().addAll(enableItem, disableItem, linksMenuItem, revealItem);
 
         // only display context menu for non-null items:
         row.contextMenuProperty().bind(
@@ -118,7 +136,12 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
 
         // cutomize menu for actual row item (links, ...)
         row.setOnContextMenuRequested(event -> {
-            Map<LinkType, URL> links = row.getItem().getLinks();
+            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
+            boolean enabled = aircraft.isEnabled();
+            enableItem.setVisible(! enabled);
+            disableItem.setVisible(enabled);
+
+            Map<LinkType, URL> links = aircraft.getLinks();
             linksMenuItem.getItems().clear();
             for (Map.Entry<LinkType, URL> entry : links.entrySet()) {
                 LinkType linkType = entry.getKey();

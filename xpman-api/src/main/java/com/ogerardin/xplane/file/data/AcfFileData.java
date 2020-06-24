@@ -2,6 +2,7 @@ package com.ogerardin.xplane.file.data;
 
 import lombok.*;
 
+/** Parsing result for a .acf file */
 @Getter
 @Setter
 @ToString

@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Represents a parsed .acf file
+ */
 public class AcfFile extends XPlaneDataFile<AcfFileParser, AcfFileData> {
 
     @AllArgsConstructor
