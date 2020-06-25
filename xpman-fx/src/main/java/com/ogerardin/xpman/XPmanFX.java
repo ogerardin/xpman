@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
@@ -19,12 +20,16 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
 @Slf4j
 public class XPmanFX extends Application {
+
+    @FXML
+    private VBox main;
 
     @FXML
     private Menu recentMenu;
@@ -38,6 +43,8 @@ public class XPmanFX extends Application {
 
     private final Config config = ConfigManager.INSTANCE.load();
 
+    public XPmanFX() {
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -59,6 +66,25 @@ public class XPmanFX extends Application {
         loader.setControllerFactory(this::buildController);
         Pane mainPane = loader.load();
         stage.setScene(new Scene(mainPane));
+
+        restoreWindowPosition(stage);
+
+    }
+
+    private void restoreWindowPosition(Stage stage) {
+        Preferences prefs = Preferences.userRoot().node("XPMan");
+        stage.setX(prefs.getDouble("X", 10));
+        stage.setY(prefs.getDouble("Y", 10));
+        stage.setWidth(prefs.getDouble("W", main.getPrefWidth()));
+        stage.setHeight(prefs.getDouble("H", main.getPrefHeight()));
+    }
+
+    private void saveWindowPosition(Stage stage) {
+        Preferences prefs = Preferences.userRoot().node("XPMan");
+        prefs.putDouble("X", stage.getX());
+        prefs.putDouble("Y", stage.getY());
+        prefs.putDouble("W", stage.getWidth());
+        prefs.putDouble("H", stage.getHeight());
     }
 
     public static void main(String[] args) {
@@ -71,6 +97,7 @@ public class XPmanFX extends Application {
         alert.showAndWait()
                 .filter(buttonType -> buttonType == ButtonType.OK)
                 .ifPresent(buttonType -> {
+                    saveWindowPosition(primaryStage);
                     Platform.exit();
                     System.exit(0);
                 });
@@ -98,6 +125,11 @@ public class XPmanFX extends Application {
 
     @SneakyThrows
     private <C> C buildController(Class<C> type) {
+        if (type == this.getClass()) {
+            // don't reinstantiate this class, use the existing instance
+            //noinspection unchecked
+            return (C) this;
+        }
         try {
             // if the controller class has a constuctor that takes a XPlaneInstanceProperty, use it
             Constructor<C> constructor = type.getConstructor(XPlaneInstanceProperty.class);
