@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.XPManTestBase;
+import com.ogerardin.xplane.config.XPlaneInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ import static org.parboiled.support.Filters.rulesBelow;
 @Slf4j
 @ExtendWith(TimingExtension.class)
 @DisabledIfNoXPlaneRootFolder
-class AcfFileParserTest extends XPManTestBase {
+class AcfFileParserTest {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final boolean TRACE = false;
@@ -33,7 +33,7 @@ class AcfFileParserTest extends XPManTestBase {
     @Test
     public void testCanParseAcf() throws IOException {
 
-        Path acfPath = getXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
+        Path acfPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 //        Path acfPath = getXPRootFolder().resolve("Aircraft/YAK-55M/YAK-55M.acf");
 //        Path acfPath = getXPRootFolder().resolve("Aircraft/RafaleC_solo_display/RafaleC.acf");
 

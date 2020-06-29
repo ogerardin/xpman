@@ -2,7 +2,6 @@ package com.ogerardin.xplane.config.aircrafts;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.XPManTestBase;
 import com.ogerardin.xplane.config.InvalidConfig;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +13,12 @@ import java.util.List;
 @Slf4j
 @ExtendWith(TimingExtension.class)
 @DisabledIfNoXPlaneRootFolder
-public class AircraftManagerTest extends XPManTestBase {
+public class AircraftManagerTest {
 
     @Test
     public void testLoadAircrafts() throws InvalidConfig {
 
-        XPlaneInstance xplane = new XPlaneInstance(getXPRootFolder());
+        XPlaneInstance xplane = new XPlaneInstance(XPlaneInstance.getDefaultXPRootFolder());
 
         List<Aircraft> aircrafts = xplane.getAircraftManager().getAircrafts();
         log.info("Found {} aircrafts", aircrafts.size());
