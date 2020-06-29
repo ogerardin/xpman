@@ -12,11 +12,15 @@ public class LinuxPlatform implements Platform {
 
     @SneakyThrows
     @Override
-    @UserLabel("Show in Files")
     public void reveal(Path path) {
         // https://askubuntu.com/a/1109917/325617
         String shellParam = String.format("gtk-launch \"$(xdg-mime query default inode/directory)\" '%s'", path.toString());
         ProcessExecutor.exec("sh", "-c", shellParam);
+    }
+
+    @Override
+    public String revealLabel() {
+        return "Show in Files";
     }
 
     @SneakyThrows

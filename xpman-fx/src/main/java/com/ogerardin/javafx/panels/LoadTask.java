@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.panels;
+package com.ogerardin.javafx.panels;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;

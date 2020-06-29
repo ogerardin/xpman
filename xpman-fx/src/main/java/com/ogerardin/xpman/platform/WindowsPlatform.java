@@ -12,10 +12,14 @@ public class WindowsPlatform implements Platform {
 
     @SneakyThrows
     @Override
-    @UserLabel("Show in Explorer")
     public void reveal(Path path) {
         String explorerParam = "/select,\"" + path.toString() + "\"";
         ProcessExecutor.exec("explorer.exe", explorerParam);
+    }
+
+    @Override
+    public String revealLabel() {
+        return "Show in Explorer";
     }
 
     @SneakyThrows
