@@ -4,6 +4,7 @@ import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.Maps;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import static java.lang.Boolean.TRUE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+@Disabled
 class SpelTest {
 
     @Test
@@ -35,7 +37,7 @@ class SpelTest {
     public void testSpelVariables() {
         Map<String, Object> variables = Maps.mapOf("var1", TRUE);
 
-        assertThat(eval("var1", null, variables), is(TRUE));
+        assertThat(eval("#var1", null, variables), is(TRUE));
     }
 
 
