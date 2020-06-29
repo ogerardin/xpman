@@ -14,7 +14,7 @@ public class ColimataConcorde extends Aircraft implements CustomAircraft {
 
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");
-        assertValid(acfFile.getName().equals("CONCORDE FXP"));
+        assertValid(getName().equals("CONCORDE FXP"));
     }
 
     @SneakyThrows

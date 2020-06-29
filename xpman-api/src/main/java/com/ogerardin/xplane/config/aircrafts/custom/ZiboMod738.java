@@ -10,9 +10,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +30,7 @@ public class ZiboMod738 extends Aircraft implements CustomAircraft {
 
     public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "ZIBO Mod 737-800X");
-        assertValid(acfFile.getNotes().startsWith("ZIBOmod"));
+        assertValid(getNotes().startsWith("ZIBOmod"));
     }
 
     public String loadVersion() {
@@ -54,7 +52,9 @@ public class ZiboMod738 extends Aircraft implements CustomAircraft {
         );
     }
 
-    public String getLatestVersion() throws GeneralSecurityException, IOException {
+    @SneakyThrows
+    @Override
+    public String getLatestVersion() {
         // The aircraft is published on a Google drive: https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ
         // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
         // Patches are published as incremental files B738X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
