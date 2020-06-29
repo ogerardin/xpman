@@ -1,12 +1,13 @@
 package com.ogerardin.xpman.panels.plugins;
 
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.plugins.Plugin;
 import com.ogerardin.xpman.XPlaneInstanceProperty;
-import com.ogerardin.xpman.panels.DefaultPanelController;
+import com.ogerardin.javafx.panels.TableViewController;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 
-public class PluginsController extends DefaultPanelController<Plugin> {
+public class PluginsController extends TableViewController<XPlaneInstance, Plugin> {
 
     @FXML
     private TableView<Plugin> pluginTable;

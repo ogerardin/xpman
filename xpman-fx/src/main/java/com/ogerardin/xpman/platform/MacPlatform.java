@@ -12,9 +12,13 @@ public class MacPlatform implements Platform {
 
     @SneakyThrows
     @Override
-    @UserLabel("Reveal in Finder")
     public void reveal(Path path) {
         ProcessExecutor.exec("open", "-R", path.toString());
+    }
+
+    @Override
+    public String revealLabel() {
+        return "Reveal in Finder";
     }
 
     @SneakyThrows

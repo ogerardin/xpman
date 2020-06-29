@@ -1,32 +1,24 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.config.LinkType;
-import com.ogerardin.xplane.config.aircrafts.Aircraft;
+import com.ogerardin.javafx.panels.TableViewController;
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.XPlaneInstanceProperty;
-import com.ogerardin.xpman.panels.DefaultPanelController;
-import com.ogerardin.xpman.platform.Platform;
-import com.ogerardin.xpman.platform.Platforms;
-import com.ogerardin.xpman.platform.UserLabel;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
-public class AircraftsController extends DefaultPanelController<Aircraft> {
+public class AircraftsController extends TableViewController<XPlaneInstance, UiAircraft> {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
@@ -34,21 +26,39 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
 
     @FXML
     @ToString.Exclude
-    private TableColumn<Aircraft, Path> thumbColumn;
+    private TableColumn<UiAircraft, Path> thumbColumn;
 
     @FXML
     @ToString.Exclude
-    private TableView<Aircraft> aircraftsTable;
+    private TableView<UiAircraft> aircraftsTable;
 
     public AircraftsController(XPlaneInstanceProperty xPlaneInstanceProperty) {
         super(
                 xPlaneInstanceProperty,
-                xPlaneInstance -> xPlaneInstance.getAircraftManager().getAircrafts()
+                xPlaneInstance -> xPlaneInstance.getAircraftManager().getAircrafts().stream()
+                        .map(aircraft -> new UiAircraft(aircraft, xPlaneInstance))
+                        .collect(Collectors.toList())
         );
     }
 
-    private static TableCell<Aircraft, Path> thumbnailCellFactory(TableColumn<Aircraft, Path> col) {
-        return new TableCell<Aircraft, Path>() {
+    @FXML
+    public void initialize() {
+        setTableView(aircraftsTable);
+
+        aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
+
+        aircraftsTable.setRowFactory(
+                tableView -> {
+                    final TableRow<UiAircraft> row = new TableRow<>();
+                    setContextMenu(row, UiAircraft.class);
+                    return row;
+                });
+
+        thumbColumn.setCellFactory(AircraftsController::thumbnailCellFactory);
+    }
+
+    private static TableCell<UiAircraft, Path> thumbnailCellFactory(TableColumn<UiAircraft, Path> col) {
+        return new TableCell<UiAircraft, Path>() {
             @Override
             protected void updateItem(Path thumbFile, boolean empty) {
                 ImageView thumbnaiImageView = null;
@@ -65,7 +75,7 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
                         log.warn("Failed to load thumbnail: {}", thumbFile);
                     }
                 }
-                Aircraft aircraft = (Aircraft) getTableRow().getItem();
+                UiAircraft aircraft = (UiAircraft) getTableRow().getItem();
                 if (aircraft != null && ! aircraft.isEnabled()) {
                     // aircraft is disabled: add "disabled" icon
                     ImageView disabledImageView = new ImageView(DISABLED_IMAGE);
@@ -79,84 +89,4 @@ public class AircraftsController extends DefaultPanelController<Aircraft> {
         };
     }
 
-    @FXML
-    public void initialize() {
-        setTableView(aircraftsTable);
-        aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
-
-        aircraftsTable.setRowFactory(
-                tableView -> {
-                    final TableRow<Aircraft> row = new TableRow<>();
-                    setRowContextMenu(row);
-                    return row;
-                });
-
-        thumbColumn.setCellFactory(AircraftsController::thumbnailCellFactory);
-    }
-
-    private void setRowContextMenu(TableRow<Aircraft> row) {
-        // set label according to annotation @UserLabel Platform.reveal
-        Platform platform = Platforms.getCurrent();
-        String revealLabel = Arrays.stream(platform.getClass().getMethods())
-                .filter(method -> method.getName().equals("reveal"))
-                .findAny()
-                .map(method -> method.getAnnotation(UserLabel.class))
-                .map(UserLabel::value)
-                .orElse("Show in files");
-
-        // build context menu
-        ContextMenu rowMenu = new ContextMenu();
-        MenuItem enableItem = new MenuItem("Enable aircraft");
-        enableItem.setOnAction(event -> {
-            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
-            getXPlaneInstance().getAircraftManager().enableAircraft(aircraft);
-            //TODO don't call refresh, use ObservableProperty ?
-            getTableView().refresh();
-        });
-        MenuItem disableItem = new MenuItem("Disable aircraft");
-        disableItem.setOnAction(event -> {
-            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
-            getXPlaneInstance().getAircraftManager().disableAircraft(aircraft);
-            //TODO don't call refresh, use ObservableProperty ?
-            getTableView().refresh();
-        });
-        Menu linksMenuItem = new Menu("Links");
-        MenuItem revealItem = new MenuItem(revealLabel);
-        revealItem.setOnAction(event -> {
-            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
-            reveal(aircraft);
-        });
-        rowMenu.getItems().addAll(enableItem, disableItem, linksMenuItem, revealItem);
-
-        // only display context menu for non-null items:
-        row.contextMenuProperty().bind(
-                Bindings.when(Bindings.isNotNull(row.itemProperty()))
-                        .then(rowMenu)
-                        .otherwise((ContextMenu) null));
-
-        // cutomize menu for actual row item (links, ...)
-        row.setOnContextMenuRequested(event -> {
-            Aircraft aircraft = getTableView().getSelectionModel().getSelectedItem();
-            boolean enabled = aircraft.isEnabled();
-            enableItem.setVisible(! enabled);
-            disableItem.setVisible(enabled);
-
-            Map<LinkType, URL> links = aircraft.getLinks();
-            linksMenuItem.getItems().clear();
-            for (Map.Entry<LinkType, URL> entry : links.entrySet()) {
-                LinkType linkType = entry.getKey();
-                URL url = entry.getValue();
-                MenuItem linkMenuItem = new MenuItem(linkType.getLabel());
-                linkMenuItem.setOnAction(e -> Platforms.getCurrent().openInBrowser(url));
-                linksMenuItem.getItems().add(linkMenuItem);
-            }
-            linksMenuItem.setVisible(! linksMenuItem.getItems().isEmpty());
-        });
-    }
-
-    @SneakyThrows
-    public void reveal(Aircraft selectedItem) {
-        Path file = selectedItem.getAcfFile().getFile();
-        Platforms.getCurrent().reveal(file);
-    }
 }
