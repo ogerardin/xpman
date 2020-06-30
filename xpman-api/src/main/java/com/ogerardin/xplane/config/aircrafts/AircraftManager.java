@@ -7,12 +7,10 @@ import com.ogerardin.xplane.util.FileUtils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -121,14 +119,24 @@ public class AircraftManager {
     private void moveAircraft(Aircraft aircraft, Path targetFolder) throws IOException {
         Path acfFile = aircraft.getAcfFile().getFile();
         // move the folder containing the .acf file...
-        Path source = acfFile.getParent();
+        Path sourceFolder = acfFile.getParent();
         // ...to the "Aircrafts" folder, keeping the original folder name
-        Path target = targetFolder.resolve(source.getFileName());
-        Files.move(source, target);
+        Path target = targetFolder.resolve(sourceFolder.getFileName());
+        Files.move(sourceFolder, target);
 
         // update aircraft
         Path newAcfFile = target.resolve(acfFile.getFileName());
         aircraft.setAcfFile(new AcfFile(newAcfFile));
         aircraft.setEnabled(newAcfFile.startsWith(aircraftFolder));
+    }
+
+    @SneakyThrows
+    public void moveAircraftToTrash(Aircraft aircraft) {
+        Path acfFile = aircraft.getAcfFile().getFile();
+        // move the folder containing the .acf file...
+        Path folder = acfFile.getParent();
+        // ...to the trash
+        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+        fileUtils.moveToTrash(new File[]{folder.toFile()});
     }
 }
