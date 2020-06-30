@@ -4,13 +4,13 @@ import com.ogerardin.javafx.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xpman.platform.Platforms;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
 import java.nio.file.Path;
 
-@RequiredArgsConstructor
+@Data
 public class UiAircraft {
 
     @Delegate
@@ -33,10 +33,20 @@ public class UiAircraft {
 
     @Label("'Disable Aircraft'")
     @EnabledIf("enabled")
-    @Confirm
+    @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
+            "+ ' will be moved to ' + xPlaneInstance.rootFolder.relativize(xPlaneInstance.aircraftManager.disabledAircraftFolder) " +
+            "+ ' \n\nPress OK to continue.'")
     @RefreshAfter
     public void disable() {
         xPlaneInstance.getAircraftManager().disableAircraft(aircraft);
+    }
+
+    @Label("'Move to Trash'")
+    @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
+            "+ ' will be moved to the trash.\n\nPress OK to continue.'")
+    @RefreshAfter
+    public void moveToTrash() {
+        xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
     }
 
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key.label")

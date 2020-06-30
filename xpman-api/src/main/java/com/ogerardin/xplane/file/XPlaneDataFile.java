@@ -25,6 +25,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public abstract class XPlaneDataFile<P extends XPlaneFileParser, R extends XPlaneFileData> {
 
+    @Getter
     private final Path file;
 
     /** Class of parser required to parse this file */
