@@ -5,7 +5,13 @@ import lombok.Data;
 @Data
 public class CheckResult {
 
-    final boolean valid;
+    final Status status;
 
     final String message;
+
+    public enum Status {
+        OK,
+        WARN,
+        ERROR;
+    }
 }
