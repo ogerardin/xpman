@@ -1,43 +1,52 @@
 package com.ogerardin.xplane.config.aircrafts.install;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.config.aircrafts.install.CheckResult.Status;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.stream.Collectors;
 
 @UtilityClass
 @Slf4j
 public class AircraftInstaller {
 
-    public CheckResult checkZip(Path zipFile) {
-        //TODO: check if not overwriting anything!
+    public CheckResult checkZip(XPlaneInstance xPlaneInstance, Path zipFile) {
+        //TODO: assert single folder
+
+        Path aircraftFolder = xPlaneInstance.getAircraftManager().getAircraftFolder();
+
         List<String> acfFiles = new ArrayList<>();
-        try (ZipFile zip = new ZipFile(zipFile.toFile(), ZipFile.OPEN_READ)) {
-            Enumeration<? extends ZipEntry> entries = zip.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry zipEntry = entries.nextElement();
-//           enum log.debug("ZipEntry: {}", zipEntry);
-                String entryName = zipEntry.getName();
-                if (entryName.endsWith(".acf")) {
-                    acfFiles.add(entryName);
-                    log.debug("Found acf file: {}", entryName);
+        boolean overwriting = false;
+        try {
+            List<Path> paths = FileUtils.zipPaths(zipFile).collect(Collectors.toList());
+            for (Path path : paths) {
+                if (path.getFileName().toString().endsWith(".acf")) {
+                    log.debug("Found acf file: {}", path);
+                    acfFiles.add(path.toString());
+                }
+                if (Files.exists(aircraftFolder.resolve(path))) {
+                    overwriting = true;
                 }
             }
         } catch (IOException e) {
-            return new CheckResult(false, "File is not a ZIP archive");
+            return new CheckResult(Status.ERROR, "File is not a ZIP archive");
         }
         if (acfFiles.isEmpty()) {
-            return new CheckResult(false, "No ACF file found in archive");
+            return new CheckResult(Status.ERROR, "No ACF file found in archive");
         }
-        return new CheckResult(true, "Found the following ACF files in archive: " + acfFiles);
+        String message = "Found the following ACF files in archive: " + acfFiles + ".";
+        if (overwriting) {
+            return new CheckResult(Status.WARN, message
+                    + "\nWarning: some files in ythe archive will overwrite existing files! Only proceed if you are updating an aircraft.");
+        }
+        return new CheckResult(Status.OK, message);
     }
 
     public void installZip(XPlaneInstance xPlaneInstance, Path zipFile) throws IOException {

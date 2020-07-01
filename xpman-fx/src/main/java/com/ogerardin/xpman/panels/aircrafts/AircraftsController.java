@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -108,13 +109,22 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
 
     @SneakyThrows
     private void installAircraftFromZip(Path zipfile) {
-        CheckResult checkResult = AircraftInstaller.checkZip(zipfile);
-        if (!checkResult.isValid()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, checkResult.getMessage());
+        XPlaneInstance xPlaneInstance = getPropertyValue();
+
+        CheckResult checkResult = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
+        CheckResult.Status status = checkResult.getStatus();
+        if (status == CheckResult.Status.ERROR) {
+            Alert alert = new Alert(AlertType.ERROR, checkResult.getMessage());
             alert.showAndWait();
             return;
         }
-        XPlaneInstance xPlaneInstance = getPropertyValue();
+
+        Alert alert = new Alert((status == CheckResult.Status.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, checkResult.getMessage());
+        alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+
         AircraftInstaller.installZip(xPlaneInstance, zipfile);
     }
 
