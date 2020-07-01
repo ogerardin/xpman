@@ -1,14 +1,15 @@
 package com.ogerardin.xpman.platform;
 
 import lombok.Getter;
+import lombok.experimental.UtilityClass;
 
-public enum Platforms {
-    ;
+@UtilityClass
+public class Platforms {
 
     @Getter(lazy = true)
-    private static final Platform current = currentPlatform();
+    private final Platform current = currentPlatform();
 
-    private static Platform currentPlatform() {
+    private Platform currentPlatform() {
         switch (com.sun.jna.Platform.getOSType()) {
             case com.sun.jna.Platform.MAC:
                 return new MacPlatform();

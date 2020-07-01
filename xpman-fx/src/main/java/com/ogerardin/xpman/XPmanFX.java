@@ -20,8 +20,10 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
@@ -49,13 +51,15 @@ public class XPmanFX extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        log.debug("Setting up stage");
         setupStage(primaryStage);
         primaryStage.show();
+        log.debug("Ready!");
     }
 
 
     @SneakyThrows
-    private void setupStage(Stage stage) throws java.io.IOException {
+    private void setupStage(Stage stage) {
         stage.setTitle("XPman");
         stage.setOnCloseRequest(windowEvent -> {
             windowEvent.consume();
@@ -72,15 +76,19 @@ public class XPmanFX extends Application {
     }
 
     private void restoreWindowPosition(Stage stage) {
-        Preferences prefs = Preferences.userRoot().node("XPMan");
+        Preferences prefs = getPrefsRoot();
         stage.setX(prefs.getDouble("X", 10));
         stage.setY(prefs.getDouble("Y", 10));
         stage.setWidth(prefs.getDouble("W", main.getPrefWidth()));
         stage.setHeight(prefs.getDouble("H", main.getPrefHeight()));
     }
 
+    private Preferences getPrefsRoot() {
+        return Preferences.userRoot().node("XPMan");
+    }
+
     private void saveWindowPosition(Stage stage) {
-        Preferences prefs = Preferences.userRoot().node("XPMan");
+        Preferences prefs = getPrefsRoot();
         prefs.putDouble("X", stage.getX());
         prefs.putDouble("Y", stage.getY());
         prefs.putDouble("W", stage.getWidth());
@@ -88,6 +96,11 @@ public class XPmanFX extends Application {
     }
 
     public static void main(String[] args) {
+        String version = XPmanFX.class.getPackage().getImplementationVersion();
+        log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
+        Stream.of("java.vendor", "java.version", "os.arch", "os.name", "os.version")
+                .map(propertyName -> String.format("  %s: %s", propertyName, System.getProperty(propertyName)))
+                .forEach(log::info);
         launch(args);
     }
 
@@ -107,14 +120,16 @@ public class XPmanFX extends Application {
     public void open() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
-        if (selectedDirectory != null) {
-            openXPlane(selectedDirectory);
+        if (selectedDirectory == null) {
+            return;
         }
+        openXPlane(selectedDirectory);
     }
 
     @SneakyThrows
     private void openXPlane(File selectedDirectory) {
         Path folder = selectedDirectory.toPath().toRealPath();
+        log.info("Opening X-Plane folder {}", folder);
         XPlaneInstance xplane = new XPlaneInstance(folder);
         xPlaneInstanceProperty.set(xplane);
         config.setLastXPlanePath(folder.toString());
@@ -154,11 +169,10 @@ public class XPmanFX extends Application {
     }
 
     private void updateRecent() {
-        recentMenu.getItems().clear();
         List<MenuItem> menuItems = config.getRecentPaths().stream()
                 .map(RecentMenuItem::new)
                 .collect(Collectors.toList());
-        recentMenu.getItems().addAll(menuItems);
+        recentMenu.getItems().setAll(menuItems);
     }
 
     private class RecentMenuItem extends MenuItem {

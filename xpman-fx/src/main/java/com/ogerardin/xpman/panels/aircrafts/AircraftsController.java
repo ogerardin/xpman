@@ -2,15 +2,21 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.javafx.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
+import com.ogerardin.xplane.config.aircrafts.install.CheckResult;
 import com.ogerardin.xpman.XPlaneInstanceProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -87,6 +93,29 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
                 }
             }
         };
+    }
+
+    @SneakyThrows
+    public void installAircraft(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(null);
+        if (file == null) {
+            return;
+        }
+
+        installAircraftFromZip(file.toPath());
+    }
+
+    @SneakyThrows
+    private void installAircraftFromZip(Path zipfile) {
+        CheckResult checkResult = AircraftInstaller.checkZip(zipfile);
+        if (!checkResult.isValid()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, checkResult.getMessage());
+            alert.showAndWait();
+            return;
+        }
+        XPlaneInstance xPlaneInstance = getPropertyValue();
+        AircraftInstaller.installZip(xPlaneInstance, zipfile);
     }
 
 }
