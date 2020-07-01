@@ -2,8 +2,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f300a3631f1418a8029d21c5823719a)](https://www.codacy.com/manual/ogerardin/xpman)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
 
-X-Plane Manager
-===============
+#X-Plane Manager
 X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's wonderful flight simulator X-Plane.
 
 Such tools exist but they are not cross-platform, have limited functionality, are difficult to use or are payware.
@@ -21,9 +20,7 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 ##Status
 Preliminary stage: loads aircrafts and can perform some actions on them.  
 
-Installing X-Plane Manager
-==========================
-
+#Installing X-Plane Manager
 If you already have a [Java 8 runtime](https://www.oracle.com/java/technologies/javase-jre8-downloads.html), 
 grab the jar from [GitHub releases](https://github.com/ogerardin/xpman/releases) and run it by double-clicking.
 
