@@ -7,9 +7,9 @@
 
 <DialogPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.AboutController">
     <graphic>
-        <ImageView>
+        <ImageView fitHeight="128.0" fitWidth="128.0">
          <image>
-            <Image url="@/fxml/logo.gif" />
+            <Image url="@../icon.png" />
          </image>
         </ImageView>
     </graphic>

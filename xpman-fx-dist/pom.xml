@@ -79,6 +79,31 @@
 
         <plugins>
 
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.ogerardin.xplane</groupId>
+                                    <artifactId>xpman-fx</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                    <type>jar</type>
+                                    <includes>/icon.png</includes>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Generates an uber-jar by method of repackaging using Spring's spring-boot-maven-plugin.
                 Much cleaner than shading, the dependencies are not unpacked and merged, but embedded as is, and
                 a custom classloader takes care of accessing them. -->
@@ -577,7 +602,7 @@
                                         <argument>-s</argument>
                                         <argument>format</argument>
                                         <argument>icns</argument>
-                                        <argument>${project.basedir}/assets/common/icon.png</argument>
+                                        <argument>${project.basedir}/assets/icon.png</argument>
                                         <argument>--out</argument>
                                         <argument>${project.basedir}/assets/mac/${app.name}.icns</argument>
                                     </arguments>

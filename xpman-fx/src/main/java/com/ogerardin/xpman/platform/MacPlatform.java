@@ -26,4 +26,10 @@ public class MacPlatform implements Platform {
     public void openInBrowser(URL url) {
         ProcessExecutor.exec("open", url.toString());
     }
+
+    @Override
+    @SneakyThrows
+    public void startApp(Path app) {
+        ProcessExecutor.exec("open", app.toString());
+    }
 }

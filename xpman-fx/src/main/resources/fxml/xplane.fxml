@@ -2,28 +2,51 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="246.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.xplane.XPlaneController">
-    <GridPane prefHeight="81.0" prefWidth="465.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="227.0" minWidth="10.0" prefWidth="141.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="386.0" minWidth="10.0" prefWidth="267.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-        <Label text="Root folder:" textAlignment="RIGHT" GridPane.halignment="RIGHT">
-         <GridPane.margin>
-            <Insets right="10.0" />
-         </GridPane.margin></Label>
-        <Label text="Version:" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
-         <GridPane.margin>
-            <Insets right="10.0" />
-         </GridPane.margin></Label>
-        <Label fx:id="version" text="&lt;value&gt;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Hyperlink fx:id="link" onAction="#showFolder" text="&lt;value&gt;" GridPane.columnIndex="1" />
-    </GridPane>
+   <BorderPane AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <center>
+          <GridPane prefHeight="109.0" prefWidth="465.0" BorderPane.alignment="CENTER">
+              <columnConstraints>
+                  <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="131.0" minWidth="115.0" prefWidth="131.0" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+               <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+              <Label text="Root folder:" textAlignment="RIGHT" GridPane.halignment="RIGHT">
+                  <GridPane.margin>
+                      <Insets right="10.0" />
+                  </GridPane.margin>
+              </Label>
+              <Label text="Version:" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                  <GridPane.margin>
+                      <Insets right="10.0" />
+                  </GridPane.margin>
+              </Label>
+              <Label fx:id="version" text="&lt;value&gt;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+              <Hyperlink fx:id="link" onAction="#showFolder" text="&lt;value&gt;" GridPane.columnIndex="1" />
+              <Label text="X-Plane Executable:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin></Label>
+            <Label fx:id="executable" text="&lt;value&gt;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="startXPlaneButton" mnemonicParsing="false" onAction="#startXPlane" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+          </GridPane>
+      </center>
+      <left>
+         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+            <image>
+               <Image url="@../x-plane.png" />
+            </image>
+         </ImageView>
+      </left>
+   </BorderPane>
 </AnchorPane>

@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-<!--    <logger name="com.ogerardin.xpman.util.SpelUtil" level="INFO" />-->
+    <logger name="com.ogerardin.xpman.util.SpelUtil" level="INFO" />
 
     <root level="debug">
         <appender-ref ref="CONSOLE" />
