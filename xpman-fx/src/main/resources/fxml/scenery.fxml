@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ogerardin.xpman.panels.scenery.SceneryController">
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <center>
+
+            <TableView fx:id="sceneryTable" prefHeight="400.0" prefWidth="600.0">
+                <columns>
+                    <TableColumn editable="false" prefWidth="174.0" text="Name">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="name" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="141.0" text="Category">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="category" />
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </center>
+        <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <items>
+                    <Button mnemonicParsing="false" text="Analyze" />
+                    <Button mnemonicParsing="false" text="Check for updates" />
+                    <Button mnemonicParsing="false" onAction="#installScenery" text="Install..." />
+                    <ComboBox prefWidth="150.0" promptText="Filter" />
+                </items>
+            </ToolBar>
+        </top>
+    </BorderPane>
+</AnchorPane>

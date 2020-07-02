@@ -9,9 +9,9 @@ import java.nio.file.Path;
 @AllArgsConstructor
 public class Plugin {
 
-    Path folder;
+    private final Path folder;
 
-    String name;
+    private final String name;
 
     public Plugin(Path folder) {
         this(folder, folder.getFileName().toString());

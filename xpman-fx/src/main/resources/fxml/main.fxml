@@ -33,11 +33,8 @@
                     <Tab text="Aircrafts">
                         <fx:include source="aircrafts.fxml" />
                     </Tab>
-                    <Tab text="Airports">
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="238.0" prefWidth="640.0" />
-                    </Tab>
                     <Tab text="Scenery">
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <fx:include source="scenery.fxml" />
                     </Tab>
                     <Tab text="Nav data">
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />

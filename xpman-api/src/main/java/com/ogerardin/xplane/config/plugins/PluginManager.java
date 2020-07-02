@@ -7,6 +7,7 @@ import io.github.classgraph.ScanResult;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class PluginManager {
 
-
+    @NonNull
     public final Path pluginsFolder;
 
     @Getter(lazy = true)

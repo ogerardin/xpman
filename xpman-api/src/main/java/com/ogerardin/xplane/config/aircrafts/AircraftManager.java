@@ -35,7 +35,7 @@ public class AircraftManager {
     @Getter(AccessLevel.NONE)
     private final List<Class<?>> aircraftClasses = findAircraftClasses();
 
-    public AircraftManager(Path aircraftFolder) {
+    public AircraftManager(@NonNull Path aircraftFolder) {
         this.aircraftFolder = aircraftFolder;
         this.disabledAircraftFolder = aircraftFolder.getParent().resolve(aircraftFolder.getFileName() + " (disabled)");
     }
