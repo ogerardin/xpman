@@ -1,5 +1,8 @@
 package com.ogerardin.xplane.config;
 
+import com.sun.jna.Platform;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration.plist.XMLPropertyListConfiguration;
 import org.boris.pecoff4j.PE;
@@ -18,10 +21,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+@Getter
+@RequiredArgsConstructor
 public enum XPlaneVariant {
-    MAC("X-Plane.app", XPlaneVariant::getMacVersion),
-    WINDOWS("X-Plane.exe", XPlaneVariant::getPEVersion),
-    LINUX("X-Plane-x86_64", XPlaneVariant::getELFVersion);
+    MAC(Platform.MAC, "X-Plane.app", XPlaneVariant::getMacVersion),
+    WINDOWS(Platform.WINDOWS, "X-Plane.exe", XPlaneVariant::getPEVersion),
+    LINUX(Platform.LINUX, "X-Plane-x86_64", XPlaneVariant::getELFVersion);
+
+    private final int osType;
+    private final String appFilename;
+    private final Function<Path, String> versionFetcher;
 
     @SneakyThrows
     private static String getELFVersion(Path exePath) {
@@ -69,28 +78,19 @@ public enum XPlaneVariant {
         return plist.getString("CFBundleShortVersionString");
     }
 
-    private final String exeFilename;
-
-    private final Function<Path, String> versionFetcher;
-
-    XPlaneVariant(String exeFilename, Function<Path, String> versionFetcher) {
-        this.exeFilename = exeFilename;
-        this.versionFetcher = versionFetcher;
-    }
-
     public boolean applies(Path rootFolder) {
-        if (exeFilename == null) {
+        if (appFilename == null) {
             return true;
         }
-        return Files.exists(getExePath(rootFolder));
+        return Files.exists(getAppPath(rootFolder));
     }
 
     public String getVersion(Path rootFolder) {
-        return versionFetcher.apply(getExePath(rootFolder));
+        return versionFetcher.apply(getAppPath(rootFolder));
     }
 
-    public Path getExePath(Path rootFolder) {
-        return rootFolder.resolve(exeFilename);
+    public Path getAppPath(Path rootFolder) {
+        return rootFolder.resolve(appFilename);
     }
 
 

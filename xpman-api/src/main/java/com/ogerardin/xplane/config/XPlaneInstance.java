@@ -52,8 +52,8 @@ public class XPlaneInstance {
 
     }
 
-    public Path getExePath() {
-        return getVariant().getExePath(rootFolder);
+    public Path getAppPath() {
+        return getVariant().getAppPath(rootFolder);
     }
 
 

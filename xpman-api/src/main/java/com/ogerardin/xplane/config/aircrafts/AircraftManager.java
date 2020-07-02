@@ -46,9 +46,9 @@ public class AircraftManager {
         // find all .acf files under the Aircrafts folder
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
-        log.debug("Found {} acf files", acfFiles.size());
+        log.info("Found {} acf files", acfFiles.size());
         List<Path> disabledAcfFiles = FileUtils.findFiles(disabledAircraftFolder, isAcfPredicate);
-        log.debug("Found {} disabled acf files", disabledAcfFiles.size());
+        log.info("Found {} disabled acf files", disabledAcfFiles.size());
         List<Path> allAcfFiles = Stream.of(acfFiles, disabledAcfFiles).flatMap(Collection::stream).collect(Collectors.toList());
 
         // build Aircraft object for each applicable file

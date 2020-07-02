@@ -28,4 +28,10 @@ public class LinuxPlatform implements Platform {
     public void openInBrowser(URL url) {
         ProcessExecutor.exec("xdg-open", url.toString());
     }
+
+    @SneakyThrows
+    @Override
+    public void startApp(Path app) {
+        ProcessExecutor.exec("sh", "-c", app.toString());
+    }
 }
