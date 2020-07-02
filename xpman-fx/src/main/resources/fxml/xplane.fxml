@@ -31,14 +31,14 @@
                       <Insets right="10.0" />
                   </GridPane.margin>
               </Label>
-              <Label fx:id="version" text="&lt;value&gt;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-              <Hyperlink fx:id="link" onAction="#showFolder" text="&lt;value&gt;" GridPane.columnIndex="1" />
+              <Label fx:id="version" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+              <Hyperlink fx:id="link" onAction="#showFolder" text="..." GridPane.columnIndex="1" />
               <Label text="X-Plane Executable:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin></Label>
-            <Label fx:id="executable" text="&lt;value&gt;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="startXPlaneButton" mnemonicParsing="false" onAction="#startXPlane" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="appPath" text="..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="3" />
           </GridPane>
       </center>
       <left>

@@ -10,12 +10,15 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import lombok.SneakyThrows;
 
+/**
+ * Controller for the first tab pane, which contains a summary of X-Plane installation.
+ */
 public class XPlaneController {
 
     private XPlaneInstance xPlaneInstance;
 
     @FXML
-    private Label executable;
+    private Label appPath;
 
     @FXML
     private Button startXPlaneButton;
@@ -31,7 +34,7 @@ public class XPlaneController {
             xPlaneInstance = newValue;
             version.setText(String.format("%s (%s)", newValue.getVersion(), newValue.getVariant().name()));
             link.setText(newValue.getRootFolder().toString());
-            executable.setText(newValue.getAppPath().toString());
+            appPath.setText(newValue.getAppPath().toString());
             // disable "start" button if current platform different from X-Plane detected platform
             startXPlaneButton.setDisable(Platform.getOSType() != newValue.getVariant().getOsType());
         });

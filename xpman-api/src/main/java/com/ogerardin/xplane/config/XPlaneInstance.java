@@ -2,6 +2,7 @@ package com.ogerardin.xplane.config;
 
 import com.ogerardin.xplane.config.aircrafts.AircraftManager;
 import com.ogerardin.xplane.config.plugins.PluginManager;
+import com.ogerardin.xplane.config.scenery.SceneryManager;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -29,6 +30,10 @@ public class XPlaneInstance {
     @Getter(lazy = true)
     @ToString.Exclude
     private final AircraftManager aircraftManager = new AircraftManager(rootFolder.resolve("Aircraft"));
+
+    @Getter(lazy = true)
+    @ToString.Exclude
+    private final SceneryManager sceneryManager = new SceneryManager(rootFolder.resolve("Custom Scenery"));
 
     @Getter(lazy = true)
     @ToString.Exclude
