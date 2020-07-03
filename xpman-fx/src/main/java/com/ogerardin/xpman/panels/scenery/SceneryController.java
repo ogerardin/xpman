@@ -2,27 +2,39 @@ package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.javafx.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.scenery.SceneryPackage;
 import com.ogerardin.xpman.XPlaneInstanceProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import lombok.ToString;
 
-public class SceneryController extends TableViewController<XPlaneInstance, SceneryPackage> {
+import java.util.stream.Collectors;
+
+public class SceneryController extends TableViewController<XPlaneInstance, UiScenery> {
 
     @FXML
     @ToString.Exclude
-    private TableView<SceneryPackage> sceneryTable;
+    private TableView<UiScenery> sceneryTable;
 
     public SceneryController(XPlaneInstanceProperty xPlaneInstanceProperty) {
         super(
                 xPlaneInstanceProperty,
-                xPlaneInstance -> xPlaneInstance.getSceneryManager().getPackages());
+                xPlaneInstance -> xPlaneInstance.getSceneryManager().getPackages().stream()
+                .map(sceneryPackage -> new UiScenery(sceneryPackage, xPlaneInstance))
+                .collect(Collectors.toList())
+        );
     }
 
     @FXML
     public void initialize() {
         setTableView(sceneryTable);
+
+        sceneryTable.setRowFactory(tableView -> {
+            final TableRow<UiScenery> row = new TableRow<>();
+            setContextMenu(row, UiScenery.class);
+            return row;
+
+        });
     }
 
     public void installScenery() {

@@ -1,19 +1,14 @@
 package com.ogerardin.xplane.config.aircrafts;
 
 import com.ogerardin.xplane.config.IllegalOperation;
-import com.ogerardin.xplane.config.aircrafts.custom.CustomAircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.FileUtils;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
+import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -33,7 +28,7 @@ public class AircraftManager {
     private final List<Aircraft> aircrafts = loadAircrafts();
 
     @Getter(AccessLevel.NONE)
-    private final List<Class<?>> aircraftClasses = findAircraftClasses();
+    private final List<Class<?>> aircraftClasses = IntrospectionHelper.findAllSubclasses(Aircraft.class);
 
     public AircraftManager(@NonNull Path aircraftFolder) {
         this.aircraftFolder = aircraftFolder;
@@ -59,45 +54,13 @@ public class AircraftManager {
                 .map(this::getAircraft)
                 .peek(aircraft -> aircraft.setEnabled(aircraft.getAcfFile().getFile().startsWith(aircraftFolder)))
                 .collect(Collectors.toList());
-        log.debug("Loaded {} aircrafts", aircrafts.size());
+        log.info("Loaded {} aircrafts", aircrafts.size());
         return aircrafts;
     }
 
-    /**
-     * Returns a newly created aircraft instance for the specified {@link AcfFile}.
-     * Each known Aircraft subclass is examined in sequence:
-     * - if the class exposes a constructor that takes a AcfFile, it is invoked with the specified AcfFile.
-     * - if it succeeds, the resulting Aircraft is returned.
-     * If all Aircfat subclasses have been examined and none succeeded to construct an Aircraft, an instance of
-     * plain class {@link Aircraft} is constructed and returned.
-     */
+    @SneakyThrows
     private Aircraft getAircraft(AcfFile acfFile) {
-        for (Class<?> aircraftClass : aircraftClasses) {
-            try {
-                Constructor<?> constructor = aircraftClass.getConstructor(AcfFile.class);
-                Aircraft aircraft = (Aircraft) constructor.newInstance(acfFile);
-                log.info("Found known custom aircraft {} in {}", aircraftClass.getSimpleName(), acfFile.getFile());
-                return aircraft;
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-//                log.debug("Failed to instantiate {} for {}: {}", aircraftClass, acfFile, e.toString());
-            }
-        }
-        return new Aircraft(acfFile);
-    }
-
-    /** Returns all subclasses of {@link Aircraft} from package com.ogerardin.xplane.config.aircrafts.custom */
-    private List<Class<?>> findAircraftClasses() {
-        String customAircraftsPackageName = CustomAircraft.class.getPackage().getName();
-        try (ScanResult scanResult = new ClassGraph()
-                .enableAllInfo()
-                .whitelistPackages(customAircraftsPackageName)
-                .scan()
-        ) {
-            ClassInfoList classInfoList = scanResult.getSubclasses(Aircraft.class.getName());
-            List<Class<?>> classes = classInfoList.loadClasses();
-            log.info("Custom aircraft classes found: {}", classes);
-            return classes;
-        }
+        return IntrospectionHelper.getBestSubclassInstance(Aircraft.class, acfFile);
     }
 
     @SneakyThrows

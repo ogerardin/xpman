@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class ColimataConcorde extends Aircraft implements CustomAircraft {
+public class ColimataConcorde extends Aircraft {
 
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");

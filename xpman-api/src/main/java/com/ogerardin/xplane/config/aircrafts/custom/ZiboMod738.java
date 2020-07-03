@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 @Slf4j
-public class ZiboMod738 extends Aircraft implements CustomAircraft {
+public class ZiboMod738 extends Aircraft {
 
     /** The Google Drive folder ID of the folder containing published updates */
     public static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";

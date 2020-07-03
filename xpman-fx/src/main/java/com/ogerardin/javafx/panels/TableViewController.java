@@ -54,6 +54,13 @@ public class TableViewController<O, T> {
         });
     }
 
+    /**
+     * Builds a dynamic context menu based on exposed methods of the specified item class.
+     * @see Label
+     * @see EnabledIf
+     * @see Confirm
+     * @see ForEach
+     */
     protected void setContextMenu(TableRow<T> row, Class<T> itemClass) {
         // build context menu
         ContextMenu rowMenu = new ContextMenu();
@@ -87,6 +94,7 @@ public class TableViewController<O, T> {
                 String expr = label.value();
                 text = (String) SpelUtil.eval(expr, null);
             } else {
+                // no label: try to make up something human-readable from the method name
                 String[] words = StringUtils.splitByCharacterTypeCamelCase(method.getName());
                 text = String.join(" ", words);
             }

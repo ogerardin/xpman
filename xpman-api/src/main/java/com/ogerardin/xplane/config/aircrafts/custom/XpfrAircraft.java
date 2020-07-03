@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
-public class XpfrAircraft extends Aircraft implements CustomAircraft {
+public class XpfrAircraft extends Aircraft {
 
     private final Pattern FILE_PATTERN = Pattern.compile(".+-(([A-Z]{4})\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
 
