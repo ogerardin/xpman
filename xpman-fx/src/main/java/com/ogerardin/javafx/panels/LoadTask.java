@@ -40,9 +40,9 @@ class LoadTask<T> extends Task<Void> {
         });
         // call supplier to obtain items (this may take time) and load list
         List<T> list = supplier.get();
-        tableView.setItems(new ObservableListWrapper<>(list));
-        // reset placeholder
         Platform.runLater(() -> {
+            tableView.setItems(new ObservableListWrapper<>(list));
+            // reset placeholder
             tableView.placeholderProperty().setValue(defaultPlaceholder);
         });
         log.debug("done load table {}", tableView.getId());
