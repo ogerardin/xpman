@@ -105,7 +105,7 @@ public class XPmanFX extends Application {
     }
 
     @FXML
-    protected void quit() {
+    private void quit() {
         Alert alert = new Alert(CONFIRMATION, "Do you really want to quit?");
         alert.showAndWait()
                 .filter(buttonType -> buttonType == ButtonType.OK)
@@ -117,7 +117,7 @@ public class XPmanFX extends Application {
     }
 
     @FXML
-    public void open() {
+    private void open() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
         if (selectedDirectory == null) {

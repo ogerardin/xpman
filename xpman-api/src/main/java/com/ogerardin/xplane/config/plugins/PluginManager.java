@@ -43,7 +43,7 @@ public class PluginManager {
                     .map(Optional::get)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            log.warn("Plugin folder not found: {}", pluginsFolder);
+            log.error("Plugin folder not found: {}", pluginsFolder);
             return Collections.emptyList();
         }
     }
