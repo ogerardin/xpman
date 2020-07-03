@@ -8,7 +8,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,36 +48,36 @@ public class IntrospectionHelper {
      * - if the constructor succeeds, the resulting instance is returned.
      * If all subclasses of C have been examined and none succeeded, an instance of baseClass is returned.
      */
-    @SuppressWarnings("unchecked")
-    public <C> C getBestSubclassInstance(Class<C> baseClass, Object... constructorParams) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-
-        // determine param types
-        Class<?>[] paramTypes = new Class[constructorParams.length];
-        for (int i = 0; i < constructorParams.length; i++) {
-            Object constructorParam = constructorParams[i];
-            paramTypes[i] = constructorParam.getClass();
-        }
-
+    public <C> C getBestSubclassInstance(Class<C> baseClass, Object... constructorParams) throws InstantiationException {
 
         // find all subclasses of base class
         final List<Class<?>> candidateClasses = findAllSubclasses(baseClass);
 
         for (Class<?> candidateClass : candidateClasses) {
             try {
-                // try to find a constructor that matches the  param types
-                Constructor<?> constructor = candidateClass.getConstructor(paramTypes);
-                // try to call it
-                C instance = (C) constructor.newInstance(constructorParams);
-                // it worked!
-                log.debug("Recognized {} for {}", candidateClass.getSimpleName(), constructorParams);
+                C instance = newInstance(candidateClass, constructorParams);
+                log.debug("Matched {}({})", candidateClass.getSimpleName(), constructorParams);
                 return instance;
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+            } catch (Exception ignored) {
                 // failed to instantiate candidate class: just ignore
             }
         }
         // no candidate matched, instantiate base class
 //        log.debug("Instantiating base class {} for {}", baseClass.getSimpleName(), constructorParams);
-        return baseClass.getConstructor(paramTypes).newInstance(constructorParams);
+        return newInstance(baseClass, constructorParams);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <C> C newInstance(Class<?> baseClass, Object... constructorParams) throws InstantiationException {
+        // try to find a constructor that matches the param types
+        for (Constructor<?> constructor : baseClass.getDeclaredConstructors()) {
+            try {
+                return (C) constructor.newInstance(constructorParams);
+            } catch (Exception e) {
+                // constructor failed: just ignore
+            }
+        }
+        throw new InstantiationException("No constructor matched the specified parameters");
     }
 
 }

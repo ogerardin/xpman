@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
-public class TerrainRadar extends Plugin implements CustomPlugin {
+public class TerrainRadar extends Plugin {
 
     public TerrainRadar(Path folder) {
         super(folder, "Terrain Radar");
