@@ -78,10 +78,10 @@ public class TableViewController<O, T> {
                         .then(rowMenu)
                         .otherwise((ContextMenu) null));
 
-        // cutomize menu for actual row item (links, ...)
+        // cutomize menu for actual row item
         row.setOnContextMenuRequested(event -> {
-            T aircraft = getTableView().getSelectionModel().getSelectedItem();
-            contexualizeMenu(rowMenu, aircraft);
+            T item = getTableView().getSelectionModel().getSelectedItem();
+            contexualizeMenu(rowMenu, item);
         });
     }
 
