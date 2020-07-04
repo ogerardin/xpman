@@ -10,12 +10,17 @@
 
             <TableView fx:id="sceneryTable" prefHeight="400.0" prefWidth="600.0">
                 <columns>
+                    <TableColumn editable="false" prefWidth="40" text="Rank">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="rank" />
+                        </cellValueFactory>
+                    </TableColumn>
                     <TableColumn editable="false" prefWidth="267.0" text="Name">
                         <cellValueFactory>
                             <PropertyValueFactory property="name" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="100.0" text="Version">
+                    <TableColumn editable="false" prefWidth="150.0" text="Version">
                         <cellValueFactory>
                             <PropertyValueFactory property="version" />
                         </cellValueFactory>
@@ -36,10 +41,21 @@
         <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <items>
+                    <Button mnemonicParsing="false" text="▲">
+                        <tooltip>
+                            <Tooltip text="Move Scenery Pack up one rank in scenery_packs.ini" />
+                        </tooltip>
+                    </Button>
+                    <Button mnemonicParsing="false" text="▼">
+                        <tooltip>
+                            <Tooltip text="Move Scenery Pack down one rank in scenery_packs.ini"/>
+                        </tooltip>
+                    </Button>
                     <Button mnemonicParsing="false" text="Analyze" />
                     <Button mnemonicParsing="false" text="Check for updates" />
                     <Button mnemonicParsing="false" onAction="#installScenery" text="Install..." />
                     <ComboBox prefWidth="150.0" promptText="Filter" />
+                    <Button mnemonicParsing="false" text="Button" />
                 </items>
             </ToolBar>
         </top>
