@@ -15,6 +15,11 @@
                             <PropertyValueFactory property="name" />
                         </cellValueFactory>
                     </TableColumn>
+                    <TableColumn editable="false" prefWidth="100.0" text="Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="version" />
+                        </cellValueFactory>
+                    </TableColumn>
                     <TableColumn editable="false" prefWidth="68.0" text="Airport?">
                         <cellValueFactory>
                             <PropertyValueFactory property="airport" />

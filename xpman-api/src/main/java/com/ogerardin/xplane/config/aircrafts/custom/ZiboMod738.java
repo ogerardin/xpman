@@ -18,6 +18,8 @@ import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 @Slf4j
 public class ZiboMod738 extends Aircraft {
@@ -30,7 +32,7 @@ public class ZiboMod738 extends Aircraft {
 
     public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "ZIBO Mod 737-800X");
-        assertValid(getNotes().startsWith("ZIBOmod"));
+        assertTrue(getNotes().startsWith("ZIBOmod"));
     }
 
     public String loadVersion() {

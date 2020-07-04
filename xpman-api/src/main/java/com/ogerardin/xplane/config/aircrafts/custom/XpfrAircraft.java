@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 
@@ -24,7 +26,7 @@ public class XpfrAircraft extends Aircraft {
 
     public XpfrAircraft(AcfFile acfFile) throws InstantiationException {
         super(acfFile);
-        assertValid(getStudio().equals("XPFR"));
+        assertTrue(getStudio().equals("XPFR"));
     }
 
     @SneakyThrows
