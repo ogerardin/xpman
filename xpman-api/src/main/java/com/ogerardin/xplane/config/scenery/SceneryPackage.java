@@ -29,4 +29,9 @@ public class SceneryPackage {
         return Files.exists(folder.resolve("library.txt"));
     }
 
+    public String getVersion() {
+        return null;
+    }
+
+
 }

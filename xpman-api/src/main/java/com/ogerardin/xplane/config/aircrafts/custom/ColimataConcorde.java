@@ -9,12 +9,14 @@ import lombok.SneakyThrows;
 import java.net.URL;
 import java.util.Map;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 public class ColimataConcorde extends Aircraft {
 
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");
-        assertValid(getName().equals("CONCORDE FXP"));
+        assertTrue(getName().equals("CONCORDE FXP"));
     }
 
     @SneakyThrows

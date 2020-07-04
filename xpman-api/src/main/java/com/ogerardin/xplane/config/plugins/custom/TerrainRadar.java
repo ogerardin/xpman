@@ -8,14 +8,14 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 public class TerrainRadar extends Plugin {
 
-    public TerrainRadar(Path folder) {
+    public TerrainRadar(Path folder) throws InstantiationException {
         super(folder, "Terrain Radar");
-        if (! folder.endsWith("TerrainRadar")) {
-            throw new IllegalArgumentException();
-        }
+        assertTrue(folder.endsWith("TerrainRadar"));
     }
 
     @Override

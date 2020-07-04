@@ -80,4 +80,9 @@ public class IntrospectionHelper {
         throw new InstantiationException("No constructor matched the specified parameters");
     }
 
+    public void assertTrue(boolean valid) throws InstantiationException {
+        if (! valid) {
+            throw new InstantiationException();
+        }
+    }
 }
