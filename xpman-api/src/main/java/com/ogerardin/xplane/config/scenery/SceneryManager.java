@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.config.scenery;
 
+import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Data;
 import lombok.Getter;
@@ -25,9 +26,15 @@ public class SceneryManager {
     @Getter(lazy = true)
     private final List<SceneryPackage> packages = loadPackages();
 
+    @Getter(lazy = true)
+    private final SceneryPacksIniFile sceneryPacksIniFile = loadSceneryPacksIniFile();
+
+
     private List<SceneryPackage> loadPackages() {
+        SceneryPacksIniFile iniFile = getSceneryPacksIniFile();
+
         try (Stream<Path> pathStream = Files.list(customSceneryFolder)) {
-                return pathStream.filter(Files::isDirectory)
+            return pathStream.filter(Files::isDirectory)
                     .map(this::getSceneryPackage)
                     .collect(Collectors.toList());
         } catch (IOException e) {
@@ -36,9 +43,24 @@ public class SceneryManager {
         }
     }
 
+    private SceneryPacksIniFile loadSceneryPacksIniFile() {
+        final Path sceneryPacksIniFile = customSceneryFolder.resolve("scenery_packs.ini");
+        return Files.exists(sceneryPacksIniFile) ?
+                new SceneryPacksIniFile(sceneryPacksIniFile) : null;
+    }
+
     @SneakyThrows
     private SceneryPackage getSceneryPackage(Path folder) {
-        return IntrospectionHelper.getBestSubclassInstance(SceneryPackage.class, folder);
+        SceneryPackage sceneryPackage = IntrospectionHelper.getBestSubclassInstance(SceneryPackage.class, folder);
+        SceneryPacksIniFile iniFile = getSceneryPacksIniFile();
+        if (iniFile != null) {
+            Path sceneryFolder = customSceneryFolder.getParent().relativize(sceneryPackage.getFolder());
+            int index = iniFile.getSceneryPackList().indexOf(sceneryFolder);
+            if (index >= 0) {
+                sceneryPackage.setRank(index + 1);
+            }
+        }
+        return sceneryPackage;
     }
 
 

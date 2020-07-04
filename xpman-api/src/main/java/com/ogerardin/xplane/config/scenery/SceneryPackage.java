@@ -10,8 +10,11 @@ import java.nio.file.Path;
 public class SceneryPackage {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
+
     @NonNull
     final Path folder;
+
+    private Integer rank = null;
 
     public String getName() {
         return folder.getFileName().toString();
