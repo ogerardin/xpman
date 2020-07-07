@@ -107,6 +107,7 @@ public class XPmanFX extends Application {
     @FXML
     private void quit() {
         Alert alert = new Alert(CONFIRMATION, "Do you really want to quit?");
+        alert.initOwner(primaryStage);
         alert.showAndWait()
                 .filter(buttonType -> buttonType == ButtonType.OK)
                 .ifPresent(buttonType -> {

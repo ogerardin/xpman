@@ -14,7 +14,7 @@ public class OpenSceneryX extends SceneryPackage {
 
     public OpenSceneryX(@NonNull Path folder) throws InstantiationException {
         super(folder);
-        assertTrue(getFolder().getFileName().toString().equals("OpenSceneryX"));
+        require(getFolder().getFileName().toString().equals("OpenSceneryX"));
     }
 
     @SneakyThrows

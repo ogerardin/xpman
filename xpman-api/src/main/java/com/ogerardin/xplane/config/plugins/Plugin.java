@@ -24,6 +24,10 @@ public class Plugin {
         return null;
     }
 
+    public String getLatestVersion() {
+        return null;
+    }
+
     public Map<String, URL> getLinks() {
         return Collections.emptyMap();
     }

@@ -25,7 +25,7 @@ public class XpfrAircraft extends Aircraft {
 
     public XpfrAircraft(AcfFile acfFile) throws InstantiationException {
         super(acfFile);
-        assertTrue(getStudio().equals("XPFR"));
+        require(getStudio().equals("XPFR"));
     }
 
     @SneakyThrows
