@@ -3,7 +3,10 @@ package com.ogerardin.xplane.config.plugins;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +21,11 @@ public class Plugin {
     }
 
     public String getVersion() {
-        return "unknown";
+        return null;
     }
+
+    public Map<String, URL> getLinks() {
+        return Collections.emptyMap();
+    }
+
 }

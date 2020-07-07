@@ -1,0 +1,29 @@
+package com.ogerardin.xpman.panels.plugins;
+
+import com.ogerardin.javafx.panels.menu.ForEach;
+import com.ogerardin.javafx.panels.menu.Label;
+import com.ogerardin.javafx.panels.menu.Value;
+import com.ogerardin.xplane.config.plugins.Plugin;
+import com.ogerardin.xpman.platform.Platforms;
+import lombok.Data;
+import lombok.experimental.Delegate;
+
+import java.net.URL;
+
+@Data
+public class UiPlugin {
+
+    @Delegate
+    final Plugin plugin;
+
+    @Label("T(com.ogerardin.xpman.platform.Platforms).getCurrent().revealLabel()")
+    public void reveal() {
+        Platforms.getCurrent().reveal(plugin.getFolder());
+    }
+
+    @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
+    public void openLink(@Value("#item.value") URL url) {
+        Platforms.getCurrent().openUrl(url);
+    }
+
+}

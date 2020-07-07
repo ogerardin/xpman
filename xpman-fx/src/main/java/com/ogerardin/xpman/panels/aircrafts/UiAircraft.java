@@ -20,8 +20,7 @@ public class UiAircraft {
 
     @Label("T(com.ogerardin.xpman.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
-        Path file = aircraft.getAcfFile().getFile();
-        Platforms.getCurrent().reveal(file);
+        Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile());
     }
 
     @Label("'Enable Aircraft'")

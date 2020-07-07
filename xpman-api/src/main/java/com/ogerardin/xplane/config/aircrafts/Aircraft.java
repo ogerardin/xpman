@@ -112,11 +112,6 @@ public class Aircraft implements DiagProvider {
         final String property;
     }
 
-    //** Methods excluded from delegation */
-    private interface Named {
-        String getName();
-    }
-
     public String getVersion() {
         return null;
     }

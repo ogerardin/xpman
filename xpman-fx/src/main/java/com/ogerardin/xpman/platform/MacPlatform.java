@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Slf4j
@@ -13,6 +14,10 @@ public class MacPlatform implements Platform {
     @SneakyThrows
     @Override
     public void reveal(Path path) {
+        // if path is a directory, use any contained file otherwise the Finder will not select the directory
+        if (Files.isDirectory(path)) {
+            path = Files.list(path).findAny().orElse(path);
+        }
         ProcessExecutor.exec("open", "-R", path.toString());
     }
 

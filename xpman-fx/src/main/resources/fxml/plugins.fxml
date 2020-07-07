@@ -11,14 +11,14 @@
     <TableView fx:id="pluginTable" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <columns>
-          <TableColumn prefWidth="135.0" text="Name">
+          <TableColumn prefWidth="150.0" text="Name">
               <cellValueFactory>
                   <PropertyValueFactory property="name" />
               </cellValueFactory>
           </TableColumn>
-          <TableColumn prefWidth="500" text="Folder">
+          <TableColumn prefWidth="150.0" text="Version">
               <cellValueFactory>
-                  <PropertyValueFactory property="folder" />
+                  <PropertyValueFactory property="version" />
               </cellValueFactory>
           </TableColumn>
       </columns>
