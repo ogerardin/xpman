@@ -25,7 +25,7 @@ public class LinuxPlatform implements Platform {
 
     @SneakyThrows
     @Override
-    public void openInBrowser(URL url) {
+    public void openUrl(URL url) {
         ProcessExecutor.exec("xdg-open", url.toString());
     }
 

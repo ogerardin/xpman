@@ -1,7 +1,6 @@
 package com.ogerardin.xplane.config.aircrafts.custom;
 
 import com.google.api.services.drive.model.File;
-import com.ogerardin.xplane.config.LinkType;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.GoogleDriveClient;
@@ -10,7 +9,10 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +37,21 @@ public class ZiboMod738 extends Aircraft {
         assertTrue(getNotes().startsWith("ZIBOmod"));
     }
 
-    public String loadVersion() {
+    private String loadVersion() {
+        // try version.txt file otherwise fallback to notes field
+        try {
+            Path versionFile = getAcfFile().getFile().getParent().resolve("version.txt");
+            return Files.readAllLines(versionFile).get(0);
+        } catch (IOException e) {
+            return loadVersionFromNotes();
+        }
+
+    }
+
+    /**
+     * Apparently less reliable than version.txt file
+     */
+    private String loadVersionFromNotes() {
         String notes = getNotes();
         Pattern pattern = Pattern.compile("(.+ )*v([0-9a-zA-Z.]+)$");
         Matcher matcher = pattern.matcher(notes);
@@ -47,12 +63,15 @@ public class ZiboMod738 extends Aircraft {
 
     @SneakyThrows
     @Override
-    public Map<LinkType, URL> getLinks() {
+    public Map<String, URL> getLinks() {
         return Maps.mapOf(
-                LinkType.HOMEPAGE, new URL("https://www.facebook.com/zibocommunity"),
-                LinkType.XPLANE_FORUM, new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links/")
+                "Facebook page", new URL("https://www.facebook.com/zibocommunity"),
+                "X-Plane forum", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
+                "Download (Google drive)", new URL("https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ")
         );
     }
+
+
 
     @SneakyThrows
     @Override

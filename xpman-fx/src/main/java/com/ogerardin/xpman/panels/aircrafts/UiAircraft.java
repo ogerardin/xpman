@@ -49,9 +49,9 @@ public class UiAircraft {
         xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
     }
 
-    @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key.label")
+    @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
-        Platforms.getCurrent().openInBrowser(url);
+        Platforms.getCurrent().openUrl(url);
     }
 
 }

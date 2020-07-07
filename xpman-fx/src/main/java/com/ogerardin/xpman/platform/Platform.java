@@ -14,7 +14,7 @@ public interface Platform {
         throw new UnsupportedOperationException();
     }
 
-    default void openInBrowser(URL url) {
+    default void openUrl(URL url) {
         throw new UnsupportedOperationException();
     }
 

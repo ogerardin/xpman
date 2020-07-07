@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.config.aircrafts;
 
-import com.ogerardin.xplane.config.LinkType;
 import com.ogerardin.xplane.diag.DiagItem;
 import com.ogerardin.xplane.diag.DiagProvider;
 import com.ogerardin.xplane.file.AcfFile;
@@ -46,7 +45,7 @@ public class Aircraft implements DiagProvider {
         return Optional.ofNullable(name).orElse(getAcfName());
     }
 
-    private String getAcfName() {
+    public String getAcfName() {
         return Optional.ofNullable(getProperty("acf/_name"))
                 .orElse(getAcfFile().getFile().getParent().getFileName().toString());
     }
@@ -131,7 +130,7 @@ public class Aircraft implements DiagProvider {
         return thumbFile;
     }
 
-    public Map<LinkType, URL> getLinks() {
+    public Map<String, URL> getLinks() {
         return Collections.emptyMap();
     }
 

@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.config.aircrafts.custom;
 
-import com.ogerardin.xplane.config.LinkType;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.Maps;
@@ -44,9 +43,9 @@ public class XpfrAircraft extends Aircraft {
 
     @SneakyThrows
     @Override
-    public Map<LinkType, URL> getLinks() {
+    public Map<String, URL> getLinks() {
         return Maps.mapOf(
-                LinkType.HOMEPAGE, new URL("http://www.xpfr.org")
+                "Homepage", new URL("http://www.xpfr.org")
         );
     }
 

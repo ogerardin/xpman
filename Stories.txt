@@ -11,4 +11,5 @@ install plugin from zip
 recognise specific plugin -> requirements, check update, home page, etc.
 list recognized navdata sets
 update navdata set
-
+auto-order scenery_pack.ini
+generate flight plan for FMS / ATC
