@@ -34,7 +34,7 @@ public class ZiboMod738 extends Aircraft {
 
     public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "ZIBO Mod 737-800X");
-        assertTrue(getNotes().startsWith("ZIBOmod"));
+        require(getNotes().startsWith("ZIBOmod"));
     }
 
     private String loadVersion() {
@@ -67,7 +67,7 @@ public class ZiboMod738 extends Aircraft {
         return Maps.mapOf(
                 "Facebook page", new URL("https://www.facebook.com/zibocommunity"),
                 "X-Plane forum", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
-                "Download (Google drive)", new URL("https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ")
+                "Download (Google drive)", new URL("https://drive.google.com/drive/folders/" + ZIBO_FOLDER_ID)
         );
     }
 

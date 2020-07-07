@@ -21,6 +21,11 @@
                   <PropertyValueFactory property="version" />
               </cellValueFactory>
           </TableColumn>
+          <TableColumn prefWidth="150.0" text="Latest version">
+              <cellValueFactory>
+                  <PropertyValueFactory property="latestVersion" />
+              </cellValueFactory>
+          </TableColumn>
       </columns>
     </TableView>
 </AnchorPane>

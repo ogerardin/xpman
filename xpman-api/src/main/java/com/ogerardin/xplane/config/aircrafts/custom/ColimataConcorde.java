@@ -18,14 +18,14 @@ public class ColimataConcorde extends Aircraft {
 
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");
-        assertTrue(getAcfName().equals("CONCORDE FXP"));
+        require(getAcfName().equals("CONCORDE FXP"));
     }
 
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {
         final Map<String, URL> linkMap = Maps.mapOf(
-                "Support", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
+                "X-Planee Forum Support Thread", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
                 "Homepage", new URL("http://www.colimata.com")
         );
         return linkMap;

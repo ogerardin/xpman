@@ -15,7 +15,7 @@ public class MacPlatform implements Platform {
     @Override
     public void reveal(Path path) {
         // if path is a directory, use any contained file otherwise the Finder will not select the directory
-        if (Files.isDirectory(path)) {
+        if (Files.isDirectory(path) && ! path.getFileName().toString().endsWith(".app")) {
             path = Files.list(path).findAny().orElse(path);
         }
         ProcessExecutor.exec("open", "-R", path.toString());
