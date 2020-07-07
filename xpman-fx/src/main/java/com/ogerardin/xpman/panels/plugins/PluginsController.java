@@ -1,28 +1,39 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.plugins.Plugin;
-import com.ogerardin.xpman.XPlaneInstanceProperty;
 import com.ogerardin.javafx.panels.TableViewController;
+import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xpman.XPlaneInstanceProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import lombok.ToString;
 
-public class PluginsController extends TableViewController<XPlaneInstance, Plugin> {
+import java.util.stream.Collectors;
+
+public class PluginsController extends TableViewController<XPlaneInstance, UiPlugin> {
 
     @FXML
-    @ToString.Exclude
-    private TableView<Plugin> pluginTable;
+    private TableView<UiPlugin> pluginTable;
 
     public PluginsController(XPlaneInstanceProperty xPlaneInstanceProperty) {
         super(
                 xPlaneInstanceProperty,
-                xPlaneInstance -> xPlaneInstance.getPluginManager().getPlugins());
+                xPlaneInstance -> xPlaneInstance.getPluginManager().getPlugins().stream()
+                .map(UiPlugin::new)
+                .collect(Collectors.toList())
+        );
     }
 
     @FXML
     public void initialize() {
         setTableView(pluginTable);
+
+        pluginTable.setRowFactory(
+                tableView -> {
+                    final TableRow<UiPlugin> row = new TableRow<>();
+                    setContextMenu(row, UiPlugin.class);
+                    return row;
+                });
+
     }
 
 }

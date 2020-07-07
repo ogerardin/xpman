@@ -14,7 +14,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import lombok.SneakyThrows;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -32,11 +31,9 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     private static final Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
 
     @FXML
-    @ToString.Exclude
     private TableColumn<UiAircraft, Path> thumbColumn;
 
     @FXML
-    @ToString.Exclude
     private TableView<UiAircraft> aircraftsTable;
 
     public AircraftsController(XPlaneInstanceProperty xPlaneInstanceProperty) {
