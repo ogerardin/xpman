@@ -24,7 +24,7 @@ public class WindowsPlatform implements Platform {
 
     @SneakyThrows
     @Override
-    public void openInBrowser(URL url) {
+    public void openUrl(URL url) {
         ProcessExecutor.exec("cmd", "/c", String.format("start %s", url.toString()));
     }
 

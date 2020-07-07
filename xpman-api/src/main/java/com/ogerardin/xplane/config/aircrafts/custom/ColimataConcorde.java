@@ -1,12 +1,14 @@
 package com.ogerardin.xplane.config.aircrafts.custom;
 
-import com.ogerardin.xplane.config.LinkType;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.Maps;
 import lombok.SneakyThrows;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
@@ -16,16 +18,31 @@ public class ColimataConcorde extends Aircraft {
 
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");
-        assertTrue(getName().equals("CONCORDE FXP"));
+        assertTrue(getAcfName().equals("CONCORDE FXP"));
     }
 
     @SneakyThrows
     @Override
-    public Map<LinkType, URL> getLinks() {
-        return Maps.mapOf(
-                LinkType.SUPPORT, new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
-                LinkType.HOMEPAGE, new URL("http://www.colimata.com")
+    public Map<String, URL> getLinks() {
+        final Map<String, URL> linkMap = Maps.mapOf(
+                "Support", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
+                "Homepage", new URL("http://www.colimata.com")
         );
+        return linkMap;
+    }
+
+    @SneakyThrows
+    public Map<String, URL> getManuals() {
+        final HashMap<String, URL> manualsMap = new HashMap<>();
+        Files.list(getAcfFile().getFile().getParent().resolve("MANUALS"))
+                .filter(path -> path.getFileName().toString().endsWith(".pdf"))
+                .forEach(path -> {
+                    try {
+                        manualsMap.put("Manual: " + path.getFileName().toString(), path.toUri().toURL());
+                    } catch (MalformedURLException ignored) {
+                    }
+                });
+        return manualsMap;
     }
 
 }
