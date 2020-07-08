@@ -3,12 +3,13 @@ package com.ogerardin.xpman.panels.aircrafts;
 import com.ogerardin.javafx.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
+import com.ogerardin.xplane.diag.CheckResult;
 import com.ogerardin.xpman.platform.Platforms;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
-import java.nio.file.Path;
+import java.util.List;
 
 @Data
 public class UiAircraft {
@@ -51,6 +52,10 @@ public class UiAircraft {
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
+    }
+
+    public List<CheckResult> analyze() {
+        return aircraft.check(xPlaneInstance);
     }
 
 }

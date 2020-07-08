@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -47,8 +46,9 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
                 }
             }
             try {
-                method.invoke(this.getTarget(), paramValues);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                Object result = method.invoke(this.getTarget(), paramValues);
+                log.debug("Method invocation returned: {}", result);
+            } catch (Exception e) {
                 log.error("Exception while invoking method", e);
             }
             if (aftermethodExecution != null) {
