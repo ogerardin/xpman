@@ -3,16 +3,22 @@ package com.ogerardin.xpman.panels.aircrafts;
 import com.ogerardin.javafx.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
-import com.ogerardin.xplane.config.aircrafts.install.CheckResult;
+import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.Severity;
 import com.ogerardin.xpman.XPlaneInstanceProperty;
+import com.ogerardin.xpman.panels.diag.DiagController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -109,14 +116,14 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         XPlaneInstance xPlaneInstance = getPropertyValue();
 
         CheckResult checkResult = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
-        CheckResult.Status status = checkResult.getStatus();
-        if (status == CheckResult.Status.ERROR) {
+        Severity severity = checkResult.getSeverity();
+        if (severity == Severity.ERROR) {
             Alert alert = new Alert(AlertType.ERROR, checkResult.getMessage());
             alert.showAndWait();
             return;
         }
 
-        Alert alert = new Alert((status == CheckResult.Status.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, checkResult.getMessage());
+        Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, checkResult.getMessage());
         alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
         if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;
@@ -125,4 +132,15 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         AircraftInstaller.installZip(xPlaneInstance, zipfile);
     }
 
+    @SneakyThrows
+    public static void displayCheckResults(List<CheckResult> results) {
+        FXMLLoader loader = new FXMLLoader(AircraftsController.class.getResource("/fxml/diag.fxml"));
+        Pane mainPane = loader.load();
+        DiagController controller = loader.getController();
+        controller.setItems(results);
+        Stage stage = new Stage();
+        stage.setTitle("Analysis results");
+        stage.setScene(new Scene(mainPane));
+        stage.show();
+    }
 }

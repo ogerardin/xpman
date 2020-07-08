@@ -67,6 +67,15 @@ public class TableViewController<O, T> {
         ContextMenu rowMenu = new ContextMenu();
         rowMenu.getItems().addAll(
                 Arrays.stream(itemClass.getDeclaredMethods())
+                        // skip if method is an Object method
+                        .filter(method -> {
+                            try {
+                                Object.class.getMethod(method.getName(), method.getParameterTypes());
+                                return false;
+                            } catch (Exception e) {
+                                return true;
+                            }
+                        })
                         // skip non public or abstract methods
                         .filter(method -> Modifier.isPublic(method.getModifiers()) && ! Modifier.isAbstract(method.getModifiers()))
                         // skip methods with parameters

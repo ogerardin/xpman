@@ -54,6 +54,7 @@ public class UiAircraft {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @OnSuccess("T(com.ogerardin.xpman.panels.aircrafts.AircraftsController).displayCheckResults(#result)")
     public List<CheckResult> analyze() {
         return aircraft.check(xPlaneInstance);
     }
