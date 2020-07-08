@@ -16,6 +16,8 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 @SuppressWarnings("unused")
 public class ColimataConcorde extends Aircraft {
 
+    //TODO manage customization (see CUSTOMIZE/description.txt)
+
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");
         require(getAcfName().equals("CONCORDE FXP"));
@@ -25,8 +27,8 @@ public class ColimataConcorde extends Aircraft {
     @Override
     public Map<String, URL> getLinks() {
         final Map<String, URL> linkMap = Maps.mapOf(
-                "X-Planee Forum Support Thread", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
-                "Homepage", new URL("http://www.colimata.com")
+                "X-Plane Forum Support Thread", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
+                "Colimata Homepage", new URL("http://www.colimata.com")
         );
         return linkMap;
     }

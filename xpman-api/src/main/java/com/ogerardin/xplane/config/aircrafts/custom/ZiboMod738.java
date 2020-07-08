@@ -1,7 +1,13 @@
 package com.ogerardin.xplane.config.aircrafts.custom;
 
 import com.google.api.services.drive.model.File;
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
+import com.ogerardin.xplane.config.plugins.custom.AviTab;
+import com.ogerardin.xplane.config.plugins.custom.TerrainRadar;
+import com.ogerardin.xplane.diag.CheckItem;
+import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.RecommendedPluginCheck;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.GoogleDriveClient;
 import com.ogerardin.xplane.util.Maps;
@@ -13,21 +19,27 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+import static com.ogerardin.xplane.util.IntrospectionHelper.require;
 
 @SuppressWarnings("unused")
 @Slf4j
 public class ZiboMod738 extends Aircraft {
 
-    /** The Google Drive folder ID of the folder containing published updates */
+    /**
+     * The Google Drive folder ID of the folder containing published updates
+     */
     public static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
+
+    private final List<CheckItem<Aircraft>> CHECKS = Arrays.asList(
+            new RecommendedPluginCheck(AviTab.class),
+            new RecommendedPluginCheck(TerrainRadar.class)
+    );
 
     @Getter(lazy = true)
     private final String version = loadVersion();
@@ -71,8 +83,6 @@ public class ZiboMod738 extends Aircraft {
         );
     }
 
-
-
     @SneakyThrows
     @Override
     public String getLatestVersion() {
@@ -110,4 +120,14 @@ public class ZiboMod738 extends Aircraft {
         version = version.replaceAll("_", ".");
         return maybePatch.isPresent() ? String.format("%s.%d", version, maybePatch.getAsInt()) : version;
     }
+
+    @Override
+    public List<CheckResult> check(XPlaneInstance xPlaneInstance) {
+        return Stream.concat(
+                super.check(xPlaneInstance).stream(),
+                CHECKS.stream()
+                        .map(checkItem -> checkItem.check(this, xPlaneInstance)))
+                .collect(Collectors.toList());
+    }
+
 }

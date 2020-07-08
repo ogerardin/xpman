@@ -17,6 +17,7 @@ import lombok.var;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -66,8 +67,12 @@ public class TableViewController<O, T> {
         ContextMenu rowMenu = new ContextMenu();
         rowMenu.getItems().addAll(
                 Arrays.stream(itemClass.getDeclaredMethods())
-                        .filter(method -> method.getReturnType() == Void.TYPE)
-                        .filter(method -> ! method.getName().startsWith("set"))
+                        // skip non public or abstract methods
+                        .filter(method -> Modifier.isPublic(method.getModifiers()) && ! Modifier.isAbstract(method.getModifiers()))
+                        // skip methods with parameters
+                        .filter(method -> method.getParameterCount() == 0)
+                        // skip setters/getters
+                        .filter(method -> ! method.getName().startsWith("get") && ! method.getName().startsWith("is"))
                         .map(this::buildMenuItem)
                         .toArray(MenuItem[]::new)
         );
@@ -96,6 +101,7 @@ public class TableViewController<O, T> {
             } else {
                 // no label: try to make up something human-readable from the method name
                 String[] words = StringUtils.splitByCharacterTypeCamelCase(method.getName());
+                words[0] = StringUtils.capitalize(words[0]);
                 text = String.join(" ", words);
             }
             MethodMenuItem<UiAircraft> menuItem = new MethodMenuItem<>(text, method, null);

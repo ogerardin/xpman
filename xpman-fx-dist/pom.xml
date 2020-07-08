@@ -402,7 +402,6 @@
                                     <jrePath>${java.home}</jrePath>
                                     <generateInstaller>true</generateInstaller>
                                     <macConfig>
-                                        <!-- FIXME dmg temporarily disabled because it fails on Travis-CI -->
                                         <generateDmg>true</generateDmg>
                                         <generatePkg>true</generatePkg>
                                     </macConfig>

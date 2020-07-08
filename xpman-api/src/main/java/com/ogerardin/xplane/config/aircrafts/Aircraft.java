@@ -1,7 +1,8 @@
 package com.ogerardin.xplane.config.aircrafts;
 
-import com.ogerardin.xplane.diag.DiagItem;
-import com.ogerardin.xplane.diag.DiagProvider;
+import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.Checkable;
 import com.ogerardin.xplane.file.AcfFile;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.*;
 
 @Data
 @Slf4j
-public class Aircraft implements DiagProvider {
+public class Aircraft implements Checkable {
 
     @Setter(AccessLevel.PACKAGE)
     private AcfFile acfFile;
@@ -87,13 +88,13 @@ public class Aircraft implements DiagProvider {
 
 
     @Override
-    public List<DiagItem> getDiagItems() {
-        return null;
+    public List<CheckResult> check(XPlaneInstance xPlaneInstance) {
+        return new ArrayList<>();
     }
 
     public String getLatestVersion() {
         return null;
-    };
+    }
 
     @AllArgsConstructor
     public enum Category {
