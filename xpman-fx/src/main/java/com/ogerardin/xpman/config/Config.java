@@ -1,14 +1,18 @@
 package com.ogerardin.xpman.config;
 
+import javafx.geometry.Rectangle2D;
 import lombok.Data;
 
 import java.util.HashSet;
-import java.util.Set;
 
 @Data
 public class Config {
 
     String lastXPlanePath;
 
-    Set<String> recentPaths = new HashSet<>();
+    StringSet recentPaths = new StringSet();
+
+    Rectangle2D lastPosition;
+
+    public static class StringSet extends HashSet<String> {}
 }

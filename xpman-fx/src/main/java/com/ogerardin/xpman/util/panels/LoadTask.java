@@ -1,4 +1,4 @@
-package com.ogerardin.javafx.panels;
+package com.ogerardin.xpman.util.panels;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
@@ -7,17 +7,15 @@ import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 @Slf4j
+@AllArgsConstructor
 public
 class LoadTask<T> extends Task<Void> {
 

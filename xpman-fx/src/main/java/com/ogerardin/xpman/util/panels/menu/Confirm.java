@@ -1,4 +1,4 @@
-package com.ogerardin.javafx.panels.menu;
+package com.ogerardin.xpman.util.panels.menu;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,15 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks the conditional availability of a method.
+ * Indicates that the action associated to the annotated method requires user confirmation before being executed.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface EnabledIf {
+public @interface Confirm {
 
     /**
-     * Boolean expression to determine if the annotated method is applicable.
+     * String expression defining the confirmation message that will be presented to the user.
      * The expression is evaluated with the target object as context root.
      */
-    String value();
+    String value() default "'Are you sure?'";
 }

@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import com.ogerardin.javafx.panels.TableViewController;
+import com.ogerardin.xpman.util.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.XPlaneInstanceProperty;
 import javafx.fxml.FXML;
