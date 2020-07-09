@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.javafx.panels.TableViewController;
+import com.ogerardin.xpman.util.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
 import com.ogerardin.xplane.diag.CheckResult;

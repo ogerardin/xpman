@@ -2,17 +2,20 @@ package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.config.Config;
-import com.ogerardin.xpman.config.ConfigManager;
+import com.ogerardin.xpman.config.PrefsConfigManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +24,6 @@ import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,13 +45,14 @@ public class XPmanFX extends Application {
 
     private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
 
-    private final Config config = ConfigManager.INSTANCE.load();
+    @Getter(value = AccessLevel.PRIVATE, lazy = true)
+    private final Config config = PrefsConfigManager.load();
 
     public XPmanFX() {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         log.debug("Setting up stage");
         setupStage(primaryStage);
@@ -72,27 +75,23 @@ public class XPmanFX extends Application {
         stage.setScene(new Scene(mainPane));
 
         restoreWindowPosition(stage);
-
     }
 
     private void restoreWindowPosition(Stage stage) {
-        Preferences prefs = getPrefsRoot();
-        stage.setX(prefs.getDouble("X", 10));
-        stage.setY(prefs.getDouble("Y", 10));
-        stage.setWidth(prefs.getDouble("W", main.getPrefWidth()));
-        stage.setHeight(prefs.getDouble("H", main.getPrefHeight()));
-    }
-
-    private Preferences getPrefsRoot() {
-        return Preferences.userRoot().node("XPMan");
+        final Rectangle2D lastPosition = getConfig().getLastPosition();
+        if (lastPosition != null) {
+            stage.setX(lastPosition.getMinX());
+            stage.setY(lastPosition.getMinY());
+            stage.setWidth(lastPosition.getWidth());
+            stage.setHeight(lastPosition.getHeight());
+        }
     }
 
     private void saveWindowPosition(Stage stage) {
-        Preferences prefs = getPrefsRoot();
-        prefs.putDouble("X", stage.getX());
-        prefs.putDouble("Y", stage.getY());
-        prefs.putDouble("W", stage.getWidth());
-        prefs.putDouble("H", stage.getHeight());
+        final Rectangle2D position = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+        final Config config = getConfig();
+        config.setLastPosition(position);
+        PrefsConfigManager.save(config);
     }
 
     public static void main(String[] args) {
@@ -133,9 +132,12 @@ public class XPmanFX extends Application {
         log.info("Opening X-Plane folder {}", folder);
         XPlaneInstance xplane = new XPlaneInstance(folder);
         xPlaneInstanceProperty.set(xplane);
+
+        Config config = getConfig();
         config.setLastXPlanePath(folder.toString());
         config.getRecentPaths().add(folder.toString());
-        ConfigManager.INSTANCE.save(config);
+        PrefsConfigManager.save(config);
+
         updateRecent();
     }
 
@@ -170,6 +172,7 @@ public class XPmanFX extends Application {
     }
 
     private void updateRecent() {
+        final Config config = getConfig();
         List<MenuItem> menuItems = config.getRecentPaths().stream()
                 .map(RecentMenuItem::new)
                 .collect(Collectors.toList());

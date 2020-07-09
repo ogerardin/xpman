@@ -1,4 +1,4 @@
-package com.ogerardin.javafx.panels.menu;
+package com.ogerardin.xpman.util.panels.menu;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

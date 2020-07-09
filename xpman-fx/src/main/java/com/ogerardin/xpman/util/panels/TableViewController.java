@@ -1,8 +1,8 @@
-package com.ogerardin.javafx.panels;
+package com.ogerardin.xpman.util.panels;
 
-import com.ogerardin.javafx.panels.menu.*;
 import com.ogerardin.xpman.panels.aircrafts.UiAircraft;
 import com.ogerardin.xpman.util.SpelUtil;
+import com.ogerardin.xpman.util.panels.menu.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ContextMenu;
@@ -10,8 +10,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.commons.lang.StringUtils;
@@ -31,10 +31,11 @@ import static javafx.beans.binding.Bindings.when;
  * @param <T> type of the items that depend on the O value
  */
 @Slf4j
-@Data
 public class TableViewController<O, T> {
 
     /** The table to update. This property must be set in the initialize method, after FXML bindings have been populated */
+    @Getter
+    @Setter
     private TableView<T> tableView;
 
     @Getter(AccessLevel.PROTECTED)
@@ -102,7 +103,7 @@ public class TableViewController<O, T> {
     private MenuItem buildMenuItem(Method method) {
         ForEach forEach = method.getAnnotation(ForEach.class);
         if (forEach == null) {
-            var label = method.getAnnotation(com.ogerardin.javafx.panels.menu.Label.class);
+            var label = method.getAnnotation(com.ogerardin.xpman.util.panels.menu.Label.class);
             String text;
             if (label != null) {
                 String expr = label.value();

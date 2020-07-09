@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.javafx.panels.menu.Label;
+import com.ogerardin.xpman.util.panels.menu.Label;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
 import com.ogerardin.xpman.platform.Platforms;
