@@ -15,12 +15,14 @@ import java.util.Map;
 @Slf4j
 public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
 
+    private final Object controller;
     private final ForEach forEach;
     private final Method method;
     private final String[] paramValueExpr;
 
-    public GroupMenuItem(ForEach forEach, Method method) {
+    public <C> GroupMenuItem(C controller, ForEach forEach, Method method) {
         super(forEach.group());
+        this.controller = controller;
         this.forEach = forEach;
         this.method = method;
 
@@ -58,7 +60,7 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
 
     }
 
-    private MenuItem buildMenuItem(Method method, T target, Object item) {
+    private <C> MenuItem buildMenuItem(Method method, T target, Object item) {
         Map<String, Object> contextVariables = Maps.mapOf(forEach.itemVariableName(), item);
 
         Object[] paramValues = new Object[method.getParameterCount()];
@@ -71,8 +73,7 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
         String itemLabelExpr = forEach.itemLabel();
         String text = (String) SpelUtil.eval(itemLabelExpr, target, contextVariables);
 
-        MethodMenuItem<T> menuItem = new MethodMenuItem<>(text, method, target, paramValues);
-//        MenuItem menuItem = new MenuItem(text);
+        MethodMenuItem<T> menuItem = new MethodMenuItem<>(controller, text, method, target, paramValues);
         return menuItem;
     }
 }

@@ -26,7 +26,7 @@ public class UiAircraft {
 
     @Label("'Enable Aircraft'")
     @EnabledIf("! enabled")
-    @RefreshAfter
+    @OnSuccess("tableView.refresh()")
     public void enable() {
         xPlaneInstance.getAircraftManager().enableAircraft(aircraft);
     }
@@ -36,7 +36,7 @@ public class UiAircraft {
     @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
             "+ ' will be moved to ' + xPlaneInstance.rootFolder.relativize(xPlaneInstance.aircraftManager.disabledAircraftFolder) " +
             "+ ' \n\nPress OK to continue.'")
-    @RefreshAfter
+    @OnSuccess("tableView.refresh()")
     public void disable() {
         xPlaneInstance.getAircraftManager().disableAircraft(aircraft);
     }
@@ -44,7 +44,7 @@ public class UiAircraft {
     @Label("'Move to Trash'")
     @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
             "+ ' will be moved to the trash.\n\nPress OK to continue.'")
-    @RefreshAfter
+    @OnSuccess("tableView.refresh()")
     public void moveToTrash() {
         xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
     }
@@ -54,7 +54,7 @@ public class UiAircraft {
         Platforms.getCurrent().openUrl(url);
     }
 
-    @OnSuccess("T(com.ogerardin.xpman.panels.aircrafts.AircraftsController).displayCheckResults(#result)")
+    @OnSuccess("displayCheckResults(#result)")
     public List<CheckResult> analyze() {
         return aircraft.check(xPlaneInstance);
     }

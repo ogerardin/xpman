@@ -1,8 +1,8 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xpman.util.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xpman.XPlaneInstanceProperty;
+import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.util.panels.TableViewController;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -23,11 +23,11 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
     private TableView<UiScenery> sceneryTable;
 
     @FXML
-    private TableColumn rankColumn;
+    private TableColumn<UiScenery, Integer> rankColumn;
 
-    public SceneryController(XPlaneInstanceProperty xPlaneInstanceProperty) {
+    public SceneryController(XPmanFX mainController) {
         super(
-                xPlaneInstanceProperty,
+                mainController.xPlaneInstanceProperty(),
                 xPlaneInstance -> xPlaneInstance.getSceneryManager().getPackages().stream()
                         .map(sceneryPackage -> new UiScenery(sceneryPackage, xPlaneInstance))
                         .collect(Collectors.toList())
