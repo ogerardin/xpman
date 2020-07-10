@@ -2,6 +2,7 @@ package com.ogerardin.xplane.config.aircrafts.custom;
 
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
+import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -14,8 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.ogerardin.xplane.util.IntrospectionHelper.*;
-
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 
@@ -26,7 +25,7 @@ public class XpfrAircraft extends Aircraft {
 
     public XpfrAircraft(AcfFile acfFile) throws InstantiationException {
         super(acfFile);
-        require(getStudio().equals("XPFR"));
+        IntrospectionHelper.require(getStudio().equals("XPFR"));
     }
 
     @SneakyThrows

@@ -2,6 +2,7 @@ package com.ogerardin.xplane.config.plugins.custom;
 
 import com.google.api.client.util.IOUtils;
 import com.ogerardin.xplane.config.plugins.Plugin;
+import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -18,8 +19,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.ogerardin.xplane.util.IntrospectionHelper.*;
-
 @SuppressWarnings("unused")
 @Slf4j
 public class TerrainRadar extends Plugin {
@@ -32,7 +31,7 @@ public class TerrainRadar extends Plugin {
 
     public TerrainRadar(Path folder) throws InstantiationException {
         super(folder, "Terrain Radar");
-        require(folder.endsWith("TerrainRadar"));
+        IntrospectionHelper.require(folder.endsWith("TerrainRadar"));
     }
 
     @Override

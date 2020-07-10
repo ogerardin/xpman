@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.config.plugins.custom;
 
 import com.ogerardin.xplane.config.plugins.Plugin;
+import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
-
-import static com.ogerardin.xplane.util.IntrospectionHelper.require;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -21,7 +20,7 @@ public class AviTab extends Plugin {
 
     public AviTab(Path folder) throws InstantiationException {
         super(folder, "AviTab: VR-compatible tablet with PDF viewer, moving maps and more");
-        require(folder.endsWith("AviTab"));
+        IntrospectionHelper.require(folder.endsWith("AviTab"));
     }
 
     @SneakyThrows
