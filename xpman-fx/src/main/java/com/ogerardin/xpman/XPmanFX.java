@@ -5,6 +5,7 @@ import com.ogerardin.xpman.config.Config;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -41,9 +42,13 @@ public class XPmanFX extends Application {
     @FXML
     private TabPane tabPane;
 
+    @Getter
     private Stage primaryStage;
 
     private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
+    public ObservableValue<XPlaneInstance> xPlaneInstanceProperty() {
+        return xPlaneInstanceProperty;
+    }
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
     private final Config config = PrefsConfigManager.load();
@@ -149,9 +154,9 @@ public class XPmanFX extends Application {
             return (C) this;
         }
         try {
-            // if the controller class has a constuctor that takes a XPlaneInstanceProperty, use it
-            Constructor<C> constructor = type.getConstructor(XPlaneInstanceProperty.class);
-            return constructor.newInstance(xPlaneInstanceProperty);
+            // if the controller class has a constuctor that takes a XPmanFX parameter, use it
+            Constructor<C> constructor = type.getConstructor(XPmanFX.class);
+            return constructor.newInstance(this);
         } catch (NoSuchMethodException e) {
             // otherwise use no-arg constructor
             return type.newInstance();
@@ -178,6 +183,7 @@ public class XPmanFX extends Application {
                 .collect(Collectors.toList());
         recentMenu.getItems().setAll(menuItems);
     }
+
 
     private class RecentMenuItem extends MenuItem {
         public RecentMenuItem(String folder) {

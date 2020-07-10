@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xpman.XPlaneInstanceProperty;
+import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.platform.Platforms;
 import com.sun.jna.Platform;
 import javafx.fxml.FXML;
@@ -29,15 +29,19 @@ public class XPlaneController {
     @FXML
     private Label version;
 
-    public XPlaneController(XPlaneInstanceProperty xPlaneInstanceProperty) {
-        xPlaneInstanceProperty.addListener((observable, oldValue, newValue) -> {
-            xPlaneInstance = newValue;
-            version.setText(String.format("%s (%s)", newValue.getVersion(), newValue.getVariant().name()));
-            link.setText(newValue.getRootFolder().toString());
-            appPath.setText(newValue.getAppPath().toString());
-            // disable "start" button if current platform different from X-Plane detected platform
-            startXPlaneButton.setDisable(Platform.getOSType() != newValue.getVariant().getOsType());
+    public XPlaneController(XPmanFX mainController) {
+        mainController.xPlaneInstanceProperty().addListener((observable, oldValue, xPlaneInstance) -> {
+            this.xPlaneInstance = xPlaneInstance;
+            updateDisplay(xPlaneInstance);
         });
+    }
+
+    private void updateDisplay(XPlaneInstance newValue) {
+        version.setText(String.format("%s (%s)", newValue.getVersion(), newValue.getVariant().name()));
+        link.setText(newValue.getRootFolder().toString());
+        appPath.setText(newValue.getAppPath().toString());
+        // disable "start" button if current platform different from X-Plane detected platform
+        startXPlaneButton.setDisable(Platform.getOSType() != newValue.getVariant().getOsType());
     }
 
     @SneakyThrows

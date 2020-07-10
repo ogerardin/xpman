@@ -114,20 +114,14 @@ public class TableViewController<O, T> {
                 words[0] = StringUtils.capitalize(words[0]);
                 text = String.join(" ", words);
             }
-            MethodMenuItem<UiAircraft> menuItem = new MethodMenuItem<>(text, method, null);
-
-            var refreshAfter = method.getAnnotation(RefreshAfter.class);
-            if (refreshAfter != null) {
-                menuItem.setAftermethodExecution(() -> getTableView().refresh());
-            }
-            return menuItem;
+            return new MethodMenuItem<UiAircraft>(this, text, method, null);
         }
-        return new GroupMenuItem<UiAircraft>(forEach, method);
+        return new GroupMenuItem<UiAircraft>(this, forEach, method);
     }
 
     private void contexualizeMenu(ContextMenu contextMenu, T item) {
         contextMenu.getItems().stream()
-                .filter(menuItem -> menuItem instanceof Contextualizable)
+                .filter(Contextualizable.class::isInstance)
                 .map(menuItem -> (Contextualizable<T>) menuItem)
                 .forEach(contextualizable -> contextualizable.contextualize(item));
 

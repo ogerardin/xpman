@@ -1,12 +1,12 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xpman.util.panels.TableViewController;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
 import com.ogerardin.xplane.diag.CheckResult;
 import com.ogerardin.xplane.diag.Severity;
-import com.ogerardin.xpman.XPlaneInstanceProperty;
+import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.panels.diag.DiagController;
+import com.ogerardin.xpman.util.panels.TableViewController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -43,9 +43,9 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     @FXML
     private TableView<UiAircraft> aircraftsTable;
 
-    public AircraftsController(XPlaneInstanceProperty xPlaneInstanceProperty) {
+    public AircraftsController(XPmanFX mainController) {
         super(
-                xPlaneInstanceProperty,
+                mainController.xPlaneInstanceProperty(),
                 xPlaneInstance -> xPlaneInstance.getAircraftManager().getAircrafts().stream()
                         .map(aircraft -> new UiAircraft(aircraft, xPlaneInstance))
                         .collect(Collectors.toList())
@@ -132,15 +132,17 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         AircraftInstaller.installZip(xPlaneInstance, zipfile);
     }
 
+    @SuppressWarnings("unused")
     @SneakyThrows
-    public static void displayCheckResults(List<CheckResult> results) {
+    public void displayCheckResults(List<CheckResult> results) {
         FXMLLoader loader = new FXMLLoader(AircraftsController.class.getResource("/fxml/diag.fxml"));
-        Pane mainPane = loader.load();
+        Pane pane = loader.load();
         DiagController controller = loader.getController();
         controller.setItems(results);
         Stage stage = new Stage();
         stage.setTitle("Analysis results");
-        stage.setScene(new Scene(mainPane));
+        stage.setScene(new Scene(pane));
+        stage.initOwner(this.aircraftsTable.getScene().getWindow());
         stage.show();
     }
 }

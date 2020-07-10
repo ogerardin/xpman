@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 public @interface OnSuccess {
 
     /** Expression to evaluate after the method has been successfully invoked.
-     * The expression is evaluated with the target object as context root and a variable named {@link #resultVariableName()}
+     * The expression is evaluated with the controller as context root and a variable named {@link #resultVariableName()}
      * containing the result of the method invocation. */
     String value();
 

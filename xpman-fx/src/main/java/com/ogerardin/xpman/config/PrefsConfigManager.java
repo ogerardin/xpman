@@ -8,6 +8,9 @@ import lombok.experimental.UtilityClass;
 
 import java.util.prefs.Preferences;
 
+/**
+ * Utility class to load and save preferences and config using the Java Preferences mechanism
+ */
 @UtilityClass
 public class PrefsConfigManager {
 

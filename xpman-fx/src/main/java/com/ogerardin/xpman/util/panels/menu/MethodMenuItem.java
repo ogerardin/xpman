@@ -5,8 +5,9 @@ import com.ogerardin.xpman.util.SpelUtil;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -17,17 +18,15 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
-@Data
 public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
 
     private final String enabledIfExpr;
     private final String confirmExpr;
 
-    private Runnable aftermethodExecution;
-
+    @Setter @Getter
     private T target;
 
-    public MethodMenuItem(String text, Method method, T target, Object... paramValues) {
+    public <C> MethodMenuItem(C controller, String text, Method method, T target, Object... paramValues) {
         setText(text);
         this.target = target;
 
@@ -60,14 +59,11 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
                     final String resultVariableName = onSuccess.resultVariableName();
                     Map<String, Object> contextVariables = Maps.mapOf(resultVariableName, result);
                     String expr = onSuccess.value();
-                    SpelUtil.eval(expr, target, contextVariables);
+                    SpelUtil.eval(expr, controller, contextVariables);
                 }
 
             } catch (Exception e) {
                 log.error("Exception while invoking method", e);
-            }
-            if (aftermethodExecution != null) {
-                aftermethodExecution.run();
             }
         });
     }
