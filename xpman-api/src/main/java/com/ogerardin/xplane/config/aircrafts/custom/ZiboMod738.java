@@ -10,6 +10,7 @@ import com.ogerardin.xplane.diag.CheckResult;
 import com.ogerardin.xplane.diag.RecommendedPluginCheck;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.GoogleDriveClient;
+import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -24,8 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.ogerardin.xplane.util.IntrospectionHelper.require;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -46,7 +45,7 @@ public class ZiboMod738 extends Aircraft {
 
     public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "ZIBO Mod 737-800X");
-        require(getNotes().startsWith("ZIBOmod"));
+        IntrospectionHelper.require(getNotes().startsWith("ZIBOmod"));
     }
 
     private String loadVersion() {

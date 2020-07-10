@@ -2,6 +2,7 @@ package com.ogerardin.xplane.config.aircrafts.custom;
 
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
+import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.SneakyThrows;
 
@@ -11,8 +12,6 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ogerardin.xplane.util.IntrospectionHelper.*;
-
 @SuppressWarnings("unused")
 public class ColimataConcorde extends Aircraft {
 
@@ -20,7 +19,7 @@ public class ColimataConcorde extends Aircraft {
 
     public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "Colimata Concorde FXP");
-        require(getAcfName().equals("CONCORDE FXP"));
+        IntrospectionHelper.require(getAcfName().equals("CONCORDE FXP"));
     }
 
     @SneakyThrows
