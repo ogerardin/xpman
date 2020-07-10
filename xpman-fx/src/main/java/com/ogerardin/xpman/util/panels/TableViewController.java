@@ -79,10 +79,8 @@ public class TableViewController<O, T> {
                         })
                         // skip non public or abstract methods
                         .filter(method -> Modifier.isPublic(method.getModifiers()) && ! Modifier.isAbstract(method.getModifiers()))
-                        // skip methods with parameters
-                        .filter(method -> method.getParameterCount() == 0)
                         // skip setters/getters
-                        .filter(method -> ! method.getName().startsWith("get") && ! method.getName().startsWith("is"))
+                        .filter(method -> ! method.getName().startsWith("set") &&! method.getName().startsWith("get") && ! method.getName().startsWith("is"))
                         .map(this::buildMenuItem)
                         .toArray(MenuItem[]::new)
         );
@@ -103,13 +101,14 @@ public class TableViewController<O, T> {
     private MenuItem buildMenuItem(Method method) {
         ForEach forEach = method.getAnnotation(ForEach.class);
         if (forEach == null) {
+            //TODO we should be able to use @Value on methods that are not annotated with @ForEach
             var label = method.getAnnotation(com.ogerardin.xpman.util.panels.menu.Label.class);
             String text;
             if (label != null) {
                 String expr = label.value();
                 text = (String) SpelUtil.eval(expr, null);
             } else {
-                // no label: try to make up something human-readable from the method name
+                // no @Label: try to make up something human-readable from the method name
                 String[] words = StringUtils.splitByCharacterTypeCamelCase(method.getName());
                 words[0] = StringUtils.capitalize(words[0]);
                 text = String.join(" ", words);

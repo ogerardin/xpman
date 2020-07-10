@@ -60,7 +60,7 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
 
     }
 
-    private <C> MenuItem buildMenuItem(Method method, T target, Object item) {
+    private MenuItem buildMenuItem(Method method, T target, Object item) {
         Map<String, Object> contextVariables = Maps.mapOf(forEach.itemVariableName(), item);
 
         Object[] paramValues = new Object[method.getParameterCount()];
@@ -73,7 +73,6 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
         String itemLabelExpr = forEach.itemLabel();
         String text = (String) SpelUtil.eval(itemLabelExpr, target, contextVariables);
 
-        MethodMenuItem<T> menuItem = new MethodMenuItem<>(controller, text, method, target, paramValues);
-        return menuItem;
+        return new MethodMenuItem<>(controller, text, method, target, paramValues);
     }
 }
