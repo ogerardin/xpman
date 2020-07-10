@@ -1,10 +1,11 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xpman.util.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.Checkable;
 import com.ogerardin.xpman.platform.Platforms;
+import com.ogerardin.xpman.util.panels.menu.*;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
@@ -14,7 +15,9 @@ import java.util.List;
 @Data
 public class UiAircraft {
 
-    @Delegate
+    // all methods of Aircraft will be available in UiAircraft, except Aircraft#check because we need to handle it
+    // in a special way, see #analyze
+    @Delegate(excludes = Checkable.class)
     private final Aircraft aircraft;
 
     private final XPlaneInstance xPlaneInstance;
