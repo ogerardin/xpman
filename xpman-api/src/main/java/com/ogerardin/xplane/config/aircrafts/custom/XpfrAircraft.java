@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -44,8 +45,12 @@ public class XpfrAircraft extends Aircraft {
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {
-        return Maps.mapOf(
-                "Homepage", new URL("http://www.xpfr.org")
+        return Maps.merge(
+                super.getLinks(),
+                Maps.mapOf(
+                        "Aircraft detailed sheet on xpfr.org",
+                        new URL(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
+                )
         );
     }
 
