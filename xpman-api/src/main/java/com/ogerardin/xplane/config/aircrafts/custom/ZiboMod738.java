@@ -76,11 +76,13 @@ public class ZiboMod738 extends Aircraft {
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {
-        return Maps.mapOf(
-                "Facebook page", new URL("https://www.facebook.com/zibocommunity"),
-                "X-Plane forum", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
-                "Download (Google drive)", new URL("https://drive.google.com/drive/folders/" + ZIBO_FOLDER_ID)
-        );
+        return Maps.merge(
+                super.getLinks(),
+                Maps.mapOf(
+                        "Facebook page", new URL("https://www.facebook.com/zibocommunity"),
+                        "X-Plane forum", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
+                        "Download (Google drive)", new URL("https://drive.google.com/drive/folders/" + ZIBO_FOLDER_ID)
+                ));
     }
 
     @SneakyThrows

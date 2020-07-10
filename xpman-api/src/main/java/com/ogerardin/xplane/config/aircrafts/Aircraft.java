@@ -4,13 +4,12 @@ import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.diag.CheckResult;
 import com.ogerardin.xplane.diag.Checkable;
 import com.ogerardin.xplane.file.AcfFile;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -117,6 +116,7 @@ public class Aircraft implements Checkable {
         return null;
     }
 
+    @SuppressWarnings("unused")
     public Path getThumb() {
         Path file = getAcfFile().getFile();
         String filename = file.getFileName().toString();
@@ -126,8 +126,18 @@ public class Aircraft implements Checkable {
         return thumbFile;
     }
 
+    @SneakyThrows
     public Map<String, URL> getLinks() {
-        return Collections.emptyMap();
+        final HashMap<String, URL> map = new HashMap<>();
+        Files.list(getAcfFile().getFile().getParent())
+                .filter(path -> path.getFileName().toString().toLowerCase().contains("manual"))
+                .forEach(path -> {
+                    try {
+                        map.put("Manual: " + path.getFileName().toString(), path.toUri().toURL());
+                    } catch (MalformedURLException ignored) {
+                    }
+                });
+        return map;
     }
 
 

@@ -26,11 +26,13 @@ public class ColimataConcorde extends Aircraft {
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {
-        final Map<String, URL> linkMap = Maps.mapOf(
-                "X-Plane Forum Support Thread", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
-                "Colimata Homepage", new URL("http://www.colimata.com")
+        return Maps.merge(
+                super.getLinks(),
+                Maps.mapOf(
+                        "X-Plane Forum Support Thread", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
+                        "Colimata Homepage", new URL("http://www.colimata.com")
+                )
         );
-        return linkMap;
     }
 
     @SneakyThrows
