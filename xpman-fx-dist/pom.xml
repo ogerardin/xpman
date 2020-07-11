@@ -67,7 +67,7 @@
                 <plugin>
                     <groupId>io.github.fvarrui</groupId>
                     <artifactId>javapackager</artifactId>
-                    <version>1.0.3</version>
+                    <version>1.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -577,6 +577,7 @@
             </build>
         </profile>
 
+        <!-- This profile generates the .icns icon file for the Mac app -->
         <profile>
             <id>create-icon-mac</id>
             <activation>
