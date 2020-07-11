@@ -91,7 +91,7 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
     }
 
     /**
-     * Matches a property value.
+     * Matches a scenery folder.
      * Upon successful match, pushes the value as a String.
      */
     @SuppressSubnodes

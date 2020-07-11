@@ -1,10 +1,7 @@
 package com.ogerardin.xplane.config.scenery;
 
 import com.ogerardin.xplane.util.FileUtils;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,17 +13,21 @@ public class SceneryPackage {
     public static final String EARTH_NAV_DATA = "Earth nav data";
 
     @NonNull
-    final Path folder;
+    @Setter(AccessLevel.PACKAGE)
+    private Path folder;
 
     @Getter(lazy = true)
     private final int tileCount = countTiles();
+
+    private boolean enabled = false;
+
+    private Integer rank = null;
+
 
     @SneakyThrows
     private int countTiles() {
         return FileUtils.findFiles(getEarthNavDataFolder(), path -> path.getFileName().toString().endsWith(".dsf")).size();
     }
-
-    private Integer rank = null;
 
     public String getName() {
         return folder.getFileName().toString();
