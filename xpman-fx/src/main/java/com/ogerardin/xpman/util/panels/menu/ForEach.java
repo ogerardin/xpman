@@ -6,8 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated method is to generate several "actions". This is mostly useful when the method has
- * parameters, in association with @{@link Value}, to generate actions with different parameter values.
+ * Indicates that the annotated method is to generate one action for each item of the specified iterable.
+ * The action name can be customized by using #itemLabel. The parameter values associated with a
+ * specific item are customized by using @{@link Value} on each parameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
