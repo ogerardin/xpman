@@ -21,18 +21,18 @@ import java.util.stream.Stream;
 @Slf4j
 public class AircraftManager {
 
-    public final Path aircraftFolder;
-    public final Path disabledAircraftFolder;
+    @NonNull
+    private final Path aircraftFolder;
+
+    @NonNull
+    private final Path disabledAircraftFolder;
 
     @Getter(lazy = true)
     private final List<Aircraft> aircrafts = loadAircrafts();
 
-    @Getter(AccessLevel.NONE)
-    private final List<Class<?>> aircraftClasses = IntrospectionHelper.findAllSubclasses(Aircraft.class);
-
     public AircraftManager(@NonNull Path aircraftFolder) {
         this.aircraftFolder = aircraftFolder;
-        this.disabledAircraftFolder = aircraftFolder.getParent().resolve(aircraftFolder.getFileName() + " (disabled)");
+        this.disabledAircraftFolder = aircraftFolder.resolveSibling(aircraftFolder.getFileName() + " (disabled)");
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -52,7 +52,6 @@ public class AircraftManager {
                 .map(AcfFile::new)
                 .filter(isVersion11)
                 .map(this::getAircraft)
-                .peek(aircraft -> aircraft.setEnabled(aircraft.getAcfFile().getFile().startsWith(aircraftFolder)))
                 .collect(Collectors.toList());
         log.info("Loaded {} aircrafts", aircrafts.size());
         return aircrafts;
@@ -60,12 +59,18 @@ public class AircraftManager {
 
     @SneakyThrows
     private Aircraft getAircraft(AcfFile acfFile) {
-        return IntrospectionHelper.getBestSubclassInstance(Aircraft.class, acfFile);
+        Aircraft aircraft = IntrospectionHelper.getBestSubclassInstance(Aircraft.class, acfFile);
+        aircraft.setEnabled(isEnabled(aircraft));
+        return aircraft;
+    }
+
+    private boolean isEnabled(Aircraft aircraft) {
+        return aircraft.getAcfFile().getFile().startsWith(aircraftFolder);
     }
 
     @SneakyThrows
     public void enableAircraft(Aircraft aircraft) {
-        if (aircraft.getAcfFile().getFile().startsWith(aircraftFolder)) {
+        if (isEnabled(aircraft)) {
             throw new IllegalOperation("Aircraft already enabled");
         }
         moveAircraft(aircraft, aircraftFolder);
@@ -73,7 +78,7 @@ public class AircraftManager {
 
     @SneakyThrows
     public void disableAircraft(Aircraft aircraft) {
-        if (! aircraft.getAcfFile().getFile().startsWith(aircraftFolder)) {
+        if (! isEnabled(aircraft)) {
             throw new IllegalOperation("Aircraft already disabled");
         }
         moveAircraft(aircraft, disabledAircraftFolder);
@@ -83,14 +88,14 @@ public class AircraftManager {
         Path acfFile = aircraft.getAcfFile().getFile();
         // move the folder containing the .acf file...
         Path sourceFolder = acfFile.getParent();
-        // ...to the "Aircrafts" folder, keeping the original folder name
+        // ...to the target folder, keeping the original folder name
         Path target = targetFolder.resolve(sourceFolder.getFileName());
         Files.move(sourceFolder, target);
 
         // update aircraft
         Path newAcfFile = target.resolve(acfFile.getFileName());
         aircraft.setAcfFile(new AcfFile(newAcfFile));
-        aircraft.setEnabled(newAcfFile.startsWith(aircraftFolder));
+        aircraft.setEnabled(isEnabled(aircraft));
     }
 
     @SneakyThrows
