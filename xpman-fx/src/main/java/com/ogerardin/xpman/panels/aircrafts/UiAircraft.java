@@ -16,17 +16,19 @@ import java.util.List;
 public class UiAircraft {
 
     // all methods of Aircraft will be available in UiAircraft, except Aircraft#check because we need to handle it
-    // in a special way, see #analyze
+    // in a special way, see #analyze()
     @Delegate(excludes = Checkable.class)
     private final Aircraft aircraft;
 
     private final XPlaneInstance xPlaneInstance;
 
+    @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xpman.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile());
     }
 
+    @SuppressWarnings("unused")
     @Label("'Enable Aircraft'")
     @EnabledIf("! enabled")
     @OnSuccess("tableView.refresh()")
@@ -34,6 +36,7 @@ public class UiAircraft {
         xPlaneInstance.getAircraftManager().enableAircraft(aircraft);
     }
 
+    @SuppressWarnings("unused")
     @Label("'Disable Aircraft'")
     @EnabledIf("enabled")
     @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
@@ -44,6 +47,7 @@ public class UiAircraft {
         xPlaneInstance.getAircraftManager().disableAircraft(aircraft);
     }
 
+    @SuppressWarnings("unused")
     @Label("'Move to Trash'")
     @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
             "+ ' will be moved to the trash.\n\nPress OK to continue.'")
