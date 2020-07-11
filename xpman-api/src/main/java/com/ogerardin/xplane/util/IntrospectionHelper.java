@@ -42,7 +42,7 @@ public class IntrospectionHelper {
     }
 
     /**
-     * Returns an instance of {@link C} matching the specified constructor parameters.
+     * Returns an new instance of {@link C} matching the specified constructor parameters.
      * Each known subclass of C is examined in sequence:
      * - if the class exposes a constructor compatible with the specified params, it is invoked with the specified params.
      * - if the constructor succeeds, the resulting instance is returned.

@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -9,14 +10,23 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.util.Collections;
 import java.util.Map;
 
+@UtilityClass
 @Slf4j
-public enum SpelUtil {
-    ;
+public class SpelUtil {
 
-    public static Object eval(String expr, Object contextRoot) {
+    /**
+     * Returns the result of evaluating the specified expression as SpEL with the specified context root and no
+     * variables.
+     */
+    public Object eval(String expr, Object contextRoot) {
         return eval(expr, contextRoot, Collections.emptyMap());
     }
-    public static Object eval(String expr, Object contextRoot, Map<String, Object> variables) {
+
+    /**
+     * Returns the result of evaluating the specified expression as SpEL with the specified context root and
+     * a set of variables.
+     */
+    public Object eval(String expr, Object contextRoot, Map<String, Object> variables) {
         log.debug("Evaluating '{}' with context root {} and variables {}", expr, contextRoot, variables);
         ExpressionParser expressionParser = new SpelExpressionParser();
         Expression expression = expressionParser.parseExpression(expr);
