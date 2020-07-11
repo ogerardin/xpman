@@ -35,6 +35,11 @@
                             <PropertyValueFactory property="library" />
                         </cellValueFactory>
                     </TableColumn>
+                    <TableColumn editable="false" prefWidth="70.0" text="Tiles">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="tileCount" />
+                        </cellValueFactory>
+                    </TableColumn>
                 </columns>
             </TableView>
         </center>
