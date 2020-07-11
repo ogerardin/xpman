@@ -44,6 +44,7 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
                 String confirmMessage = (String) SpelUtil.eval(confirmExpr, this.getTarget());
                 Alert alert = new Alert(CONFIRMATION, confirmMessage);
                 alert.setTitle(text);
+                alert.initOwner(getParentPopup().getOwnerWindow());
                 Optional<ButtonType> choice = alert.showAndWait();
                 if (choice.orElse(ButtonType.CANCEL) != ButtonType.OK) {
                     return;
