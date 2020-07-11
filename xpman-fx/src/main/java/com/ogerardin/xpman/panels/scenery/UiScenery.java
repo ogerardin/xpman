@@ -1,9 +1,12 @@
 package com.ogerardin.xpman.panels.scenery;
 
+import com.ogerardin.xpman.util.panels.menu.Confirm;
+import com.ogerardin.xpman.util.panels.menu.EnabledIf;
 import com.ogerardin.xpman.util.panels.menu.Label;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
 import com.ogerardin.xpman.platform.Platforms;
+import com.ogerardin.xpman.util.panels.menu.OnSuccess;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
@@ -15,9 +18,29 @@ public class UiScenery {
 
     private final XPlaneInstance xPlaneInstance;
 
+    @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xpman.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(sceneryPackage.getFolder());
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Enable Scenery Package'")
+    @EnabledIf("! enabled")
+    @OnSuccess("tableView.refresh()")
+    public void enable() {
+        xPlaneInstance.getSceneryManager().enableSceneryPackage(sceneryPackage);
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Disable Scenery Package'")
+    @EnabledIf("enabled")
+    @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(sceneryPackage.folder) " +
+            "+ ' will be moved to ' + xPlaneInstance.rootFolder.relativize(xPlaneInstance.sceneryManager.disabledSceneryFolder) " +
+            "+ ' \n\nPress OK to continue.'")
+    @OnSuccess("tableView.refresh()")
+    public void disable() {
+        xPlaneInstance.getSceneryManager().disableSceneryPackage(sceneryPackage);
     }
 
 }
