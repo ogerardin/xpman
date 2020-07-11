@@ -1,14 +1,13 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xpman.util.panels.menu.Confirm;
-import com.ogerardin.xpman.util.panels.menu.EnabledIf;
-import com.ogerardin.xpman.util.panels.menu.Label;
+import com.ogerardin.xpman.util.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
 import com.ogerardin.xpman.platform.Platforms;
-import com.ogerardin.xpman.util.panels.menu.OnSuccess;
 import lombok.Data;
 import lombok.experimental.Delegate;
+
+import java.net.URL;
 
 @Data
 public class UiScenery {
@@ -32,6 +31,7 @@ public class UiScenery {
         xPlaneInstance.getSceneryManager().enableSceneryPackage(sceneryPackage);
     }
 
+    //TODO different warning when the package is a library
     @SuppressWarnings("unused")
     @Label("'Disable Scenery Package'")
     @EnabledIf("enabled")
@@ -42,5 +42,12 @@ public class UiScenery {
     public void disable() {
         xPlaneInstance.getSceneryManager().disableSceneryPackage(sceneryPackage);
     }
+
+    @SuppressWarnings("unused")
+    @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
+    public void openLink(@Value("#item.value") URL url) {
+        Platforms.getCurrent().openUrl(url);
+    }
+
 
 }

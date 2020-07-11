@@ -15,6 +15,11 @@
                             <PropertyValueFactory property="rank" />
                         </cellValueFactory>
                     </TableColumn>
+                    <TableColumn fx:id="enabledColumn" editable="false" prefWidth="70.0" text="Enabled?">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="enabled" />
+                        </cellValueFactory>
+                    </TableColumn>
                     <TableColumn editable="false" prefWidth="249.0" text="Name">
                         <cellValueFactory>
                             <PropertyValueFactory property="name" />
@@ -60,7 +65,7 @@
                     <Button mnemonicParsing="false" text="Check for updates" />
                     <Button mnemonicParsing="false" onAction="#installScenery" text="Install..." />
                     <ComboBox prefWidth="150.0" promptText="Filter" />
-                    <Button mnemonicParsing="false" text="Button" />
+                    <Button mnemonicParsing="false" text="Organize scenery_pack.ini" />
                 </items>
             </ToolBar>
         </top>

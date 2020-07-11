@@ -168,6 +168,7 @@ public class XPmanFX extends Application {
         Dialog<ButtonType> dialog = new Dialog<>();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/about.fxml"));
         dialog.setDialogPane(loader.load());
+        dialog.initOwner(primaryStage);
         dialog.show();
     }
 

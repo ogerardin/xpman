@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,15 +40,22 @@ public class SceneryManager {
         this.disabledSceneryFolder = sceneryFolder.resolveSibling(sceneryFolder.getFileName() + " (disabled)");
     }
 
+    @SneakyThrows
     private List<SceneryPackage> loadPackages() {
-        try (Stream<Path> pathStream = Files.list(sceneryFolder)) {
-            return pathStream.filter(Files::isDirectory)
-                    .map(this::getSceneryPackage)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            log.error("Custom Scenery folder not found: {}", sceneryFolder);
+        return Stream.of(
+                getSceneryPackages(sceneryFolder),
+                getSceneryPackages(disabledSceneryFolder)
+        ).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    private List<SceneryPackage> getSceneryPackages(Path sceneryFolder) throws IOException {
+        if (! Files.exists(sceneryFolder)) {
             return Collections.emptyList();
         }
+        return Files.list(sceneryFolder)
+                .filter(Files::isDirectory)
+                .map(this::getSceneryPackage)
+                .collect(Collectors.toList());
     }
 
     private SceneryPacksIniFile loadSceneryPacksIniFile() {
