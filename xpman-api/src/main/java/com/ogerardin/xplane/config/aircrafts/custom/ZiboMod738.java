@@ -51,7 +51,7 @@ public class ZiboMod738 extends Aircraft {
     private String loadVersion() {
         // try version.txt file otherwise fallback to notes field
         try {
-            Path versionFile = getAcfFile().getFile().getParent().resolve("version.txt");
+            Path versionFile = getAcfFile().getFile().resolveSibling("version.txt");
             return Files.readAllLines(versionFile).get(0);
         } catch (IOException e) {
             return loadVersionFromNotes();

@@ -25,6 +25,9 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
     @FXML
     private TableColumn<UiScenery, Integer> rankColumn;
 
+    @FXML
+    private TableColumn<UiScenery, Boolean> enabledColumn;
+
     public SceneryController(XPmanFX mainController) {
         super(
                 mainController.xPlaneInstanceProperty(),
@@ -52,6 +55,7 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
             sceneryTable.sort();
         });
         
+        enabledColumn.setCellFactory(SceneryController::booleanCellFactory);
         airportColumn.setCellFactory(SceneryController::booleanCellFactory);
         libraryColumn.setCellFactory(SceneryController::booleanCellFactory);
     }
@@ -69,5 +73,6 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
     }
 
     public void installScenery() {
+        //TODO
     }
 }

@@ -1,14 +1,20 @@
 package com.ogerardin.xplane.config.scenery;
 
+import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.Checkable;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.*;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Data
-public class SceneryPackage {
+public class SceneryPackage implements Checkable {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
 
@@ -52,5 +58,13 @@ public class SceneryPackage {
     }
 
 
+    @Override
+    public List<CheckResult> check(XPlaneInstance xPlaneInstance) {
+        //TODO
+        return Collections.emptyList();
+    }
 
+    public Map<String, URL> getLinks() {
+        return Collections.emptyMap();
+    }
 }
