@@ -45,6 +45,13 @@ jobs:
 
 after_success: ./travis/handle_untagged.sh
 
+before_deploy:
+  - |
+    if [[ $TRAVIS_OS_NAME == "osx" ]]; then
+      sudo chown -R "$USER:$(id -g)" /Users/travis/.rvm/rubies/
+      rvm $(travis_internal_ruby) do gem uninstall openssl --all
+    fi
+
 deploy:
   on:
     tags: true
