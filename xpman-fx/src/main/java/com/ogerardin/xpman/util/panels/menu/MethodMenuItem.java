@@ -52,6 +52,7 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
             }
             try {
                 // invoke method with specified parameter values
+                log.debug("Invoking {} on {} with parameters {}", method, this.getTarget(), paramValues);
                 Object result = method.invoke(this.getTarget(), paramValues);
                 log.debug("Method invocation returned: {}", result);
 
