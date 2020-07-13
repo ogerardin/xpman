@@ -25,7 +25,7 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
                 Header(),
                 ZeroOrMore(Newline()),
                 SceneryPacks(),
-                swap() && push(new SceneryPackIniData((Header) pop(), (SceneryPackList) pop()))
+                swap() && push(new SceneryPackIniData((Header) pop(), (SceneryPackIniData.SceneryPackList) pop()))
 //                Junk(),
 //                EOI
         );
@@ -52,12 +52,12 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
     }
 
     /**
-     * Upon successful match, pushes an instrance of {@link SceneryPackList}
+     * Upon successful match, pushes an instrance of {@link SceneryPackIniData.SceneryPackList}
      */
     @SuppressWarnings({"Convert2Lambda", "rawtypes"})
     Rule SceneryPacks() {
         return Sequence(
-                push(new SceneryPackList()),
+                push(new SceneryPackIniData.SceneryPackList()),
                 ZeroOrMore(
                         Sequence(
                                 SceneryPack(),
@@ -65,7 +65,7 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
                                     @Override
                                     public boolean run(Context context) {
                                         Path sceneryPack = (Path) pop();
-                                        SceneryPackList sceneryPacks = (SceneryPackList) peek();
+                                        SceneryPackIniData.SceneryPackList sceneryPacks = (SceneryPackIniData.SceneryPackList) peek();
                                         sceneryPacks.add(sceneryPack);
                                         return true;
                                     }

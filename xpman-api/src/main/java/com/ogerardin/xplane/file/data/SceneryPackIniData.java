@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+
 /** Parsing result for a .acf file */
 @Getter
 @Setter
@@ -16,4 +19,6 @@ public class SceneryPackIniData extends XPlaneFileData {
         super(header);
         this.sceneryPackList = sceneryPackList;
     }
+
+    public static class SceneryPackList extends ArrayList<Path> {}
 }
