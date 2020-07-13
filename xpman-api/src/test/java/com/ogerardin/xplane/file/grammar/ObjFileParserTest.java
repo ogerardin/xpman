@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.parboiled.Parboiled;
+import org.parboiled.errors.ParseError;
+import org.parboiled.parserunners.AbstractParseRunner;
+import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.parserunners.TracingParseRunner;
 import org.parboiled.support.ParsingResult;
@@ -28,7 +31,7 @@ import static org.parboiled.support.Filters.rulesBelow;
 class ObjFileParserTest {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final boolean TRACE = true;
+    private final boolean TRACE = false;
 
     @Test
     public void testCanParseObj() throws IOException {
@@ -39,7 +42,7 @@ class ObjFileParserTest {
         String fileContents = new String(bytes, US_ASCII);
 
         ObjFileParser parser = Parboiled.createParser(ObjFileParser.class);
-        ReportingParseRunner<?> runner;
+        AbstractParseRunner<?> runner;
         if (TRACE) {
             runner = new TracingParseRunner<>(parser.XPlaneFile())
                     .withFilter(
@@ -48,13 +51,20 @@ class ObjFileParserTest {
                                     not(rulesBelow(parser.ObjAttribute(), parser.ObjCommand(), parser.ObjDatum()))
                             )
                     )
-//                    .withFilter(rules(parser.Number()))
                     .withLog(log::debug);
         } else {
-            runner = new ReportingParseRunner<>(parser.XPlaneFile());
+//            runner = new ReportingParseRunner<>(parser.XPlaneFile());
+            runner = new RecoveringParseRunner<>(parser.XPlaneFile());
         }
 
         ParsingResult<?> result = runner.run(fileContents);
+
+        if (!result.matched) {
+            for (ParseError parseError : result.parseErrors) {
+                log.error("Parse error: {}", parseError.getErrorMessage());
+            }
+
+        }
 
         assertTrue(result.matched);
 

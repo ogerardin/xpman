@@ -10,7 +10,6 @@ import org.parboiled.annotations.SuppressSubnodes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-//@BuildParseTree
 @Slf4j
 public class SceneryPacksIniParser extends XPlaneFileParser {
 

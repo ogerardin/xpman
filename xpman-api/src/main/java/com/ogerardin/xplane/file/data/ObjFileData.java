@@ -1,9 +1,6 @@
 package com.ogerardin.xplane.file.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +11,14 @@ import java.util.List;
 @ToString
 public class ObjFileData extends XPlaneFileData {
 
-    final ObjAttributes attributes;
+    ObjAttributes attributes = new ObjAttributes();
 
-    final ObjData data;
+    ObjData data = new ObjData();
 
-    final ObjCommands commands;
+    ObjCommands commands = new ObjCommands();
 
-    public ObjFileData(Header header, ObjAttributes attributes, ObjData data, ObjCommands commands) {
+    public ObjFileData(Header header) {
         super(header);
-        this.attributes = attributes;
-        this.data = data;
-        this.commands = commands;
     }
 
     public static class ObjAttributes extends ArrayList<ObjAttribute> {}
