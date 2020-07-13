@@ -2,8 +2,7 @@ package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.xplane.file.data.AcfFileData;
 import com.ogerardin.xplane.file.data.Header;
-import com.ogerardin.xplane.file.data.Properties;
-import com.ogerardin.xplane.file.data.Property;
+import com.ogerardin.xplane.file.data.AcfProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.parboiled.Action;
 import org.parboiled.Context;
@@ -26,7 +25,7 @@ public class AcfFileParser extends XPlaneFileParser {
                 Header(),
                 ZeroOrMore(Newline()),
                 Properties(),
-                swap() && push(new AcfFileData((Header) pop(), (Properties) pop()))
+                swap() && push(new AcfFileData((Header) pop(), (AcfFileData.AcfProperties) pop()))
 //                Junk(),
 //                EOI
         );
@@ -55,22 +54,22 @@ public class AcfFileParser extends XPlaneFileParser {
 
     /**
      * Matches a "properties" section.
-     * Upon successful match, pushes an instrance of {@code Properties}
+     * Upon successful match, pushes an instrance of {@code AcfProperties}
      */
     @SuppressWarnings({"Convert2Lambda", "rawtypes"})
     Rule Properties() {
         return Sequence(
                 "PROPERTIES_BEGIN", WhiteSpace(), Newline(),
-                push(new Properties()),
+                push(new AcfFileData.AcfProperties()),
                 ZeroOrMore(
                         Sequence(
                                 Property(),
                                 new Action() {
                                     @Override
                                     public boolean run(Context context) {
-                                        Property property = (Property) pop();
+                                        AcfProperty property = (AcfProperty) pop();
 //                                        log.debug("Adding property {}", property);
-                                        Properties properties = (Properties) peek();
+                                        AcfFileData.AcfProperties properties = (AcfFileData.AcfProperties) peek();
                                         properties.put(property.getName(), property.getValue());
                                         return true;
                                     }
@@ -83,13 +82,13 @@ public class AcfFileParser extends XPlaneFileParser {
 
     /**
      * Matches a line with property name and value.
-     * Upon successful match, pushes a {@link Property} instance
+     * Upon successful match, pushes a {@link AcfProperty} instance
      */
     Rule Property() {
         return Sequence('P', ' ',
                 PropertyName(), ' ',
                 PropertyValue(),
-                swap() && push(new Property((String) pop(), (String) pop())),
+                swap() && push(new AcfProperty((String) pop(), (String) pop())),
                 Newline());
     }
 
