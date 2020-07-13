@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.panels.scenery;
 
+import com.ogerardin.xplane.diag.Checkable;
 import com.ogerardin.xpman.util.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
@@ -12,7 +13,7 @@ import java.net.URL;
 @Data
 public class UiScenery {
 
-    @Delegate
+    @Delegate(excludes = Checkable.class)
     private final SceneryPackage sceneryPackage;
 
     private final XPlaneInstance xPlaneInstance;
@@ -31,7 +32,7 @@ public class UiScenery {
         xPlaneInstance.getSceneryManager().enableSceneryPackage(sceneryPackage);
     }
 
-    //TODO different warning when the package is a library
+    //TODO different warning when the package is a library because the library might be used by other scenery
     @SuppressWarnings("unused")
     @Label("'Disable Scenery Package'")
     @EnabledIf("enabled")
