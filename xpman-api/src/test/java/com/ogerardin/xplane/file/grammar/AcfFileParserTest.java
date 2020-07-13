@@ -28,7 +28,7 @@ import static org.parboiled.support.Filters.rulesBelow;
 class AcfFileParserTest {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final boolean TRACE = false;
+    private final boolean TRACE = true;
 
     @Test
     public void testCanParseAcf() throws IOException {

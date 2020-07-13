@@ -21,32 +21,12 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
     @Override
     public Rule XPlaneFile() {
         return Sequence(
-                Header(),
+                Header(REQUIRED_TYPE),
                 ZeroOrMore(Newline()),
                 SceneryPacks(),
                 swap() && push(new SceneryPackIniData((Header) pop(), (SceneryPackIniData.SceneryPackList) pop()))
 //                Junk(),
 //                EOI
-        );
-    }
-
-    Rule Junk() {
-        return ZeroOrMore(JunkLine());
-    }
-
-    Rule JunkLine() {
-        return Sequence(ZeroOrMore(ANY), Newline());
-    }
-
-    /**
-     * Upon successful match, pushes an instance of {@link Header}
-     */
-    Rule Header() {
-        return Sequence(
-                Origin(), WhiteSpace(), Newline(),
-                VersionSpec(), WhiteSpace(), Newline(),
-                FileType(), WhiteSpace(), Newline(),
-                swap3() && push(new Header((String) pop(), (String) pop(), (String) pop()))
         );
     }
 
@@ -85,10 +65,6 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
                 Newline());
     }
 
-    Rule Newline() {
-        return Sequence(Optional('\r'), '\n');
-    }
-
     /**
      * Matches a scenery folder.
      * Upon successful match, pushes the value as a String.
@@ -97,44 +73,6 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
     Rule FolderName() {
         return Sequence(
                 OneOrMore(NoneOf("\r\n")),
-                push(match())
-        );
-    }
-
-    Rule Spacechar() {
-        return AnyOf(" \t");
-    }
-
-    Rule FileType() {
-        return Sequence(
-//                Sequence(Letter(), Letter(), Letter()),
-                REQUIRED_TYPE,
-                push(match())
-        );
-    }
-
-    Rule VersionSpec() {
-        return Sequence(
-                Version(), push(match()),
-                " ",
-                AnyOf("vV"), "ersion");
-    }
-
-    Rule WhiteSpace() {
-        return ZeroOrMore(Spacechar());
-    }
-
-    Rule Version() {
-        return Sequence(Digit(), Digit(), Digit(), Digit());
-    }
-
-    Rule Digit() {
-        return CharRange('0', '9');
-    }
-
-    Rule Origin() {
-        return Sequence(
-                AnyOf("IA"),
                 push(match())
         );
     }

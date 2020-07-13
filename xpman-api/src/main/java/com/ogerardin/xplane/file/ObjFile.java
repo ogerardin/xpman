@@ -1,13 +1,10 @@
 package com.ogerardin.xplane.file;
 
-import com.ogerardin.xplane.file.data.AcfFileData;
-import com.ogerardin.xplane.file.data.ObjFileData;
-import com.ogerardin.xplane.file.grammar.AcfFileParser;
+import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import com.ogerardin.xplane.file.grammar.ObjFileParser;
 import lombok.ToString;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * Represents a parsed .acf file
