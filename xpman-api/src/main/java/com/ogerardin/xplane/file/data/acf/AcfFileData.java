@@ -1,5 +1,7 @@
-package com.ogerardin.xplane.file.data;
+package com.ogerardin.xplane.file.data.acf;
 
+import com.ogerardin.xplane.file.data.Header;
+import com.ogerardin.xplane.file.data.XPlaneFileData;
 import lombok.*;
 
 import java.util.HashMap;

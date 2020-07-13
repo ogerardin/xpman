@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.file.grammar;
 
-import com.ogerardin.xplane.file.data.AcfFileData;
+import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.data.Header;
-import com.ogerardin.xplane.file.data.AcfProperty;
+import com.ogerardin.xplane.file.data.acf.AcfProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.parboiled.Action;
 import org.parboiled.Context;
@@ -21,33 +21,12 @@ public class AcfFileParser extends XPlaneFileParser {
     @Override
     public Rule XPlaneFile() {
         return Sequence(
-                Header(),
+                Header(REQUIRED_TYPE),
                 ZeroOrMore(Newline()),
                 Properties(),
                 swap() && push(new AcfFileData((Header) pop(), (AcfFileData.AcfProperties) pop()))
 //                Junk(),
 //                EOI
-        );
-    }
-
-    Rule Junk() {
-        return ZeroOrMore(JunkLine());
-    }
-
-    Rule JunkLine() {
-        return Sequence(ZeroOrMore(ANY), Newline());
-    }
-
-    /**
-     * Matches a com.ogerardin.xplane.file header.
-     * Upon successful match, pushes an instance of {@link Header}
-     */
-    Rule Header() {
-        return Sequence(
-                Origin(), WhiteSpace(), Newline(),
-                VersionSpec(), WhiteSpace(), Newline(),
-                FileType(), WhiteSpace(), Newline(),
-                swap3() && push(new Header((String) pop(), (String) pop(), (String) pop()))
         );
     }
 
@@ -58,7 +37,7 @@ public class AcfFileParser extends XPlaneFileParser {
     @SuppressWarnings({"Convert2Lambda", "rawtypes"})
     Rule Properties() {
         return Sequence(
-                "PROPERTIES_BEGIN", WhiteSpace(), Newline(),
+                "PROPERTIES_BEGIN", Optional(WhiteSpace()), Newline(),
                 push(new AcfFileData.AcfProperties()),
                 ZeroOrMore(
                         Sequence(
@@ -75,7 +54,7 @@ public class AcfFileParser extends XPlaneFileParser {
                                 }
                         )
                 ),
-                "PROPERTIES_END", WhiteSpace(), Newline()
+                "PROPERTIES_END", Optional(WhiteSpace()), Newline()
         );
     }
 
@@ -91,10 +70,6 @@ public class AcfFileParser extends XPlaneFileParser {
                 Newline());
     }
 
-    Rule Newline() {
-        return Sequence(Optional('\r'), '\n');
-    }
-
     /**
      * Matches a property value.
      * Upon successful match, pushes the value as a String.
@@ -102,14 +77,9 @@ public class AcfFileParser extends XPlaneFileParser {
     @SuppressSubnodes
     Rule PropertyValue() {
         return Sequence(
-//                OneOrMore(PropertyValueChar()),
                 OneOrMore(NoneOf("\r\n")),
                 push(match())
         );
-    }
-
-    Rule PropertyValueChar() {
-        return CharRange(' ' , '~');
     }
 
     /**
@@ -126,56 +96,6 @@ public class AcfFileParser extends XPlaneFileParser {
 
     Rule PropertyNameChar() {
         return FirstOf(Alphanumeric(), '_', ',', '/');
-    }
-
-    Rule Alphanumeric() {
-        return FirstOf(Letter(), Digit());
-    }
-
-    Rule Spacechar() {
-        return AnyOf(" \t");
-    }
-
-    Rule NotNewline() {
-        return TestNot(AnyOf("\n\r"));
-    }
-
-    Rule FileType() {
-        return Sequence(
-//                Sequence(Letter(), Letter(), Letter()),
-                REQUIRED_TYPE,
-                push(match())
-        );
-    }
-
-    Rule VersionSpec() {
-        return Sequence(
-                Version(), push(match()),
-                " ",
-                AnyOf("vV"), "ersion");
-    }
-
-    Rule WhiteSpace() {
-        return ZeroOrMore(Spacechar());
-    }
-
-    Rule Version() {
-        return Sequence(Digit(), Digit(), Digit(), Digit());
-    }
-
-    Rule Letter() {
-        return FirstOf(CharRange('a', 'z'), CharRange('A', 'Z'));
-    }
-
-    Rule Digit() {
-        return CharRange('0', '9');
-    }
-
-    Rule Origin() {
-        return Sequence(
-                AnyOf("IA"),
-                push(match())
-        );
     }
 
 }

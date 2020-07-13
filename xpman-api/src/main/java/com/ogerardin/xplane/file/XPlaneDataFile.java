@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.parboiled.Parboiled;
+import org.parboiled.parserunners.BasicParseRunner;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.ParsingResult;
 
@@ -48,7 +49,8 @@ public abstract class XPlaneDataFile<P extends XPlaneFileParser, R extends XPlan
         P parser = Parboiled.createParser(parserClass);
         byte[] bytes = Files.readAllBytes(file);
         String fileContents = new String(bytes, UTF_8);
-        ParsingResult<Object> result = new ReportingParseRunner<>(parser.XPlaneFile()).run(fileContents);
+//        ParsingResult<Object> result = new ReportingParseRunner<>(parser.XPlaneFile()).run(fileContents);
+        ParsingResult<Object> result = new BasicParseRunner<>(parser.XPlaneFile()).run(fileContents);
 //        log.debug("Done parsing {}", file);
         //noinspection unchecked
         return (R) result.resultValue;

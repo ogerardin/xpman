@@ -1,9 +1,10 @@
-package com.ogerardin.xplane.file.data;
+package com.ogerardin.xplane.file.data.obj;
 
+import com.ogerardin.xplane.file.data.Header;
+import com.ogerardin.xplane.file.data.XPlaneFileData;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /** Parsing result for a .acf file */
 @Getter

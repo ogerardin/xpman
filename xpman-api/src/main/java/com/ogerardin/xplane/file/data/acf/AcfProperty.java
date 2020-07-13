@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.data;
+package com.ogerardin.xplane.file.data.acf;
 
 import lombok.Data;
 

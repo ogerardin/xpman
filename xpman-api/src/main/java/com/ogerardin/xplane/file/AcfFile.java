@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.file;
 
-import com.ogerardin.xplane.file.data.AcfFileData;
+import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.grammar.AcfFileParser;
 import lombok.ToString;
 

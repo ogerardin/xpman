@@ -1,6 +1,9 @@
 package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.xplane.file.data.*;
+import com.ogerardin.xplane.file.data.obj.ObjCommand;
+import com.ogerardin.xplane.file.data.obj.ObjFileData;
+import com.ogerardin.xplane.file.data.obj.ObjTexture;
 import lombok.extern.slf4j.Slf4j;
 import org.parboiled.Action;
 import org.parboiled.Rule;
@@ -18,29 +21,12 @@ public class ObjFileParser extends XPlaneFileParser {
     @Override
     public Rule XPlaneFile() {
         return Sequence(
-                Header(),
+                Header(REQUIRED_TYPE),
                 // ObjFileData is pushed early on the stack and will be enriched by relevant rules
                 push(new ObjFileData((Header) peek())),
                 ZeroOrMore(Newline()),
                 ObjItems(),
                 EOI
-        );
-    }
-
-    Rule JunkLine() {
-        return Sequence(ZeroOrMore(NoneOf("\r\n")), Newline());
-    }
-
-    /**
-     * Matches a X-Plane file header.
-     * Upon successful match, pushes an instance of {@link Header}
-     */
-    Rule Header() {
-        return Sequence(
-                Origin(), JunkLine(),
-                VersionSpec(), JunkLine(),
-                FileType(), JunkLine(),
-                swap3() && push(new Header((String) pop(), (String) pop(), (String) pop()))
         );
     }
 
@@ -197,14 +183,6 @@ public class ObjFileParser extends XPlaneFileParser {
     // Common
     //
 
-    Rule Comment() {
-        return Sequence('#', ZeroOrMore(NoneOf("\r\n")));
-    }
-
-    Rule CommentLine() {
-        return Sequence(Comment(), Newline());
-    }
-
     /**
      * Upon successful match, pushes the value as a String.
      */
@@ -212,87 +190,6 @@ public class ObjFileParser extends XPlaneFileParser {
     Rule FileName() {
         return Sequence(
                 OneOrMore(NoneOf("\r\n")),
-                push(match())
-        );
-    }
-
-    @SuppressSubnodes
-    Rule Number() {
-        return Sequence(
-                Optional('-'),
-                OneOrMore(Digit()),
-                Optional(
-                        '.',
-                        OneOrMore(Digit())
-                )
-        );
-    }
-
-    Rule Newline() {
-        return Sequence(Optional('\r'), '\n');
-    }
-
-    Rule PropertyValueChar() {
-        return CharRange(' ', '~');
-    }
-
-    /**
-     * Matches a property name.
-     * Upon successful match, pushes the name as a String.
-     */
-    @SuppressSubnodes
-    Rule PropertyName() {
-        return Sequence(
-                OneOrMore(PropertyNameChar()),
-                push(match())
-        );
-    }
-
-    Rule PropertyNameChar() {
-        return FirstOf(Alphanumeric(), '_', ',', '/');
-    }
-
-    Rule Alphanumeric() {
-        return FirstOf(Letter(), Digit());
-    }
-
-    Rule Spacechar() {
-        return AnyOf(" \t");
-    }
-
-    Rule FileType() {
-        return Sequence(
-//                Sequence(Letter(), Letter(), Letter()),
-                REQUIRED_TYPE,
-                push(match())
-        );
-    }
-
-    Rule VersionSpec() {
-        return Sequence(
-                Version(), push(match())
-        );
-    }
-
-    Rule WhiteSpace() {
-        return OneOrMore(Spacechar());
-    }
-
-    Rule Version() {
-        return OneOrMore(Digit());
-    }
-
-    Rule Letter() {
-        return FirstOf(CharRange('a', 'z'), CharRange('A', 'Z'));
-    }
-
-    Rule Digit() {
-        return CharRange('0', '9');
-    }
-
-    Rule Origin() {
-        return Sequence(
-                AnyOf("IA"),
                 push(match())
         );
     }
