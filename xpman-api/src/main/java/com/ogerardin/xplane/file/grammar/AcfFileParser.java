@@ -9,7 +9,6 @@ import org.parboiled.Context;
 import org.parboiled.Rule;
 import org.parboiled.annotations.SuppressSubnodes;
 
-//@BuildParseTree
 @Slf4j
 public class AcfFileParser extends XPlaneFileParser {
 
@@ -54,7 +53,7 @@ public class AcfFileParser extends XPlaneFileParser {
 
     /**
      * Matches a "properties" section.
-     * Upon successful match, pushes an instrance of {@code AcfProperties}
+     * Upon successful match, pushes an instance of {{@link AcfFileData.AcfProperties}}
      */
     @SuppressWarnings({"Convert2Lambda", "rawtypes"})
     Rule Properties() {

@@ -1,13 +1,11 @@
 package com.ogerardin.xplane.file.grammar;
 
-import com.ogerardin.xplane.file.data.AcfFileData;
-import com.ogerardin.xplane.file.data.Header;
-import com.ogerardin.xplane.file.data.ObjFileData;
+import com.ogerardin.xplane.file.data.*;
 import lombok.extern.slf4j.Slf4j;
+import org.parboiled.Action;
 import org.parboiled.Rule;
 import org.parboiled.annotations.SuppressSubnodes;
 
-//@BuildParseTree
 @Slf4j
 public class ObjFileParser extends XPlaneFileParser {
 
@@ -21,16 +19,12 @@ public class ObjFileParser extends XPlaneFileParser {
     public Rule XPlaneFile() {
         return Sequence(
                 Header(),
+                // ObjFileData is pushed early on the stack and will be enriched by relevant rules
+                push(new ObjFileData((Header) peek())),
                 ZeroOrMore(Newline()),
-                ObjItems()
-//                swap() && push(new AcfFileData((Header) pop(), (AcfFileData.AcfProperties) pop()))
-//                Junk(),
-//                EOI
+                ObjItems(),
+                EOI
         );
-    }
-
-    Rule Junk() {
-        return ZeroOrMore(JunkLine());
     }
 
     Rule JunkLine() {
@@ -65,9 +59,13 @@ public class ObjFileParser extends XPlaneFileParser {
     Rule ObjAttributes() {
         return ZeroOrMore(
                 FirstOf(
+                        // match empty line
                         Newline(),
+                        // match line containing only whitespace
                         Sequence(WhiteSpace(), Newline()),
+                        // match line containing only comment
                         Sequence(Comment(), Newline()),
+                        // match line containing an attribute, with an optional comment
                         Sequence(ObjAttribute(), Optional(WhiteSpace()), Optional(Comment()), Newline())
                 )
         );
@@ -82,11 +80,37 @@ public class ObjFileParser extends XPlaneFileParser {
     }
 
     Rule TextureLit() {
-        return Sequence("TEXTURE_LIT", WhiteSpace(), FileName());
+        return Sequence("TEXTURE_LIT", WhiteSpace(), FileName(),
+                (Action<?>) context -> {
+                    ObjTexture texture = new ObjTexture((String) pop());
+                    ObjFileData fileData = (ObjFileData) peek();
+                    fileData.getAttributes().add(texture);
+                    return true;
+                }
+        );
+    }
+
+    Rule TextureNormal() {
+        return Sequence("TEXTURE_NORMAL", WhiteSpace(), FileName(),
+                (Action<?>) context -> {
+                    ObjTexture texture = new ObjTexture((String) pop());
+                    ObjFileData fileData = (ObjFileData) peek();
+                    fileData.getAttributes().add(texture);
+                    return true;
+                }
+        );
     }
 
     Rule Texture() {
-        return Sequence("TEXTURE", WhiteSpace(), FileName());
+        return Sequence(
+                "TEXTURE", WhiteSpace(), FileName(),
+                (Action<?>) context -> {
+                    ObjTexture texture = new ObjTexture((String) pop());
+                    ObjFileData fileData = (ObjFileData) peek();
+                    fileData.getAttributes().add(texture);
+                    return true;
+                }
+        );
     }
 
     Rule PointCounts() {
@@ -150,6 +174,9 @@ public class ObjFileParser extends XPlaneFileParser {
         );
     }
 
+    /**
+     * Matches a single command. Uption success, pushes a {@link ObjCommand} item.
+     */
     Rule ObjCommand() {
         return FirstOf(
                 Comment(),
@@ -178,10 +205,18 @@ public class ObjFileParser extends XPlaneFileParser {
         return Sequence(Comment(), Newline());
     }
 
+    /**
+     * Upon successful match, pushes the value as a String.
+     */
+    @SuppressSubnodes
     Rule FileName() {
-        return PropertyValue();
+        return Sequence(
+                OneOrMore(NoneOf("\r\n")),
+                push(match())
+        );
     }
 
+    @SuppressSubnodes
     Rule Number() {
         return Sequence(
                 Optional('-'),
@@ -195,19 +230,6 @@ public class ObjFileParser extends XPlaneFileParser {
 
     Rule Newline() {
         return Sequence(Optional('\r'), '\n');
-    }
-
-    /**
-     * Matches a property value.
-     * Upon successful match, pushes the value as a String.
-     */
-    @SuppressSubnodes
-    Rule PropertyValue() {
-        return Sequence(
-//                OneOrMore(PropertyValueChar()),
-                OneOrMore(NoneOf("\r\n")),
-                push(match())
-        );
     }
 
     Rule PropertyValueChar() {
