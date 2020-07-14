@@ -4,11 +4,16 @@ import com.ogerardin.xplane.file.data.*;
 import com.ogerardin.xplane.file.data.obj.ObjCommand;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
+import com.ogerardin.xplane.file.data.obj.ObjUnknownAttr;
 import lombok.extern.slf4j.Slf4j;
 import org.parboiled.Action;
 import org.parboiled.Rule;
 import org.parboiled.annotations.SuppressSubnodes;
 
+/**
+ * Parser for OBJ8 file structure.
+ * Reference: https://developer.x-plane.com/article/obj8-file-format-specification/#OBJECT_SYNTAX
+ */
 @Slf4j
 public class ObjFileParser extends XPlaneFileParser {
 
@@ -31,18 +36,6 @@ public class ObjFileParser extends XPlaneFileParser {
     }
 
     Rule ObjItems() {
-        return Sequence(
-                ObjAttributes(),
-                ObjData(),
-                ObjCommands()
-        );
-    }
-
-    //
-    // Attributes
-    //
-
-    Rule ObjAttributes() {
         return ZeroOrMore(
                 FirstOf(
                         // match empty line
@@ -51,52 +44,59 @@ public class ObjFileParser extends XPlaneFileParser {
                         Sequence(WhiteSpace(), Newline()),
                         // match line containing only comment
                         Sequence(Comment(), Newline()),
-                        // match line containing an attribute, with an optional comment
-                        Sequence(ObjAttribute(), Optional(WhiteSpace()), Optional(Comment()), Newline())
+                        // match line containing an attribute/datum/command, with an optional comment
+                        Sequence(ObjAttribute(), Optional(WhiteSpace()), Optional(Comment()), Newline()),
+                        Sequence(ObjDatum(), Optional(WhiteSpace()), Optional(Comment()), Newline()),
+                        Sequence(ObjCommand(), Optional(WhiteSpace()), Optional(Comment()), Newline())
                 )
         );
     }
 
+    //
+    // Attributes
+    //
+
     Rule ObjAttribute() {
         return FirstOf(
                 Texture(),
-                TextureLit(),
-                PointCounts()
+                PointCounts(),
+                OtherAttribute()
         );
     }
 
-    Rule TextureLit() {
-        return Sequence("TEXTURE_LIT", WhiteSpace(), FileName(),
+    Rule OtherAttribute() {
+        return Sequence(
+                OtherAttributeType(), JunkLine(),
                 (Action<?>) context -> {
-                    ObjTexture texture = new ObjTexture((String) pop());
+                    ObjUnknownAttr unkownAttr = new ObjUnknownAttr((String) pop());
                     ObjFileData fileData = (ObjFileData) peek();
-                    fileData.getAttributes().add(texture);
+                    fileData.getAttributes().add(unkownAttr);
                     return true;
                 }
         );
     }
 
-    Rule TextureNormal() {
-        return Sequence("TEXTURE_NORMAL", WhiteSpace(), FileName(),
-                (Action<?>) context -> {
-                    ObjTexture texture = new ObjTexture((String) pop());
-                    ObjFileData fileData = (ObjFileData) peek();
-                    fileData.getAttributes().add(texture);
-                    return true;
-                }
+    Rule OtherAttributeType() {
+        return Sequence(
+                Sequence("ATTR_", OneOrMore(NoneOf(" \t"))), push(match())
         );
     }
 
     Rule Texture() {
         return Sequence(
-                "TEXTURE", WhiteSpace(), FileName(),
+                TextureType(), WhiteSpace(), FileName(),
                 (Action<?>) context -> {
-                    ObjTexture texture = new ObjTexture((String) pop());
+                    swap();
+                    ObjTexture texture = new ObjTexture((String) pop(), (String) pop());
                     ObjFileData fileData = (ObjFileData) peek();
                     fileData.getAttributes().add(texture);
                     return true;
                 }
         );
+    }
+
+    Rule TextureType() {
+        return Sequence(FirstOf("TEXTURE_NORMAL", "TEXTURE_LIT", "TEXTURE"), push(match()));
     }
 
     Rule PointCounts() {
@@ -107,17 +107,6 @@ public class ObjFileParser extends XPlaneFileParser {
     //
     // Data
     //
-
-    Rule ObjData() {
-        return ZeroOrMore(
-                FirstOf(
-                        Newline(),
-                        Sequence(WhiteSpace(), Newline()),
-                        Sequence(Comment(), Newline()),
-                        Sequence(ObjDatum(), Optional(WhiteSpace()), Optional(Comment()), Newline())
-                )
-        );
-    }
 
     Rule ObjDatum() {
         return FirstOf(
@@ -148,17 +137,6 @@ public class ObjFileParser extends XPlaneFileParser {
     //
     // Commands
     //
-
-    Rule ObjCommands() {
-        return ZeroOrMore(
-                FirstOf(
-                        Newline(),
-                        Sequence(WhiteSpace(), Newline()),
-                        Sequence(Comment(), Newline()),
-                        Sequence(ObjCommand(), Optional(WhiteSpace()), Optional(Comment()), Newline())
-                )
-        );
-    }
 
     /**
      * Matches a single command. Uption success, pushes a {@link ObjCommand} item.

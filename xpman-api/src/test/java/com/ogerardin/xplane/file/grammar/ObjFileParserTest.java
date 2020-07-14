@@ -3,6 +3,7 @@ package com.ogerardin.xplane.file.grammar;
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,9 +43,9 @@ class ObjFileParserTest {
         String fileContents = new String(bytes, US_ASCII);
 
         ObjFileParser parser = Parboiled.createParser(ObjFileParser.class);
-        AbstractParseRunner<?> runner;
+        AbstractParseRunner<ObjFileData> runner;
         if (TRACE) {
-            runner = new TracingParseRunner<>(parser.XPlaneFile())
+            runner = new TracingParseRunner<ObjFileData>(parser.XPlaneFile())
                     .withFilter(
                             and(
                                     rules(parser.ObjAttribute(), parser.ObjCommand(), parser.ObjDatum()),
@@ -53,11 +54,11 @@ class ObjFileParserTest {
                     )
                     .withLog(log::debug);
         } else {
-//            runner = new ReportingParseRunner<>(parser.XPlaneFile());
-            runner = new RecoveringParseRunner<>(parser.XPlaneFile());
+//            runner = new ReportingParseRunner<ObjFileData>(parser.XPlaneFile());
+            runner = new RecoveringParseRunner<ObjFileData>(parser.XPlaneFile());
         }
 
-        ParsingResult<?> result = runner.run(fileContents);
+        ParsingResult<ObjFileData> result = runner.run(fileContents);
 
         if (!result.matched) {
             for (ParseError parseError : result.parseErrors) {
@@ -67,6 +68,9 @@ class ObjFileParserTest {
         }
 
         assertTrue(result.matched);
+
+        ObjFileData resultValue = result.resultValue;
+        log.debug("resultValue={}", resultValue);
 
 //        log.debug(ParseTreeUtils.printNodeTree(result));
     }
