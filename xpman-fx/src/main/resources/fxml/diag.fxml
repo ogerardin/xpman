@@ -13,6 +13,11 @@
                   <PropertyValueFactory property="severity" />
               </cellValueFactory>
           </TableColumn>
+          <TableColumn prefWidth="150.0" text="Source">
+              <cellValueFactory>
+                  <PropertyValueFactory property="source" />
+              </cellValueFactory>
+          </TableColumn>
           <TableColumn prefWidth="370.0" text="Message">
               <cellValueFactory>
                   <PropertyValueFactory property="message" />

@@ -80,7 +80,7 @@ public class SceneryPackage implements Checkable {
                 if (attribute instanceof ObjTexture) {
                     String reference = ((ObjTexture) attribute).getReference();
                     if (! Files.exists(file.resolveSibling(reference))) {
-                        result.add(new CheckResult(Severity.ERROR, "Missing texture: " + reference));
+                        result.add(new CheckResult(Severity.ERROR, file.toString(), "Missing texture: " + reference));
                     }
                 }
             }

@@ -11,11 +11,17 @@ public class CheckResult {
 
     final Severity severity;
 
+    final String source;
+
     final String message;
 
     final List<Fix> fixes;
 
     public CheckResult(Severity severity, String message) {
-        this(severity, message, null);
+        this(severity, null, message, null);
+    }
+
+    public CheckResult(Severity severity, String source, String message) {
+        this(severity, source, message, null);
     }
 }
