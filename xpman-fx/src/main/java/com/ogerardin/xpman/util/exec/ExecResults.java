@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.exec;
+package com.ogerardin.xpman.util.exec;
 
 import lombok.Data;
 

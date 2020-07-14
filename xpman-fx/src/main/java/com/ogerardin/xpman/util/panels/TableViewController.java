@@ -1,19 +1,23 @@
 package com.ogerardin.xpman.util.panels;
 
+import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xpman.panels.aircrafts.AircraftsController;
 import com.ogerardin.xpman.panels.aircrafts.UiAircraft;
+import com.ogerardin.xpman.panels.diag.DiagController;
 import com.ogerardin.xpman.util.SpelUtil;
 import com.ogerardin.xpman.util.panels.menu.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
@@ -124,5 +128,19 @@ public class TableViewController<O, T> {
                 .map(menuItem -> (Contextualizable<T>) menuItem)
                 .forEach(contextualizable -> contextualizable.contextualize(item));
 
+    }
+
+    @SuppressWarnings("unused")
+    @SneakyThrows
+    public void displayCheckResults(List<CheckResult> results) {
+        FXMLLoader loader = new FXMLLoader(AircraftsController.class.getResource("/fxml/diag.fxml"));
+        Pane pane = loader.load();
+        DiagController controller = loader.getController();
+        controller.setItems(results);
+        Stage stage = new Stage();
+        stage.setTitle("Analysis results");
+        stage.setScene(new Scene(pane));
+        stage.initOwner(this.tableView.getScene().getWindow());
+        stage.show();
     }
 }
