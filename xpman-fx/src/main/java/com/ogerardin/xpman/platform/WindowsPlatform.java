@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.platform;
 
-import com.ogerardin.xpman.exec.ProcessExecutor;
+import com.ogerardin.xpman.util.exec.ProcessExecutor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 

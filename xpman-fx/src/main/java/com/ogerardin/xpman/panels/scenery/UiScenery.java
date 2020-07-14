@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.panels.scenery;
 
+import com.ogerardin.xplane.diag.CheckResult;
 import com.ogerardin.xplane.diag.Checkable;
 import com.ogerardin.xpman.util.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
+import java.util.List;
 
 @Data
 public class UiScenery {
@@ -48,6 +50,11 @@ public class UiScenery {
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
+    }
+
+    @OnSuccess("displayCheckResults(#result)")
+    public List<CheckResult> analyze() {
+        return sceneryPackage.check(xPlaneInstance);
     }
 
 

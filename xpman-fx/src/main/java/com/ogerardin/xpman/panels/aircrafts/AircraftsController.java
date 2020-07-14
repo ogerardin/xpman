@@ -132,17 +132,4 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         AircraftInstaller.installZip(xPlaneInstance, zipfile);
     }
 
-    @SuppressWarnings("unused")
-    @SneakyThrows
-    public void displayCheckResults(List<CheckResult> results) {
-        FXMLLoader loader = new FXMLLoader(AircraftsController.class.getResource("/fxml/diag.fxml"));
-        Pane pane = loader.load();
-        DiagController controller = loader.getController();
-        controller.setItems(results);
-        Stage stage = new Stage();
-        stage.setTitle("Analysis results");
-        stage.setScene(new Scene(pane));
-        stage.initOwner(this.aircraftsTable.getScene().getWindow());
-        stage.show();
-    }
 }
