@@ -5,9 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ObjTexture extends ObjAttribute {
-
-    private final String type;
-
-    private final String reference;
+public class ObjUnknownAttr extends ObjAttribute {
+    private final String attr;
 }
