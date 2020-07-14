@@ -37,7 +37,8 @@ class ObjFileParserTest {
     @Test
     public void testCanParseObj() throws IOException {
 
-        Path objPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
+//        Path objPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
+        Path objPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
 
         byte[] bytes = Files.readAllBytes(objPath);
         String fileContents = new String(bytes, US_ASCII);

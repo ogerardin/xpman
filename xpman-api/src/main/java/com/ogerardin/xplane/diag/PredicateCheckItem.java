@@ -15,8 +15,8 @@ public class PredicateCheckItem<T> implements CheckItem<T> {
     @Override
     public CheckResult check(T target, XPlaneInstance xPlaneInstance) {
         if (! predicate.apply(target, xPlaneInstance)) {
-            return new CheckResult(level, message, null);
+            return new CheckResult(level, null, message, null);
         }
-        return new CheckResult(Severity.OK, message, null);
+        return new CheckResult(Severity.OK, null, message, null);
     }
 }
