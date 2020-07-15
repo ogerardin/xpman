@@ -2,23 +2,18 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
-import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.InspectionResult;
 import com.ogerardin.xplane.diag.Severity;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.panels.diag.DiagController;
 import com.ogerardin.xpman.util.panels.TableViewController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -115,15 +109,15 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     private void installAircraftFromZip(Path zipfile) {
         XPlaneInstance xPlaneInstance = getPropertyValue();
 
-        CheckResult checkResult = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
-        Severity severity = checkResult.getSeverity();
+        InspectionResult inspectionResult = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
+        Severity severity = inspectionResult.getSeverity();
         if (severity == Severity.ERROR) {
-            Alert alert = new Alert(AlertType.ERROR, checkResult.getMessage());
+            Alert alert = new Alert(AlertType.ERROR, inspectionResult.getMessage());
             alert.showAndWait();
             return;
         }
 
-        Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, checkResult.getMessage());
+        Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, inspectionResult.getMessage());
         alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
         if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;

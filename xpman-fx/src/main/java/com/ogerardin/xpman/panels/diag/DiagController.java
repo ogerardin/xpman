@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.diag;
 
-import com.ogerardin.xplane.diag.CheckResult;
+import com.ogerardin.xplane.diag.InspectionResult;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -12,9 +12,9 @@ public class DiagController {
     private static final Label PLACEHOLDER = new Label("No message!");
 
     @FXML
-    private TableView<CheckResult> tableView;
+    private TableView<InspectionResult> tableView;
 
-    public void setItems(List<CheckResult> items) {
+    public void setItems(List<InspectionResult> items) {
         tableView.getItems().setAll(items);
     }
 

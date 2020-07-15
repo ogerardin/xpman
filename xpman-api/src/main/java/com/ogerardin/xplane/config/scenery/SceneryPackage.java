@@ -1,15 +1,14 @@
 package com.ogerardin.xplane.config.scenery;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.diag.CheckResult;
-import com.ogerardin.xplane.diag.Checkable;
+import com.ogerardin.xplane.diag.InspectionResult;
+import com.ogerardin.xplane.diag.Inspectable;
 import com.ogerardin.xplane.diag.Severity;
 import com.ogerardin.xplane.file.ObjFile;
 import com.ogerardin.xplane.file.data.obj.ObjAttribute;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
 import com.ogerardin.xplane.util.FileUtils;
-import com.sun.prism.Texture;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +22,7 @@ import java.util.Map;
 
 @Data
 @Slf4j
-public class SceneryPackage implements Checkable {
+public class SceneryPackage implements Inspectable {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
 
@@ -69,9 +68,9 @@ public class SceneryPackage implements Checkable {
 
     @SneakyThrows
     @Override
-    public List<CheckResult> check(XPlaneInstance xPlaneInstance) {
+    public List<InspectionResult> inspect(XPlaneInstance xPlaneInstance) {
         final List<Path> objFiles = FileUtils.findFiles(folder, path -> path.getFileName().toString().endsWith(".obj"));
-        List<CheckResult> result = new ArrayList<>();
+        List<InspectionResult> result = new ArrayList<>();
         for (Path file : objFiles) {
             log.info("Inspecting {}", file);
             ObjFile objFile = new ObjFile(file);
@@ -80,7 +79,7 @@ public class SceneryPackage implements Checkable {
                 if (attribute instanceof ObjTexture) {
                     String reference = ((ObjTexture) attribute).getReference();
                     if (! Files.exists(file.resolveSibling(reference))) {
-                        result.add(new CheckResult(Severity.ERROR, file.toString(), "Missing texture: " + reference));
+                        result.add(new InspectionResult(Severity.ERROR, file.toString(), "Missing texture: " + reference));
                     }
                 }
             }
