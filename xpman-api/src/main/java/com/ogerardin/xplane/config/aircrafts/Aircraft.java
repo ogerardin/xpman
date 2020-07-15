@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.config.aircrafts;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.diag.CheckResult;
-import com.ogerardin.xplane.diag.Checkable;
+import com.ogerardin.xplane.diag.InspectionResult;
+import com.ogerardin.xplane.diag.Inspectable;
 import com.ogerardin.xplane.file.AcfFile;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.*;
 
 @Data
 @Slf4j
-public class Aircraft implements Checkable {
+public class Aircraft implements Inspectable {
 
     @Setter(AccessLevel.PACKAGE)
     private AcfFile acfFile;
@@ -87,7 +87,7 @@ public class Aircraft implements Checkable {
 
 
     @Override
-    public List<CheckResult> check(XPlaneInstance xPlaneInstance) {
+    public List<InspectionResult> inspect(XPlaneInstance xPlaneInstance) {
         return new ArrayList<>();
     }
 

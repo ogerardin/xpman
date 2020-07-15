@@ -5,9 +5,9 @@ import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.config.plugins.custom.AviTab;
 import com.ogerardin.xplane.config.plugins.custom.TerrainRadar;
-import com.ogerardin.xplane.diag.CheckItem;
-import com.ogerardin.xplane.diag.CheckResult;
-import com.ogerardin.xplane.diag.RecommendedPluginCheck;
+import com.ogerardin.xplane.diag.Inspection;
+import com.ogerardin.xplane.diag.InspectionResult;
+import com.ogerardin.xplane.diag.RecommendedPluginsInspection;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.GoogleDriveClient;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -35,9 +35,9 @@ public class ZiboMod738 extends Aircraft {
      */
     public static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
 
-    private final List<CheckItem<Aircraft>> CHECKS = Arrays.asList(
-            new RecommendedPluginCheck(AviTab.class),
-            new RecommendedPluginCheck(TerrainRadar.class)
+    @SuppressWarnings({"ArraysAsListWithZeroOrOneArgument"})
+    private final List<Inspection<Aircraft>> CHECKS = Arrays.asList(
+            new RecommendedPluginsInspection<>(AviTab.class, TerrainRadar.class)
     );
 
     @Getter(lazy = true)
@@ -123,12 +123,13 @@ public class ZiboMod738 extends Aircraft {
     }
 
     @Override
-    public List<CheckResult> check(XPlaneInstance xPlaneInstance) {
+    public List<InspectionResult> inspect(XPlaneInstance xPlaneInstance) {
         return Stream.concat(
-                super.check(xPlaneInstance).stream(),
+                super.inspect(xPlaneInstance).stream(),
                 CHECKS.stream()
-                        .map(checkItem -> checkItem.check(this, xPlaneInstance)))
-                .collect(Collectors.toList());
+                        .map(inspection -> inspection.inspect(this, xPlaneInstance))
+                        .flatMap(Collection::stream)
+        ).collect(Collectors.toList());
     }
 
 }

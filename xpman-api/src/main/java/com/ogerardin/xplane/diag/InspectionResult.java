@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CheckResult {
+public class InspectionResult {
 
     final Severity severity;
 
@@ -17,11 +17,11 @@ public class CheckResult {
 
     final List<Fix> fixes;
 
-    public CheckResult(Severity severity, String message) {
+    public InspectionResult(Severity severity, String message) {
         this(severity, null, message, null);
     }
 
-    public CheckResult(Severity severity, String source, String message) {
+    public InspectionResult(Severity severity, String source, String message) {
         this(severity, source, message, null);
     }
 }

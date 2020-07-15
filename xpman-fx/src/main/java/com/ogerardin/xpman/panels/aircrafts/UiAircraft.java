@@ -2,8 +2,8 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
-import com.ogerardin.xplane.diag.CheckResult;
-import com.ogerardin.xplane.diag.Checkable;
+import com.ogerardin.xplane.diag.InspectionResult;
+import com.ogerardin.xplane.diag.Inspectable;
 import com.ogerardin.xpman.platform.Platforms;
 import com.ogerardin.xpman.util.panels.menu.*;
 import lombok.Data;
@@ -17,7 +17,7 @@ public class UiAircraft {
 
     // all methods of Aircraft will be available in UiAircraft, except Aircraft#check because we need to handle it
     // in a special way, see #analyze()
-    @Delegate(excludes = Checkable.class)
+    @Delegate(excludes = Inspectable.class)
     private final Aircraft aircraft;
 
     private final XPlaneInstance xPlaneInstance;
@@ -62,8 +62,8 @@ public class UiAircraft {
     }
 
     @OnSuccess("displayCheckResults(#result)")
-    public List<CheckResult> analyze() {
-        return aircraft.check(xPlaneInstance);
+    public List<InspectionResult> analyze() {
+        return aircraft.inspect(xPlaneInstance);
     }
 
 }

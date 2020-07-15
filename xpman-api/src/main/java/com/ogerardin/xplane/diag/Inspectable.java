@@ -4,8 +4,8 @@ import com.ogerardin.xplane.config.XPlaneInstance;
 
 import java.util.List;
 
-public interface Checkable {
+public interface Inspectable {
 
-    List<CheckResult> check(XPlaneInstance xPlaneInstance);
+    List<InspectionResult> inspect(XPlaneInstance xPlaneInstance);
 
 }
