@@ -1,6 +1,8 @@
 package com.ogerardin.xplane.config.scenery;
 
 import com.ogerardin.xplane.config.IllegalOperation;
+import com.ogerardin.xplane.config.Manager;
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Data;
@@ -18,9 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Data
 @Slf4j
-public class SceneryManager {
+public class SceneryManager extends Manager<SceneryPackage> {
 
     @NonNull
     private final Path sceneryFolder;
@@ -35,7 +36,8 @@ public class SceneryManager {
     @Getter(lazy = true)
     private final SceneryPacksIniFile sceneryPacksIniFile = loadSceneryPacksIniFile();
 
-    public SceneryManager(@NonNull Path sceneryFolder) {
+    public SceneryManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path sceneryFolder) {
+        super(xPlaneInstance);
         this.sceneryFolder = sceneryFolder;
         this.disabledSceneryFolder = sceneryFolder.resolveSibling(sceneryFolder.getFileName() + " (disabled)");
     }

@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.util.panels;
 
-import com.ogerardin.xplane.diag.InspectionResult;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xpman.panels.aircrafts.AircraftsController;
 import com.ogerardin.xpman.panels.aircrafts.UiAircraft;
 import com.ogerardin.xpman.panels.diag.DiagController;
@@ -132,7 +132,7 @@ public class TableViewController<O, T> {
 
     @SuppressWarnings("unused")
     @SneakyThrows
-    public void displayCheckResults(List<InspectionResult> results) {
+    public void displayCheckResults(List<InspectionMessage> results) {
         FXMLLoader loader = new FXMLLoader(AircraftsController.class.getResource("/fxml/diag.fxml"));
         Pane pane = loader.load();
         DiagController controller = loader.getController();
