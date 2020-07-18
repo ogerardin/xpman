@@ -1,8 +1,10 @@
-package com.ogerardin.xplane.diag;
+package com.ogerardin.xplane.inspection.impl;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.config.plugins.Plugin;
+import com.ogerardin.xplane.inspection.Inspection;
+import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.Severity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,19 +19,17 @@ public class RecommendedPluginsInspection<T> implements Inspection<T> {
         this.wantedPluginClasses = wantedPluginClasses;
     }
 
+    @Override
+    public List<InspectionMessage> apply(T target, XPlaneInstance xPlaneInstance) {
+        return Arrays.stream(wantedPluginClasses)
+                .filter(pluginClass -> ! pluginInstalled(xPlaneInstance, pluginClass))
+                .map(pluginClass -> new InspectionMessage(Severity.WARN, target.toString(), "Recommended plugin " + pluginClass.getSimpleName() + " is not installed for this plane"))
+                .collect(Collectors.toList());
+    }
+
     private static Boolean pluginInstalled(XPlaneInstance xPlaneInstance, Class<? extends Plugin> wantedPluginClass) {
         return xPlaneInstance.getPluginManager().getPlugins().stream()
                 .map(Plugin::getClass)
                 .anyMatch(pluginClass -> pluginClass == wantedPluginClass);
-    }
-
-    @Override
-    public List<InspectionResult> inspect(T target, XPlaneInstance xPlaneInstance) {
-        return Arrays.stream(wantedPluginClasses)
-                .map(wantedPluginClass -> new InspectionResult(
-                        pluginInstalled(xPlaneInstance, wantedPluginClass) ? Severity.OK : Severity.WARN,
-                        target.toString(), "Plugin " + wantedPluginClass.getSimpleName() + " is recommended for this plane"
-                ))
-                .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,7 @@
 package com.ogerardin.xplane.config.plugins;
 
+import com.ogerardin.xplane.config.Manager;
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Data;
 import lombok.Getter;
@@ -15,15 +17,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Data
 @Slf4j
-public class PluginManager {
+public class PluginManager extends Manager<Plugin> {
 
     @NonNull
-    public final Path pluginsFolder;
+    private final Path pluginsFolder;
 
     @Getter(lazy = true)
     private final List<Plugin> plugins = loadPlugins();
+
+    public PluginManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path pluginsFolder) {
+        super(xPlaneInstance);
+        this.pluginsFolder = pluginsFolder;
+    }
 
     private List<Plugin> loadPlugins()  {
         try (Stream<Path> pathStream = Files.list(pluginsFolder)) {

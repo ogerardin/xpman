@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -16,7 +17,6 @@ import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
-@EqualsAndHashCode(callSuper = true)
 @Slf4j
 public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
 

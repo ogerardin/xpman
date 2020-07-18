@@ -3,10 +3,7 @@ package com.ogerardin.xplane.config;
 import com.ogerardin.xplane.config.aircrafts.AircraftManager;
 import com.ogerardin.xplane.config.plugins.PluginManager;
 import com.ogerardin.xplane.config.scenery.SceneryManager;
-import lombok.Data;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
@@ -29,15 +26,18 @@ public class XPlaneInstance {
 
     @Getter(lazy = true)
     @ToString.Exclude
-    private final AircraftManager aircraftManager = new AircraftManager(rootFolder.resolve("Aircraft"));
+    @EqualsAndHashCode.Exclude
+    private final AircraftManager aircraftManager = new AircraftManager(this, rootFolder.resolve("Aircraft"));
 
     @Getter(lazy = true)
     @ToString.Exclude
-    private final SceneryManager sceneryManager = new SceneryManager(rootFolder.resolve("Custom Scenery"));
+    @EqualsAndHashCode.Exclude
+    private final SceneryManager sceneryManager = new SceneryManager(this, rootFolder.resolve("Custom Scenery"));
 
     @Getter(lazy = true)
     @ToString.Exclude
-    private final PluginManager pluginManager = new PluginManager(rootFolder.resolve("Resources").resolve("plugins"));
+    @EqualsAndHashCode.Exclude
+    private final PluginManager pluginManager = new PluginManager(this, rootFolder.resolve("Resources").resolve("plugins"));
 
     public XPlaneInstance(Path rootFolder) throws InvalidConfig {
         if (!Files.isDirectory(rootFolder)) {

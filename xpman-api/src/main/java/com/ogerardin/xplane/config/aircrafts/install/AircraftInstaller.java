@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.config.aircrafts.install;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.diag.InspectionResult;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ogerardin.xplane.diag.Severity.*;
+import static com.ogerardin.xplane.inspection.Severity.*;
 
 @UtilityClass
 @Slf4j
 public class AircraftInstaller {
 
-    public InspectionResult checkZip(XPlaneInstance xPlaneInstance, Path zipFile) {
+    public InspectionMessage checkZip(XPlaneInstance xPlaneInstance, Path zipFile) {
         //TODO: assert single folder
 
         Path aircraftFolder = xPlaneInstance.getAircraftManager().getAircraftFolder();
@@ -38,17 +38,17 @@ public class AircraftInstaller {
                 }
             }
         } catch (IOException e) {
-            return new InspectionResult(ERROR, "File is not a ZIP archive");
+            return new InspectionMessage(ERROR, "File is not a ZIP archive");
         }
         if (acfFiles.isEmpty()) {
-            return new InspectionResult(ERROR, "No ACF file found in archive");
+            return new InspectionMessage(ERROR, "No ACF file found in archive");
         }
         String message = "Found the following ACF files in archive: " + acfFiles + ".";
         if (overwriting) {
-            return new InspectionResult(WARN, message
+            return new InspectionMessage(WARN, message
                     + "\nWarning: some files in the archive will overwrite existing files! Only proceed if you are updating an aircraft.");
         }
-        return new InspectionResult(OK, message);
+        return new InspectionMessage(OK, message);
     }
 
     public void installZip(XPlaneInstance xPlaneInstance, Path zipFile) throws IOException {

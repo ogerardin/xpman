@@ -1,6 +1,8 @@
 package com.ogerardin.xplane.config.aircrafts;
 
 import com.ogerardin.xplane.config.IllegalOperation;
+import com.ogerardin.xplane.config.Manager;
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -17,11 +19,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Data
 @Slf4j
-public class AircraftManager {
+public class AircraftManager extends Manager<Aircraft> {
 
     @NonNull
+    @Getter
     private final Path aircraftFolder;
 
     @NonNull
@@ -30,7 +32,8 @@ public class AircraftManager {
     @Getter(lazy = true)
     private final List<Aircraft> aircrafts = loadAircrafts();
 
-    public AircraftManager(@NonNull Path aircraftFolder) {
+    public AircraftManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path aircraftFolder) {
+        super(xPlaneInstance);
         this.aircraftFolder = aircraftFolder;
         this.disabledAircraftFolder = aircraftFolder.resolveSibling(aircraftFolder.getFileName() + " (disabled)");
     }
@@ -107,4 +110,5 @@ public class AircraftManager {
         var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
         fileUtils.moveToTrash(new File[]{folder.toFile()});
     }
+
 }

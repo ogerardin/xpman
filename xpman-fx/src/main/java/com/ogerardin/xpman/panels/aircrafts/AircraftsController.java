@@ -2,8 +2,8 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
-import com.ogerardin.xplane.diag.InspectionResult;
-import com.ogerardin.xplane.diag.Severity;
+import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.panels.TableViewController;
 import javafx.event.ActionEvent;
@@ -109,15 +109,15 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     private void installAircraftFromZip(Path zipfile) {
         XPlaneInstance xPlaneInstance = getPropertyValue();
 
-        InspectionResult inspectionResult = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
-        Severity severity = inspectionResult.getSeverity();
+        InspectionMessage inspectionMessage = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
+        Severity severity = inspectionMessage.getSeverity();
         if (severity == Severity.ERROR) {
-            Alert alert = new Alert(AlertType.ERROR, inspectionResult.getMessage());
+            Alert alert = new Alert(AlertType.ERROR, inspectionMessage.getMessage());
             alert.showAndWait();
             return;
         }
 
-        Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, inspectionResult.getMessage());
+        Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, inspectionMessage.getMessage());
         alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
         if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;

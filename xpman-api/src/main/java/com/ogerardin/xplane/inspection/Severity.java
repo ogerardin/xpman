@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.diag;
+package com.ogerardin.xplane.inspection;
 
 public enum Severity {
     /** no issue */

@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xplane.diag.InspectionResult;
-import com.ogerardin.xplane.diag.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xpman.util.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
@@ -15,7 +14,7 @@ import java.util.List;
 @Data
 public class UiScenery {
 
-    @Delegate(excludes = Inspectable.class)
+    @Delegate
     private final SceneryPackage sceneryPackage;
 
     private final XPlaneInstance xPlaneInstance;
@@ -53,8 +52,8 @@ public class UiScenery {
     }
 
     @OnSuccess("displayCheckResults(#result)")
-    public List<InspectionResult> analyze() {
-        return sceneryPackage.inspect(xPlaneInstance);
+    public List<InspectionMessage> inspect() {
+        return xPlaneInstance.getSceneryManager().inspect(sceneryPackage);
     }
 
 

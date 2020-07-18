@@ -1,8 +1,6 @@
 package com.ogerardin.xplane.config.aircrafts;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.diag.InspectionResult;
-import com.ogerardin.xplane.diag.Inspectable;
+import com.ogerardin.xplane.inspection.*;
 import com.ogerardin.xplane.file.AcfFile;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +13,10 @@ import java.util.*;
 
 @Data
 @Slf4j
-public class Aircraft implements Inspectable {
+public class Aircraft implements InspectionsProvider<Aircraft> {
 
+    // acfFile is not final in order to allow change when the .acf file is moved (for example when disabled)
+    // without instantiating a new Aircraft
     @Setter(AccessLevel.PACKAGE)
     private AcfFile acfFile;
 
@@ -86,11 +86,6 @@ public class Aircraft implements Inspectable {
     }
 
 
-    @Override
-    public List<InspectionResult> inspect(XPlaneInstance xPlaneInstance) {
-        return new ArrayList<>();
-    }
-
     public String getLatestVersion() {
         return null;
     }
@@ -110,8 +105,8 @@ public class Aircraft implements Inspectable {
         SCIENCE_FICTION("acf/_is_sci_fi");
 
         final String property;
-    }
 
+    }
     public String getVersion() {
         return null;
     }
@@ -140,5 +135,9 @@ public class Aircraft implements Inspectable {
         return map;
     }
 
+    @Override
+    public Inspections<Aircraft> getInspections() {
+        return new Inspections<>();
+    }
 
 }

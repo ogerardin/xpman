@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.diag;
+package com.ogerardin.xplane.inspection;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class InspectionResult {
+public class InspectionMessage {
 
     final Severity severity;
 
@@ -17,11 +17,11 @@ public class InspectionResult {
 
     final List<Fix> fixes;
 
-    public InspectionResult(Severity severity, String message) {
+    public InspectionMessage(Severity severity, String message) {
         this(severity, null, message, null);
     }
 
-    public InspectionResult(Severity severity, String source, String message) {
+    public InspectionMessage(Severity severity, String source, String message) {
         this(severity, source, message, null);
     }
 }

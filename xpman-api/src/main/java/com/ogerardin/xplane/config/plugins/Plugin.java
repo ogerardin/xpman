@@ -1,5 +1,7 @@
 package com.ogerardin.xplane.config.plugins;
 
+import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,7 +12,7 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class Plugin {
+public class Plugin implements InspectionsProvider<Plugin> {
 
     private final Path folder;
 
@@ -32,4 +34,8 @@ public class Plugin {
         return Collections.emptyMap();
     }
 
+    @Override
+    public Inspections<Plugin> getInspections() {
+        return Inspections.of();
+    }
 }

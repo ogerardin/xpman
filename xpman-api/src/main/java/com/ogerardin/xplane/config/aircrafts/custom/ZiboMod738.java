@@ -1,13 +1,11 @@
 package com.ogerardin.xplane.config.aircrafts.custom;
 
 import com.google.api.services.drive.model.File;
-import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.config.plugins.custom.AviTab;
 import com.ogerardin.xplane.config.plugins.custom.TerrainRadar;
-import com.ogerardin.xplane.diag.Inspection;
-import com.ogerardin.xplane.diag.InspectionResult;
-import com.ogerardin.xplane.diag.RecommendedPluginsInspection;
+import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.impl.RecommendedPluginsInspection;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.GoogleDriveClient;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -23,8 +21,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -33,15 +29,13 @@ public class ZiboMod738 extends Aircraft {
     /**
      * The Google Drive folder ID of the folder containing published updates
      */
-    public static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
-
-    @SuppressWarnings({"ArraysAsListWithZeroOrOneArgument"})
-    private final List<Inspection<Aircraft>> CHECKS = Arrays.asList(
-            new RecommendedPluginsInspection<>(AviTab.class, TerrainRadar.class)
-    );
+    private static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
 
     @Getter(lazy = true)
     private final String version = loadVersion();
+
+    @Getter(lazy = true)
+    private final String latestVersion = loadLatestVersion();
 
     public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile, "ZIBO Mod 737-800X");
@@ -85,8 +79,7 @@ public class ZiboMod738 extends Aircraft {
     }
 
     @SneakyThrows
-    @Override
-    public String getLatestVersion() {
+    public String loadLatestVersion() {
         // The aircraft is published on a Google drive: https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ
         // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
         // Patches are published as incremental files B738X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
@@ -123,13 +116,8 @@ public class ZiboMod738 extends Aircraft {
     }
 
     @Override
-    public List<InspectionResult> inspect(XPlaneInstance xPlaneInstance) {
-        return Stream.concat(
-                super.inspect(xPlaneInstance).stream(),
-                CHECKS.stream()
-                        .map(inspection -> inspection.inspect(this, xPlaneInstance))
-                        .flatMap(Collection::stream)
-        ).collect(Collectors.toList());
+    public Inspections<Aircraft> getInspections() {
+        return super.getInspections()
+                .append(new RecommendedPluginsInspection<>(AviTab.class, TerrainRadar.class));
     }
-
 }
