@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xpman.util.panels.menu.*;
+import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
 import com.ogerardin.xpman.platform.Platforms;

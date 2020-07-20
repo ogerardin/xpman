@@ -1,14 +1,12 @@
-package com.ogerardin.xpman.util.panels.menu;
+package com.ogerardin.xpman.util.jfx.panels.menu;
 
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;

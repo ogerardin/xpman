@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.panels.menu;
+package com.ogerardin.xpman.util.jfx.panels.menu;
 
 public interface Contextualizable<T> {
 

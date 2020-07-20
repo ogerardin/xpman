@@ -10,6 +10,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Helper class to invoke expressions written in the Spring Expression Language (SpEL).
+ */
 @UtilityClass
 @Slf4j
 public class SpelUtil {
