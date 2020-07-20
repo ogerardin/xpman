@@ -113,12 +113,14 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         Severity severity = inspectionMessage.getSeverity();
         if (severity == Severity.ERROR) {
             Alert alert = new Alert(AlertType.ERROR, inspectionMessage.getMessage());
+            alert.initOwner(aircraftsTable.getScene().getWindow());
             alert.showAndWait();
             return;
         }
 
         Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, inspectionMessage.getMessage());
         alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+        alert.initOwner(aircraftsTable.getScene().getWindow());
         if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;
         }
