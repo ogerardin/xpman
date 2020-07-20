@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.panels.menu;
+package com.ogerardin.xpman.util.jfx.panels.menu;
 
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;

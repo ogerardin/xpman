@@ -1,11 +1,11 @@
-package com.ogerardin.xpman.util.panels;
+package com.ogerardin.xpman.util.jfx.panels;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xpman.panels.aircrafts.AircraftsController;
 import com.ogerardin.xpman.panels.aircrafts.UiAircraft;
 import com.ogerardin.xpman.panels.diag.DiagController;
 import com.ogerardin.xpman.util.SpelUtil;
-import com.ogerardin.xpman.util.panels.menu.*;
+import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -106,7 +106,7 @@ public class TableViewController<O, T> {
         ForEach forEach = method.getAnnotation(ForEach.class);
         if (forEach == null) {
             //TODO we should be able to use @Value on methods that are not annotated with @ForEach
-            var label = method.getAnnotation(com.ogerardin.xpman.util.panels.menu.Label.class);
+            var label = method.getAnnotation(com.ogerardin.xpman.util.jfx.panels.menu.Label.class);
             String text;
             if (label != null) {
                 String expr = label.value();
