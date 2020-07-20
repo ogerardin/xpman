@@ -11,7 +11,7 @@ public class InspectionMessage {
 
     final Severity severity;
 
-    final String source;
+    final String object;
 
     final String message;
 
@@ -21,7 +21,7 @@ public class InspectionMessage {
         this(severity, null, message, null);
     }
 
-    public InspectionMessage(Severity severity, String source, String message) {
-        this(severity, source, message, null);
+    public InspectionMessage(Severity severity, String object, String message) {
+        this(severity, object, message, null);
     }
 }
