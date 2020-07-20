@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ogerardin/xpman.svg?branch=master)](https://travis-ci.org/ogerardin/back2back)
+[![Build Status](https://travis-ci.org/ogerardin/xpman.svg?branch=master)](https://travis-ci.com/ogerardin/xpman)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f300a3631f1418a8029d21c5823719a)](https://www.codacy.com/manual/ogerardin/xpman)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
 
