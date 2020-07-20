@@ -14,16 +14,24 @@ public class RecommendedPluginsInspection<T> implements Inspection<T> {
 
     private final Class<? extends Plugin>[] wantedPluginClasses;
 
+    private final XPlaneInstance xPlaneInstance;
+
     @SafeVarargs
-    public RecommendedPluginsInspection(Class<? extends Plugin>... wantedPluginClasses) {
+    public RecommendedPluginsInspection(XPlaneInstance xPlaneInstance, Class<? extends Plugin>... wantedPluginClasses) {
+        this.xPlaneInstance = xPlaneInstance;
         this.wantedPluginClasses = wantedPluginClasses;
     }
 
     @Override
-    public List<InspectionMessage> apply(T target, XPlaneInstance xPlaneInstance) {
+    public List<InspectionMessage> apply(T target) {
         return Arrays.stream(wantedPluginClasses)
                 .filter(pluginClass -> ! pluginInstalled(xPlaneInstance, pluginClass))
-                .map(pluginClass -> new InspectionMessage(Severity.WARN, target.toString(), "Recommended plugin " + pluginClass.getSimpleName() + " is not installed for this plane"))
+                .map(pluginClass -> InspectionMessage.builder()
+                        .severity(Severity.WARN)
+                        .object(target.toString())
+                        .message("Recommended plugin " + pluginClass.getSimpleName() + " is not installed for this plane")
+                        .build()
+                )
                 .collect(Collectors.toList());
     }
 

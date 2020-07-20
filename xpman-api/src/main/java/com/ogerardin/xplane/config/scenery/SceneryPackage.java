@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.config.scenery;
 
+import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.inspection.*;
 import com.ogerardin.xplane.inspection.impl.ReferencedTexturesInspection;
 import com.ogerardin.xplane.util.FileUtils;
@@ -63,7 +64,7 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
     }
 
     @Override
-    public Inspections<SceneryPackage> getInspections() {
+    public Inspections<SceneryPackage> getInspections(XPlaneInstance xPlaneInstance) {
         return Inspections.of(new ReferencedTexturesInspection());
     }
 }

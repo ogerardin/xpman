@@ -8,8 +8,10 @@ public class CheckHasFilesWithType extends CheckInspection<InstallableZip> {
 
     public CheckHasFilesWithType(String suffix) {
         super(
-                (zip, xPlaneInstance) -> zip.getPaths().stream().anyMatch(path -> path.getFileName().toString().endsWith(suffix)),
-                () -> new InspectionMessage(Severity.ERROR, "No files with suffix " + suffix + " found in ZIP")
+                zip -> zip.getPaths().stream().anyMatch(path -> path.getFileName().toString().endsWith(suffix)),
+                () -> InspectionMessage.builder()
+                        .severity(Severity.ERROR).message("No files with suffix " + suffix + " found in ZIP")
+                        .build()
         );
     }
 

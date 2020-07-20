@@ -8,7 +8,11 @@ public class CheckValidZip extends CheckInspection<InstallableZip> {
 
     public CheckValidZip() {
         super(
-                (zip, xPlaneInstance) -> zip.isValidZip(),
-                () -> new InspectionMessage(Severity.ERROR, "File is not a valid zip archive"));
+                InstallableZip::isValidZip,
+                () -> InspectionMessage.builder()
+                        .severity(Severity.ERROR)
+                        .message("File is not a valid zip archive")
+                        .abort(true) // abort following inspections
+                        .build());
     }
 }
