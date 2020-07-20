@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.inspection.impl;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
 import com.ogerardin.xplane.file.ObjFile;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
@@ -25,7 +24,7 @@ public class ReferencedTexturesInspection implements Inspection<SceneryPackage> 
 
     @SneakyThrows
     @Override
-    public List<InspectionMessage> apply(SceneryPackage target, XPlaneInstance xPlaneInstance) {
+    public List<InspectionMessage> apply(SceneryPackage target) {
         final List<Path> objFiles = FileUtils.findFiles(target.getFolder(), path -> path.getFileName().toString().endsWith(".obj"));
         List<InspectionMessage> result = new ArrayList<>();
         for (Path file : objFiles) {
@@ -35,7 +34,11 @@ public class ReferencedTexturesInspection implements Inspection<SceneryPackage> 
                     .filter(ObjTexture.class::isInstance)
                     .map(ObjTexture.class::cast)
                     .filter(texture -> ! Files.exists(file.resolveSibling(texture.getReference())))
-                    .map(texture -> new InspectionMessage(Severity.ERROR, file.toString(), "Missing texture: " + texture.getReference()))
+                    .map(texture -> InspectionMessage.builder()
+                            .severity(Severity.ERROR)
+                            .object(file.toString())
+                            .message("Missing texture: " + texture.getReference())
+                            .build())
                     .collect(Collectors.toList());
             result.addAll(inspectionMessages);
         }

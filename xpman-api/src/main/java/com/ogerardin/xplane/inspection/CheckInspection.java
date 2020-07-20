@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -15,13 +16,13 @@ import java.util.function.Supplier;
 @Data
 public class CheckInspection<T> implements Inspection<T> {
 
-    private final BiFunction<T, XPlaneInstance, Boolean> check;
+    private final Predicate<T> check;
 
     private final Supplier<InspectionMessage> messageSupplier;
 
     @Override
-    public List<InspectionMessage> apply(T target, XPlaneInstance xPlaneInstance) {
-        if (! check.apply(target, xPlaneInstance)) {
+    public List<InspectionMessage> apply(T target) {
+        if (! check.test(target)) {
             return Collections.singletonList(messageSupplier.get());
         }
         return Collections.emptyList();

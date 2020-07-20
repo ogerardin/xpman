@@ -1,11 +1,12 @@
 package com.ogerardin.xplane.inspection;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
+import one.util.streamex.StreamEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,10 +35,11 @@ public class Inspections<T> implements Inspection<T> {
     }
 
     @Override
-    public List<InspectionMessage> apply(T target, XPlaneInstance xPlaneInstance) {
-        return inspections.stream()
-                .map(inspection -> inspection.apply(target, xPlaneInstance))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+    public List<InspectionMessage> apply(T target) {
+        return StreamEx.of(inspections)
+                .map(inspection -> inspection.apply(target))
+                // short-circuit when one of the inspections return an aborting message
+                .takeWhileInclusive(messages -> messages.stream().noneMatch(InspectionMessage::isAbort))
+                .toFlatList(Function.identity());
     }
 }

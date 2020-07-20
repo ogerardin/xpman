@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
+import com.google.gson.internal.Streams;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
@@ -22,7 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class AircraftsController extends TableViewController<XPlaneInstance, UiAircraft> {
@@ -109,16 +114,33 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     private void installAircraftFromZip(Path zipfile) {
         XPlaneInstance xPlaneInstance = getPropertyValue();
 
-        InspectionMessage inspectionMessage = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
-        Severity severity = inspectionMessage.getSeverity();
-        if (severity == Severity.ERROR) {
-            Alert alert = new Alert(AlertType.ERROR, inspectionMessage.getMessage());
+        List<InspectionMessage> inspectionMessages = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
+
+        final Map<Severity, List<InspectionMessage>> messagesBySeverity = inspectionMessages.stream()
+                .collect(Collectors.groupingBy(InspectionMessage::getSeverity));
+
+        final List<InspectionMessage> errors = messagesBySeverity.get(Severity.ERROR);
+
+        if (! errors.isEmpty()) {
+            final String message = errors.stream()
+                    .map(InspectionMessage::getMessage)
+                    .collect(Collectors.joining("\n"));
+            Alert alert = new Alert(AlertType.ERROR, message);
             alert.initOwner(aircraftsTable.getScene().getWindow());
             alert.showAndWait();
             return;
         }
 
-        Alert alert = new Alert((severity == Severity.WARN) ? AlertType.WARNING : AlertType.CONFIRMATION, inspectionMessage.getMessage());
+        final List<InspectionMessage> warnings = messagesBySeverity.get(Severity.WARN);
+        final List<InspectionMessage> info = messagesBySeverity.get(Severity.INFO);
+
+        final String message = Stream.concat(warnings.stream(), info.stream())
+                .map(InspectionMessage::getMessage)
+                .collect(Collectors.joining("\n"));
+
+
+        Alert alert = new Alert((! warnings.isEmpty()) ? AlertType.WARNING : AlertType.CONFIRMATION,
+                message);
         alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
         alert.initOwner(aircraftsTable.getScene().getWindow());
         if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {

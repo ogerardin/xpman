@@ -1,27 +1,26 @@
 package com.ogerardin.xplane.inspection;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class InspectionMessage {
 
-    final Severity severity;
+    @Builder.Default
+    private final Severity severity = Severity.INFO;
 
-    final String object;
+    private final String object;
 
-    final String message;
+    private final String message;
 
-    final List<Fix> fixes;
+    @Singular
+    private final List<Fix> fixes;
 
-    public InspectionMessage(Severity severity, String message) {
-        this(severity, null, message, null);
-    }
+    @Builder.Default
+    private final boolean abort = false;
 
-    public InspectionMessage(Severity severity, String object, String message) {
-        this(severity, object, message, null);
-    }
 }

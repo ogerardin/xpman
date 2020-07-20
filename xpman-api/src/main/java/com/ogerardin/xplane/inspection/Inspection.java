@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface Inspection<T> {
 
-    List<InspectionMessage> apply(T target, XPlaneInstance xPlaneInstance);
+    List<InspectionMessage> apply(T target);
 }
