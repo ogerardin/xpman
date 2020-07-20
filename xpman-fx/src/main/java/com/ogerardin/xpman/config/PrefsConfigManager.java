@@ -13,6 +13,7 @@ import java.util.prefs.Preferences;
  */
 @UtilityClass
 public class PrefsConfigManager {
+    //TODO use a single key and store all as JSON
 
     private final Gson GSON = new Gson();
 
