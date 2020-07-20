@@ -5,7 +5,7 @@ import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.util.panels.TableViewController;
+import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;

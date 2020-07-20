@@ -1,18 +1,16 @@
 package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xpman.config.Config;
+import com.ogerardin.xpman.config.XPManConfig;
 import com.ogerardin.xpman.config.PrefsConfigManager;
-import javafx.application.Application;
+import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import lombok.AccessLevel;
@@ -28,97 +26,33 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
-
 @Slf4j
-public class XPmanFX extends Application {
-
-    @FXML
-    private VBox main;
+public class XPmanFX extends JfxApp<XPManConfig> {
 
     @FXML
     private Menu recentMenu;
 
-    @FXML
-    private TabPane tabPane;
-
-    @Getter
-    private Stage primaryStage;
+    @Getter(value = AccessLevel.PROTECTED, lazy = true)
+    private final XPManConfig config = PrefsConfigManager.load();
 
     private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
     public ObservableValue<XPlaneInstance> xPlaneInstanceProperty() {
         return xPlaneInstanceProperty;
     }
 
-    @Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final Config config = PrefsConfigManager.load();
-
-    public XPmanFX() {
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        log.debug("Setting up stage");
-        setupStage(primaryStage);
-        primaryStage.show();
-        log.debug("Ready!");
-    }
-
-
-    @SneakyThrows
-    private void setupStage(Stage stage) {
-        stage.setTitle("XPman");
-        stage.setOnCloseRequest(windowEvent -> {
-            windowEvent.consume();
-            quit();
-        });
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-        loader.setControllerFactory(this::buildController);
-        Pane mainPane = loader.load();
-        stage.setScene(new Scene(mainPane));
-
-        restoreWindowPosition(stage);
-    }
-
-    private void restoreWindowPosition(Stage stage) {
-        final Rectangle2D lastPosition = getConfig().getLastPosition();
-        if (lastPosition != null) {
-            stage.setX(lastPosition.getMinX());
-            stage.setY(lastPosition.getMinY());
-            stage.setWidth(lastPosition.getWidth());
-            stage.setHeight(lastPosition.getHeight());
-        }
-    }
-
-    private void saveWindowPosition(Stage stage) {
-        final Rectangle2D position = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
-        final Config config = getConfig();
-        config.setLastPosition(position);
-        PrefsConfigManager.save(config);
-    }
 
     public static void main(String[] args) {
+        // catch-all exception handler (text version)
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> log.error("Caught exception", e));
+
         String version = XPmanFX.class.getPackage().getImplementationVersion();
         log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
         Stream.of("java.vendor", "java.version", "os.arch", "os.name", "os.version")
                 .map(propertyName -> String.format("  %s: %s", propertyName, System.getProperty(propertyName)))
                 .forEach(log::info);
-        launch(args);
-    }
 
-    @FXML
-    private void quit() {
-        Alert alert = new Alert(CONFIRMATION, "Do you really want to quit?");
-        alert.initOwner(primaryStage);
-        alert.showAndWait()
-                .filter(buttonType -> buttonType == ButtonType.OK)
-                .ifPresent(buttonType -> {
-                    saveWindowPosition(primaryStage);
-                    Platform.exit();
-                    System.exit(0);
-                });
+        // fire up JavaFX. This will instantiate a XPmanFX and call #start
+        launch(args);
     }
 
     @FXML
@@ -138,10 +72,10 @@ public class XPmanFX extends Application {
         XPlaneInstance xplane = new XPlaneInstance(folder);
         xPlaneInstanceProperty.set(xplane);
 
-        Config config = getConfig();
+        XPManConfig config = getConfig();
         config.setLastXPlanePath(folder.toString());
         config.getRecentPaths().add(folder.toString());
-        PrefsConfigManager.save(config);
+        saveConfig(config);
 
         updateRecent();
     }
@@ -154,7 +88,7 @@ public class XPmanFX extends Application {
             return (C) this;
         }
         try {
-            // if the controller class has a constuctor that takes a XPmanFX parameter, use it
+            // if the controller class has a constructor that takes a XPmanFX parameter, use it
             Constructor<C> constructor = type.getConstructor(XPmanFX.class);
             return constructor.newInstance(this);
         } catch (NoSuchMethodException e) {
@@ -178,13 +112,33 @@ public class XPmanFX extends Application {
     }
 
     private void updateRecent() {
-        final Config config = getConfig();
+        final XPManConfig config = getConfig();
         List<MenuItem> menuItems = config.getRecentPaths().stream()
                 .map(RecentMenuItem::new)
                 .collect(Collectors.toList());
         recentMenu.getItems().setAll(menuItems);
     }
 
+    @SneakyThrows
+    protected void setupStage(Stage stage) {
+        stage.setTitle("XPman");
+        stage.setOnCloseRequest(windowEvent -> {
+            windowEvent.consume();
+            quit();
+        });
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        loader.setControllerFactory(this::buildController);
+        Pane mainPane = loader.load();
+        stage.setScene(new Scene(mainPane));
+
+        restoreWindowPosition(stage);
+    }
+
+    @Override
+    protected void saveConfig(XPManConfig config) {
+        PrefsConfigManager.save(config);
+    }
 
     private class RecentMenuItem extends MenuItem {
         public RecentMenuItem(String folder) {

@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.util.panels.TableViewController;
+import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
