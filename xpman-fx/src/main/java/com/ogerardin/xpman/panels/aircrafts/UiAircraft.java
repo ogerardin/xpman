@@ -4,7 +4,7 @@ import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xpman.platform.Platforms;
-import com.ogerardin.xpman.util.panels.menu.*;
+import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
