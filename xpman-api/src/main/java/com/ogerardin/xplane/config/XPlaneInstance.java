@@ -47,14 +47,11 @@ public class XPlaneInstance {
         this.rootFolder = rootFolder;
     }
 
-    private static XPlaneVariant computeVariant(Path rootFolder) throws InvalidConfig {
+    private static XPlaneVariant computeVariant(Path rootFolder) {
         return Arrays.stream(XPlaneVariant.values())
                 .filter(v -> v.applies(rootFolder))
-                .findAny()
-                .orElseThrow(() ->
-                    new InvalidConfig("No X-Plane application not found in " + rootFolder)
-                );
-
+                .findFirst()
+                .orElse(XPlaneVariant.UNKNOWN);
     }
 
     public Path getAppPath() {
