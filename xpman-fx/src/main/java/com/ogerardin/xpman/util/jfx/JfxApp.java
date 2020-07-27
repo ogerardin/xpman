@@ -16,6 +16,13 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 public abstract class JfxApp<C extends JfxAppConfig> extends Application {
 
     @Getter
+    private static final boolean devMode = Boolean.parseBoolean(System.getProperty("jfxapp.devmode", "false"));
+
+    static {
+        log.debug("dev mode: {}", devMode);
+    }
+
+    @Getter
     protected Stage primaryStage;
 
     @Override
@@ -56,14 +63,20 @@ public abstract class JfxApp<C extends JfxAppConfig> extends Application {
 
     @FXML
     protected void quit() {
+        if (isDevMode()) {
+            quitNow();
+        }
+
         Alert alert = new Alert(CONFIRMATION, "Do you really want to quit?");
         alert.initOwner(primaryStage);
         alert.showAndWait()
                 .filter(buttonType -> buttonType == ButtonType.OK)
-                .ifPresent(buttonType -> {
-                    saveWindowPosition(primaryStage);
-                    Platform.exit();
-                    System.exit(0);
-                });
+                .ifPresent(buttonType -> quitNow());
+    }
+
+    private void quitNow() {
+        saveWindowPosition(primaryStage);
+        Platform.exit();
+        System.exit(0);
     }
 }
