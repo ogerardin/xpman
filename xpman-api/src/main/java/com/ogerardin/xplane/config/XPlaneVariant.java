@@ -26,7 +26,8 @@ import java.util.function.Function;
 public enum XPlaneVariant {
     MAC(Platform.MAC, "X-Plane.app", XPlaneVariant::getMacVersion),
     WINDOWS(Platform.WINDOWS, "X-Plane.exe", XPlaneVariant::getPEVersion),
-    LINUX(Platform.LINUX, "X-Plane-x86_64", XPlaneVariant::getELFVersion);
+    LINUX(Platform.LINUX, "X-Plane-x86_64", XPlaneVariant::getELFVersion),
+    UNKNOWN(Platform.UNSPECIFIED, "", path -> "unknown");
 
     private final int osType;
     private final String appFilename;
@@ -34,7 +35,7 @@ public enum XPlaneVariant {
 
     @SneakyThrows
     private static String getELFVersion(Path exePath) {
-        // there seem to be no symbol in the ELF sylbol table pointing to the version string :(
+        // there seem to be no symbol in the ELF symbol table pointing to the version string :(
 /*
         ElfFile elfFile = ElfFile.from(Files.newInputStream(exePath));
         ElfSymbol symbol = elfFile.getELFSymbol("version_info");
