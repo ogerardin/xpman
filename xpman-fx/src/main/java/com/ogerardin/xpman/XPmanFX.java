@@ -1,12 +1,12 @@
 package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.config.XPlaneVariant;
 import com.ogerardin.xpman.config.XPManConfig;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -71,6 +71,13 @@ public class XPmanFX extends JfxApp<XPManConfig> {
         Path folder = selectedDirectory.toPath().toRealPath();
         log.info("Opening X-Plane folder {}", folder);
         XPlaneInstance xplane = new XPlaneInstance(folder);
+
+        if ((xplane.getVariant() == XPlaneVariant.UNKNOWN) && !isDevMode()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, String.format("%s is not a valid X-Plane folder.", folder.toString()));
+            alert.initOwner(primaryStage);
+            alert.showAndWait();
+            return;
+        }
         xPlaneInstanceProperty.set(xplane);
 
         XPManConfig config = getConfig();
