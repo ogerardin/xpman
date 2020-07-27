@@ -5,11 +5,16 @@ import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xpman.XPlaneInstanceProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
@@ -36,6 +41,11 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
 
     private static final Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
 
+    private final ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty;
+
+    @FXML
+    private ToolBar toolbar;
+
     @FXML
     private TableColumn<UiAircraft, Path> thumbColumn;
 
@@ -49,6 +59,7 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
                         .map(aircraft -> new UiAircraft(aircraft, xPlaneInstance))
                         .collect(Collectors.toList())
         );
+        xPlaneInstanceProperty = mainController.xPlaneInstanceProperty();
     }
 
     @FXML
@@ -56,7 +67,6 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         setTableView(aircraftsTable);
 
         aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
-
         aircraftsTable.setRowFactory(
                 tableView -> {
                     final TableRow<UiAircraft> row = new TableRow<>();
@@ -65,6 +75,8 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
                 });
 
         thumbColumn.setCellFactory(AircraftsController::thumbnailCellFactory);
+
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneInstanceProperty));
     }
 
     private static TableCell<UiAircraft, Path> thumbnailCellFactory(TableColumn<UiAircraft, Path> col) {

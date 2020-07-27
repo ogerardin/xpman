@@ -5,6 +5,7 @@ import com.ogerardin.xpman.config.XPManConfig;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +37,7 @@ public class XPmanFX extends JfxApp<XPManConfig> {
     private final XPManConfig config = PrefsConfigManager.load();
 
     private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
-    public ObservableValue<XPlaneInstance> xPlaneInstanceProperty() {
+    public ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty() {
         return xPlaneInstanceProperty;
     }
 

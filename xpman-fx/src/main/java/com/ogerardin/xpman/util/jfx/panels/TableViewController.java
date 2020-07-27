@@ -7,6 +7,7 @@ import com.ogerardin.xpman.panels.diag.DiagController;
 import com.ogerardin.xpman.util.SpelUtil;
 import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,7 +31,7 @@ import static javafx.beans.binding.Bindings.when;
 
 /**
  * A Controller for a {@link TableView} where the list of displayed items depend on the value of an {@link ObservableValue}.
- * Whenever the value changes, a loader it called to obtain the new list of itmes
+ * Whenever the value changes, a loader is called to obtain the new list of items.
  * @param <O> type of the observed value
  * @param <T> type of the items that depend on the O value
  */
@@ -45,6 +46,11 @@ public class TableViewController<O, T> {
     @Getter(AccessLevel.PROTECTED)
     private O propertyValue;
 
+    /**
+     * Builds a {@link TableViewController}
+     * @param observableValue the property on which the items displayed depend
+     * @param loader a function the provides the list of items to display based on the observable value
+     */
     public TableViewController(
             ObservableValue<O> observableValue,
             Function<O, List<T>> loader) {
