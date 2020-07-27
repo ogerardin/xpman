@@ -3,15 +3,19 @@ package com.ogerardin.xpman.panels.scenery;
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 
 import java.util.stream.Collectors;
 
 public class SceneryController extends TableViewController<XPlaneInstance, UiScenery> {
+
+    private final ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty;
+
+    @FXML
+    private ToolBar toolbar;
 
     @FXML
     private TableColumn<UiScenery, Boolean> airportColumn;
@@ -35,6 +39,7 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
                         .map(sceneryPackage -> new UiScenery(sceneryPackage, xPlaneInstance))
                         .collect(Collectors.toList())
         );
+        xPlaneInstanceProperty = mainController.xPlaneInstanceProperty();
     }
 
     @FXML
@@ -47,7 +52,6 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
             return row;
 
         });
-
         sceneryTable.itemsProperty().addListener((observable, oldValue, newValue) -> {
             // initially sort by rank
             rankColumn.setSortType(TableColumn.SortType.ASCENDING);
@@ -58,6 +62,8 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
         enabledColumn.setCellFactory(SceneryController::booleanCellFactory);
         airportColumn.setCellFactory(SceneryController::booleanCellFactory);
         libraryColumn.setCellFactory(SceneryController::booleanCellFactory);
+
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneInstanceProperty));
     }
 
     private static TableCell<UiScenery, Boolean> booleanCellFactory(TableColumn<UiScenery, Boolean> col) {
