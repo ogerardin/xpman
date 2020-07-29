@@ -72,6 +72,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
@@ -85,16 +86,22 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <verbose>true</verbose>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <offline>true</offline>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>

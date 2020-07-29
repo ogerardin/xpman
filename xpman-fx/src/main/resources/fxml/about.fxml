@@ -5,20 +5,25 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<DialogPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.AboutController">
+<DialogPane prefHeight="209.0" prefWidth="356.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.AboutController">
     <graphic>
         <ImageView fitHeight="128.0" fitWidth="128.0">
-         <image>
             <Image url="@../icon.png" />
-         </image>
         </ImageView>
     </graphic>
    <ButtonType fx:constant="CLOSE" />
    <content>
-      <AnchorPane>
-         <children>
-            <Text fx:id="text" text="X-Plane Manager&#10;bla bla" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-         </children>
-      </AnchorPane>
+       <AnchorPane>
+           <Text fx:id="title" text="X-Plane Manager ..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+               <font>
+                   <Font name="System Bold" size="12.0" />
+               </font>
+           </Text>
+           <Text fx:id="build" layoutX="20.0" layoutY="49.0" text="Build ..." />
+           <Text fx:id="runtime" layoutX="20.0" layoutY="78.0" text="Runtime: ..." />
+           <Text fx:id="vm" layoutX="20.0" layoutY="95.0" text="VM: ..." />
+           <Hyperlink onAction="#openLink" layoutX="16.0" layoutY="115.0" text="github.com/ogerardin/xpman" />
+           <Text layoutX="20.0" layoutY="151.0" text="© 2020 by Olivier Gérardin" />
+       </AnchorPane>
    </content>
 </DialogPane>

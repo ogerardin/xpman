@@ -4,7 +4,7 @@ import javafx.geometry.Rectangle2D;
 import lombok.Data;
 
 @Data
-public class JfxAppConfig {
+public class JfxAppPrefs {
 
     Rectangle2D lastPosition;
 
