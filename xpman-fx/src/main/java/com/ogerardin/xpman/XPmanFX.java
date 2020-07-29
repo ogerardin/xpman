@@ -2,7 +2,7 @@ package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.XPlaneVariant;
-import com.ogerardin.xpman.config.XPManConfig;
+import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
@@ -20,23 +20,25 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Map.Entry.comparingByKey;
+
 @Slf4j
-public class XPmanFX extends JfxApp<XPManConfig> {
+public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     private Menu recentMenu;
 
     @Getter(value = AccessLevel.PROTECTED, lazy = true)
-    private final XPManConfig config = PrefsConfigManager.load();
+    private final XPManPrefs config = PrefsConfigManager.load();
 
     private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
     public ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty() {
@@ -50,9 +52,18 @@ public class XPmanFX extends JfxApp<XPManConfig> {
 
         String version = XPmanFX.class.getPackage().getImplementationVersion();
         log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
-        Stream.of("java.vendor", "java.version", "os.arch", "os.name", "os.version")
-                .map(propertyName -> String.format("  %s: %s", propertyName, System.getProperty(propertyName)))
-                .forEach(log::info);
+        if (isDevMode()) {
+            // dump all System properties
+            System.getProperties().entrySet().stream()
+                    .sorted(Comparator.comparing(entry -> (String) entry.getKey()))
+                    .map(entry -> String.format("  %s: %s", entry.getKey(), entry.getValue()))
+                    .forEach(log::info);
+        } else {
+            // just dump a few selected properties
+            Stream.of("java.vendor", "java.version", "os.arch", "os.name", "os.version")
+                    .map(propertyName -> String.format("  %s: %s", propertyName, System.getProperty(propertyName)))
+                    .forEach(log::info);
+        }
 
         // fire up JavaFX. This will instantiate a XPmanFX and call #start
         launch(args);
@@ -82,7 +93,7 @@ public class XPmanFX extends JfxApp<XPManConfig> {
         }
         xPlaneInstanceProperty.set(xplane);
 
-        XPManConfig config = getConfig();
+        XPManPrefs config = getConfig();
         config.setLastXPlanePath(folder.toString());
         config.getRecentPaths().add(folder.toString());
         saveConfig(config);
@@ -109,13 +120,6 @@ public class XPmanFX extends JfxApp<XPManConfig> {
 
     @SneakyThrows
     public void about() {
-        final Properties gitProperties = new Properties();
-        final InputStream resourceAsStream = this.getClass().getResourceAsStream("/git.properties");
-        if (resourceAsStream != null) {
-            gitProperties.load(resourceAsStream);
-        }
-        final String buildHost = gitProperties.getProperty("git.build.host", "unknnown");
-
         Dialog<ButtonType> dialog = new Dialog<>();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/about.fxml"));
         dialog.setDialogPane(loader.load());
@@ -129,7 +133,7 @@ public class XPmanFX extends JfxApp<XPManConfig> {
     }
 
     private void updateRecent() {
-        final XPManConfig config = getConfig();
+        final XPManPrefs config = getConfig();
         List<MenuItem> menuItems = config.getRecentPaths().stream()
                 .map(RecentMenuItem::new)
                 .collect(Collectors.toList());
@@ -153,7 +157,7 @@ public class XPmanFX extends JfxApp<XPManConfig> {
     }
 
     @Override
-    protected void saveConfig(XPManConfig config) {
+    protected void saveConfig(XPManPrefs config) {
         PrefsConfigManager.save(config);
     }
 

@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
 @Slf4j
-public abstract class JfxApp<C extends JfxAppConfig> extends Application {
+public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     @Getter
     private static final boolean devMode = Boolean.parseBoolean(System.getProperty("jfxapp.devmode", "false"));

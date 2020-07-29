@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.exec;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.List;
  * A daemon Thread that reads the specified {@link InputStream} as long as EOF is not reached and stores
  * the read lines into a List. The Thread is started as soon as the constructor is called.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 class StreamGobbler extends Thread {
     private final InputStream inputStream;

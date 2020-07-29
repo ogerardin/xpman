@@ -22,13 +22,13 @@ public class PrefsConfigManager {
     private final String KEY_LAST_POSITION = "lastPosition";
 
     @SneakyThrows
-    public XPManConfig load() {
+    public XPManPrefs load() {
         Preferences prefsRoot = getPrefsRoot();
-        XPManConfig config = new XPManConfig();
+        XPManPrefs config = new XPManPrefs();
         config.setLastXPlanePath(prefsRoot.get(KEY_LAST_XPLANE_PATH, null));
         String recentPaths = prefsRoot.get(KEY_RECENT_PATHS, null);
         if (recentPaths != null) {
-            config.setRecentPaths(GSON.fromJson(recentPaths, XPManConfig.StringSet.class));
+            config.setRecentPaths(GSON.fromJson(recentPaths, XPManPrefs.StringSet.class));
         }
         String lastPosition = prefsRoot.get(KEY_LAST_POSITION, null);
         if (lastPosition != null) {
@@ -38,7 +38,7 @@ public class PrefsConfigManager {
     }
 
     @SneakyThrows
-    public void save(XPManConfig config) {
+    public void save(XPManPrefs config) {
         Preferences prefsRoot = getPrefsRoot();
         if (config.getLastXPlanePath() != null) {
             prefsRoot.put(KEY_LAST_XPLANE_PATH, config.getLastXPlanePath());
