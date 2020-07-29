@@ -15,7 +15,7 @@ public class AcfFileParser extends XPlaneFileParser {
     static final String REQUIRED_TYPE = "ACF";
 
     /**
-     * Matches a full X-Plane com.ogerardin.xplane.file.
+     * Matches a full X-Plane aircraft file.
      * Upon successful match, pushes an instance of {@link AcfFileData}
      */
     @Override
