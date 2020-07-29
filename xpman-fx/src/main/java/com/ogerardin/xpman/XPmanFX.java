@@ -20,10 +20,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -107,6 +109,13 @@ public class XPmanFX extends JfxApp<XPManConfig> {
 
     @SneakyThrows
     public void about() {
+        final Properties gitProperties = new Properties();
+        final InputStream resourceAsStream = this.getClass().getResourceAsStream("/git.properties");
+        if (resourceAsStream != null) {
+            gitProperties.load(resourceAsStream);
+        }
+        final String buildHost = gitProperties.getProperty("git.build.host", "unknnown");
+
         Dialog<ButtonType> dialog = new Dialog<>();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/about.fxml"));
         dialog.setDialogPane(loader.load());
