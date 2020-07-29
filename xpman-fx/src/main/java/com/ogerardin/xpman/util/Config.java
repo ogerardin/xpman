@@ -1,11 +1,9 @@
 package com.ogerardin.xpman.util;
 
 import com.ogerardin.xpman.XPmanFX;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -13,9 +11,9 @@ import java.util.Properties;
 @UtilityClass
 public class Config {
 
-    private final Properties gitProperties = loadProperties();
+    private final Properties gitProperties = loadGitProperties();
 
-    private Properties loadProperties() {
+    private Properties loadGitProperties() {
         Properties properties = new Properties();
         try (InputStream resourceAsStream = Config.class.getResourceAsStream("/git.properties")) {
             if (resourceAsStream == null) {
@@ -68,5 +66,9 @@ public class Config {
     public String getVersion() {
         return gitProperties.getProperty("git.build.version",
                 XPmanFX.class.getPackage().getImplementationVersion());
+    }
+
+    public String getBuildNumber() {
+        return gitProperties.getProperty("git.build.number");
     }
 }
