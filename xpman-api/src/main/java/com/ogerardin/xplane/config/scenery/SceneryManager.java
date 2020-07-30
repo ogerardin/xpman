@@ -24,11 +24,11 @@ import java.util.stream.Stream;
 public class SceneryManager extends Manager<SceneryPackage> {
 
     @NonNull
+    @Getter
     private final Path sceneryFolder;
 
     @NonNull
     private final Path disabledSceneryFolder;
-
 
     @Getter(lazy = true)
     private final List<SceneryPackage> packages = loadPackages();

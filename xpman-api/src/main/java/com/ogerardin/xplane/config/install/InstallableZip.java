@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.config.aircrafts.install;
+package com.ogerardin.xplane.config.install;
 
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.Data;
@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.ZipException;
 
 @Slf4j
 @Data

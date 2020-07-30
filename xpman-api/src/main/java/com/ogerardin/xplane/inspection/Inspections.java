@@ -4,12 +4,14 @@ import one.util.streamex.StreamEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * A collection of {@link Inspection}s for a common target type.
+ * @param <T> target type of the inspections
+ */
 public class Inspections<T> implements Inspection<T> {
 
     private final List<Inspection<T>> inspections = new ArrayList<>();
@@ -35,9 +37,9 @@ public class Inspections<T> implements Inspection<T> {
     }
 
     @Override
-    public List<InspectionMessage> apply(T target) {
+    public List<InspectionMessage> inspect(T target) {
         return StreamEx.of(inspections)
-                .map(inspection -> inspection.apply(target))
+                .map(inspection -> inspection.inspect(target))
                 // short-circuit when one of the inspections return an aborting message
                 .takeWhileInclusive(messages -> messages.stream().noneMatch(InspectionMessage::isAbort))
                 .toFlatList(Function.identity());
