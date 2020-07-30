@@ -1,20 +1,16 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.google.gson.internal.Streams;
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.aircrafts.install.AircraftInstaller;
+import com.ogerardin.xplane.config.aircrafts.AircraftInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xpman.XPlaneInstanceProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
@@ -30,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -126,7 +121,8 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     private void installAircraftFromZip(Path zipfile) {
         XPlaneInstance xPlaneInstance = getPropertyValue();
 
-        List<InspectionMessage> inspectionMessages = AircraftInstaller.checkZip(xPlaneInstance, zipfile);
+        AircraftInstaller installer = new AircraftInstaller(xPlaneInstance);
+        List<InspectionMessage> inspectionMessages = installer.inspect(zipfile);
 
         final Map<Severity, List<InspectionMessage>> messagesBySeverity = inspectionMessages.stream()
                 .collect(Collectors.groupingBy(InspectionMessage::getSeverity));
@@ -159,7 +155,7 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
             return;
         }
 
-        AircraftInstaller.installZip(xPlaneInstance, zipfile);
+        installer.install(zipfile);
     }
 
 }

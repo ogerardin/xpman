@@ -1,16 +1,10 @@
-package com.ogerardin.xplane.config.aircrafts.install;
+package com.ogerardin.xplane.config.install;
 
+import com.ogerardin.xplane.config.install.InstallableZip;
 import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.util.FileUtils;
 import lombok.SneakyThrows;
-
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CheckSingleRootFolder extends CheckInspection<InstallableZip> {
 
