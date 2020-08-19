@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.panels;
+package com.ogerardin.xpman.panels.about;
 
 import com.ogerardin.xpman.platform.Platforms;
 import com.ogerardin.xpman.util.Config;
@@ -21,8 +21,6 @@ public class AboutController {
     private Text vm;
     @FXML
     private Text title;
-
-
 
     @FXML
     void initialize() {

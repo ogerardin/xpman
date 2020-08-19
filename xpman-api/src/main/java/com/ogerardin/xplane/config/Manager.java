@@ -15,10 +15,10 @@ public class Manager<T extends InspectionsProvider<T>> implements Inspection<T> 
 
     protected final XPlaneInstance xPlaneInstance;
 
-    public List<InspectionMessage> inspect(T target) {
+    public List<InspectionMessage> apply(T target) {
         Inspections<T> inspections = target.getInspections(xPlaneInstance);
         final List<InspectionMessage> inspectionMessages = inspections.stream()
-                .map(inspection -> inspection.inspect(target))
+                .map(inspection -> inspection.apply(target))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         return inspectionMessages;

@@ -60,7 +60,7 @@ public class UiAircraft {
 
     @OnSuccess("displayCheckResults(#result)")
     public List<InspectionMessage> inspect() {
-        return xPlaneInstance.getAircraftManager().inspect(aircraft);
+        return xPlaneInstance.getAircraftManager().apply(aircraft);
     }
 
 }

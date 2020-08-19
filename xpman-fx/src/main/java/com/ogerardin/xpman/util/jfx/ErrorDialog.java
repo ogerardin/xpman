@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+/**
+ * A custom dialog to display a {@link Throwable}. Includes an expandable area to display stack trace.
+ */
 @Slf4j
 @UtilityClass
 public class ErrorDialog {

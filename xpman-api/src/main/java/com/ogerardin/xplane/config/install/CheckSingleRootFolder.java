@@ -17,6 +17,7 @@ public class CheckSingleRootFolder extends CheckInspection<InstallableZip> {
                         .severity(Severity.ERROR)
                         .message("This file cannot be installed automatically because it " +
                                 "does not contain a single folder; please check instructions and install manually.")
+                        .abort(true)
                         .build()
         );
     }

@@ -12,6 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
+/**
+ * Superclass for a JavaFX app. Provides window position restore, preferences management with {@link JfxAppPrefs},
+ * quit confirmation, etc.
+ * @param <C> specific preferences class
+ */
 @Slf4j
 public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 

@@ -18,19 +18,19 @@ public class DefaultInstaller implements Installer {
     final Path targetFolder;
     final String suffix;
 
-    public List<InspectionMessage> inspect(Path zipFile) {
+    public List<InspectionMessage> apply(Path zipFile) {
         Inspections<InstallableZip> inspections = getInspections();
         var installableZip = new InstallableZip(zipFile);
-        return inspections.inspect(installableZip);
+        return inspections.apply(installableZip);
     }
 
     protected Inspections<InstallableZip> getInspections() {
         return Inspections.of(
-                    new CheckValidZip(),
-                    new CheckHasFilesWithType(suffix),
-                    new CheckDoesNotOverwriteFiles(targetFolder),
-                    new CheckSingleRootFolder()
-            );
+                new CheckValidZip(),
+                new CheckSingleRootFolder(),
+                new CheckHasFilesWithType(suffix),
+                new CheckDoesNotOverwriteFiles(targetFolder)
+        );
     }
 
     @SneakyThrows
