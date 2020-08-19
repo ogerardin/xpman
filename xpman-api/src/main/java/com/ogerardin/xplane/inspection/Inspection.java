@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface Inspection<T> {
 
-    List<InspectionMessage> inspect(T target);
+    List<InspectionMessage> apply(T target);
 }

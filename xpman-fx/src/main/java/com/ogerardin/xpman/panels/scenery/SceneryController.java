@@ -1,14 +1,20 @@
 package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.config.aircrafts.AircraftInstaller;
+import com.ogerardin.xplane.config.scenery.SceneryInstaller;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.install.InstallHelper;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
+import java.io.File;
 import java.util.stream.Collectors;
 
 public class SceneryController extends TableViewController<XPlaneInstance, UiScenery> {
@@ -83,6 +89,14 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
     }
 
     public void installScenery() {
-        //TODO
+        Window window = sceneryTable.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(window);
+        if (file == null) {
+            return;
+        }
+        XPlaneInstance xPlaneInstance = getPropertyValue();
+        SceneryInstaller installer = new SceneryInstaller(xPlaneInstance);
+        InstallHelper.checkAndInstall(file.toPath(), installer, window);
     }
 }

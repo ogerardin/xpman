@@ -15,6 +15,7 @@ public class CheckHasFilesWithType extends CheckInspection<InstallableZip> {
                 zip -> zip.getPaths().stream().anyMatch(path -> path.getFileName().toString().endsWith(suffix)),
                 () -> InspectionMessage.builder()
                         .severity(Severity.ERROR).message("No files with suffix " + suffix + " found in ZIP")
+                        .abort(true)
                         .build()
         );
     }

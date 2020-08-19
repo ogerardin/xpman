@@ -24,7 +24,7 @@ public class ReferencedTexturesInspection implements Inspection<SceneryPackage> 
 
     @SneakyThrows
     @Override
-    public List<InspectionMessage> inspect(SceneryPackage target) {
+    public List<InspectionMessage> apply(SceneryPackage target) {
         final List<Path> objFiles = FileUtils.findFiles(target.getFolder(), path -> path.getFileName().toString().endsWith(".obj"));
         List<InspectionMessage> result = new ArrayList<>();
         for (Path file : objFiles) {

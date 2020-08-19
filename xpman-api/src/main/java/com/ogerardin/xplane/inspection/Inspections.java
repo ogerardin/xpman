@@ -37,9 +37,9 @@ public class Inspections<T> implements Inspection<T> {
     }
 
     @Override
-    public List<InspectionMessage> inspect(T target) {
+    public List<InspectionMessage> apply(T target) {
         return StreamEx.of(inspections)
-                .map(inspection -> inspection.inspect(target))
+                .map(inspection -> inspection.apply(target))
                 // short-circuit when one of the inspections return an aborting message
                 .takeWhileInclusive(messages -> messages.stream().noneMatch(InspectionMessage::isAbort))
                 .toFlatList(Function.identity());

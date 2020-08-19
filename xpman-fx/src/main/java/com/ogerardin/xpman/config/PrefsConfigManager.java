@@ -47,7 +47,7 @@ public class PrefsConfigManager {
         prefsRoot.put(KEY_LAST_POSITION, GSON.toJson(config.getLastPosition()));
     }
 
-    public Preferences getPrefsRoot() {
+    private Preferences getPrefsRoot() {
         return Preferences.userNodeForPackage(XPmanFX.class);
     }
 }

@@ -19,7 +19,7 @@ public class CheckInspection<T> implements Inspection<T> {
     private final Supplier<InspectionMessage> messageSupplier;
 
     @Override
-    public List<InspectionMessage> inspect(T target) {
+    public List<InspectionMessage> apply(T target) {
         if (! check.test(target)) {
             return Collections.singletonList(messageSupplier.get());
         }

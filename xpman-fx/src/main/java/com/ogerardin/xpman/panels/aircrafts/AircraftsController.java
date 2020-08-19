@@ -2,9 +2,8 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.aircrafts.AircraftInstaller;
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.install.InstallHelper;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
@@ -12,10 +11,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 public class AircraftsController extends TableViewController<XPlaneInstance, UiAircraft> {
@@ -106,56 +102,16 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         };
     }
 
-    @SneakyThrows
-    public void installAircraft(ActionEvent actionEvent) {
+    public void installAircraft() {
+        Window window = aircraftsTable.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(null);
+        File file = fileChooser.showOpenDialog(window);
         if (file == null) {
             return;
         }
-
-        installAircraftFromZip(file.toPath());
-    }
-
-    @SneakyThrows
-    private void installAircraftFromZip(Path zipfile) {
         XPlaneInstance xPlaneInstance = getPropertyValue();
-
         AircraftInstaller installer = new AircraftInstaller(xPlaneInstance);
-        List<InspectionMessage> inspectionMessages = installer.inspect(zipfile);
-
-        final Map<Severity, List<InspectionMessage>> messagesBySeverity = inspectionMessages.stream()
-                .collect(Collectors.groupingBy(InspectionMessage::getSeverity));
-
-        final List<InspectionMessage> errors = messagesBySeverity.get(Severity.ERROR);
-
-        if (! errors.isEmpty()) {
-            final String message = errors.stream()
-                    .map(InspectionMessage::getMessage)
-                    .collect(Collectors.joining("\n"));
-            Alert alert = new Alert(AlertType.ERROR, message);
-            alert.initOwner(aircraftsTable.getScene().getWindow());
-            alert.showAndWait();
-            return;
-        }
-
-        final List<InspectionMessage> warnings = messagesBySeverity.get(Severity.WARN);
-        final List<InspectionMessage> info = messagesBySeverity.get(Severity.INFO);
-
-        final String message = Stream.concat(warnings.stream(), info.stream())
-                .map(InspectionMessage::getMessage)
-                .collect(Collectors.joining("\n"));
-
-
-        Alert alert = new Alert((! warnings.isEmpty()) ? AlertType.WARNING : AlertType.CONFIRMATION,
-                message);
-        alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
-        alert.initOwner(aircraftsTable.getScene().getWindow());
-        if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
-            return;
-        }
-
-        installer.install(zipfile);
+        InstallHelper.checkAndInstall(file.toPath(), installer, window);
     }
 
 }

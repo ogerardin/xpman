@@ -53,7 +53,7 @@ public class UiScenery {
 
     @OnSuccess("displayCheckResults(#result)")
     public List<InspectionMessage> inspect() {
-        return xPlaneInstance.getSceneryManager().inspect(sceneryPackage);
+        return xPlaneInstance.getSceneryManager().apply(sceneryPackage);
     }
 
 

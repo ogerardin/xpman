@@ -23,7 +23,7 @@ public class RecommendedPluginsInspection<T> implements Inspection<T> {
     }
 
     @Override
-    public List<InspectionMessage> inspect(T target) {
+    public List<InspectionMessage> apply(T target) {
         return Arrays.stream(wantedPluginClasses)
                 .filter(pluginClass -> ! pluginInstalled(xPlaneInstance, pluginClass))
                 .map(pluginClass -> InspectionMessage.builder()
