@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.config.install;
 
-import com.ogerardin.xplane.config.install.InstallableZip;
 import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
@@ -8,6 +7,10 @@ import com.ogerardin.xplane.inspection.Severity;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * A {@link CheckInspection} that produces a warning if the source zip would overwrite existing file(s)
+ * if extracted into the tqrget folder.
+ */
 public class CheckDoesNotOverwriteFiles extends CheckInspection<InstallableZip> {
 
     public CheckDoesNotOverwriteFiles(Path targetFolder) {

@@ -1,11 +1,13 @@
 package com.ogerardin.xplane.config.install;
 
-import com.ogerardin.xplane.config.install.InstallableZip;
 import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
 import lombok.SneakyThrows;
 
+/**
+ * A {@link CheckInspection} that produces an error if the source zip contains more than one root folder
+ */
 public class CheckSingleRootFolder extends CheckInspection<InstallableZip> {
 
     public CheckSingleRootFolder() {
