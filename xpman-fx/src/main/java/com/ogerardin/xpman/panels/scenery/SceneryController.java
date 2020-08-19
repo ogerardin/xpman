@@ -2,6 +2,7 @@ package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
@@ -62,6 +63,9 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
         enabledColumn.setCellFactory(SceneryController::booleanCellFactory);
         airportColumn.setCellFactory(SceneryController::booleanCellFactory);
         libraryColumn.setCellFactory(SceneryController::booleanCellFactory);
+
+        TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn,
+                "The rank of this scenery in scenery_pack.ini");
 
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneInstanceProperty));
     }
