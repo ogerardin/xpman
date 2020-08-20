@@ -48,7 +48,7 @@ public class UiAircraft {
     @Label("'Move to Trash'")
     @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(aircraft.acfFile.file.parent) " +
             "+ ' will be moved to the trash.\n\nPress OK to continue.'")
-    @OnSuccess("tableView.refresh()")
+    @OnSuccess("reload()")
     public void moveToTrash() {
         xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
     }

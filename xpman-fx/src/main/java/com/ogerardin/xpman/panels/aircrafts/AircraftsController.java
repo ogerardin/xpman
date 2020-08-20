@@ -109,9 +109,11 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
         if (file == null) {
             return;
         }
+
         XPlaneInstance xPlaneInstance = getPropertyValue();
         AircraftInstaller installer = new AircraftInstaller(xPlaneInstance);
         InstallHelper.checkAndInstall(file.toPath(), installer, window);
+        reload();
     }
 
 }

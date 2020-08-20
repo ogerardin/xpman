@@ -38,32 +38,38 @@ import static javafx.beans.binding.Bindings.when;
 @Slf4j
 public class TableViewController<O, T> {
 
+    private final Function<O, List<T>> loader;
+
     /** The table to update. This property must be set in the initialize method, after FXML bindings have been populated */
     @Getter
     @Setter
     private TableView<T> tableView;
 
+    /** Current value of the {@link ObservableValue} */
     @Getter(AccessLevel.PROTECTED)
     private O propertyValue;
+
 
     /**
      * Builds a {@link TableViewController}
      * @param observableValue the property on which the items displayed depend
-     * @param loader a function the provides the list of items to display based on the observable value
+     * @param loader a function that provides the list of items to display based on the observable value
      */
-    public TableViewController(
-            ObservableValue<O> observableValue,
-            Function<O, List<T>> loader) {
+    public TableViewController(ObservableValue<O> observableValue, Function<O, List<T>> loader) {
+        this.loader = loader;
 
         observableValue.addListener((observable, oldValue, newValue) -> {
             propertyValue = newValue;
-
-            LoadTask<T> loadTask = new LoadTask<>(tableView, () -> loader.apply(propertyValue));
-
-            Thread thread = new Thread(loadTask);
-            thread.setDaemon(true);
-            thread.start();
+            reload();
         });
+    }
+
+    public void reload() {
+        LoadTask<T> loadTask = new LoadTask<>(tableView, () -> loader.apply(propertyValue));
+
+        Thread thread = new Thread(loadTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
