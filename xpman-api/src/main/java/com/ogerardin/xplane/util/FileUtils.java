@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class FileUtils {
     }
 
     public void unzip(Path zipFile, Path targetFolder) throws IOException {
-        try (ZipFile zip = new ZipFile(zipFile.toFile(), ZipFile.OPEN_READ)) {
+        try (ZipFile zip = new ZipFile(zipFile.toFile(), Charset.forName("CP437"))) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry zipEntry = entries.nextElement();
@@ -56,7 +57,7 @@ public class FileUtils {
     }
 
     public Stream<Path> zipPaths(Path zipFile) throws IOException {
-        try (ZipFile zip = new ZipFile(zipFile.toFile(), ZipFile.OPEN_READ)) {
+        try (ZipFile zip = new ZipFile(zipFile.toFile(), Charset.forName("CP437"))) {
             return Collections.list(zip.entries()).stream()
                     .map(ZipEntry::getName)
                     .map(Paths::get);
