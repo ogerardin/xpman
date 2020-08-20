@@ -3,14 +3,13 @@ package com.ogerardin.xplane.config.scenery;
 import com.ogerardin.xplane.config.IllegalOperation;
 import com.ogerardin.xplane.config.Manager;
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.config.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -115,5 +114,9 @@ public class SceneryManager extends Manager<SceneryPackage> {
         sceneryPackage.setEnabled(isEnabled(sceneryPackage));
     }
 
-
+    @SneakyThrows
+    public void moveSceneryPackageToTrash(SceneryPackage sceneryPackage) {
+        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+        fileUtils.moveToTrash(new File[]{sceneryPackage.getFolder().toFile()});
+    }
 }

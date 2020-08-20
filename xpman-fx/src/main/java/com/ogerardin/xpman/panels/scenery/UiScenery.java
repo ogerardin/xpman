@@ -45,6 +45,14 @@ public class UiScenery {
         xPlaneInstance.getSceneryManager().disableSceneryPackage(sceneryPackage);
     }
 
+    @Label("'Move to Trash'")
+    @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(sceneryPackage.folder) " +
+            "+ ' will be moved to the trash.\n\nPress OK to continue.'")
+    @OnSuccess("tableView.refresh()")
+    public void moveToTrash() {
+        xPlaneInstance.getSceneryManager().moveSceneryPackageToTrash(sceneryPackage);
+    }
+
     @SuppressWarnings("unused")
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
