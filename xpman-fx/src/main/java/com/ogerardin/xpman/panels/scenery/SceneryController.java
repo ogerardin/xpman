@@ -95,8 +95,10 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
         if (file == null) {
             return;
         }
+
         XPlaneInstance xPlaneInstance = getPropertyValue();
         SceneryInstaller installer = new SceneryInstaller(xPlaneInstance);
         InstallHelper.checkAndInstall(file.toPath(), installer, window);
+        reload();
     }
 }

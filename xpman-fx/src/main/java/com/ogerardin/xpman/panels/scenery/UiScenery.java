@@ -48,7 +48,7 @@ public class UiScenery {
     @Label("'Move to Trash'")
     @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(sceneryPackage.folder) " +
             "+ ' will be moved to the trash.\n\nPress OK to continue.'")
-    @OnSuccess("tableView.refresh()")
+    @OnSuccess("reload()")
     public void moveToTrash() {
         xPlaneInstance.getSceneryManager().moveSceneryPackageToTrash(sceneryPackage);
     }
