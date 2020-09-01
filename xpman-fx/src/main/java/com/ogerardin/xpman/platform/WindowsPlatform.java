@@ -30,6 +30,12 @@ public class WindowsPlatform implements Platform {
 
     @SneakyThrows
     @Override
+    public void openFile(Path file) {
+        ProcessExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file.toString()));
+    }
+
+    @SneakyThrows
+    @Override
     public void startApp(Path app) {
         ProcessExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app.toString()));
     }

@@ -78,5 +78,9 @@ public class XPlaneInstance {
         log.info("\n\nUsing X-Plane root folder '{}'\n", xplaneRoot);
         return xplaneRoot;
     }
+
+    public Path getLogPath() {
+        return getRootFolder().resolve("Log.txt");
+    }
 }
 

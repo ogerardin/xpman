@@ -31,6 +31,12 @@ public class LinuxPlatform implements Platform {
 
     @SneakyThrows
     @Override
+    public void openFile(Path file) {
+        ProcessExecutor.exec("xdg-open", file.toString());
+    }
+
+    @SneakyThrows
+    @Override
     public void startApp(Path app) {
         ProcessExecutor.exec("sh", "-c", app.toString());
     }

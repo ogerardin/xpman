@@ -37,4 +37,10 @@ public class MacPlatform implements Platform {
     public void startApp(Path app) {
         ProcessExecutor.exec("open", app.toString());
     }
+
+    @Override
+    @SneakyThrows
+    public void openFile(Path file) {
+        ProcessExecutor.exec("open", file.toString());
+    }
 }
