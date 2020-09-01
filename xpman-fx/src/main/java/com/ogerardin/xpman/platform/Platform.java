@@ -14,6 +14,10 @@ public interface Platform {
         throw new UnsupportedOperationException();
     }
 
+    default void openFile(Path path) {
+        throw new UnsupportedOperationException();
+    }
+
     default void openUrl(URL url) {
         throw new UnsupportedOperationException();
     }

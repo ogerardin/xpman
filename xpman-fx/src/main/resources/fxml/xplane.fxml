@@ -32,13 +32,20 @@
                   </GridPane.margin>
               </Label>
               <Label fx:id="version" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-              <Hyperlink fx:id="link" onAction="#showFolder" text="..." GridPane.columnIndex="1" />
+              <Hyperlink fx:id="folder" onAction="#showFolder" text="..." GridPane.columnIndex="1" />
               <Label text="X-Plane Executable:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin></Label>
             <Label fx:id="appPath" text="..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+              <Label text="Log file:" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                  <GridPane.margin>
+                      <Insets right="10.0" />
+                  </GridPane.margin></Label>
+              <Hyperlink fx:id="log" onAction="#showLog" text="..." GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+            <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="4" />
           </GridPane>
       </center>
       <left>

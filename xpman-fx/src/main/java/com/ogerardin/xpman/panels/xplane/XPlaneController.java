@@ -24,10 +24,13 @@ public class XPlaneController {
     private Button startXPlaneButton;
 
     @FXML
-    private Hyperlink link;
+    private Hyperlink folder;
 
     @FXML
     private Label version;
+
+    @FXML
+    private Hyperlink log;
 
     public XPlaneController(XPmanFX mainController) {
         mainController.xPlaneInstanceProperty().addListener((observable, oldValue, xPlaneInstance) -> {
@@ -38,8 +41,9 @@ public class XPlaneController {
 
     private void updateDisplay(XPlaneInstance newValue) {
         version.setText(String.format("%s (%s)", newValue.getVersion(), newValue.getVariant().name()));
-        link.setText(newValue.getRootFolder().toString());
+        folder.setText(newValue.getRootFolder().toString());
         appPath.setText(newValue.getAppPath().toString());
+        log.setText(newValue.getLogPath().toString());
         // disable "start" button if current platform different from X-Plane detected platform
         startXPlaneButton.setDisable(Platform.getOSType() != newValue.getVariant().getOsType());
     }
@@ -51,5 +55,11 @@ public class XPlaneController {
 
     public void startXPlane() {
         Platforms.getCurrent().startApp(xPlaneInstance.getAppPath());
+    }
+
+    @FXML
+    private void showLog() {
+        Platforms.getCurrent().openFile(xPlaneInstance.getLogPath());
+
     }
 }
