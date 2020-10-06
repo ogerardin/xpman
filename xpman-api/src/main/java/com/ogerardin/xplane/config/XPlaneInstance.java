@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.config;
 
 import com.ogerardin.xplane.config.aircrafts.AircraftManager;
+import com.ogerardin.xplane.config.navdata.NavDataManager;
 import com.ogerardin.xplane.config.plugins.PluginManager;
 import com.ogerardin.xplane.config.scenery.SceneryManager;
 import lombok.*;
@@ -38,6 +39,11 @@ public class XPlaneInstance {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final PluginManager pluginManager = new PluginManager(this, rootFolder.resolve("Resources").resolve("plugins"));
+
+    @Getter(lazy = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private final NavDataManager navDataManager = new NavDataManager(this);
 
     public XPlaneInstance(Path rootFolder) throws InvalidConfig {
         if (!Files.isDirectory(rootFolder)) {
