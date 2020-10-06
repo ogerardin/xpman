@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.ogerardin.xpman.panels.navdata.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.navdata.NavDataController">
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <top>
+            <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <items>
+                    <Button mnemonicParsing="false" text="Analyze" />
+                    <Button mnemonicParsing="false" text="Check for updates" />
+                    <!--                    <Button mnemonicParsing="false" onAction="#install" text="Install..."/>-->
+                    <ComboBox prefWidth="150.0" promptText="Filter" />
+                </items>
+            </ToolBar>
+        </top>
+        <center>
+            <TreeTableView fx:id="treeTableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <columns>
+                    <TreeTableColumn prefWidth="173.0" text="Name">
+                        <cellValueFactory>
+                            <TreeItemPropertyValueFactory property="name" />
+                        </cellValueFactory>
+                    </TreeTableColumn>
+                </columns>
+            </TreeTableView>
+        </center>
+    </BorderPane>
+</AnchorPane>

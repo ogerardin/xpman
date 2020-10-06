@@ -16,11 +16,10 @@ import java.util.function.Supplier;
 
 @Slf4j
 @AllArgsConstructor
-public
-class LoadTask<T> extends Task<Void> {
+public class TableViewLoadTask<T> extends Task<Void> {
 
     private static final ImageView LOADING
-            = new ImageView(new Image(LoadTask.class.getResource("/loading.gif").toExternalForm()));
+            = new ImageView(new Image(TableViewLoadTask.class.getResource("/loading.gif").toExternalForm()));
 
     private final TableView<T> tableView;
     private final Supplier<List<T>> supplier;
@@ -36,8 +35,11 @@ class LoadTask<T> extends Task<Void> {
             tableView.placeholderProperty().setValue(LOADING);
             tableView.setItems(null);
         });
-        // call supplier to obtain items (this may take time) and load list
+
+        // call supplier to obtain items (this may take time) and populate table
         List<T> list = supplier.get();
+
+        // populate tableView
         Platform.runLater(() -> {
             tableView.setItems(new ObservableListWrapper<>(list));
             // reset placeholder

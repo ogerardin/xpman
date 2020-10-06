@@ -7,7 +7,6 @@ import com.ogerardin.xpman.panels.diag.DiagController;
 import com.ogerardin.xpman.util.SpelUtil;
 import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -65,7 +64,7 @@ public class TableViewController<O, T> {
     }
 
     public void reload() {
-        LoadTask<T> loadTask = new LoadTask<>(tableView, () -> loader.apply(propertyValue));
+        TableViewLoadTask<T> loadTask = new TableViewLoadTask<>(tableView, () -> loader.apply(propertyValue));
 
         Thread thread = new Thread(loadTask);
         thread.setDaemon(true);
