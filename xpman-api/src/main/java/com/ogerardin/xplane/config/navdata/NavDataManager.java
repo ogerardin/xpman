@@ -19,26 +19,41 @@ public class NavDataManager extends Manager<NavDataSet> {
 
     public List<NavDataSet> loadNavDataSets() {
         return Stream.of(
-                baseNavDataSet(),
-                updatedBaseNavDataSet()
-//                updatedApproaches(),
-//                handPlacedLocalizers(),
-//                userData()
+                simWideOverride(),
+                baseNavData(),
+                updatedBaseNavData(),
+                faaUpdatedApproaches(),
+                handPlacedLocalizers(),
+                userData()
         ).collect(Collectors.toList());
     }
 
-    private NavDataSet updatedBaseNavDataSet() {
-        return new BaseNavDataSet(
-                getXPlaneInstance().getRootFolder().resolve("Resources").resolve("default data"),
-                "Base (shipped with X-Plane)"
+    private NavDataSet simWideOverride() {
+        return new Arinc424DataSet("Sim-wide ARINC424 override", xPlaneInstance.getPaths().customData(), "earth_424.dat");
+    }
+
+    private NavDataSet baseNavData() {
+        return new XPNavDataSet("Base (shipped with X-Plane)", xPlaneInstance.getPaths().defaultData());
+    }
+
+    private NavDataSet updatedBaseNavData() {
+        return new XPNavDataSet("Updated base (supplied by third-parties)", xPlaneInstance.getPaths().customData());
+    }
+
+    private NavDataSet faaUpdatedApproaches() {
+        return new Arinc424DataSet("FAA updated approaches", xPlaneInstance.getPaths().customData(),"FAACIFP18");
+    }
+
+    private NavDataSet handPlacedLocalizers() {
+        return new XPNavDataSet("Hand-placed localizers",
+                xPlaneInstance.getPaths().customScenery().resolve("Global Airports/Earth nav data"),
+                new String[] {"earth_nav.dat"}
         );
     }
 
-    private NavDataSet baseNavDataSet() {
-        return new BaseNavDataSet(
-                getXPlaneInstance().getRootFolder().resolve("Custom data"),
-                "Updated base (supplied by third-parties)"
-        );
+    private NavDataSet userData() {
+        return new XPNavDataSet("User data", xPlaneInstance.getPaths().customData(),
+                new String[] {"user_nav.dat", "user_fix.dat"});
     }
 
 }

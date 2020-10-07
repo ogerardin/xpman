@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.panels.navdata.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
@@ -20,9 +19,14 @@
         <center>
             <TreeTableView fx:id="treeTableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <columns>
-                    <TreeTableColumn prefWidth="173.0" text="Name">
+                    <TreeTableColumn editable="false" prefWidth="400.0" sortable="false" text="Name">
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="name" />
+                        </cellValueFactory>
+                    </TreeTableColumn>
+                    <TreeTableColumn fx:id="existsColumn" editable="false" prefWidth="75.0" sortable="false" text="Exists">
+                        <cellValueFactory>
+                            <TreeItemPropertyValueFactory property="exists" />
                         </cellValueFactory>
                     </TreeTableColumn>
                 </columns>
