@@ -18,39 +18,41 @@ import java.util.stream.Stream;
 @Data
 public class XPlaneInstance {
 
-    private final Path rootFolder;
+    private final Path baseFolder;
 
     private final XPlaneVariant variant;
 
+    private final XplanePaths paths = new XplanePaths();
+
     @Getter(lazy = true)
-    private final String version = getVariant().getVersion(rootFolder);
+    private final String version = getVariant().getVersion(baseFolder);
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final AircraftManager aircraftManager = new AircraftManager(this, rootFolder.resolve("Aircraft"));
+    private final AircraftManager aircraftManager = new AircraftManager(this, paths.aircraft());
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final SceneryManager sceneryManager = new SceneryManager(this, rootFolder.resolve("Custom Scenery"));
+    private final SceneryManager sceneryManager = new SceneryManager(this, paths.customScenery());
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final PluginManager pluginManager = new PluginManager(this, rootFolder.resolve("Resources").resolve("plugins"));
+    private final PluginManager pluginManager = new PluginManager(this, paths.plugins());
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final NavDataManager navDataManager = new NavDataManager(this);
 
-    public XPlaneInstance(Path rootFolder) throws InvalidConfig {
-        if (!Files.isDirectory(rootFolder)) {
-            throw new InvalidConfig("Folder " + rootFolder + " does not exist");
+    public XPlaneInstance(Path baseFolder) throws InvalidConfig {
+        if (!Files.isDirectory(baseFolder)) {
+            throw new InvalidConfig("Folder " + baseFolder + " does not exist");
         }
-        this.variant = computeVariant(rootFolder);
-        this.rootFolder = rootFolder;
+        this.variant = computeVariant(baseFolder);
+        this.baseFolder = baseFolder;
     }
 
     private static XPlaneVariant computeVariant(Path rootFolder) {
@@ -61,7 +63,7 @@ public class XPlaneInstance {
     }
 
     public Path getAppPath() {
-        return getVariant().getAppPath(rootFolder);
+        return getVariant().getAppPath(baseFolder);
     }
 
 
@@ -77,7 +79,7 @@ public class XPlaneInstance {
                 userHome.resolve("Applications").resolve("X-Plane 11"),
                 userHome.resolve("Desktop").resolve("X-Plane 11")
         )
-                .filter(path -> Files.isDirectory(path))
+                .filter(Files::isDirectory)
                 .findFirst()
                 .orElseThrow(() -> new InvalidConfig("Failed to find an X-Plane root folder"));
 
@@ -86,7 +88,28 @@ public class XPlaneInstance {
     }
 
     public Path getLogPath() {
-        return getRootFolder().resolve("Log.txt");
+        return getBaseFolder().resolve("Log.txt");
+    }
+
+    public class XplanePaths {
+        public Path aircraft() {
+            return getBaseFolder().resolve("Aircraft");
+        }
+        public Path customData() {
+            return getBaseFolder().resolve("Custom Data");
+        }
+        public Path customScenery() {
+            return getBaseFolder().resolve("Custom Scenery");
+        }
+        public Path resources() {
+            return getBaseFolder().resolve("Resources");
+        }
+        public Path defaultData() {
+            return resources().resolve("default data");
+        }
+        public Path plugins() {
+            return resources().resolve("plugins");
+        }
     }
 }
 

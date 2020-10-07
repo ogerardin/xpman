@@ -16,4 +16,9 @@ public class NavDataGroup implements NavDataItem {
     public List<? extends NavDataItem> getChildren() {
         return items;
     }
+
+    @Override
+    public Boolean getExists() {
+        return null;
+    }
 }

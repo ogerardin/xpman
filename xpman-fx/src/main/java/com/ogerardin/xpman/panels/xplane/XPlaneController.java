@@ -41,7 +41,7 @@ public class XPlaneController {
 
     private void updateDisplay(XPlaneInstance newValue) {
         version.setText(String.format("%s (%s)", newValue.getVersion(), newValue.getVariant().name()));
-        folder.setText(newValue.getRootFolder().toString());
+        folder.setText(newValue.getBaseFolder().toString());
         appPath.setText(newValue.getAppPath().toString());
         log.setText(newValue.getLogPath().toString());
         // disable "start" button if current platform different from X-Plane detected platform

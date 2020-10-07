@@ -41,6 +41,7 @@ class TreeTableViewLoadTask extends Task<Void> {
         });
 
         TreeItem<UiNavDataItem> root = getTree(navDataManager);
+        root.expandedProperty().set(true);
 
         Platform.runLater(() -> {
             treeTableView.setRoot(root);

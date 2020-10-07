@@ -10,4 +10,7 @@ public interface NavDataItem {
     default List<? extends NavDataItem> getChildren() {
         return Collections.emptyList();
     }
+
+    Boolean getExists();
+
 }

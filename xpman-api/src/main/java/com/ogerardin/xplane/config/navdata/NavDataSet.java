@@ -5,17 +5,19 @@ import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.Data;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, NavDataItem {
 
-    private final Path folder;
-
     private final String name;
 
-    private List<NavDataFile> files;
+    private final Path folder;
+
+    private List<NavDataFile> files = new ArrayList<>();
 
     @Override
     public Inspections<NavDataSet> getInspections(XPlaneInstance xPlaneInstance) {
@@ -25,5 +27,10 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
     @Override
     public List<? extends NavDataItem> getChildren() {
         return files;
+    }
+
+    @Override
+    public Boolean getExists() {
+        return files.stream().map(NavDataFile::getFile).anyMatch(Files::exists);
     }
 }
