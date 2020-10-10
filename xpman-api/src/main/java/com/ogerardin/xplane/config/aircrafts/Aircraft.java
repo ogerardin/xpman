@@ -79,16 +79,19 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
         return getProperty("acf/_notes");
     }
 
+    public String getVersion() {
+        return getProperty("acf/_version");
+    }
+
+    public String getLatestVersion() {
+        return null;
+    }
+
     public Category getCategory() {
         return Arrays.stream(Category.values())
                 .filter(category -> Objects.equals(getProperty(category.property), "1"))
                 .findAny()
                 .orElse(null);
-    }
-
-
-    public String getLatestVersion() {
-        return null;
     }
 
     @AllArgsConstructor
@@ -106,10 +109,6 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
         SCIENCE_FICTION("acf/_is_sci_fi");
 
         final String property;
-
-    }
-    public String getVersion() {
-        return null;
     }
 
     @SuppressWarnings("unused")

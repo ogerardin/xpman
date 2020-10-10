@@ -39,8 +39,13 @@ public class ZiboMod738 extends Aircraft {
     private final String latestVersion = loadLatestVersion();
 
     public ZiboMod738(AcfFile acfFile) throws InstantiationException {
-        super(acfFile, "ZIBO Mod 737-800X");
+        super(acfFile);
         IntrospectionHelper.require(getNotes().startsWith("ZIBOmod"));
+    }
+
+    @Override
+    public String getName() {
+        return "ZIBO Mod " + getAcfName();
     }
 
     private String loadVersion() {
