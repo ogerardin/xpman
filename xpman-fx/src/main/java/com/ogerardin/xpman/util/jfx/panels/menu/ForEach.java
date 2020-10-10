@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that the annotated method is to generate one action for each item of the specified iterable.
- * The action name can be customized by using #itemLabel. The parameter values associated with a
+ * The action name can be customized by using {@link #itemLabel()}. The parameter values associated with a
  * specific item are customized by using @{@link Value} on each parameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,6 +28,6 @@ public @interface ForEach {
     String itemVariableName() default "item";
 
     /** String expression to be used as action name. Evaluated with the target object as context root and the current
-     * Iterable item in a variable named {@link ForEach#itemLabel} */
+     * Iterable item in a variable named "itemLabel" */
     String itemLabel() default "item.toString()";
 }

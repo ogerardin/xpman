@@ -37,8 +37,8 @@ public class UiScenery {
     @SuppressWarnings("unused")
     @Label("'Disable Scenery Package'")
     @EnabledIf("enabled")
-    @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(sceneryPackage.folder) " +
-            "+ ' will be moved to ' + xPlaneInstance.rootFolder.relativize(xPlaneInstance.sceneryManager.disabledSceneryFolder) " +
+    @Confirm("'The entire folder ' + xPlaneInstance.baseFolder.relativize(sceneryPackage.folder) " +
+            "+ ' will be moved to ' + xPlaneInstance.baseFolder.relativize(xPlaneInstance.sceneryManager.disabledSceneryFolder) " +
             "+ ' \n\nPress OK to continue.'")
     @OnSuccess("tableView.refresh()")
     public void disable() {
@@ -46,7 +46,7 @@ public class UiScenery {
     }
 
     @Label("'Move to Trash'")
-    @Confirm("'The entire folder ' + xPlaneInstance.rootFolder.relativize(sceneryPackage.folder) " +
+    @Confirm("'The entire folder ' + xPlaneInstance.baseFolder.relativize(sceneryPackage.folder) " +
             "+ ' will be moved to the trash.\n\nPress OK to continue.'")
     @OnSuccess("reload()")
     public void moveToTrash() {
