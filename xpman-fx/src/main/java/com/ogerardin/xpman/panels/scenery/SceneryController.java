@@ -29,7 +29,7 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
 
     @FXML
     private TableColumn<UiScenery, Boolean> libraryColumn;
-    
+
     @FXML
     private TableView<UiScenery> sceneryTable;
 
@@ -65,7 +65,7 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
             sceneryTable.getSortOrder().setAll(rankColumn);
             sceneryTable.sort();
         });
-        
+
         enabledColumn.setCellFactory(SceneryController::booleanCellFactory);
         airportColumn.setCellFactory(SceneryController::booleanCellFactory);
         libraryColumn.setCellFactory(SceneryController::booleanCellFactory);
@@ -81,7 +81,10 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
             @Override
             protected void updateItem(Boolean value, boolean empty) {
                 super.updateItem(value, empty);
-                if (value != null) {
+                if (empty || value == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
                     setText(value ? "Yes" : null);
                 }
             }

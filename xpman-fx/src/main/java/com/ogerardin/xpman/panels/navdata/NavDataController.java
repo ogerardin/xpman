@@ -2,9 +2,10 @@ package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.panels.scenery.UiScenery;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.TreeTableCell;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,14 +18,15 @@ public class NavDataController {
     private TreeTableView<UiNavDataItem> treeTableView;
 
     public NavDataController(XPmanFX mainController) {
-        mainController.xPlaneInstanceProperty().addListener(
-                (observable, oldValue, newValue) -> updateView(newValue)
+        mainController.xPlaneInstanceProperty().addListener((observable, oldValue, newValue) -> updateView(newValue)
         );
     }
 
     @FXML
     public void initialize() {
         existsColumn.setCellFactory(NavDataController::booleanCellFactory);
+
+
     }
 
     private static TreeTableCell<UiNavDataItem, Boolean> booleanCellFactory(TreeTableColumn<UiNavDataItem, Boolean> col) {

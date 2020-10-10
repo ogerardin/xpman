@@ -4,15 +4,17 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.navdata.NavDataController">
-    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.navdata.NavDataController">
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0">
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <items>
-                    <Button mnemonicParsing="false" text="Analyze" />
-                    <Button mnemonicParsing="false" text="Check for updates" />
+                    <Button mnemonicParsing="false" text="Analyze"/>
+                    <Button mnemonicParsing="false" text="Check for updates"/>
                     <!--                    <Button mnemonicParsing="false" onAction="#install" text="Install..."/>-->
-                    <ComboBox prefWidth="150.0" promptText="Filter" />
+                    <ComboBox prefWidth="150.0" promptText="Filter"/>
                 </items>
             </ToolBar>
         </top>
@@ -21,12 +23,23 @@
                 <columns>
                     <TreeTableColumn editable="false" prefWidth="400.0" sortable="false" text="Name">
                         <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="name" />
+                            <TreeItemPropertyValueFactory property="name"/>
                         </cellValueFactory>
                     </TreeTableColumn>
-                    <TreeTableColumn fx:id="existsColumn" editable="false" prefWidth="75.0" sortable="false" text="Exists">
+                    <TreeTableColumn fx:id="existsColumn" editable="false" prefWidth="75.0" sortable="false"
+                                     text="Exists">
                         <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="exists" />
+                            <TreeItemPropertyValueFactory property="exists"/>
+                        </cellValueFactory>
+                    </TreeTableColumn>
+                    <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Format">
+                        <cellValueFactory>
+                            <TreeItemPropertyValueFactory property="format"/>
+                        </cellValueFactory>
+                    </TreeTableColumn>
+                    <TreeTableColumn prefWidth="75.0" text="Version">
+                        <cellValueFactory>
+                            <TreeItemPropertyValueFactory property="version"/>
                         </cellValueFactory>
                     </TreeTableColumn>
                 </columns>

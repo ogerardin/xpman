@@ -4,6 +4,7 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
+<?import com.ogerardin.xpman.util.jfx.SpelValueFactory?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.aircrafts.AircraftsController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <center>
@@ -15,29 +16,14 @@
                             <PropertyValueFactory property="thumb" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="121.0" text="Name">
+                    <TableColumn editable="false" prefWidth="200.0" text="Name">
                         <cellValueFactory>
                             <PropertyValueFactory property="name" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn prefWidth="105.0" text="Version">
+                    <TableColumn editable="false" prefWidth="150.0" text="Studio/Author">
                         <cellValueFactory>
-                            <PropertyValueFactory property="version" />
-                        </cellValueFactory>
-                    </TableColumn>
-                    <TableColumn prefWidth="105.0" text="Latest Version">
-                        <cellValueFactory>
-                            <PropertyValueFactory property="latestVersion" />
-                        </cellValueFactory>
-                    </TableColumn>
-                    <TableColumn editable="false" prefWidth="134.0" text="Author">
-                        <cellValueFactory>
-                            <PropertyValueFactory property="author" />
-                        </cellValueFactory>
-                    </TableColumn>
-                    <TableColumn editable="false" prefWidth="150.0" text="Studio">
-                        <cellValueFactory>
-                            <PropertyValueFactory property="studio" />
+                            <SpelValueFactory expression="(studio?:'-') + '&#10;' + (author?:'-')"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="150.0" text="Manufacturer">
@@ -50,6 +36,44 @@
                             <PropertyValueFactory property="category" />
                         </cellValueFactory>
                     </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="version" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Latest Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="latestVersion" />
+                        </cellValueFactory>
+                    </TableColumn>
+<!--
+                    <TableColumn prefWidth="105.0" text="Notes">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="notes" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Description">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="description" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Callsign">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="callsign" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="ICAO code">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="icaoCode" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Tail number">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="tailNumber" />
+                        </cellValueFactory>
+                    </TableColumn>
+-->
+
                 </columns>
             </TableView>
         </center>

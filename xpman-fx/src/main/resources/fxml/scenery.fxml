@@ -15,6 +15,7 @@
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn fx:id="enabledColumn" editable="false" prefWidth="70.0" text="Enabled?">
+                        <userData>Hello</userData>
                         <cellValueFactory>
                             <PropertyValueFactory property="enabled" />
                         </cellValueFactory>
