@@ -22,6 +22,11 @@ public class ColimataConcorde extends Aircraft {
         IntrospectionHelper.require(getAcfName().equals("CONCORDE FXP"));
     }
 
+    @Override
+    public String getVersion() {
+        return getNotes();
+    }
+
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {
