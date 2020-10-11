@@ -2,21 +2,11 @@ package com.ogerardin.xpman.util.jfx;
 
 import com.ogerardin.xpman.util.SpelUtil;
 import javafx.beans.NamedArg;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.MapValueFactory;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.util.Callback;
-
-import sun.util.logging.PlatformLogger;
-import sun.util.logging.PlatformLogger.Level;
-import com.sun.javafx.property.PropertyReference;
-import com.sun.javafx.scene.control.Logging;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -27,6 +17,7 @@ import com.sun.javafx.scene.control.Logging;
  * @param <S> The type of the class contained within the TableView.items list.
  * @param <T> The type of the class contained within the TableColumn cells.
  */
+@Slf4j
 public class SpelValueFactory<S,T> implements Callback<CellDataFeatures<S,T>, ObservableValue<T>> {
 
     private final String expression;
@@ -64,12 +55,9 @@ public class SpelValueFactory<S,T> implements Callback<CellDataFeatures<S,T>, Ob
             return new ReadOnlyObjectWrapper<T>(value);
         } catch (IllegalStateException e) {
             // log the warning and move on
-            final PlatformLogger logger = Logging.getControlsLogger();
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.finest("Can not retrieve property '" + getExpression() +
-                        "' in PropertyValueFactory: " + this +
+                log.debug("Can not evaluate expression '" + getExpression() +
+                        "' in SpelValueFactory: " + this +
                         " with provided class type: " + rowData.getClass(), e);
-            }
         }
 
         return null;
