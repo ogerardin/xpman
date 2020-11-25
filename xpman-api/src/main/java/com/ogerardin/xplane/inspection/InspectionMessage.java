@@ -24,4 +24,8 @@ public class InspectionMessage {
     @Builder.Default
     private final boolean abort = false;
 
+    public boolean isError() {
+        return severity == Severity.ERROR;
+    }
+
 }

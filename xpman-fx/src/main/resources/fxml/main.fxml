@@ -5,10 +5,12 @@
 <?import javafx.scene.layout.*?>
 
 <VBox prefHeight="529.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.XPmanFX">
-    <MenuBar VBox.vgrow="NEVER">
+    <MenuBar fx:id="mainMenu" VBox.vgrow="NEVER">
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#open" text="Select X-Plane folder…" />
             <Menu fx:id="recentMenu" mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem onAction="#installWizard" text="Install Wizard..."/>
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Preferences…" />
             <SeparatorMenuItem mnemonicParsing="false" />
