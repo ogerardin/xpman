@@ -51,6 +51,7 @@ public class SpelValueFactory<S,T> implements Callback<CellDataFeatures<S,T>, Ob
 
 
         try {
+            @SuppressWarnings("unchecked")
             T value = (T) SpelUtil.eval(getExpression(), rowData);
             return new ReadOnlyObjectWrapper<T>(value);
         } catch (IllegalStateException e) {

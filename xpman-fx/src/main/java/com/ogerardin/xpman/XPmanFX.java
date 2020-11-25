@@ -2,11 +2,15 @@ package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.XPlaneVariant;
-import com.ogerardin.xpman.config.XPManPrefs;
+import com.ogerardin.xplane.config.install.DefaultInstaller;
+import com.ogerardin.xplane.config.install.Installer;
 import com.ogerardin.xpman.config.PrefsConfigManager;
+import com.ogerardin.xpman.config.XPManPrefs;
+import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,21 +22,23 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Map.Entry.comparingByKey;
-
 @Slf4j
 public class XPmanFX extends JfxApp<XPManPrefs> {
+
+    @FXML
+    private MenuBar mainMenu;
 
     @FXML
     private Menu recentMenu;
@@ -159,6 +165,13 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @Override
     protected void saveConfig(XPManPrefs config) {
         PrefsConfigManager.save(config);
+    }
+
+    @FXML
+    private void installWizard(ActionEvent actionEvent) {
+        Installer dummyInstaller = new DefaultInstaller(Paths.get("."), ".acf");
+        val wizard = new InstallWizard(dummyInstaller);
+        wizard.showAndWait();
     }
 
     private class RecentMenuItem extends MenuItem {
