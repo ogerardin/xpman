@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 /**
  * A {@link CheckInspection} that produces a warning if the source zip would overwrite existing file(s)
- * if extracted into the tqrget folder.
+ * if extracted into the target folder.
  */
 public class CheckDoesNotOverwriteFiles extends CheckInspection<InstallableZip> {
 

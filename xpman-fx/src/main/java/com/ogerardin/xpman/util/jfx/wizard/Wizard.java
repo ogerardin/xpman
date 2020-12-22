@@ -3,16 +3,15 @@ package com.ogerardin.xpman.util.jfx.wizard;
 import javafx.fxml.FXMLLoader;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
 import java.lang.reflect.Constructor;
 import java.util.stream.Stream;
 
 @Slf4j
-public class MyWizard extends Wizard {
+public class Wizard extends org.controlsfx.dialog.Wizard {
 
-    public MyWizard(String title) {
+    public Wizard(String title) {
         setTitle(title);
     }
 
@@ -27,7 +26,7 @@ public class MyWizard extends Wizard {
     @SneakyThrows
     private WizardPane loadWizardPane(String page) {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(MyWizard.class.getResource(page));
+        loader.setLocation(Wizard.class.getResource(page));
         loader.setControllerFactory(this::buildController);
         WizardPane wizardPane = loader.load();
 
