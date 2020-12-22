@@ -1,16 +1,10 @@
 package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xplane.config.install.Installer;
-import com.ogerardin.xpman.util.jfx.wizard.MyWizard;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import lombok.Data;
+import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import lombok.Getter;
-import lombok.experimental.Accessors;
 
-import java.nio.file.Path;
-
-public class InstallWizard extends MyWizard {
+public class InstallWizard extends Wizard {
 
     @Getter
     private final Installer installer;

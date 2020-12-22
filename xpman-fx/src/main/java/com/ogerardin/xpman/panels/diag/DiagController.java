@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DiagController {
 
-    private static final Label PLACEHOLDER = new Label("No message!");
+    private static final Label PLACEHOLDER = new Label("No messages");
 
     @FXML
     private TableView<InspectionMessage> tableView;

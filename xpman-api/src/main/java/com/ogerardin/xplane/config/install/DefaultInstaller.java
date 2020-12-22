@@ -26,9 +26,9 @@ public class DefaultInstaller implements Installer {
 
     protected Inspections<InstallableZip> getInspections() {
         return Inspections.of(
-                new CheckValidZip(),
-                new CheckSingleRootFolder(),
-                new CheckHasFilesWithType(suffix),
+                new CheckIsValidZip(),
+                new CheckHasSingleRootFolder(),
+                new CheckHasFilesWithType2(suffix),
                 new CheckDoesNotOverwriteFiles(targetFolder)
         );
     }

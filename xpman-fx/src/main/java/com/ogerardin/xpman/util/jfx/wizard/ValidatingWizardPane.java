@@ -26,7 +26,12 @@ public class ValidatingWizardPane extends WizardPane implements Validating {
 
     @Override
     public void onEnteringPage(Wizard wizard) {
-        wizard.invalidProperty().bind(this.invalidProperty());
+        log.debug("Entering wizard page '{}'", this.getHeaderText());
+        ReadOnlyBooleanProperty ip = this.invalidProperty();
+        wizard.invalidProperty().unbind();
+        if (ip != null) {
+            wizard.invalidProperty().bind(ip);
+        }
         if (flowListener != null) {
             flowListener.onEnteringPage(wizard);
         }
@@ -34,6 +39,7 @@ public class ValidatingWizardPane extends WizardPane implements Validating {
 
     @Override
     public void onExitingPage(Wizard wizard) {
+        log.debug("Exiting wizard page '{}'", this.getHeaderText());
         log.debug("settings: {}", wizard.getSettings());
         wizard.invalidProperty().unbind();
         if (flowListener != null) {
