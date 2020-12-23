@@ -9,5 +9,5 @@ import java.util.List;
 @FunctionalInterface
 public interface Inspection<T> {
 
-    List<InspectionMessage> apply(T target);
+    List<InspectionMessage> inspect(T target);
 }

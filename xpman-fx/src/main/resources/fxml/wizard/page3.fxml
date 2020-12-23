@@ -8,10 +8,5 @@
                       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.install.wizard.Page3Controller">
     <headerText>Summary</headerText>
     <content>
-        <Label layoutX="8.0" layoutY="20.0" prefHeight="50.0" prefWidth="231.0" text="Page 3">
-            <font>
-                <Font size="40.0"/>
-            </font>
-        </Label>
     </content>
 </ValidatingWizardPane>

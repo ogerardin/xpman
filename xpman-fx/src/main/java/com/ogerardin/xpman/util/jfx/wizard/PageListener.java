@@ -2,7 +2,7 @@ package com.ogerardin.xpman.util.jfx.wizard;
 
 import org.controlsfx.dialog.Wizard;
 
-public interface FlowListener {
+public interface PageListener {
 
     default void onEnteringPage(Wizard wizard) {}
 

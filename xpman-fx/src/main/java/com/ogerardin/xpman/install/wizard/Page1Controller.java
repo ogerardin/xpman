@@ -30,13 +30,17 @@ public class Page1Controller implements Validating {
 
     @FXML
     public void initialize() {
+        // decorate fields in error
         setErrorDecorationEnabled(true);
+
+        // don't decorate required fields
         setValidationDecorator(new GraphicValidationDecoration() {
             @Override
             protected Collection<Decoration> createRequiredDecorations(Control target) {
                 return Collections.emptyList();
             }
         });
+
         registerValidator(sourcePathField, Validator.createPredicateValidator(
                 Page1Controller::fileExists, "File does not exist!"));
     }

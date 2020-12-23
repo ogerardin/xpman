@@ -53,14 +53,16 @@ public class UiAircraft {
         xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
     }
 
+    @SuppressWarnings("unused")
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @SuppressWarnings("unused")
     @OnSuccess("displayCheckResults(#result)")
     public List<InspectionMessage> inspect() {
-        return xPlaneInstance.getAircraftManager().apply(aircraft);
+        return xPlaneInstance.getAircraftManager().inspect(aircraft);
     }
 
 }
