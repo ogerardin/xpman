@@ -8,7 +8,7 @@ import lombok.SneakyThrows;
 /**
  * A {@link CheckInspection} that produces an error if the source zip contains more than one root folder
  */
-public class CheckHasSingleRootFolder extends CheckInspection<InstallableZip> {
+public class CheckHasSingleRootFolder extends CheckInspection<InstallableArchive> {
 
     public CheckHasSingleRootFolder() {
         super(
@@ -23,7 +23,7 @@ public class CheckHasSingleRootFolder extends CheckInspection<InstallableZip> {
     }
 
     @SneakyThrows
-    private static long countRootFolders(InstallableZip zip) {
+    private static long countRootFolders(InstallableArchive zip) {
         return zip.getPaths().stream()
                 .map(path -> path.getName(0))
                 .distinct()

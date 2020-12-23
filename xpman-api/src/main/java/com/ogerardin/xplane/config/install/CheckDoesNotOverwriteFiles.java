@@ -11,7 +11,7 @@ import java.nio.file.Path;
  * A {@link CheckInspection} that produces a warning if the source zip would overwrite existing file(s)
  * if extracted into the target folder.
  */
-public class CheckDoesNotOverwriteFiles extends CheckInspection<InstallableZip> {
+public class CheckDoesNotOverwriteFiles extends CheckInspection<InstallableArchive> {
 
     public CheckDoesNotOverwriteFiles(Path targetFolder) {
         super(

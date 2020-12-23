@@ -2,7 +2,7 @@ package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.XPlaneVariant;
-import com.ogerardin.xplane.config.install.DefaultInstaller;
+import com.ogerardin.xplane.config.install.GenericInstaller;
 import com.ogerardin.xplane.config.install.Installer;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
@@ -27,7 +27,6 @@ import lombok.val;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -169,8 +168,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     private void installWizard(ActionEvent actionEvent) {
-        Installer dummyInstaller = new DefaultInstaller(Paths.get("."), ".acf");
-        val wizard = new InstallWizard(dummyInstaller);
+        Installer installer = new GenericInstaller(xPlaneInstanceProperty().getValue());
+        val wizard = new InstallWizard(installer);
         wizard.showAndWait();
     }
 

@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 public class InstallHelper {
 
     public void checkAndInstall(Path zipfile, Installer installer, Window owner) {
-        List<InspectionMessage> inspectionMessages = installer.apply(zipfile);
+        List<InspectionMessage> inspectionMessages = installer.inspect(zipfile);
 
         final Map<Severity, List<InspectionMessage>> messagesBySeverity = inspectionMessages.stream()
                 .collect(Collectors.groupingBy(InspectionMessage::getSeverity));

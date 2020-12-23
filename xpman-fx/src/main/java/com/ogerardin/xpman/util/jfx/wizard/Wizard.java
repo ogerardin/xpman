@@ -15,6 +15,12 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
         setTitle(title);
     }
 
+    /**
+     * Set this Wizard's flow as a {@link org.controlsfx.dialog.Wizard.LinearFlow} of {@link WizardPane}s
+     * instantiated from the specified FXML resources.
+     *
+     * @param pages list of FXML resources; each of them must define a WizardPane (or subclass)
+     */
     protected void setFlow(String... pages) {
         WizardPane[] wizardPanes = Stream.of(pages)
                 .map(this::loadWizardPane)
@@ -37,9 +43,9 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
                 Validating validatingController = (Validating) controller;
                 validatingWizardPane.setInvalidProperty(validatingController.invalidProperty());
             }
-            if (controller instanceof FlowListener) {
-                FlowListener flowListenerController = (FlowListener) controller;
-                validatingWizardPane.setFlowListener(flowListenerController);
+            if (controller instanceof PageListener) {
+                PageListener pageListenerController = (PageListener) controller;
+                validatingWizardPane.setPageListener(pageListenerController);
             }
         }
         return wizardPane;

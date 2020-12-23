@@ -7,11 +7,11 @@ import com.ogerardin.xplane.inspection.Severity;
 /**
  * A {@link CheckInspection} that produces an aborting error if the source zip is not a valid archive.
  */
-public class CheckIsValidZip extends CheckInspection<InstallableZip> {
+public class CheckIsValidZip extends CheckInspection<InstallableArchive> {
 
     public CheckIsValidZip() {
         super(
-                InstallableZip::isValidZip,
+                InstallableArchive::isValidArchive,
                 () -> InspectionMessage.builder()
                         .severity(Severity.ERROR)
                         .message("File is not a valid zip archive")

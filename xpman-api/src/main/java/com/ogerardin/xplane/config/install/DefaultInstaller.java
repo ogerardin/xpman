@@ -18,17 +18,17 @@ public class DefaultInstaller implements Installer {
     final Path targetFolder;
     final String suffix;
 
-    public List<InspectionMessage> apply(Path zipFile) {
-        Inspections<InstallableZip> inspections = getInspections();
-        var installableZip = new InstallableZip(zipFile);
-        return inspections.apply(installableZip);
+    public List<InspectionMessage> inspect(Path zipFile) {
+        Inspections<InstallableArchive> inspections = getInspections();
+        var installableZip = new InstallableArchive(zipFile);
+        return inspections.inspect(installableZip);
     }
 
-    protected Inspections<InstallableZip> getInspections() {
+    protected Inspections<InstallableArchive> getInspections() {
         return Inspections.of(
                 new CheckIsValidZip(),
                 new CheckHasSingleRootFolder(),
-                new CheckHasFilesWithType2(suffix),
+                new CheckHasFilesWithType(suffix),
                 new CheckDoesNotOverwriteFiles(targetFolder)
         );
     }

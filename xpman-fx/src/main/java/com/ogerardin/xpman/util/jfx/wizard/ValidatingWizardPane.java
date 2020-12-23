@@ -20,7 +20,7 @@ public class ValidatingWizardPane extends WizardPane implements Validating {
     }
 
     @Getter @Setter
-    private FlowListener flowListener;
+    private PageListener pageListener;
 
     // bind/unbind page validation support to wizard's invalidProperty
 
@@ -32,8 +32,8 @@ public class ValidatingWizardPane extends WizardPane implements Validating {
         if (ip != null) {
             wizard.invalidProperty().bind(ip);
         }
-        if (flowListener != null) {
-            flowListener.onEnteringPage(wizard);
+        if (pageListener != null) {
+            pageListener.onEnteringPage(wizard);
         }
     }
 
@@ -42,8 +42,8 @@ public class ValidatingWizardPane extends WizardPane implements Validating {
         log.debug("Exiting wizard page '{}'", this.getHeaderText());
         log.debug("settings: {}", wizard.getSettings());
         wizard.invalidProperty().unbind();
-        if (flowListener != null) {
-            flowListener.onExitingPage(wizard);
+        if (pageListener != null) {
+            pageListener.onExitingPage(wizard);
         }
     }
 }
