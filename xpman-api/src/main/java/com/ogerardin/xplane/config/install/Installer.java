@@ -6,5 +6,13 @@ import java.nio.file.Path;
 
 public interface Installer extends Inspection<Path> {
 
-    void install(Path source);
+    default void install(Path source) {
+        install(source, null);
+    }
+
+    void install(Path source, ProgressListener progressListener);
+
+    interface ProgressListener {
+        void installing(double percent, String message);
+    }
 }

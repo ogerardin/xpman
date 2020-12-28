@@ -2,11 +2,17 @@
 
 <?import com.ogerardin.xpman.util.jfx.wizard.ValidatingWizardPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.VBox?>
 
-<ValidatingWizardPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171"
-                      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.install.wizard.Page3Controller">
-    <headerText>Summary</headerText>
-    <content>
-    </content>
+<ValidatingWizardPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.install.wizard.Page3Controller">
+    <headerText>Installing...</headerText>
+   <content>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Label fx:id="fileLabel" text="&lt;file&gt;" />
+            <ProgressBar fx:id="progress" prefWidth="600.0" progress="0.0" />
+         </children>
+      </VBox>
+   </content>
 </ValidatingWizardPane>

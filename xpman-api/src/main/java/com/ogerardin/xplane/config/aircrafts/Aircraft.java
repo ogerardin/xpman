@@ -48,7 +48,7 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
     public String getAcfName() {
         return Optional.ofNullable(getProperty("acf/_name"))
-                .orElse(getAcfFile().getFile().getParent().getFileName().toString());
+                .orElse(getAcfFile().getFile().getFileName().toString().replace(".acf", ""));
     }
 
     public String getDescription() {

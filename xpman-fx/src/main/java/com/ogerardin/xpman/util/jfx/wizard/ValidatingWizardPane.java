@@ -8,7 +8,7 @@ import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
 /**
- * Inspired by from https://github.com/controlsfx/controlsfx/issues/604#issuecomment-450456446
+ * Inspired by  https://github.com/controlsfx/controlsfx/issues/604#issuecomment-450456446
  */
 @Slf4j
 public class ValidatingWizardPane extends WizardPane implements Validating {
@@ -22,28 +22,26 @@ public class ValidatingWizardPane extends WizardPane implements Validating {
     @Getter @Setter
     private PageListener pageListener;
 
-    // bind/unbind page validation support to wizard's invalidProperty
-
     @Override
     public void onEnteringPage(Wizard wizard) {
-        log.debug("Entering wizard page '{}'", this.getHeaderText());
+        log.debug("Entering wizard page '{}'", this);
         ReadOnlyBooleanProperty ip = this.invalidProperty();
         wizard.invalidProperty().unbind();
         if (ip != null) {
             wizard.invalidProperty().bind(ip);
         }
         if (pageListener != null) {
-            pageListener.onEnteringPage(wizard);
+            pageListener.onEnteringPage(this);
         }
     }
 
     @Override
     public void onExitingPage(Wizard wizard) {
-        log.debug("Exiting wizard page '{}'", this.getHeaderText());
+        log.debug("Exiting wizard page '{}'", this);
         log.debug("settings: {}", wizard.getSettings());
         wizard.invalidProperty().unbind();
         if (pageListener != null) {
-            pageListener.onExitingPage(wizard);
+            pageListener.onExitingPage(this);
         }
     }
 }

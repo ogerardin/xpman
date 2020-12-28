@@ -1,6 +1,8 @@
 package com.ogerardin.xpman.util.jfx.wizard;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ButtonBar;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
@@ -61,6 +63,13 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
             // otherwise use no-arg constructor
             return type.newInstance();
         }
+    }
+
+    public static void disableButton(WizardPane wizardPane, ButtonBar.ButtonData buttonData, boolean disabled) {
+        wizardPane.getButtonTypes().stream()
+                .filter(buttonType -> buttonType.getButtonData().equals(buttonData))
+                .map(wizardPane::lookupButton)
+                .forEach(node -> Platform.runLater(() -> node.setDisable(disabled)));
     }
 
 }
