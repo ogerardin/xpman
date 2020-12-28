@@ -1,24 +1,19 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.aircrafts.AircraftInstaller;
+import com.ogerardin.xplane.config.install.InstallType;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.install.InstallHelper;
+import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
-import javafx.stage.Window;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -103,16 +98,9 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     }
 
     public void installAircraft() {
-        Window window = aircraftsTable.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(window);
-        if (file == null) {
-            return;
-        }
-
         XPlaneInstance xPlaneInstance = getPropertyValue();
-        AircraftInstaller installer = new AircraftInstaller(xPlaneInstance);
-        InstallHelper.checkAndInstall(file.toPath(), installer, window);
+        InstallWizard wizard = new InstallWizard(xPlaneInstance, InstallType.AIRCRAFT);
+        wizard.showAndWait();
         reload();
     }
 

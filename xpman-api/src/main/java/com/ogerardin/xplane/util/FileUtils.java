@@ -36,31 +36,4 @@ public class FileUtils {
         return files;
     }
 
-    public void unzip(Path zipFile, Path targetFolder) throws IOException {
-        try (ZipFile zip = new ZipFile(zipFile.toFile(), Charset.forName("CP437"))) {
-            Enumeration<? extends ZipEntry> entries = zip.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry zipEntry = entries.nextElement();
-                String entryName = zipEntry.getName();
-                Path target = targetFolder.resolve(entryName);
-                if (! target.startsWith(targetFolder)) {
-                    throw new IOException("Entry outside of target directory: " + target);
-                }
-                if (zipEntry.isDirectory()) {
-                    Files.createDirectories(target);
-                } else {
-                    InputStream inputStream = zip.getInputStream(zipEntry);
-                    Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
-        }
-    }
-
-    public Stream<Path> zipPaths(Path zipFile) throws IOException {
-        try (ZipFile zip = new ZipFile(zipFile.toFile(), Charset.forName("CP437"))) {
-            return Collections.list(zip.entries()).stream()
-                    .map(ZipEntry::getName)
-                    .map(Paths::get);
-        }
-    }
 }

@@ -1,16 +1,19 @@
-package com.ogerardin.xplane.config.install;
+package com.ogerardin.xplane.config.install.check;
 
-import com.ogerardin.xplane.config.scenery.SceneryPackage;
+import com.ogerardin.xplane.config.install.InstallType;
+import com.ogerardin.xplane.config.install.InstallableArchive;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
 import lombok.Data;
 
-import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 
 @Data
 public class CheckIsInstallableType implements Inspection<InstallableArchive> {
+
+    private final InstallType requiredInstallType;
 
     @Override
     public List<InspectionMessage> inspect(InstallableArchive zip) {
@@ -35,23 +38,26 @@ public class CheckIsInstallableType implements Inspection<InstallableArchive> {
             );
         }
 
-        InstallType installType = candidateTypes.iterator().next();
-        return Collections.singletonList(InspectionMessage.builder()
-                        .severity(Severity.INFO).message("Archive type identified as: " + installType)
+        InstallType actualInstallType = candidateTypes.iterator().next();
+
+        List<InspectionMessage> messages = new ArrayList<>();
+        messages.add(
+                InspectionMessage.builder()
+                        .severity(Severity.INFO).message("Archive type identified as: " + actualInstallType)
                         .build()
         );
 
-    }
+        if (requiredInstallType != null && requiredInstallType != actualInstallType) {
+            messages.add(
+                    InspectionMessage.builder()
+                            .severity(Severity.ERROR).message("Was expecting type: " + requiredInstallType)
+                            .abort(true)
+                            .build()
+            );
+        }
 
-    private Optional<InstallType> getInstallTypeMarker(Path path) {
-        if (path.getFileName().toString().endsWith(".acf")) {
-            return Optional.of(InstallType.AIRCRAFT);
-        }
-        if (path.getFileName().toString().equals(SceneryPackage.EARTH_NAV_DATA)
-                && path.getNameCount() == 2) {
-            return Optional.of(InstallType.SCENERY);
-        }
-        return Optional.empty();
+        return messages;
+
     }
 
 }

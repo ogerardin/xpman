@@ -1,45 +1,65 @@
 package com.ogerardin.xplane.config.install;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.config.install.check.CheckHasSingleRootFolder;
+import com.ogerardin.xplane.config.install.check.CheckIsInstallableType;
+import com.ogerardin.xplane.config.install.check.CheckIsValidArchive;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.var;
+import lombok.*;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * An {@link Installer} that is able to process any type of X-Plane installation archive.
  */
-@RequiredArgsConstructor
-public class GenericInstaller implements Installer {
+public class GenericInstaller {
 
     private final XPlaneInstance xPlane;
 
-    public List<InspectionMessage> inspect(Path zipFile) {
-        Inspections<InstallableArchive> inspections = getInspections();
-        var installableZip = new InstallableArchive(zipFile);
-        return inspections.inspect(installableZip);
+    @NonNull
+    private final InstallableArchive installableArchive;
+
+    private final InstallType installType;
+
+    @Getter(lazy = true)
+    private final Set<InstallType> candidateTypes = computeCandidateTypes();
+
+    private Set<InstallType> computeCandidateTypes() {
+        return InstallType.candidateTypes(installableArchive);
     }
 
-    protected Inspections<InstallableArchive> getInspections() {
-        return Inspections.of(
-                new CheckIsValidZip(),
-                new CheckHasSingleRootFolder(),
-                new CheckIsInstallableType()
+    public GenericInstaller(XPlaneInstance xPlane, Path archive) {
+        this(xPlane, archive, null);
+    }
+
+    public GenericInstaller(XPlaneInstance xPlane, Path archive, InstallType installType) {
+        this.xPlane = xPlane;
+        this.installableArchive = new InstallableZip(archive);
+        this.installType = installType;
+    }
+
+    public List<InspectionMessage> inspect() {
+        return inspectArchive();
+    }
+
+    private List<InspectionMessage> inspectArchive() {
+        Inspections<InstallableArchive> archiveInspections = Inspections.of(
+                new CheckIsValidArchive(),
+                new CheckIsInstallableType(installType),
+                new CheckHasSingleRootFolder()
         );
+        return archiveInspections.inspect(installableArchive);
     }
 
     @SneakyThrows
-    public void install(Path zipFile) {
-        var installableZip = new InstallableArchive(zipFile);
-        //FIXME don't call candidateTypes again... pass ZIP file in constructor?
-        InstallType installType = InstallType.candidateTypes(installableZip).iterator().next();
-
+    public void install(Installer.ProgressListener progressListener) {
+        InstallType installType = getCandidateTypes().iterator().next();
         Path targetFolder = targetFolder(installType);
-        installableZip.installTo(targetFolder);
+        installableArchive.installTo(targetFolder, progressListener);
     }
 
     private Path targetFolder(InstallType installType) {

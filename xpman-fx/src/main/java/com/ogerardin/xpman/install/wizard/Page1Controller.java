@@ -33,7 +33,7 @@ public class Page1Controller implements Validating {
         // decorate fields in error
         setErrorDecorationEnabled(true);
 
-        // don't decorate required fields
+        // don't decorate required fields (because current decoration makes the field look invalid...)
         setValidationDecorator(new GraphicValidationDecoration() {
             @Override
             protected Collection<Decoration> createRequiredDecorations(Control target) {

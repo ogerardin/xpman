@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.config.install.Installer;
+import com.ogerardin.xplane.config.install.GenericInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xpman.panels.diag.SeverityIconTableCell;
@@ -14,16 +14,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.controlsfx.dialog.Wizard;
+import org.controlsfx.dialog.WizardPane;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 public class Page2Controller implements Validating, PageListener {
+
+    private final InstallWizard wizard;
 
     private final BooleanProperty invalidProperty = new SimpleBooleanProperty();
 
@@ -38,29 +41,23 @@ public class Page2Controller implements Validating, PageListener {
     @FXML
     private TableView<InspectionMessage> tableView;
 
-    @NonNull
-    private final Installer installer;
-
-    public Page2Controller(InstallWizard installWizard) {
-        this.installer = installWizard.getInstaller();
-    }
-
     @FXML
     public void initialize() {
         tableView.setPlaceholder(new Label("No message to display"));
-
         severityColumn.setCellFactory(column -> new SeverityIconTableCell<>());
     }
 
-
     @Override
-    public void onEnteringPage(Wizard wizard) {
+    public void onEnteringPage(WizardPane wizardPane) {
         // get the source file
         String sourcePath = (String) wizard.getSettings().get("sourcePathField");
         Path source = Paths.get(sourcePath);
 
+        GenericInstaller installer = new GenericInstaller(wizard.getXPlaneInstance(), source, wizard.getInstallType());
+        wizard.setInstaller(installer);
+
         // perform inspection and display results
-        List<InspectionMessage> messages = installer.inspect(source);
+        List<InspectionMessage> messages = installer.inspect();
         tableView.setItems(new ObservableListWrapper<>(messages));
 
         // validate page (and enable 'Next' button) only if there is no message with severity ERROR

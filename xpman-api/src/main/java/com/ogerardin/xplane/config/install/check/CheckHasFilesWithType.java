@@ -1,5 +1,7 @@
-package com.ogerardin.xplane.config.install;
+package com.ogerardin.xplane.config.install.check;
 
+import com.ogerardin.xplane.config.install.InstallableArchive;
+import com.ogerardin.xplane.config.install.InstallableZip;
 import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;

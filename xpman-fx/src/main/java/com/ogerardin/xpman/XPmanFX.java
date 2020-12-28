@@ -2,8 +2,6 @@ package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
 import com.ogerardin.xplane.config.XPlaneVariant;
-import com.ogerardin.xplane.config.install.GenericInstaller;
-import com.ogerardin.xplane.config.install.Installer;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -168,8 +166,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     private void installWizard(ActionEvent actionEvent) {
-        Installer installer = new GenericInstaller(xPlaneInstanceProperty().getValue());
-        val wizard = new InstallWizard(installer);
+        InstallWizard wizard = new InstallWizard(xPlaneInstanceProperty().getValue());
         wizard.showAndWait();
     }
 

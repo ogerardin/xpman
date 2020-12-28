@@ -18,14 +18,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 
-    private final Pattern FILE_PATTERN = Pattern.compile(".+-(([A-Z]{4})\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
+    private final Pattern FILE_PATTERN = Pattern.compile(".+-(([A-Z\\-]+)\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
 
     @Getter(lazy = true)
     private final String version = loadVersion();
 
     public XpfrAircraft(AcfFile acfFile) throws InstantiationException {
         super(acfFile);
-        IntrospectionHelper.require(getStudio().equals("XPFR"));
+        // not all XPFR aircrafts have "XPFR" as studio :(
+        //        IntrospectionHelper.require(getStudio().equals("XPFR"));
+        IntrospectionHelper.require(getVersion() != null);
     }
 
     @SneakyThrows
