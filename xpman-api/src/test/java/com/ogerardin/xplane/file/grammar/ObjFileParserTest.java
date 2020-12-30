@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneInstance;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import org.parboiled.Parboiled;
 import org.parboiled.errors.ParseError;
 import org.parboiled.parserunners.AbstractParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
-import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.parserunners.TracingParseRunner;
 import org.parboiled.support.ParsingResult;
 

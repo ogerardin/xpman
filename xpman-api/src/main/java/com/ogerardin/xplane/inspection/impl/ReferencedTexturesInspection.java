@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.inspection.impl;
 
-import com.ogerardin.xplane.config.scenery.SceneryPackage;
+import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.file.ObjFile;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
 import com.ogerardin.xplane.inspection.Inspection;

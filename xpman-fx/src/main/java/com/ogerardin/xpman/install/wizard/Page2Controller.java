@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.config.install.GenericInstaller;
+import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xpman.panels.diag.SeverityIconTableCell;

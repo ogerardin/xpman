@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.install.InstallType;
+import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;

@@ -3,7 +3,7 @@ package com.ogerardin.xpman.panels.plugins;
 import com.ogerardin.xpman.util.jfx.panels.menu.ForEach;
 import com.ogerardin.xpman.util.jfx.panels.menu.Label;
 import com.ogerardin.xpman.util.jfx.panels.menu.Value;
-import com.ogerardin.xplane.config.plugins.Plugin;
+import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xpman.platform.Platforms;
 import lombok.Data;
 import lombok.experimental.Delegate;

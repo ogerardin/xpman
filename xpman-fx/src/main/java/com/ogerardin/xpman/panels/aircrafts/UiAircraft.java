@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.aircrafts.Aircraft;
+import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xpman.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.panels.menu.*;

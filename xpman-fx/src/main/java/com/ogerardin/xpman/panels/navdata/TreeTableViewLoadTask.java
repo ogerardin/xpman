@@ -1,9 +1,9 @@
 package com.ogerardin.xpman.panels.navdata;
 
-import com.ogerardin.xplane.config.navdata.NavDataGroup;
-import com.ogerardin.xplane.config.navdata.NavDataItem;
-import com.ogerardin.xplane.config.navdata.NavDataManager;
-import com.ogerardin.xplane.config.navdata.NavDataSet;
+import com.ogerardin.xplane.navdata.NavDataGroup;
+import com.ogerardin.xplane.navdata.NavDataItem;
+import com.ogerardin.xplane.navdata.NavDataManager;
+import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xpman.util.jfx.panels.TableViewLoadTask;
 import javafx.application.Platform;
 import javafx.concurrent.Task;

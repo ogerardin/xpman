@@ -1,8 +1,8 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.install.GenericInstaller;
-import com.ogerardin.xplane.config.install.InstallType;
+import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.install.GenericInstaller;
+import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import lombok.AccessLevel;
 import lombok.Getter;

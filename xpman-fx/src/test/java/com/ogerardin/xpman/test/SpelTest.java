@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.test;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.aircrafts.Aircraft;
+import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.Maps;
 import org.junit.jupiter.api.Disabled;

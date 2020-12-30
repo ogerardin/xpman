@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.xplane;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.platform.Platforms;
 import com.sun.jna.Platform;

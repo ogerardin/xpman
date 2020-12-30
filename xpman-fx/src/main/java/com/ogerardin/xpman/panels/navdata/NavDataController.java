@@ -1,9 +1,8 @@
 package com.ogerardin.xpman.panels.navdata;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import lombok.extern.slf4j.Slf4j;
