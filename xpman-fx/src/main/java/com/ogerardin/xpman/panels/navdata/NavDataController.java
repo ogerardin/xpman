@@ -22,31 +22,7 @@ public class NavDataController {
         );
     }
 
-    @FXML
-    public void initialize() {
-        existsColumn.setCellFactory(NavDataController::booleanCellFactory);
-
-
-    }
-
-    private static TreeTableCell<UiNavDataItem, Boolean> booleanCellFactory(TreeTableColumn<UiNavDataItem, Boolean> col) {
-        return new TreeTableCell<UiNavDataItem, Boolean>() {
-            @Override
-            protected void updateItem(Boolean value, boolean empty) {
-                super.updateItem(value, empty);
-                if (empty || value == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(value ? "Yes" : null);
-                }
-            }
-        };
-    }
-
-
     private void updateView(XPlaneInstance xPlaneInstance) {
-
         TreeTableViewLoadTask loadTask = new TreeTableViewLoadTask(treeTableView, xPlaneInstance.getNavDataManager());
 
         Thread thread = new Thread(loadTask);

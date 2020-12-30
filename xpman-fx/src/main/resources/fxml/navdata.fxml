@@ -4,6 +4,7 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
+<?import com.ogerardin.xpman.util.jfx.BooleanTreeCellFactory?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.navdata.NavDataController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -31,6 +32,9 @@
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="exists"/>
                         </cellValueFactory>
+                        <cellFactory>
+                            <BooleanTreeCellFactory />
+                        </cellFactory>
                     </TreeTableColumn>
                     <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Format">
                         <cellValueFactory>
