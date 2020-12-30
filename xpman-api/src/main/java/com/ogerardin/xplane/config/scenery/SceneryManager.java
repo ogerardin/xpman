@@ -30,9 +30,6 @@ public class SceneryManager extends Manager<SceneryPackage> {
     private final Path disabledSceneryFolder;
 
     @Getter(lazy = true)
-    private final List<SceneryPackage> packages = loadPackages();
-
-    @Getter(lazy = true)
     private final SceneryPacksIniFile sceneryPacksIniFile = loadSceneryPacksIniFile();
 
     public SceneryManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path sceneryFolder) {
@@ -42,7 +39,7 @@ public class SceneryManager extends Manager<SceneryPackage> {
     }
 
     @SneakyThrows
-    private List<SceneryPackage> loadPackages() {
+    public List<SceneryPackage> loadPackages() {
         return Stream.of(
                 getSceneryPackages(sceneryFolder),
                 getSceneryPackages(disabledSceneryFolder)

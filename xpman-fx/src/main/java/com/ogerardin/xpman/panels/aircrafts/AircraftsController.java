@@ -41,7 +41,7 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     public AircraftsController(XPmanFX mainController) {
         super(
                 mainController.xPlaneInstanceProperty(),
-                xPlaneInstance -> xPlaneInstance.getAircraftManager().getAircrafts().stream()
+                xPlaneInstance -> xPlaneInstance.getAircraftManager().loadAircrafts().stream()
                         .map(aircraft -> new UiAircraft(aircraft, xPlaneInstance))
                         .collect(Collectors.toList())
         );
