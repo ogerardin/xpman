@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.panels.navdata;
 
-import com.ogerardin.xplane.config.navdata.NavDataItem;
-import com.ogerardin.xplane.config.navdata.NavDataSet;
+import com.ogerardin.xplane.navdata.NavDataItem;
 import lombok.Data;
 import lombok.experimental.Delegate;
 

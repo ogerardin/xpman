@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.config.install.GenericInstaller;
+import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -9,11 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.ogerardin.xpman.util.jfx.wizard.Wizard.disableButton;
 

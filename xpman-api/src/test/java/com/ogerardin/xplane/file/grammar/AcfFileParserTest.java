@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

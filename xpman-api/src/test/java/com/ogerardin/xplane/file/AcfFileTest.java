@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneInstance;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

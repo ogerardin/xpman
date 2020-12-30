@@ -1,6 +1,6 @@
 package com.ogerardin.util;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneInstance;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;

@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.inspection.impl;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.plugins.Plugin;
+import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;

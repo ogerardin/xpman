@@ -2,8 +2,8 @@ package com.ogerardin.xpman.guaranafx.main;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
-import com.ogerardin.xplane.config.InvalidConfig;
-import com.ogerardin.xplane.config.XPlaneInstance;
+import com.ogerardin.xplane.InvalidConfig;
+import com.ogerardin.xplane.XPlaneInstance;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

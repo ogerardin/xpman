@@ -1,7 +1,7 @@
 package com.ogerardin.xpman;
 
-import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.XPlaneVariant;
+import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -21,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
