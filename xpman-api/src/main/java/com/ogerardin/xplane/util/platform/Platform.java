@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.platform;
+package com.ogerardin.xplane.util.platform;
 
 import java.net.URL;
 import java.nio.file.Path;

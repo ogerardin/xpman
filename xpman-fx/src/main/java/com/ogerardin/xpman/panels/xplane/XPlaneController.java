@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlaneInstance;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.platform.Platforms;
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.sun.jna.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

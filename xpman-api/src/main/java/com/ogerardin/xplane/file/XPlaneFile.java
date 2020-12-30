@@ -1,7 +1,6 @@
 package com.ogerardin.xplane.file;
 
 import com.ogerardin.xplane.file.data.XPlaneFileData;
-import com.ogerardin.xplane.file.grammar.AcfFileParser;
 import com.ogerardin.xplane.file.grammar.XPlaneFileParser;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +8,12 @@ import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.parserunners.AbstractParseRunner;
 import org.parboiled.parserunners.BasicParseRunner;
-import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.ParsingResult;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -26,7 +26,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Data
 @Slf4j
 @RequiredArgsConstructor
-public abstract class XPlaneDataFile<P extends XPlaneFileParser, R extends XPlaneFileData> {
+public abstract class XPlaneFile<P extends XPlaneFileParser, R extends XPlaneFileData> {
 
     private static final Class<BasicParseRunner> DEFAULT_PARSER_RUNNER_CLASS = BasicParseRunner.class;
 
@@ -34,8 +34,10 @@ public abstract class XPlaneDataFile<P extends XPlaneFileParser, R extends XPlan
     private final Path file;
 
     /** Class of parser required to parse this file */
+    @NonNull
     private final Class<P> parserClass;
 
+    @NonNull
     private final Class<? extends AbstractParseRunner> parserRunnerClass;
 
     /** Result of the parsing */
@@ -43,7 +45,7 @@ public abstract class XPlaneDataFile<P extends XPlaneFileParser, R extends XPlan
     @ToString.Exclude
     private final R data = parse();
 
-    public XPlaneDataFile(Path file, Class<P> parserClass) {
+    public XPlaneFile(Path file, Class<P> parserClass) {
         this(file, parserClass, DEFAULT_PARSER_RUNNER_CLASS);
     }
 
@@ -52,22 +54,22 @@ public abstract class XPlaneDataFile<P extends XPlaneFileParser, R extends XPlan
     }
 
 
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
+    @SuppressWarnings({"ConstantConditions"})
     @SneakyThrows
     private R parse()  {
+        Objects.requireNonNull(file);
         log.debug("Parsing file {}", file);
-        P parser = Parboiled.createParser(parserClass);
         byte[] bytes = Files.readAllBytes(file);
         String fileContents = new String(bytes, UTF_8);
-//        ParsingResult<Object> result = new ReportingParseRunner<>(parser.XPlaneFile()).run(fileContents);
-//        ParsingResult<Object> result = new BasicParseRunner<>(parser.XPlaneFile()).run(fileContents);
+        return parse(fileContents);
+    }
+
+    @SuppressWarnings("unchecked")
+    public R parse(String contents) throws InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
+        P parser = Parboiled.createParser(parserClass);
         final AbstractParseRunner<Object> parserRunner = parserRunnerClass.getConstructor(Rule.class).newInstance(parser.XPlaneFile());
-        ParsingResult<Object> result = parserRunner.run(fileContents);
-//        log.debug("Done parsing {}", file);
-        //noinspection unchecked
+        ParsingResult<Object> result = parserRunner.run(contents);
         return (R) result.resultValue;
-
-
     }
 
 }

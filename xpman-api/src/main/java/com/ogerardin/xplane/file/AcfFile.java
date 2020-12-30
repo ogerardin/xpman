@@ -11,7 +11,7 @@ import java.util.Map;
  * Represents a parsed .acf file
  */
 @ToString(onlyExplicitlyIncluded = true)
-public class AcfFile extends XPlaneDataFile<AcfFileParser, AcfFileData> {
+public class AcfFile extends XPlaneFile<AcfFileParser, AcfFileData> {
 
     public AcfFile(Path file) {
         super(file, AcfFileParser.class);

@@ -4,7 +4,7 @@ import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import com.ogerardin.xplane.XPlaneInstance;
 import com.ogerardin.xplane.scenery.SceneryPackage;
-import com.ogerardin.xpman.platform.Platforms;
+import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
@@ -20,7 +20,7 @@ public class UiScenery {
     private final XPlaneInstance xPlaneInstance;
 
     @SuppressWarnings("unused")
-    @Label("T(com.ogerardin.xpman.platform.Platforms).getCurrent().revealLabel()")
+    @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(sceneryPackage.getFolder());
     }
