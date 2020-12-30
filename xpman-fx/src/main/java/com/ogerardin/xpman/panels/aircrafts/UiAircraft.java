@@ -36,9 +36,10 @@ public class UiAircraft {
     @SuppressWarnings("unused")
     @Label("'Disable Aircraft'")
     @EnabledIf("enabled")
-    @Confirm("'The entire folder ' + xPlaneInstance.baseFolder.relativize(aircraft.acfFile.file.parent) " +
-            "+ ' will be moved to ' + xPlaneInstance.baseFolder.relativize(xPlaneInstance.aircraftManager.disabledAircraftFolder) " +
-            "+ ' \n\nPress OK to continue.'")
+    @Confirm("'The entire folder <' + xPlaneInstance.baseFolder.relativize(aircraft.acfFile.file.parent) " +
+            "+ '> will be moved to <' + xPlaneInstance.baseFolder.relativize(xPlaneInstance.aircraftManager.disabledAircraftFolder) " +
+            "+ '>\nThis will impact other aircrafts contained in the same folder (if there are).'" +
+            "+ '\n\nPress OK to continue.'")
     @OnSuccess("tableView.refresh()")
     public void disable() {
         xPlaneInstance.getAircraftManager().disableAircraft(aircraft);
@@ -46,8 +47,10 @@ public class UiAircraft {
 
     @SuppressWarnings("unused")
     @Label("'Move to Trash'")
-    @Confirm("'The entire folder ' + xPlaneInstance.baseFolder.relativize(aircraft.acfFile.file.parent) " +
-            "+ ' will be moved to the trash.\n\nPress OK to continue.'")
+    @Confirm("'The entire folder <' + xPlaneInstance.baseFolder.relativize(aircraft.acfFile.file.parent) " +
+            "+ '> will be moved to the trash." +
+            "+ '\nThis will impact other aircrafts contained in the same folder (if there are).'" +
+            "+ '\n\nPress OK to continue.'")
     @OnSuccess("reload()")
     public void moveToTrash() {
         xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
