@@ -1,16 +1,15 @@
 package com.ogerardin.xplane.config.install;
 
 import com.ogerardin.xplane.config.XPlaneInstance;
-import com.ogerardin.xplane.config.install.check.CheckHasSingleRootFolder;
-import com.ogerardin.xplane.config.install.check.CheckIsInstallableType;
-import com.ogerardin.xplane.config.install.check.CheckIsValidArchive;
+import com.ogerardin.xplane.config.install.inspections.CheckHasSingleRootFolder;
+import com.ogerardin.xplane.config.install.inspections.CheckIsInstallableType;
+import com.ogerardin.xplane.config.install.inspections.CheckIsValidArchive;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
 import lombok.*;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
