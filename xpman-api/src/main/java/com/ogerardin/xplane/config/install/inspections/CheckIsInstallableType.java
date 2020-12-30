@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.config.install.check;
+package com.ogerardin.xplane.config.install.inspections;
 
 import com.ogerardin.xplane.config.install.InstallType;
 import com.ogerardin.xplane.config.install.InstallableArchive;
@@ -8,7 +8,6 @@ import com.ogerardin.xplane.inspection.Severity;
 import lombok.Data;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 @Data
 public class CheckIsInstallableType implements Inspection<InstallableArchive> {
