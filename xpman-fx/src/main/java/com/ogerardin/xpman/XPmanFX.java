@@ -5,6 +5,7 @@ import com.ogerardin.xplane.config.XPlaneVariant;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
@@ -24,7 +25,10 @@ import lombok.val;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -133,6 +137,10 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void initialize() {
         updateRecent();
+        XPManPrefs config = getConfig();
+        if (config.getLastXPlanePath() != null) {
+            Platform.runLater(() -> openXPlane(Paths.get(config.getLastXPlanePath()).toFile()));
+        }
     }
 
     private void updateRecent() {
@@ -168,6 +176,21 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private void installWizard(ActionEvent actionEvent) {
         InstallWizard wizard = new InstallWizard(xPlaneInstanceProperty().getValue());
         wizard.showAndWait();
+    }
+
+    @FXML
+    public void newIssue(ActionEvent actionEvent) throws MalformedURLException {
+        Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman/issues/new"));
+    }
+
+    @FXML
+    public void github(ActionEvent actionEvent) throws MalformedURLException {
+        Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman"));
+    }
+
+    @FXML
+    public void help(ActionEvent actionEvent) throws MalformedURLException {
+        Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman/wiki"));
     }
 
     private class RecentMenuItem extends MenuItem {
