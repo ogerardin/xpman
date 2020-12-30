@@ -38,7 +38,7 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
     public SceneryController(XPmanFX mainController) {
         super(
                 mainController.xPlaneInstanceProperty(),
-                xPlaneInstance -> xPlaneInstance.getSceneryManager().getPackages().stream()
+                xPlaneInstance -> xPlaneInstance.getSceneryManager().loadPackages().stream()
                         .map(sceneryPackage -> new UiScenery(sceneryPackage, xPlaneInstance))
                         .collect(Collectors.toList())
         );
@@ -62,29 +62,10 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
             sceneryTable.sort();
         });
 
-        enabledColumn.setCellFactory(SceneryController::booleanCellFactory);
-        airportColumn.setCellFactory(SceneryController::booleanCellFactory);
-        libraryColumn.setCellFactory(SceneryController::booleanCellFactory);
-
         TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn,
                 "The rank of this scenery in scenery_pack.ini");
 
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneInstanceProperty));
-    }
-
-    private static TableCell<UiScenery, Boolean> booleanCellFactory(TableColumn<UiScenery, Boolean> col) {
-        return new TableCell<UiScenery, Boolean>() {
-            @Override
-            protected void updateItem(Boolean value, boolean empty) {
-                super.updateItem(value, empty);
-                if (empty || value == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(value ? "Yes" : null);
-                }
-            }
-        };
     }
 
     public void installScenery() {

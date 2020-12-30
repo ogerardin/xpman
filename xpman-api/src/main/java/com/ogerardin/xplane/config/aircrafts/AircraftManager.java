@@ -27,10 +27,8 @@ public class AircraftManager extends Manager<Aircraft> {
     private final Path aircraftFolder;
 
     @NonNull
+    @Getter
     private final Path disabledAircraftFolder;
-
-    @Getter(lazy = true)
-    private final List<Aircraft> aircrafts = loadAircrafts();
 
     public AircraftManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path aircraftFolder) {
         super(xPlaneInstance);
@@ -40,7 +38,7 @@ public class AircraftManager extends Manager<Aircraft> {
 
     @SuppressWarnings("ConstantConditions")
     @SneakyThrows
-    private List<Aircraft> loadAircrafts() {
+    public List<Aircraft> loadAircrafts() {
         // find all .acf files under the Aircrafts folder
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
@@ -88,6 +86,9 @@ public class AircraftManager extends Manager<Aircraft> {
     }
 
     private void moveAircraft(Aircraft aircraft, Path targetFolder) throws IOException {
+        // make sure target directory exists
+        Files.createDirectories(targetFolder);
+
         Path acfFile = aircraft.getAcfFile().getFile();
         // move the folder containing the .acf file...
         Path sourceFolder = acfFile.getParent();
