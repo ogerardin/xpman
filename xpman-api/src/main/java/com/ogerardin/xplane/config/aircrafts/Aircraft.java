@@ -5,6 +5,7 @@ import com.ogerardin.xplane.inspection.*;
 import com.ogerardin.xplane.file.AcfFile;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.WordUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -109,6 +110,11 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
         SCIENCE_FICTION("acf/_is_sci_fi");
 
         final String property;
+
+        @Override
+        public String toString() {
+            return WordUtils.capitalizeFully(name().replaceAll("_", " "));
+        }
     }
 
     @SuppressWarnings("unused")

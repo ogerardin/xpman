@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.config.install;
 
 import com.ogerardin.xplane.config.scenery.SceneryPackage;
+import org.apache.commons.lang.WordUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -12,6 +13,11 @@ import java.util.stream.Collectors;
 public enum InstallType {
     AIRCRAFT,
     SCENERY;
+
+    @Override
+    public String toString() {
+        return WordUtils.capitalizeFully(name());
+    }
 
     public static Set<InstallType> candidateTypes(InstallableArchive zip) {
         @SuppressWarnings("OptionalGetWithoutIsPresent")
