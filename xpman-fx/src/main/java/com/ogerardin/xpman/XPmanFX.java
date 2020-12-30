@@ -5,7 +5,7 @@ import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
-import com.ogerardin.xpman.platform.Platforms;
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;

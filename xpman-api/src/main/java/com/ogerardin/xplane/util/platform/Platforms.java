@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.platform;
+package com.ogerardin.xplane.util.platform;
 
 import lombok.Getter;
 import lombok.experimental.UtilityClass;

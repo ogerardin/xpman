@@ -1,0 +1,41 @@
+package com.ogerardin.xplane.laminar;
+
+import com.ogerardin.xplane.file.ServersFile;
+import com.ogerardin.xplane.file.data.servers.ServersFileData;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import org.parboiled.common.FileUtils;
+
+import java.net.URL;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
+public class UpdateInformation {
+
+    final static String SERVERS_URL = "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt";
+
+    @Getter(lazy = true, value = AccessLevel.PRIVATE)
+    private final ServersFileData data = loadData();
+
+    @SneakyThrows
+    private ServersFileData loadData() {
+        final URL url = new URL(SERVERS_URL);
+        final byte[] bytes = FileUtils.readAllBytes(url.openStream());
+        String contents = new String(bytes, US_ASCII);
+
+        ServersFile serversFile = new ServersFile();
+        final ServersFileData data = serversFile.parse(contents);
+        return data;
+    }
+
+    public String getLatestBeta() {
+        return getData().getBetaVersion();
+    }
+
+    public String getLatestFinal() {
+        return getData().getFinalVersion();
+    }
+
+
+}

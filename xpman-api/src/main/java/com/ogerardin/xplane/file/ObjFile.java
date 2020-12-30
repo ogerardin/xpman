@@ -8,10 +8,10 @@ import org.parboiled.parserunners.RecoveringParseRunner;
 import java.nio.file.Path;
 
 /**
- * Represents a parsed .acf file
+ * Represents a parsed .obj file
  */
 @ToString(onlyExplicitlyIncluded = true)
-public class ObjFile extends XPlaneDataFile<ObjFileParser, ObjFileData> {
+public class ObjFile extends XPlaneFile<ObjFileParser, ObjFileData> {
 
     public ObjFile(Path file) {
         super(file, ObjFileParser.class, RecoveringParseRunner.class);

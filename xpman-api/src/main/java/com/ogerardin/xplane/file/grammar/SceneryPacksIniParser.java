@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.xplane.file.data.*;
+import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
 import lombok.extern.slf4j.Slf4j;
 import org.parboiled.Action;
 import org.parboiled.Context;
@@ -16,7 +17,7 @@ public class SceneryPacksIniParser extends XPlaneFileParser {
     static final String REQUIRED_TYPE = "SCENERY";
 
     /**
-     * Upon successful match, pushes an instance of {@link com.ogerardin.xplane.file.data.SceneryPackIniData}
+     * Upon successful match, pushes an instance of {@link SceneryPackIniData}
      */
     @Override
     public Rule XPlaneFile() {

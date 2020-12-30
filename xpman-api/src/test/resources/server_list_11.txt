@@ -1,0 +1,23 @@
+A
+1100 version
+SERVERS
+
+BETA X-Plane 11.51r1
+FINAL X-Plane 11.51r1
+FULL X-Plane 11.05r2
+
+BETA_VERSION  115103
+FINAL_VERSION 115103
+
+BETA_INSTALLER_MAC  www.x-plane.com /update/installers11/X-Plane11InstallerMac.zip
+FINAL_INSTALLER_MAC www.x-plane.com /update/installers11/X-Plane11InstallerMac.zip
+BETA_INSTALLER_WIN  www.x-plane.com /update/installers11/X-Plane11InstallerWindows.zip
+FINAL_INSTALLER_WIN www.x-plane.com /update/installers11/X-Plane11InstallerWindows.zip
+BETA_INSTALLER_LIN  www.x-plane.com /update/installers11/X-Plane11InstallerLinux.zip
+FINAL_INSTALLER_LIN www.x-plane.com /update/installers11/X-Plane11InstallerLinux.zip
+
+SERVER cds.n3w4x3c2.ssl.hwcdn.net
+/
+Highwinds CDN
+
+ENDOFLIST

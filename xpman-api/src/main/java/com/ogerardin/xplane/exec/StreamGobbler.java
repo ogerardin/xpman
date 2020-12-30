@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.exec;
+package com.ogerardin.xplane.exec;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
