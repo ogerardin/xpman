@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -19,7 +19,7 @@ class SceneryPacksIniTest {
 
     @Test
     public void testCanInstantiateAcfFile() {
-        Path file = XPlaneInstance.getDefaultXPRootFolder().resolve("Custom Scenery/scenery_packs.ini");
+        Path file = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/scenery_packs.ini");
 
         final SceneryPacksIniFile sceneryPacksIniFile = new SceneryPacksIniFile(file);
         assertThat(sceneryPacksIniFile.getFileSpecVersion(), is("1000"));

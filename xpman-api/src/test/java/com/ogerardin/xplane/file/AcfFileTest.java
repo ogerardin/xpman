@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +17,7 @@ class AcfFileTest {
 
     @Test
     public void testCanInstantiateAcfFile() {
-        Path acfPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
+        Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 
         AcfFile acfFile = new AcfFile(acfPath);
         MatcherAssert.assertThat(acfFile.getFileSpecVersion(), is("1100"));

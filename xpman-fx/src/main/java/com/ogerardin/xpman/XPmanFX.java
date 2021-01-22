@@ -1,6 +1,6 @@
 package com.ogerardin.xpman;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
@@ -46,9 +46,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @Getter(value = AccessLevel.PROTECTED, lazy = true)
     private final XPManPrefs config = PrefsConfigManager.load();
 
-    private static final XPlaneInstanceProperty xPlaneInstanceProperty = new XPlaneInstanceProperty();
-    public ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty() {
-        return xPlaneInstanceProperty;
+    private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
+    public ObservableObjectValue<XPlane> xPlaneProperty() {
+        return xPlaneProperty;
     }
 
 
@@ -89,7 +89,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private void openXPlane(File selectedDirectory) {
         Path folder = selectedDirectory.toPath().toRealPath();
         log.info("Opening X-Plane folder {}", folder);
-        XPlaneInstance xplane = new XPlaneInstance(folder);
+        XPlane xplane = new XPlane(folder);
 
         if ((xplane.getVariant() == XPlaneVariant.UNKNOWN) && !isDevMode()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, String.format("%s is not a valid X-Plane folder.", folder.toString()));
@@ -97,7 +97,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
             alert.showAndWait();
             return;
         }
-        xPlaneInstanceProperty.set(xplane);
+        xPlaneProperty.set(xplane);
 
         XPManPrefs config = getConfig();
         config.setLastXPlanePath(folder.toString());
@@ -173,7 +173,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     private void installWizard(ActionEvent actionEvent) {
-        InstallWizard wizard = new InstallWizard(xPlaneInstanceProperty().getValue());
+        InstallWizard wizard = new InstallWizard(xPlaneProperty().getValue());
         wizard.showAndWait();
     }
 

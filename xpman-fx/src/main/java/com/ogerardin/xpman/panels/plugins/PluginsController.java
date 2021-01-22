@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.fxml.FXML;
@@ -9,15 +9,15 @@ import javafx.scene.control.TableView;
 
 import java.util.stream.Collectors;
 
-public class PluginsController extends TableViewController<XPlaneInstance, UiPlugin> {
+public class PluginsController extends TableViewController<XPlane, UiPlugin> {
 
     @FXML
     private TableView<UiPlugin> pluginTable;
 
     public PluginsController(XPmanFX mainController) {
         super(
-                mainController.xPlaneInstanceProperty(),
-                xPlaneInstance -> xPlaneInstance.getPluginManager().getPlugins().stream()
+                mainController.xPlaneProperty(),
+                xPlane -> xPlane.getPluginManager().getPlugins().stream()
                 .map(UiPlugin::new)
                 .collect(Collectors.toList())
         );

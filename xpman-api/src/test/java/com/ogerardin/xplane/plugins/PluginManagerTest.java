@@ -3,7 +3,7 @@ package com.ogerardin.xplane.plugins;
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
 import com.ogerardin.xplane.InvalidConfig;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ public class PluginManagerTest {
     @Test
     public void testLoadPlugins() throws InvalidConfig {
 
-        XPlaneInstance xplane = new XPlaneInstance(XPlaneInstance.getDefaultXPRootFolder());
+        XPlane xplane = new XPlane(XPlane.getDefaultXPRootFolder());
 
         List<Plugin> plugins = xplane.getPluginManager().getPlugins();
         log.info("Found {} plugins", plugins.size());

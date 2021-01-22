@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -13,9 +13,9 @@ import javafx.scene.control.*;
 
 import java.util.stream.Collectors;
 
-public class SceneryController extends TableViewController<XPlaneInstance, UiScenery> {
+public class SceneryController extends TableViewController<XPlane, UiScenery> {
 
-    private final ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty;
+    private final ObservableObjectValue<XPlane> xPlaneProperty;
 
     @FXML
     private ToolBar toolbar;
@@ -37,12 +37,12 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
 
     public SceneryController(XPmanFX mainController) {
         super(
-                mainController.xPlaneInstanceProperty(),
-                xPlaneInstance -> xPlaneInstance.getSceneryManager().loadPackages().stream()
-                        .map(sceneryPackage -> new UiScenery(sceneryPackage, xPlaneInstance))
+                mainController.xPlaneProperty(),
+                xPlane -> xPlane.getSceneryManager().loadPackages().stream()
+                        .map(sceneryPackage -> new UiScenery(sceneryPackage, xPlane))
                         .collect(Collectors.toList())
         );
-        xPlaneInstanceProperty = mainController.xPlaneInstanceProperty();
+        xPlaneProperty = mainController.xPlaneProperty();
     }
 
     @FXML
@@ -65,12 +65,12 @@ public class SceneryController extends TableViewController<XPlaneInstance, UiSce
         TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn,
                 "The rank of this scenery in scenery_pack.ini");
 
-        toolbar.disableProperty().bind(Bindings.isNull(xPlaneInstanceProperty));
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }
 
     public void installScenery() {
-        XPlaneInstance xPlaneInstance = getPropertyValue();
-        InstallWizard wizard = new InstallWizard(xPlaneInstance, InstallType.SCENERY);
+        XPlane xPlane = getPropertyValue();
+        InstallWizard wizard = new InstallWizard(xPlane, InstallType.SCENERY);
         wizard.showAndWait();
         reload();
     }

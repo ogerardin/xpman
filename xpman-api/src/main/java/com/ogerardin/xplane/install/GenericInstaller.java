@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.install;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
 import com.ogerardin.xplane.install.inspections.CheckIsInstallableType;
 import com.ogerardin.xplane.install.inspections.CheckIsValidArchive;
@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class GenericInstaller {
 
-    private final XPlaneInstance xPlane;
+    private final XPlane xPlane;
 
     @NonNull
     private final InstallableArchive installableArchive;
@@ -31,11 +31,11 @@ public class GenericInstaller {
         return InstallType.candidateTypes(installableArchive);
     }
 
-    public GenericInstaller(XPlaneInstance xPlane, Path archive) {
+    public GenericInstaller(XPlane xPlane, Path archive) {
         this(xPlane, archive, null);
     }
 
-    public GenericInstaller(XPlaneInstance xPlane, Path archive, InstallType installType) {
+    public GenericInstaller(XPlane xPlane, Path archive, InstallType installType) {
         this.xPlane = xPlane;
         this.installableArchive = new InstallableZip(archive);
         this.installType = installType;

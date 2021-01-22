@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Getter;
 import lombok.NonNull;
@@ -25,8 +25,8 @@ public class PluginManager extends Manager<Plugin> {
     @Getter(lazy = true)
     private final List<Plugin> plugins = loadPlugins();
 
-    public PluginManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path pluginsFolder) {
-        super(xPlaneInstance);
+    public PluginManager(@NonNull XPlane xPlane, @NonNull Path pluginsFolder) {
+        super(xPlane);
         this.pluginsFolder = pluginsFolder;
     }
 

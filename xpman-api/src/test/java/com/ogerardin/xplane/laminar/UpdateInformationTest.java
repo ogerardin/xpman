@@ -10,10 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class UpdateInformationTest {
 
     @Test
-    void testGetVersions() {
-        final UpdateInformation versions = new UpdateInformation();
-
-        MatcherAssert.assertThat(versions.getLatestBeta(), Matchers.notNullValue());
-        MatcherAssert.assertThat(versions.getLatestFinal(), Matchers.notNullValue());
+    void testGetLatestVersions() {
+        MatcherAssert.assertThat(UpdateInformation.getLatestBeta(), Matchers.notNullValue());
+        MatcherAssert.assertThat(UpdateInformation.getLatestFinal(), Matchers.notNullValue());
     }
 }

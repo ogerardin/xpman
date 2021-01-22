@@ -3,7 +3,7 @@ package com.ogerardin.xpman.guaranafx.main;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.xplane.InvalidConfig;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -39,8 +39,8 @@ public class XPManGuaranaFX extends Application {
 
     // a bootstrap object so that we can call methods
     public static class XPConfigManager {
-        public XPlaneInstance loadFromDirectory(Path path) throws IOException, InvalidConfig {
-            return new XPlaneInstance(path);
+        public XPlane loadFromDirectory(Path path) throws IOException, InvalidConfig {
+            return new XPlane(path);
         }
     }
 

@@ -2,7 +2,7 @@ package com.ogerardin.xplane.aircrafts;
 
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.IllegalOperation;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -30,8 +30,8 @@ public class AircraftManager extends Manager<Aircraft> {
     @Getter
     private final Path disabledAircraftFolder;
 
-    public AircraftManager(@NonNull XPlaneInstance xPlaneInstance, @NonNull Path aircraftFolder) {
-        super(xPlaneInstance);
+    public AircraftManager(@NonNull XPlane xPlane, @NonNull Path aircraftFolder) {
+        super(xPlane);
         this.aircraftFolder = aircraftFolder;
         this.disabledAircraftFolder = aircraftFolder.resolveSibling(aircraftFolder.getFileName() + " (disabled)");
     }

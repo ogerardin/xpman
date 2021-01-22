@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.plugins;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ public class Plugin implements InspectionsProvider<Plugin> {
     }
 
     @Override
-    public Inspections<Plugin> getInspections(XPlaneInstance xPlaneInstance) {
+    public Inspections<Plugin> getInspections(XPlane xPlane) {
         return Inspections.of();
     }
 }

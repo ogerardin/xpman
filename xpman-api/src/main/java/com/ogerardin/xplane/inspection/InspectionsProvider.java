@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.inspection;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 
 public interface InspectionsProvider<T> {
 
-    Inspections<T> getInspections(XPlaneInstance xPlaneInstance);
+    Inspections<T> getInspections(XPlane xPlane);
 }

@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 @Data
 public class Manager<T extends InspectionsProvider<T>> implements Inspection<T> {
 
-    protected final XPlaneInstance xPlaneInstance;
+    protected final XPlane xPlane;
 
     public List<InspectionMessage> inspect(T target) {
-        Inspections<T> inspections = target.getInspections(xPlaneInstance);
+        Inspections<T> inspections = target.getInspections(xPlane);
         final List<InspectionMessage> inspectionMessages = inspections.stream()
                 .map(inspection -> inspection.inspect(target))
                 .flatMap(Collection::stream)
