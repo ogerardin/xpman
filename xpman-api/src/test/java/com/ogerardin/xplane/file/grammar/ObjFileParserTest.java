@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -36,8 +36,8 @@ class ObjFileParserTest {
     @Test
     public void testCanParseObj() throws IOException {
 
-//        Path objPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
-        Path objPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
+//        Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
+        Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
 
         byte[] bytes = Files.readAllBytes(objPath);
         String fileContents = new String(bytes, US_ASCII);

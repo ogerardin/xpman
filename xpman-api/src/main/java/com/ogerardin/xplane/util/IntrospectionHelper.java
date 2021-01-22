@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.util;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -27,7 +27,7 @@ public class IntrospectionHelper {
             return cachedResult;
         }
 
-        String packegaName = XPlaneInstance.class.getPackage().getName();
+        String packegaName = XPlane.class.getPackage().getName();
         try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
                 .whitelistPackages(packegaName)

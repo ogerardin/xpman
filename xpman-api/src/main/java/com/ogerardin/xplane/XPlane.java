@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Data
-public class XPlaneInstance {
+public class XPlane {
 
     private final Path baseFolder;
 
@@ -47,7 +47,7 @@ public class XPlaneInstance {
     @EqualsAndHashCode.Exclude
     private final NavDataManager navDataManager = new NavDataManager(this);
 
-    public XPlaneInstance(Path baseFolder) throws InvalidConfig {
+    public XPlane(Path baseFolder) throws InvalidConfig {
         if (!Files.isDirectory(baseFolder)) {
             throw new InvalidConfig("Folder " + baseFolder + " does not exist");
         }
@@ -69,7 +69,7 @@ public class XPlaneInstance {
 
     @SneakyThrows
     public static Path getDefaultXPRootFolder() {
-        URL xp11rsc = XPlaneInstance.class.getResource("/X-Plane 11/");
+        URL xp11rsc = XPlane.class.getResource("/X-Plane 11/");
         if (xp11rsc != null) {
             return Paths.get(xp11rsc.toURI());
         }

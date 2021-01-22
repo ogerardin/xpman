@@ -5,15 +5,17 @@ import com.ogerardin.xplane.file.data.servers.ServersFileData;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import org.parboiled.common.FileUtils;
 
 import java.net.URL;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+@UtilityClass
 public class UpdateInformation {
 
-    final static String SERVERS_URL = "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt";
+    private final static String SERVERS_URL = "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt";
 
     @Getter(lazy = true, value = AccessLevel.PRIVATE)
     private final ServersFileData data = loadData();

@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.aircrafts.custom;
 
 import com.google.api.services.drive.model.File;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
-import com.ogerardin.xplane.XPlaneInstance;
 import com.ogerardin.xplane.plugins.custom.AviTab;
 import com.ogerardin.xplane.plugins.custom.TerrainRadar;
 import com.ogerardin.xplane.inspection.Inspections;
@@ -122,8 +122,8 @@ public class ZiboMod738 extends Aircraft {
     }
 
     @Override
-    public Inspections<Aircraft> getInspections(XPlaneInstance xPlaneInstance) {
-        return super.getInspections(xPlaneInstance)
-                .append(new RecommendedPluginsInspection<>(xPlaneInstance, AviTab.class, TerrainRadar.class));
+    public Inspections<Aircraft> getInspections(XPlane xPlane) {
+        return super.getInspections(xPlane)
+                .append(new RecommendedPluginsInspection<>(xPlane, AviTab.class, TerrainRadar.class));
     }
 }

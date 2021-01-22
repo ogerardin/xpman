@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -21,13 +21,13 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class AircraftsController extends TableViewController<XPlaneInstance, UiAircraft> {
+public class AircraftsController extends TableViewController<XPlane, UiAircraft> {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
     private static final Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
 
-    private final ObservableObjectValue<XPlaneInstance> xPlaneInstanceProperty;
+    private final ObservableObjectValue<XPlane> xPlaneProperty;
 
     @FXML
     private ToolBar toolbar;
@@ -40,12 +40,12 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
 
     public AircraftsController(XPmanFX mainController) {
         super(
-                mainController.xPlaneInstanceProperty(),
-                xPlaneInstance -> xPlaneInstance.getAircraftManager().loadAircrafts().stream()
-                        .map(aircraft -> new UiAircraft(aircraft, xPlaneInstance))
+                mainController.xPlaneProperty(),
+                xPlane -> xPlane.getAircraftManager().loadAircrafts().stream()
+                        .map(aircraft -> new UiAircraft(aircraft, xPlane))
                         .collect(Collectors.toList())
         );
-        xPlaneInstanceProperty = mainController.xPlaneInstanceProperty();
+        xPlaneProperty = mainController.xPlaneProperty();
     }
 
     @FXML
@@ -62,7 +62,7 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
 
         thumbColumn.setCellFactory(AircraftsController::thumbnailCellFactory);
 
-        toolbar.disableProperty().bind(Bindings.isNull(xPlaneInstanceProperty));
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }
 
     private static TableCell<UiAircraft, Path> thumbnailCellFactory(TableColumn<UiAircraft, Path> col) {
@@ -98,8 +98,8 @@ public class AircraftsController extends TableViewController<XPlaneInstance, UiA
     }
 
     public void installAircraft() {
-        XPlaneInstance xPlaneInstance = getPropertyValue();
-        InstallWizard wizard = new InstallWizard(xPlaneInstance, InstallType.AIRCRAFT);
+        XPlane xPlane = getPropertyValue();
+        InstallWizard wizard = new InstallWizard(xPlane, InstallType.AIRCRAFT);
         wizard.showAndWait();
         reload();
     }

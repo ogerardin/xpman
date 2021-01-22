@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.inspection.impl;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
@@ -14,18 +14,18 @@ public class RecommendedPluginsInspection<T> implements Inspection<T> {
 
     private final Class<? extends Plugin>[] wantedPluginClasses;
 
-    private final XPlaneInstance xPlaneInstance;
+    private final XPlane xPlane;
 
     @SafeVarargs
-    public RecommendedPluginsInspection(XPlaneInstance xPlaneInstance, Class<? extends Plugin>... wantedPluginClasses) {
-        this.xPlaneInstance = xPlaneInstance;
+    public RecommendedPluginsInspection(XPlane xPlane, Class<? extends Plugin>... wantedPluginClasses) {
+        this.xPlane = xPlane;
         this.wantedPluginClasses = wantedPluginClasses;
     }
 
     @Override
     public List<InspectionMessage> inspect(T target) {
         return Arrays.stream(wantedPluginClasses)
-                .filter(pluginClass -> ! pluginInstalled(xPlaneInstance, pluginClass))
+                .filter(pluginClass -> ! pluginInstalled(xPlane, pluginClass))
                 .map(pluginClass -> InspectionMessage.builder()
                         .severity(Severity.WARN)
                         .object(target.toString())
@@ -35,8 +35,8 @@ public class RecommendedPluginsInspection<T> implements Inspection<T> {
                 .collect(Collectors.toList());
     }
 
-    private static Boolean pluginInstalled(XPlaneInstance xPlaneInstance, Class<? extends Plugin> wantedPluginClass) {
-        return xPlaneInstance.getPluginManager().getPlugins().stream()
+    private static Boolean pluginInstalled(XPlane xPlane, Class<? extends Plugin> wantedPluginClass) {
+        return xPlane.getPluginManager().getPlugins().stream()
                 .map(Plugin::getClass)
                 .anyMatch(pluginClass -> pluginClass == wantedPluginClass);
     }

@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.navdata;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.Data;
@@ -20,7 +20,7 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
     private List<NavDataFile> files = new ArrayList<>();
 
     @Override
-    public Inspections<NavDataSet> getInspections(XPlaneInstance xPlaneInstance) {
+    public Inspections<NavDataSet> getInspections(XPlane xPlane) {
         return null;
     }
 

@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.navdata;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xpman.XPmanFX;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeTableColumn;
@@ -17,12 +17,12 @@ public class NavDataController {
     private TreeTableView<UiNavDataItem> treeTableView;
 
     public NavDataController(XPmanFX mainController) {
-        mainController.xPlaneInstanceProperty().addListener((observable, oldValue, newValue) -> updateView(newValue)
+        mainController.xPlaneProperty().addListener((observable, oldValue, newValue) -> updateView(newValue)
         );
     }
 
-    private void updateView(XPlaneInstance xPlaneInstance) {
-        TreeTableViewLoadTask loadTask = new TreeTableViewLoadTask(treeTableView, xPlaneInstance.getNavDataManager());
+    private void updateView(XPlane xPlane) {
+        TreeTableViewLoadTask loadTask = new TreeTableViewLoadTask(treeTableView, xPlane.getNavDataManager());
 
         Thread thread = new Thread(loadTask);
         thread.setDaemon(true);

@@ -53,7 +53,7 @@ public class Page2Controller implements Validating, PageListener {
         String sourcePath = (String) wizard.getSettings().get("sourcePathField");
         Path source = Paths.get(sourcePath);
 
-        GenericInstaller installer = new GenericInstaller(wizard.getXPlaneInstance(), source, wizard.getInstallType());
+        GenericInstaller installer = new GenericInstaller(wizard.getXPlane(), source, wizard.getInstallType());
         wizard.setInstaller(installer);
 
         // perform inspection and display results

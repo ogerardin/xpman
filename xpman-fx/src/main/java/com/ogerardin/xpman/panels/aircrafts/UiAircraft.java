@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -17,7 +17,7 @@ public class UiAircraft {
     @Delegate
     private final Aircraft aircraft;
 
-    private final XPlaneInstance xPlaneInstance;
+    private final XPlane xPlane;
 
     @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
@@ -30,30 +30,30 @@ public class UiAircraft {
     @EnabledIf("! enabled")
     @OnSuccess("tableView.refresh()")
     public void enable() {
-        xPlaneInstance.getAircraftManager().enableAircraft(aircraft);
+        xPlane.getAircraftManager().enableAircraft(aircraft);
     }
 
     @SuppressWarnings("unused")
     @Label("'Disable Aircraft'")
     @EnabledIf("enabled")
-    @Confirm("'The entire folder <' + xPlaneInstance.baseFolder.relativize(aircraft.acfFile.file.parent) " +
-            "+ '> will be moved to <' + xPlaneInstance.baseFolder.relativize(xPlaneInstance.aircraftManager.disabledAircraftFolder) " +
+    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
+            "+ '> will be moved to <' + xPlane.baseFolder.relativize(xPlane.aircraftManager.disabledAircraftFolder) " +
             "+ '>\nThis will impact other aircrafts contained in the same folder (if there are).'" +
             "+ '\n\nPress OK to continue.'")
     @OnSuccess("tableView.refresh()")
     public void disable() {
-        xPlaneInstance.getAircraftManager().disableAircraft(aircraft);
+        xPlane.getAircraftManager().disableAircraft(aircraft);
     }
 
     @SuppressWarnings("unused")
     @Label("'Move to Trash'")
-    @Confirm("'The entire folder <' + xPlaneInstance.baseFolder.relativize(aircraft.acfFile.file.parent) " +
+    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
             "+ '> will be moved to the trash." +
             "+ '\nThis will impact other aircrafts contained in the same folder (if there are).'" +
             "+ '\n\nPress OK to continue.'")
     @OnSuccess("reload()")
     public void moveToTrash() {
-        xPlaneInstance.getAircraftManager().moveAircraftToTrash(aircraft);
+        xPlane.getAircraftManager().moveAircraftToTrash(aircraft);
     }
 
     @SuppressWarnings("unused")
@@ -65,7 +65,7 @@ public class UiAircraft {
     @SuppressWarnings("unused")
     @OnSuccess("displayCheckResults(#result)")
     public List<InspectionMessage> inspect() {
-        return xPlaneInstance.getAircraftManager().inspect(aircraft);
+        return xPlane.getAircraftManager().inspect(aircraft);
     }
 
 }

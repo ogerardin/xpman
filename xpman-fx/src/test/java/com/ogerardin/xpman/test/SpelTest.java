@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.test;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.Maps;
@@ -21,7 +21,7 @@ class SpelTest {
 
     @Test
     public void testSpel() {
-        Path acfPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
+        Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 
         AcfFile acfFile = new AcfFile(acfPath);
         Aircraft aircraft = new Aircraft(acfFile);

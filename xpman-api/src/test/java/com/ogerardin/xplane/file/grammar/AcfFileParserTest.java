@@ -2,7 +2,7 @@ package com.ogerardin.xplane.file.grammar;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class AcfFileParserTest {
     @Test
     public void testCanParseAcf() throws IOException {
 
-        Path acfPath = XPlaneInstance.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
+        Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 //        Path acfPath = getXPRootFolder().resolve("Aircraft/YAK-55M/YAK-55M.acf");
 //        Path acfPath = getXPRootFolder().resolve("Aircraft/RafaleC_solo_display/RafaleC.acf");
 

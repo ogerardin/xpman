@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.aircrafts;
 
-import com.ogerardin.xplane.XPlaneInstance;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.*;
 import com.ogerardin.xplane.file.AcfFile;
 import lombok.*;
@@ -142,7 +142,7 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     }
 
     @Override
-    public Inspections<Aircraft> getInspections(XPlaneInstance xPlaneInstance) {
+    public Inspections<Aircraft> getInspections(XPlane xPlane) {
         return new Inspections<>();
     }
 
