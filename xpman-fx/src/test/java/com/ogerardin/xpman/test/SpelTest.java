@@ -25,12 +25,12 @@ class SpelTest {
 
         AcfFile acfFile = new AcfFile(acfPath);
         Aircraft aircraft = new Aircraft(acfFile);
-        aircraft.setEnabled(true);
+//        aircraft.setEnabled(true);
 
         assertThat(eval("true", aircraft), is(TRUE));
         assertThat(eval("name", aircraft), is("Boeing 737-800"));
-        assertThat(eval("enabled", aircraft), is(TRUE));
-        assertThat(eval("! enabled", aircraft), is(FALSE));
+//        assertThat(eval("enabled", aircraft), is(TRUE));
+//        assertThat(eval("! enabled", aircraft), is(FALSE));
     }
 
     @Test

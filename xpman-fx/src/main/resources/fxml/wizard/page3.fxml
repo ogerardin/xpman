@@ -10,7 +10,7 @@
    <content>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Label fx:id="fileLabel" text="&lt;file&gt;" />
+            <Label fx:id="fileLabel" text="..." />
             <ProgressBar fx:id="progress" prefWidth="600.0" progress="0.0" />
          </children>
       </VBox>

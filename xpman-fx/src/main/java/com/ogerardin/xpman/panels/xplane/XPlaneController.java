@@ -50,22 +50,22 @@ public class XPlaneController {
 
         final String currentVersion = xPlane.getVersion();
         if (currentVersion != null) {
-            if (latestBeta.compareToIgnoreCase(currentVersion) > 0) {
-                // newer beta
-                Notifications.create()
-                        .title("new beta version")
-                        .text("Beta version " + latestBeta + " is available (you have " + currentVersion + ")")
-                        .hideAfter(Duration.seconds(10.0))
-                        .position(Pos.BOTTOM_RIGHT)
-                        .showInformation();
-            }
             if (latestFinal.compareToIgnoreCase(currentVersion) > 0) {
                 // newer final
                 Notifications.create()
-                        .title("new release version")
-                        .text("Version " + latestBeta + " is available (you have " + currentVersion + ")")
-                        .hideAfter(Duration.seconds(10.0))
-                        .position(Pos.BOTTOM_RIGHT)
+                        .title("New release version")
+                        .text("Release version " + latestBeta + " is available (you have " + currentVersion + ")")
+                        .hideAfter(Duration.seconds(30.0))
+                        .position(Pos.TOP_RIGHT)
+                        .showInformation();
+            }
+            if (! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0) {
+                // newer beta
+                Notifications.create()
+                        .title("New beta version")
+                        .text("Beta version " + latestBeta + " is available (you have " + currentVersion + ")")
+                        .hideAfter(Duration.seconds(30.0))
+                        .position(Pos.TOP_RIGHT)
                         .showInformation();
             }
         }

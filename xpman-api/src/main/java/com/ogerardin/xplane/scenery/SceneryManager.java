@@ -25,24 +25,18 @@ public class SceneryManager extends Manager<SceneryPackage> {
     @Getter
     private final Path sceneryFolder;
 
-    @NonNull
-    private final Path disabledSceneryFolder;
-
     @Getter(lazy = true)
     private final SceneryPacksIniFile sceneryPacksIniFile = loadSceneryPacksIniFile();
 
     public SceneryManager(@NonNull XPlane xPlane, @NonNull Path sceneryFolder) {
         super(xPlane);
         this.sceneryFolder = sceneryFolder;
-        this.disabledSceneryFolder = sceneryFolder.resolveSibling(sceneryFolder.getFileName() + " (disabled)");
     }
 
     @SneakyThrows
     public List<SceneryPackage> loadPackages() {
-        return Stream.of(
-                getSceneryPackages(sceneryFolder),
-                getSceneryPackages(disabledSceneryFolder)
-        ).flatMap(Collection::stream).collect(Collectors.toList());
+        return getSceneryPackages(sceneryFolder);
+
     }
 
     private List<SceneryPackage> getSceneryPackages(Path sceneryFolder) throws IOException {
@@ -75,39 +69,6 @@ public class SceneryManager extends Manager<SceneryPackage> {
             }
         }
         return sceneryPackage;
-    }
-
-    private boolean isEnabled(SceneryPackage sceneryPackage) {
-        return sceneryPackage.getFolder().startsWith(sceneryFolder);
-    }
-
-    @SneakyThrows
-    public void enableSceneryPackage(SceneryPackage sceneryPackage) {
-        if (isEnabled(sceneryPackage)) {
-            throw new IllegalOperation("SceneryPackage already enabled");
-        }
-        moveSceneryPackage(sceneryPackage, sceneryFolder);
-    }
-
-    @SneakyThrows
-    public void disableSceneryPackage(SceneryPackage sceneryPackage) {
-        if (! isEnabled(sceneryPackage)) {
-            throw new IllegalOperation("SceneryPackage already disabled");
-        }
-        moveSceneryPackage(sceneryPackage, disabledSceneryFolder);
-    }
-
-    @SneakyThrows
-    private void moveSceneryPackage(SceneryPackage sceneryPackage, Path targetFolder) {
-        // move the scenary folder
-        Path sourceFolder = sceneryPackage.getFolder();
-        // ...to the target folder, keeping the original folder name
-        Path target = targetFolder.resolve(sourceFolder.getFileName());
-        Files.move(sourceFolder, target);
-
-        // update scenery package
-        sceneryPackage.setFolder(target);
-        sceneryPackage.setEnabled(isEnabled(sceneryPackage));
     }
 
     @SneakyThrows

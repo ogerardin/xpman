@@ -14,22 +14,13 @@ import java.nio.file.Path;
 import java.util.*;
 
 @Data
+@AllArgsConstructor
 @Slf4j
 public class Aircraft implements InspectionsProvider<Aircraft> {
 
-    // acfFile is not final in order to allow change when the .acf file is moved (for example when disabled)
-    // without instantiating a new Aircraft
-    @Setter(AccessLevel.PACKAGE)
-    private AcfFile acfFile;
+    private final AcfFile acfFile;
 
     private final String name;
-
-    public boolean enabled = false;
-
-    public Aircraft(AcfFile acfFile, String name) {
-        this.acfFile = acfFile;
-        this.name = name;
-    }
 
     public Aircraft(AcfFile acfFile) {
         this(acfFile, null);

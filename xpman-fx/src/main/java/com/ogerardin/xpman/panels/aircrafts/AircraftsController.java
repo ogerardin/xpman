@@ -25,8 +25,6 @@ public class AircraftsController extends TableViewController<XPlane, UiAircraft>
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
-    private static final Image DISABLED_IMAGE = new Image(AircraftsController.class.getResource("/disabled.png").toExternalForm());
-
     private final ObservableObjectValue<XPlane> xPlaneProperty;
 
     @FXML
@@ -83,16 +81,7 @@ public class AircraftsController extends TableViewController<XPlane, UiAircraft>
                         log.warn("Failed to load thumbnail: {}", thumbFile);
                     }
                 }
-                UiAircraft aircraft = (UiAircraft) getTableRow().getItem();
-                if (aircraft != null && ! aircraft.isEnabled()) {
-                    // aircraft is disabled: add "disabled" icon
-                    ImageView disabledImageView = new ImageView(DISABLED_IMAGE);
-                    Group group = (thumbnaiImageView != null) ? new Group(thumbnaiImageView, disabledImageView) : new Group(disabledImageView);
-                    setGraphic(group);
-                }
-                else {
-                    setGraphic(thumbnaiImageView);
-                }
+                setGraphic(thumbnaiImageView);
             }
         };
     }
