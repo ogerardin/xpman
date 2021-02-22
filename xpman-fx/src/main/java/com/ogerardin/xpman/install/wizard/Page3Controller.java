@@ -8,26 +8,24 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
 
 import static com.ogerardin.xpman.util.jfx.wizard.Wizard.disableButton;
 
 @Slf4j
+@RequiredArgsConstructor
 public class Page3Controller implements PageListener {
+
+    @NonNull
+    private final InstallWizard wizard;
 
     @FXML
     private ProgressBar progress;
 
     @FXML
     private Label fileLabel;
-
-    @NonNull
-    private final GenericInstaller installer;
-
-    public Page3Controller(InstallWizard wizard) {
-        installer = wizard.getInstaller();
-    }
 
     @Override
     public void onEnteringPage(WizardPane wizardPane) {
@@ -36,6 +34,7 @@ public class Page3Controller implements PageListener {
         disableButton(wizardPane, ButtonBar.ButtonData.NEXT_FORWARD, true);
 
         // run the installer in new thread while monitoring progress
+        GenericInstaller installer = wizard.getInstaller();
         Thread thread = new Thread(() -> installer.install(Page3Controller.this::updateProgress));
         thread.start();
     }

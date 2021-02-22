@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Page2Controller implements Validating, PageListener {
 
+    @NonNull
     private final InstallWizard wizard;
 
     private final BooleanProperty invalidProperty = new SimpleBooleanProperty();

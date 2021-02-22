@@ -26,14 +26,9 @@ public class AircraftManager extends Manager<Aircraft> {
     @Getter
     private final Path aircraftFolder;
 
-    @NonNull
-    @Getter
-    private final Path disabledAircraftFolder;
-
     public AircraftManager(@NonNull XPlane xPlane, @NonNull Path aircraftFolder) {
         super(xPlane);
         this.aircraftFolder = aircraftFolder;
-        this.disabledAircraftFolder = aircraftFolder.resolveSibling(aircraftFolder.getFileName() + " (disabled)");
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -43,13 +38,10 @@ public class AircraftManager extends Manager<Aircraft> {
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
         log.info("Found {} acf files", acfFiles.size());
-        List<Path> disabledAcfFiles = FileUtils.findFiles(disabledAircraftFolder, isAcfPredicate);
-        log.info("Found {} disabled acf files", disabledAcfFiles.size());
-        List<Path> allAcfFiles = Stream.of(acfFiles, disabledAcfFiles).flatMap(Collection::stream).collect(Collectors.toList());
 
         // build Aircraft object for each applicable file
         Predicate<AcfFile> isVersion11 = acf -> acf.getFileSpecVersion().matches("11(\\d\\d)");
-        List<Aircraft> aircrafts = allAcfFiles.parallelStream()
+        List<Aircraft> aircrafts = acfFiles.parallelStream()
                 .map(AcfFile::new)
                 .filter(isVersion11)
                 .map(this::getAircraft)
@@ -60,46 +52,7 @@ public class AircraftManager extends Manager<Aircraft> {
 
     @SneakyThrows
     private Aircraft getAircraft(AcfFile acfFile) {
-        Aircraft aircraft = IntrospectionHelper.getBestSubclassInstance(Aircraft.class, acfFile);
-        aircraft.setEnabled(isEnabled(aircraft));
-        return aircraft;
-    }
-
-    private boolean isEnabled(Aircraft aircraft) {
-        return aircraft.getAcfFile().getFile().startsWith(aircraftFolder);
-    }
-
-    @SneakyThrows
-    public void enableAircraft(Aircraft aircraft) {
-        if (isEnabled(aircraft)) {
-            throw new IllegalOperation("Aircraft already enabled");
-        }
-        moveAircraft(aircraft, aircraftFolder);
-    }
-
-    @SneakyThrows
-    public void disableAircraft(Aircraft aircraft) {
-        if (! isEnabled(aircraft)) {
-            throw new IllegalOperation("Aircraft already disabled");
-        }
-        moveAircraft(aircraft, disabledAircraftFolder);
-    }
-
-    private void moveAircraft(Aircraft aircraft, Path targetFolder) throws IOException {
-        // make sure target directory exists
-        Files.createDirectories(targetFolder);
-
-        Path acfFile = aircraft.getAcfFile().getFile();
-        // move the folder containing the .acf file...
-        Path sourceFolder = acfFile.getParent();
-        // ...to the target folder, keeping the original folder name
-        Path target = targetFolder.resolve(sourceFolder.getFileName());
-        Files.move(sourceFolder, target);
-
-        // update aircraft
-        Path newAcfFile = target.resolve(acfFile.getFileName());
-        aircraft.setAcfFile(new AcfFile(newAcfFile));
-        aircraft.setEnabled(isEnabled(aircraft));
+        return IntrospectionHelper.getBestSubclassInstance(Aircraft.class, acfFile);
     }
 
     @SneakyThrows

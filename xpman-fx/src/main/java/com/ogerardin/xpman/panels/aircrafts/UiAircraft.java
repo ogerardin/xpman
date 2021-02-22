@@ -25,31 +25,30 @@ public class UiAircraft {
         Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile());
     }
 
-    @SuppressWarnings("unused")
-    @Label("'Enable Aircraft'")
-    @EnabledIf("! enabled")
-    @OnSuccess("tableView.refresh()")
-    public void enable() {
-        xPlane.getAircraftManager().enableAircraft(aircraft);
-    }
+//    @SuppressWarnings("unused")
+//    @Label("'Enable Aircraft'")
+//    @EnabledIf("! enabled")
+//    @OnSuccess("tableView.refresh()")
+//    public void enable() {
+//        xPlane.getAircraftManager().enableAircraft(aircraft);
+//    }
 
-    @SuppressWarnings("unused")
-    @Label("'Disable Aircraft'")
-    @EnabledIf("enabled")
-    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
-            "+ '> will be moved to <' + xPlane.baseFolder.relativize(xPlane.aircraftManager.disabledAircraftFolder) " +
-            "+ '>\nThis will impact other aircrafts contained in the same folder (if there are).'" +
-            "+ '\n\nPress OK to continue.'")
-    @OnSuccess("tableView.refresh()")
-    public void disable() {
-        xPlane.getAircraftManager().disableAircraft(aircraft);
-    }
+//    @SuppressWarnings("unused")
+//    @Label("'Disable Aircraft'")
+//    @EnabledIf("enabled")
+//    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
+//            "+ '> will be moved to <' + xPlane.baseFolder.relativize(xPlane.aircraftManager.disabledAircraftFolder) " +
+//            "+ '>\nThis will impact other aircrafts contained in the same folder (if there are).'" +
+//            "+ '\n\nPress OK to continue.'")
+//    @OnSuccess("tableView.refresh()")
+//    public void disable() {
+//        xPlane.getAircraftManager().disableAircraft(aircraft);
+//    }
 
     @SuppressWarnings("unused")
     @Label("'Move to Trash'")
-    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
-            "+ '> will be moved to the trash." +
-            "+ '\nThis will impact other aircrafts contained in the same folder (if there are).'" +
+    @Confirm("'The entire folder ' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + ' will be moved to the trash.'" +
+            "+ '\nThis will impact all aircrafts contained in the same folder.'" +
             "+ '\n\nPress OK to continue.'")
     @OnSuccess("reload()")
     public void moveToTrash() {
