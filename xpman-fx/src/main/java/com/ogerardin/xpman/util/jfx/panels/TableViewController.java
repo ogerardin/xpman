@@ -64,7 +64,10 @@ public class TableViewController<O, T> {
     }
 
     public void reload() {
-        TableViewLoadTask<T> loadTask = new TableViewLoadTask<>(tableView, () -> loader.apply(propertyValue));
+        TableViewLoadTask<T> loadTask = new TableViewLoadTask<>(
+                tableView,
+                () -> loader.apply(propertyValue)
+        );
 
         Thread thread = new Thread(loadTask);
         thread.setDaemon(true);

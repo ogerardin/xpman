@@ -22,7 +22,7 @@ public class NavDataController {
     }
 
     private void updateView(XPlane xPlane) {
-        TreeTableViewLoadTask loadTask = new TreeTableViewLoadTask(treeTableView, xPlane.getNavDataManager());
+        NavDataTreeTableViewLoadTask loadTask = new NavDataTreeTableViewLoadTask(treeTableView, xPlane.getNavDataManager());
 
         Thread thread = new Thread(loadTask);
         thread.setDaemon(true);

@@ -18,10 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//TODO: make this class generic and merge with TableViewLoadTask
+//TODO: use NavDataTreeTableViewLoadTask instead
 @Slf4j
 @AllArgsConstructor
-class TreeTableViewLoadTask extends Task<Void> {
+class NavDataTreeTableViewLoadTask extends Task<Void> {
 
     private static final ImageView LOADING
             = new ImageView(new Image(TableViewLoadTask.class.getResource("/loading.gif").toExternalForm()));
