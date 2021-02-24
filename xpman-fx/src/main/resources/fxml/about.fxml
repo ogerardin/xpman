@@ -5,7 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
+<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
     <graphic>
         <ImageView fitHeight="128.0" fitWidth="128.0">
             <Image url="@../icon.png" />
