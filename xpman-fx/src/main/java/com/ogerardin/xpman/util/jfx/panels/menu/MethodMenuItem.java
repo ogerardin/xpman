@@ -19,7 +19,6 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
 
     private final String enabledIfExpr;
-    private final String confirmExpr;
 
     @Setter @Getter
     private T target;
@@ -32,15 +31,13 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
         this.enabledIfExpr = (enabledIf != null) ? enabledIf.value() : null;
 
         Confirm confirm = method.getAnnotation(Confirm.class);
-        this.confirmExpr = (confirm != null) ? confirm.value() : null;
-
         OnSuccess onSuccess = method.getAnnotation(OnSuccess.class);
 
         setOnAction(event -> {
             if (confirm != null) {
                 // we must confirm before executing the method: eval message and display alert
-                String confirmMessage = (String) SpelUtil.eval(confirmExpr, this.getTarget());
-                Alert alert = new Alert(CONFIRMATION, confirmMessage);
+                String confirmMessage = (String) SpelUtil.eval(confirm.value(), this.getTarget());
+                Alert alert = new Alert(confirm.alertType(), confirmMessage, ButtonType.OK, ButtonType.CANCEL);
                 alert.setTitle(text);
                 alert.initOwner(getParentPopup().getOwnerWindow());
                 Optional<ButtonType> choice = alert.showAndWait();

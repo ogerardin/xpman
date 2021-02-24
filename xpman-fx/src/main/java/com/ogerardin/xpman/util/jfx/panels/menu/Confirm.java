@@ -1,5 +1,7 @@
 package com.ogerardin.xpman.util.jfx.panels.menu;
 
+import javafx.scene.control.Alert;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,4 +19,6 @@ public @interface Confirm {
      * The expression is evaluated with the target object as context root.
      */
     String value() default "'Are you sure?'";
+
+    Alert.AlertType alertType() default Alert.AlertType.CONFIRMATION;
 }
