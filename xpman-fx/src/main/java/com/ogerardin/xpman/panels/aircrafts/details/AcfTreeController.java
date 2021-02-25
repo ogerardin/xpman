@@ -75,7 +75,7 @@ public class AcfTreeController {
     /**
      * Returns a {@link PropertyTreeNode} such that it can be accessed by navigating from the specified root node
      * and selecting the child nodes that match each path component in sequence.
-     * If such a node does not exist, it will be created, including all missing intermediary nodes from the root node.
+     * If such a node does not exist, it will be created, and similarly for all missing intermediate nodes.
      */
     private PropertyTreeNode getNodeByPath(PropertyTreeNode root, String[] nodePath) {
         if (nodePath.length == 0) {
