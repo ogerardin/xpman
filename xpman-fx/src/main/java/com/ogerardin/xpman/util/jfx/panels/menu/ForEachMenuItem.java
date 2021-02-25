@@ -12,17 +12,21 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * A {@link Menu} where sub-items are constructed by iterating over an expression provided by a {@link ForEach} annotation.
+ * @param <T> type of the target object
+ */
 @Slf4j
-public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
+public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
 
-    private final Object controller;
+    private final Object evaluationContextRoot;
     private final ForEach forEach;
     private final Method method;
     private final String[] paramValueExpr;
 
-    public <C> GroupMenuItem(C controller, ForEach forEach, Method method) {
+    public ForEachMenuItem(Object evaluationContextRoot, ForEach forEach, Method method) {
         super(forEach.group());
-        this.controller = controller;
+        this.evaluationContextRoot = evaluationContextRoot;
         this.forEach = forEach;
         this.method = method;
 
@@ -39,10 +43,14 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
                     .value();
         }
 
-        // show group item only when there are children
+        // hide this Menu when there are no children
         visibleProperty().bind(Bindings.isNotEmpty(getItems()));
     }
 
+    /**
+     * Contextualize this Menu by evaluating the Iterable expression with the target object as context and building
+     * the corresponding MenuItems.
+     */
     @Override
     public void contextualize(T target) {
         log.debug("Contextualizing {} for {}", this, target);
@@ -57,12 +65,19 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
             log.debug("Adding item {}", menuItem);
             getItems().add(menuItem);
         }
-
     }
 
+    /**
+     * Build a single MenuItem which, when selected, invokes the specified method with parameter values computed
+     * by evaluating the associated @{@link Value} expressions.
+     * @param method method to invoke
+     * @param target the target object
+     * @param item the iterable value associated with the current action
+     */
     private MenuItem buildMenuItem(Method method, T target, Object item) {
         Map<String, Object> contextVariables = Maps.mapOf(forEach.itemVariableName(), item);
 
+        // compute parameter values
         Object[] paramValues = new Object[method.getParameterCount()];
         for (int i = 0; i < paramValueExpr.length; i++) {
             String expr = paramValueExpr[i];
@@ -73,6 +88,6 @@ public class GroupMenuItem<T> extends Menu implements Contextualizable<T> {
         String itemLabelExpr = forEach.itemLabel();
         String text = (String) SpelUtil.eval(itemLabelExpr, target, contextVariables);
 
-        return new MethodMenuItem<>(controller, text, method, target, paramValues);
+        return new MethodMenuItem<>(evaluationContextRoot, text, method, target, paramValues);
     }
 }

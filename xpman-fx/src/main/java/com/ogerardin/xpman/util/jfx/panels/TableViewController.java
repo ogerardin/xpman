@@ -119,7 +119,7 @@ public class TableViewController<O, T> {
     private MenuItem buildMenuItem(Method method) {
         ForEach forEach = method.getAnnotation(ForEach.class);
         if (forEach == null) {
-            //TODO we should be able to use @Value on methods that are not annotated with @ForEach
+            //TODO allow the use of @Value on methods that are not annotated with @ForEach
             var label = method.getAnnotation(com.ogerardin.xpman.util.jfx.panels.menu.Label.class);
             String text;
             if (label != null) {
@@ -131,9 +131,9 @@ public class TableViewController<O, T> {
                 words[0] = StringUtils.capitalize(words[0]);
                 text = String.join(" ", words);
             }
-            return new MethodMenuItem<UiAircraft>(this, text, method, null);
+            return new MethodMenuItem(this, text, method, null);
         }
-        return new GroupMenuItem<UiAircraft>(this, forEach, method);
+        return new ForEachMenuItem<UiAircraft>(this, forEach, method);
     }
 
     private void contexualizeMenu(ContextMenu contextMenu, T item) {

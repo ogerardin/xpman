@@ -6,16 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated method is to generate one action for each item of the specified iterable.
- * The action name can be customized by using {@link #itemLabel()}. The parameter values associated with a
- * specific item are customized by using @{@link Value} on each parameter.
+ * Indicates that the annotated method is to generate a group of actions, one for each item in the Iterable returned
+ * by evaluating a specified expression.
+ * Each action name can be customized by using {@link #itemLabel()}. The parameter values passed to the method
+ * when invoking an action are defined by using @{@link Value} on each parameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface ForEach {
 
     /**
-     * Iterable expression. An action will be generated for each of the Iterable items.
+     * SpEL expression expected to return an Iterable. One action will be generated for each item of the Iterable.
      * The expression is evaluated with the target object as context root.
      */
     String iterable();
@@ -27,7 +28,7 @@ public @interface ForEach {
      * {@link Value#value} expressions. Default: "item" */
     String itemVariableName() default "item";
 
-    /** String expression to be used as action name. Evaluated with the target object as context root and the current
-     * Iterable item in a variable named "itemLabel" */
+    /** The action name as a SpEL expression. Evaluated with the target object as context root and the current
+     * Iterable item in a variable named as specified by {@link #itemVariableName()} */
     String itemLabel() default "item.toString()";
 }
