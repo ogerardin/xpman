@@ -9,6 +9,7 @@ import javafx.scene.control.TreeTableView;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class AcfTreeController {
@@ -21,9 +22,7 @@ public class AcfTreeController {
                 () -> new UiProperty(getPropertyTree(aircraft)),
                 uiProperty -> treeItem(uiProperty.getItem())
         );
-        Thread thread = new Thread(loadTask);
-        thread.setDaemon(true);
-        thread.start();
+        Executors.newSingleThreadExecutor().submit(loadTask);
     }
 
     /**

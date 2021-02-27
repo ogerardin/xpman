@@ -8,7 +8,6 @@ import com.ogerardin.xpman.util.jfx.panels.TableViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -44,6 +43,7 @@ public class AircraftsController extends TableViewController<XPlane, UiAircraft>
                         .collect(Collectors.toList())
         );
         xPlaneProperty = mainController.xPlaneProperty();
+
     }
 
     @FXML
