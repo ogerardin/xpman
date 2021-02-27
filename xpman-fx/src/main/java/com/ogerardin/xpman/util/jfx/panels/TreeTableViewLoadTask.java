@@ -13,7 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-//TODO factorize common code with TreeTableViewLoadTask
+/**
+ * A {@link Task} that loads a TreeTableView from a root node provided by a supplier and a function that maps
+ * a node of type T to a {@code TreeItem<T>}
+ * @param <T> the type of the TreeTableView's items.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class TreeTableViewLoadTask<T> extends Task<Void> {

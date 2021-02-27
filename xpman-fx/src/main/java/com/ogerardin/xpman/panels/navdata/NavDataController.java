@@ -14,6 +14,7 @@ import javafx.scene.control.TreeTableView;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,10 +37,7 @@ public class NavDataController {
                 () -> new UiNavDataItem(getTree(xPlane.getNavDataManager())),
                 uiNavDataItem -> treeItem(uiNavDataItem.getNavDataItem())
         );
-
-        Thread thread = new Thread(loadTask);
-        thread.setDaemon(true);
-        thread.start();
+        Executors.newSingleThreadExecutor().submit(loadTask);
     }
 
     private NavDataItem getTree(NavDataManager navDataManager) {

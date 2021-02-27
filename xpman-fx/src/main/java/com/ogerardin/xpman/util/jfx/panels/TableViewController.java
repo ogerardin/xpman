@@ -24,35 +24,49 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static javafx.beans.binding.Bindings.when;
 
 /**
- * A Controller for a {@link TableView} where the list of displayed items depend on the value of an {@link ObservableValue}.
- * Whenever the value changes, a loader is called to obtain the new list of items.
+ * A Controller for a {@link TableView} where the list of items depend on the value of an {@link ObservableValue}:
+ * whenever the value changes, a loader is called to obtain the new list of items.
+ * Also provides a contextual menu for table items that is build by introspecting the item's class.
+ *
  * @param <O> type of the observed value
- * @param <T> type of the items that depend on the O value
+ * @param <T> type of the table items
+ * @see Label
+ * @see EnabledIf
+ * @see Confirm
+ * @see ForEach
  */
 @Slf4j
 public class TableViewController<O, T> {
 
     private final Function<O, List<T>> loader;
 
-    /** The table to update. This property must be set in the initialize method, after FXML bindings have been populated */
+    /**
+     * The table to update. This property must be set in the initialize method, after FXML bindings have been populated
+     */
     @Getter
     @Setter
     private TableView<T> tableView;
 
-    /** Current value of the {@link ObservableValue} */
+    /**
+     * Current value of the {@link ObservableValue}
+     */
     @Getter(AccessLevel.PROTECTED)
     private O propertyValue;
 
 
     /**
      * Builds a {@link TableViewController}
+     *
      * @param observableValue the property on which the items displayed depend
-     * @param loader a function that provides the list of items to display based on the observable value
+     * @param loader          a function that provides the list of items to display based on the observable value
      */
     public TableViewController(ObservableValue<O> observableValue, Function<O, List<T>> loader) {
         this.loader = loader;
@@ -69,13 +83,12 @@ public class TableViewController<O, T> {
                 () -> loader.apply(propertyValue)
         );
 
-        Thread thread = new Thread(loadTask);
-        thread.setDaemon(true);
-        thread.start();
+        Executors.newSingleThreadExecutor().submit(loadTask);
     }
 
     /**
      * Builds a dynamic context menu based on exposed methods of the specified item class.
+     *
      * @see Label
      * @see EnabledIf
      * @see Confirm
@@ -98,7 +111,7 @@ public class TableViewController<O, T> {
                         // skip non public or abstract methods
                         .filter(method -> Modifier.isPublic(method.getModifiers()) && ! Modifier.isAbstract(method.getModifiers()))
                         // skip setters/getters
-                        .filter(method -> ! method.getName().startsWith("set") &&! method.getName().startsWith("get") && ! method.getName().startsWith("is"))
+                        .filter(method -> ! method.getName().startsWith("set") && ! method.getName().startsWith("get") && ! method.getName().startsWith("is"))
                         .map(this::buildMenuItem)
                         .toArray(MenuItem[]::new)
         );
@@ -131,7 +144,7 @@ public class TableViewController<O, T> {
                 words[0] = StringUtils.capitalize(words[0]);
                 text = String.join(" ", words);
             }
-            return new MethodMenuItem(this, text, method, null);
+            return new MethodMenuItem<>(this, text, method, null);
         }
         return new ForEachMenuItem<UiAircraft>(this, forEach, method);
     }
@@ -144,6 +157,7 @@ public class TableViewController<O, T> {
 
     }
 
+    //TODO move this somewhere else
     @SuppressWarnings("unused")
     @SneakyThrows
     public void displayCheckResults(List<InspectionMessage> results) {

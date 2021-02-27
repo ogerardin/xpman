@@ -2,21 +2,27 @@ package com.ogerardin.xpman.util.jfx.panels;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * A {@link Task} that loads a TableView from a List of items provided by a Supplier.
+ * @param <T> the type of the TableView's items.
+ */
 @Slf4j
-@AllArgsConstructor
-public class TableViewLoadTask<T> extends Task<Void> {
+@RequiredArgsConstructor
+public class TableViewLoadTask<T> extends Task<ObservableList<T>> {
 
     private static final ImageView LOADING
             = new ImageView(new Image(TableViewLoadTask.class.getResource("/loading.gif").toExternalForm()));
@@ -26,7 +32,7 @@ public class TableViewLoadTask<T> extends Task<Void> {
 
     @SneakyThrows
     @Override
-    protected Void call() {
+    protected ObservableList<T> call() {
         log.debug("begin load table {}", tableView.getId());
         // save placeholder to restore it later
         Node defaultPlaceholder = tableView.placeholderProperty().get();
@@ -39,13 +45,17 @@ public class TableViewLoadTask<T> extends Task<Void> {
         // call supplier to obtain items (this may take time) and populate table
         List<T> list = supplier.get();
 
-        // populate tableView
+        // if the list is not an ObservableList, wrap it in a ObservableListWrapper
+        ObservableList<T> observableList = (list instanceof ObservableList) ?
+                (ObservableList<T>) list : new ObservableListWrapper<>(list);
+
+        // populate the tableView
         Platform.runLater(() -> {
-            tableView.setItems(new ObservableListWrapper<>(list));
+            tableView.setItems(observableList);
             // reset placeholder
             tableView.placeholderProperty().setValue(defaultPlaceholder);
         });
         log.debug("done load table {}", tableView.getId());
-        return null;
+        return observableList;
     }
 }

@@ -5,6 +5,7 @@ import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import lombok.NonNull;
@@ -30,8 +31,8 @@ public class Page3Controller implements PageListener {
     @Override
     public void onEnteringPage(WizardPane wizardPane) {
         // disable 'Previous' and 'Finish' buttons
-        disableButton(wizardPane, ButtonBar.ButtonData.BACK_PREVIOUS, true);
-        disableButton(wizardPane, ButtonBar.ButtonData.NEXT_FORWARD, true);
+        disableButton(wizardPane, ButtonData.BACK_PREVIOUS, true);
+        disableButton(wizardPane, ButtonData.NEXT_FORWARD, true);
 
         // run the installer in new thread while monitoring progress
         GenericInstaller installer = wizard.getInstaller();
