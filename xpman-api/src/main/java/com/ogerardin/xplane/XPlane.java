@@ -69,11 +69,12 @@ public class XPlane {
 
     @SneakyThrows
     public static Path getDefaultXPRootFolder() {
+        // if we have a "X-Plane 11" resource directory, use it
         URL xp11rsc = XPlane.class.getResource("/X-Plane 11/");
         if (xp11rsc != null) {
             return Paths.get(xp11rsc.toURI());
         }
-
+        // otherwise try a few common places
         Path userHome = Paths.get(System.getProperty("user.home"));
         Path xplaneRoot = Stream.of(
                 userHome.resolve("Applications").resolve("X-Plane 11"),
