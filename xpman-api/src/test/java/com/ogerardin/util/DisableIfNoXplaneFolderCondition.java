@@ -14,7 +14,7 @@ public class DisableIfNoXplaneFolderCondition implements ExecutionCondition {
             Path xpRootFolder = XPlane.getDefaultXPRootFolder();
             return ConditionEvaluationResult.enabled("X-Plane root folder: " + xpRootFolder);
         } catch (Exception e) {
-            return ConditionEvaluationResult.disabled("Could not get X-Plane root folder: " + e.toString());
+            return ConditionEvaluationResult.disabled("Could not get X-Plane root folder: " + e);
         }
     }
 }

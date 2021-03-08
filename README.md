@@ -18,7 +18,7 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 - Standalone JavaFX application
 
 ## Status
-Preliminary stage: loads aircrafts and can perform some actions on them.  
+Early development stage.  
 
 # Installing X-Plane Manager
 If you already have a [Java 8 runtime](https://www.oracle.com/java/technologies/javase-jre8-downloads.html), 

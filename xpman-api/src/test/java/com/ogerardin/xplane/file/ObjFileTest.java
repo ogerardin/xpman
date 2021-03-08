@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.nio.file.Path;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith(TimingExtension.class)
@@ -20,7 +21,7 @@ class ObjFileTest {
         Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
 
         ObjFile objFile = new ObjFile(objPath);
-        MatcherAssert.assertThat(objFile.getFileSpecVersion(), is("800"));
+        assertThat(objFile.getFileSpecVersion(), is("800"));
     }
 
 }

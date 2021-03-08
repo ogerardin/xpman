@@ -27,7 +27,7 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     }
 
     private String getProperty(String name) {
-        return acfFile.getProperty(name);
+        return (acfFile != null) ? acfFile.getProperty(name) : null;
     }
 
     public String getStudio() {
@@ -35,12 +35,15 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     }
 
     public String getName() {
-        return Optional.ofNullable(name).orElse(getAcfName());
+        return (name != null) ? name : getAcfName();
     }
 
     public String getAcfName() {
-        return Optional.ofNullable(getProperty("acf/_name"))
-                .orElse(getAcfFile().getFile().getFileName().toString().replace(".acf", ""));
+        String property = getProperty("acf/_name");
+        if (property != null) {
+            return property;
+        }
+        return getAcfFile().getFile().getFileName().toString().replace(".acf", "");
     }
 
     public String getDescription() {
