@@ -37,7 +37,7 @@ public class PluginManager extends Manager<Plugin> {
                     .map(this::maybeGetPlugin)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
         } catch (IOException e) {
             log.error("Plugin folder not found: {}", pluginsFolder);
             return Collections.emptyList();

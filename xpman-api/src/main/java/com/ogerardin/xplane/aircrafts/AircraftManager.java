@@ -1,26 +1,29 @@
 package com.ogerardin.xplane.aircrafts;
 
 import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.IllegalOperation;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
+import com.ogerardin.xplane.install.InstallTarget;
+import com.ogerardin.xplane.install.InstallableArchive;
+import com.ogerardin.xplane.install.Installer;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
-public class AircraftManager extends Manager<Aircraft> {
+public class AircraftManager extends Manager<Aircraft> implements InstallTarget {
 
     @NonNull
     @Getter
@@ -47,7 +50,7 @@ public class AircraftManager extends Manager<Aircraft> {
                 .map(this::getAircraft)
                 .collect(Collectors.toList());
         log.info("Loaded {} aircrafts", aircrafts.size());
-        return aircrafts;
+        return Collections.unmodifiableList(aircrafts);
     }
 
     @SneakyThrows
@@ -65,4 +68,8 @@ public class AircraftManager extends Manager<Aircraft> {
         fileUtils.moveToTrash(new File[]{folder.toFile()});
     }
 
+    @Override
+    public void install(InstallableArchive archive, Installer.ProgressListener progressListener) throws IOException {
+        archive.installTo(getAircraftFolder(), progressListener);
+    }
 }
