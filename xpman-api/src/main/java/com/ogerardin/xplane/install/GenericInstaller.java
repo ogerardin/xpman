@@ -17,6 +17,7 @@ import java.util.Set;
  */
 public class GenericInstaller {
 
+    @NonNull
     private final XPlane xPlane;
 
     @NonNull
@@ -31,11 +32,11 @@ public class GenericInstaller {
         return InstallType.candidateTypes(installableArchive);
     }
 
-    public GenericInstaller(XPlane xPlane, Path archive) {
+    public GenericInstaller(@NonNull XPlane xPlane, @NonNull Path archive) {
         this(xPlane, archive, null);
     }
 
-    public GenericInstaller(XPlane xPlane, Path archive, InstallType installType) {
+    public GenericInstaller(@NonNull XPlane xPlane, @NonNull Path archive, InstallType installType) {
         this.xPlane = xPlane;
         this.installableArchive = new InstallableZip(archive);
         this.installType = installType;
@@ -57,18 +58,8 @@ public class GenericInstaller {
     @SneakyThrows
     public void install(Installer.ProgressListener progressListener) {
         InstallType installType = getCandidateTypes().iterator().next();
-        Path targetFolder = targetFolder(installType);
-        installableArchive.installTo(targetFolder, progressListener);
-    }
-
-    private Path targetFolder(InstallType installType) {
-        switch (installType) {
-            case AIRCRAFT:
-                return xPlane.getAircraftManager().getAircraftFolder();
-            case SCENERY:
-                return xPlane.getSceneryManager().getSceneryFolder();
-        }
-        throw new RuntimeException("unsupported install type " + installType);
+        InstallTarget target = installType.target(xPlane);
+        target.install(installableArchive, progressListener);
     }
 
 }

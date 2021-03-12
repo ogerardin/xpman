@@ -3,7 +3,9 @@ package com.ogerardin.xplane.navdata;
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.XPlane;
 import lombok.Getter;
+import org.parboiled.common.ImmutableList;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,7 +27,7 @@ public class NavDataManager extends Manager<NavDataSet> {
                 faaUpdatedApproaches(),
                 handPlacedLocalizers(),
                 userData()
-        ).collect(Collectors.toList());
+        ).collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     private NavDataSet simWideOverride() {

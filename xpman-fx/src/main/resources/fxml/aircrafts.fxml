@@ -18,6 +18,9 @@
                         <cellValueFactory>
                             <PropertyValueFactory property="thumb"/>
                         </cellValueFactory>
+                        <cellFactory>
+                            <ThumbnailCellFactory/>
+                        </cellFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="200.0" text="Name">
                         <cellValueFactory>

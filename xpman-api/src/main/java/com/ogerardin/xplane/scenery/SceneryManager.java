@@ -4,6 +4,9 @@ import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.IllegalOperation;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
+import com.ogerardin.xplane.install.InstallTarget;
+import com.ogerardin.xplane.install.InstallableArchive;
+import com.ogerardin.xplane.install.Installer;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public class SceneryManager extends Manager<SceneryPackage> {
+public class SceneryManager extends Manager<SceneryPackage> implements InstallTarget {
 
     @NonNull
     @Getter
@@ -46,7 +49,7 @@ public class SceneryManager extends Manager<SceneryPackage> {
         return Files.list(sceneryFolder)
                 .filter(Files::isDirectory)
                 .map(this::getSceneryPackage)
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     private SceneryPacksIniFile loadSceneryPacksIniFile() {
@@ -76,4 +79,10 @@ public class SceneryManager extends Manager<SceneryPackage> {
         var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
         fileUtils.moveToTrash(new File[]{sceneryPackage.getFolder().toFile()});
     }
+
+    @Override
+    public void install(InstallableArchive archive, Installer.ProgressListener progressListener) throws IOException {
+        archive.installTo(getSceneryFolder(), progressListener);
+    }
+
 }
