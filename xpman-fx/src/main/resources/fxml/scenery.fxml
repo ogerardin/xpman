@@ -15,7 +15,7 @@
                             <PropertyValueFactory property="rank" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="enabledColumn" editable="false" prefWidth="70.0" text="Enabled?">
+                    <TableColumn editable="false" prefWidth="70.0" text="Enabled?">
                         <cellValueFactory>
                             <PropertyValueFactory property="enabled" />
                         </cellValueFactory>
@@ -33,7 +33,7 @@
                             <PropertyValueFactory property="version" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="airportColumn" editable="false" prefWidth="68.0" text="Airport?">
+                    <TableColumn editable="false" prefWidth="68.0" text="Airport?">
                         <cellValueFactory>
                             <PropertyValueFactory property="airport" />
                         </cellValueFactory>
@@ -41,7 +41,7 @@
                             <BooleanCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn fx:id="libraryColumn" editable="false" prefWidth="70.0" text="Library?">
+                    <TableColumn editable="false" prefWidth="70.0" text="Library?">
                         <cellValueFactory>
                             <PropertyValueFactory property="library" />
                         </cellValueFactory>

@@ -24,19 +24,10 @@ public class SceneryController extends TableViewController<UiScenery> {
     private ToolBar toolbar;
 
     @FXML
-    private TableColumn<UiScenery, Boolean> airportColumn;
-
-    @FXML
-    private TableColumn<UiScenery, Boolean> libraryColumn;
-
-    @FXML
     private TableView<UiScenery> sceneryTable;
 
     @FXML
     private TableColumn<UiScenery, Integer> rankColumn;
-
-    @FXML
-    private TableColumn<UiScenery, Boolean> enabledColumn;
 
     public SceneryController(XPmanFX mainController) {
         super(
