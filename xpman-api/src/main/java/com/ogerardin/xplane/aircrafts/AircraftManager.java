@@ -9,11 +9,8 @@ import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.Installer;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +37,10 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         this.aircraftFolder = aircraftFolder;
     }
 
+    /**
+     * Returns an unmodifiable list of all Aircrafts available in the X-Plane folder.
+     * If the list has not alreaddy been loaded, this method will trigger a synchronous load.
+     */
     public List<Aircraft> getAircrafts() {
         if (aircrafts == null) {
             loadAircrafts();
@@ -47,13 +48,16 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         return Collections.unmodifiableList(aircrafts);
     }
 
+    /**
+     * Trigger an asynchronous reload of the aircraft list.
+     */
     public void reload() {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(this::loadAircrafts);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @SneakyThrows
+    @Synchronized
     private void loadAircrafts() {
 
         fireEvent(new ManagerEvent.Loading<>());
