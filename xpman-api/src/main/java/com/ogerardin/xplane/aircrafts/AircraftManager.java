@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.aircrafts;
 
 import com.ogerardin.xplane.Manager;
+import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.install.InstallTarget;
@@ -19,6 +20,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -29,14 +33,31 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     @Getter
     private final Path aircraftFolder;
 
+    private List<Aircraft> aircrafts = null;
+
     public AircraftManager(@NonNull XPlane xPlane, @NonNull Path aircraftFolder) {
         super(xPlane);
         this.aircraftFolder = aircraftFolder;
     }
 
+    public List<Aircraft> getAircrafts() {
+        if (aircrafts == null) {
+            loadAircrafts();
+        }
+        return Collections.unmodifiableList(aircrafts);
+    }
+
+    public void reload() {
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(this::loadAircrafts);
+    }
+
     @SuppressWarnings("ConstantConditions")
     @SneakyThrows
-    public List<Aircraft> loadAircrafts() {
+    private void loadAircrafts() {
+
+        fireEvent(new ManagerEvent.Loading<>());
+
         // find all .acf files under the Aircrafts folder
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
@@ -44,13 +65,14 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
 
         // build Aircraft object for each applicable file
         Predicate<AcfFile> isVersion11 = acf -> acf.getFileSpecVersion().matches("11(\\d\\d)");
-        List<Aircraft> aircrafts = acfFiles.parallelStream()
+        aircrafts = acfFiles.parallelStream()
                 .map(AcfFile::new)
                 .filter(isVersion11)
                 .map(this::getAircraft)
                 .collect(Collectors.toList());
         log.info("Loaded {} aircrafts", aircrafts.size());
-        return Collections.unmodifiableList(aircrafts);
+
+        fireEvent(new ManagerEvent.Loaded<>(aircrafts));
     }
 
     @SneakyThrows
