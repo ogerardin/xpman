@@ -1,22 +1,25 @@
 package com.ogerardin.xplane;
 
+import com.ogerardin.xplane.events.EventDispatcher;
+import com.ogerardin.xplane.events.EventListener;
+import com.ogerardin.xplane.events.EventSource;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
-import com.ogerardin.xplane.install.InstallTarget;
 import lombok.Data;
+import lombok.experimental.Delegate;
 
-import java.util.Collection;
-import java.util.EventListener;
-import java.util.EventObject;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
-public abstract class Manager<T extends InspectionsProvider<T>> implements Inspection<T>, EventListener {
+public abstract class Manager<T extends InspectionsProvider<T>> implements Inspection<T>, EventSource<ManagerEvent<T>> {
 
     protected final XPlane xPlane;
+
+    @Delegate
+    private final EventDispatcher<ManagerEvent<T>> eventSource = new EventDispatcher<>();
 
     public List<InspectionMessage> inspect(T target) {
         Inspections<T> inspections = target.getInspections(xPlane);
@@ -26,4 +29,5 @@ public abstract class Manager<T extends InspectionsProvider<T>> implements Inspe
                 .collect(Collectors.toList());
         return inspectionMessages;
     }
+
 }

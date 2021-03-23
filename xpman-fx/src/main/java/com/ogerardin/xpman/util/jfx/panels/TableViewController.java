@@ -20,10 +20,6 @@ import java.util.function.Supplier;
  * A Controller for a {@link TableView} where the list of items of obtained by invoking a loader.
  *
  * @param <T> type of the table items
- * @see Label
- * @see EnabledIf
- * @see Confirm
- * @see ForEach
  */
 @Slf4j
 public class TableViewController<T> {

@@ -20,7 +20,7 @@ public class AircraftManagerTest {
 
         XPlane xplane = new XPlane(XPlane.getDefaultXPRootFolder());
 
-        List<Aircraft> aircrafts = xplane.getAircraftManager().loadAircrafts();
+        List<Aircraft> aircrafts = xplane.getAircraftManager().getAircrafts();
         log.info("Found {} aircrafts", aircrafts.size());
         aircrafts.forEach(aircraft -> log.info("*** {} ({})", aircraft.getName(), aircraft.getClass().getName()));
 
