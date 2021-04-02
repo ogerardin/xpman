@@ -15,6 +15,9 @@ import org.controlsfx.dialog.WizardPane;
 
 import static com.ogerardin.xpman.util.jfx.wizard.Wizard.disableButton;
 
+/**
+ * Wizard page 3 controller: performs actual installation with progress display.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class Page3Controller implements PageListener {

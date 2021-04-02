@@ -1,9 +1,8 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xpman.panels.diag.SeverityIconTableCell;
+import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import com.ogerardin.xpman.util.jfx.wizard.Validating;
 import com.sun.javafx.collections.ObservableListWrapper;
@@ -23,6 +22,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Wizard page 2 controller: performs inspections on the archive and displays result.
+ * Valid (=Next enabled) only if no inspection result is of type ERROR.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class Page2Controller implements Validating, PageListener {
@@ -46,7 +49,6 @@ public class Page2Controller implements Validating, PageListener {
     @FXML
     public void initialize() {
         tableView.setPlaceholder(new Label("No message to display"));
-        severityColumn.setCellFactory(column -> new SeverityIconTableCell<>());
     }
 
     @Override
