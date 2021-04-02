@@ -23,7 +23,7 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
     @Setter @Getter
     private T target;
 
-    public MethodMenuItem(Object evaluationContextRoot, String text, Method method, T target, Object... paramValues) {
+    public MethodMenuItem(Object evalContextRoot, String text, Method method, T target, Object... paramValues) {
         setText(text);
         this.target = target;
 
@@ -56,7 +56,7 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
                     final String resultVariableName = onSuccess.resultVariableName();
                     Map<String, Object> contextVariables = Maps.mapOf(resultVariableName, result);
                     String expr = onSuccess.value();
-                    SpelUtil.eval(expr, evaluationContextRoot, contextVariables);
+                    SpelUtil.eval(expr, evalContextRoot, contextVariables);
                 }
 
             } catch (Exception e) {
