@@ -2,17 +2,16 @@ package com.ogerardin.xpman.util.jfx;
 
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.util.Callback;
 
 /**
- * Factory for a {@code TreeTableCell<String>} that renders its Boolean content as "Yes"/(empty)
+ * Factory for a {@code TreeTableCell<?, String>} that renders its Boolean content as "Yes"/(empty)
  */
-public class BooleanTreeCellFactory<C> implements Callback<TreeTableColumn<C, Boolean>, TreeTableCell<C, Boolean>> {
+public class BooleanTreeCellFactory<S> implements TreeTableCellFactory<S, Boolean> {
 
 
     @Override
-    public TreeTableCell<C, Boolean> call(TreeTableColumn<C, Boolean> param) {
-        return new TreeTableCell<C, Boolean>() {
+    public TreeTableCell<S, Boolean> call(TreeTableColumn<S, Boolean> param) {
+        return new TreeTableCell<S, Boolean>() {
             @Override
             protected void updateItem(Boolean value, boolean empty) {
                 super.updateItem(value, empty);

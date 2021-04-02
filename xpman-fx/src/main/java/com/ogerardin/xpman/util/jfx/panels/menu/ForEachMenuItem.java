@@ -19,14 +19,14 @@ import java.util.Map;
 @Slf4j
 public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
 
-    private final Object evaluationContextRoot;
+    private final Object evalContextRoot;
     private final ForEach forEach;
     private final Method method;
     private final String[] paramValueExpr;
 
-    public ForEachMenuItem(Object evaluationContextRoot, ForEach forEach, Method method) {
+    public ForEachMenuItem(Object evalContextRoot, ForEach forEach, Method method) {
         super(forEach.group());
-        this.evaluationContextRoot = evaluationContextRoot;
+        this.evalContextRoot = evalContextRoot;
         this.forEach = forEach;
         this.method = method;
 
@@ -39,7 +39,8 @@ public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
                     .filter(annotation -> annotation.annotationType() == Value.class)
                     .findAny()
                     .map(Value.class::cast)
-                    .orElseThrow(() -> new IllegalArgumentException(String.format("All parameters of method %s must be annotated with @Value when method is annotated with @ForEach", method)))
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("All parameters of method %s must be " +
+                            "annotated with @Value when method is annotated with @ForEach", method)))
                     .value();
         }
 
@@ -88,6 +89,6 @@ public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
         String itemLabelExpr = forEach.itemLabel();
         String text = (String) SpelUtil.eval(itemLabelExpr, target, contextVariables);
 
-        return new MethodMenuItem<>(evaluationContextRoot, text, method, target, paramValues);
+        return new MethodMenuItem<>(evalContextRoot, text, method, target, paramValues);
     }
 }

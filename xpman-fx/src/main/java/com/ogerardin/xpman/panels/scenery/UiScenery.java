@@ -59,6 +59,7 @@ public class UiScenery {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @SuppressWarnings("unused")
     @OnSuccess("displayCheckResults(#result)")
     public List<InspectionMessage> inspect() {
         return xPlane.getSceneryManager().inspect(sceneryPackage);

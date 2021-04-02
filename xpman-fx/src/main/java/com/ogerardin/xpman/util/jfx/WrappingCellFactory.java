@@ -5,16 +5,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 /**
- * Factory for a {@code Cell<String>} that renders its String content as wrapped text.
+ * Factory for a {@code Cell<?, String>} that renders its String content as wrapped text.
  * Borrowed from: https://jluger.de/blog/20160731_javafx_text_rendering_in_tableview.html
  */
-public class WrappingCellFactory<C> implements Callback<TableColumn<C, String>, TableCell<C, String>> {
+public class WrappingCellFactory<S> implements TableCellFactory<S, String> {
+
     @Override
-    public TableCell<C, String> call(TableColumn<C, String> param) {
-        return new TableCell<C, String>() {
+    public TableCell<S, String> call(TableColumn<S, String> param) {
+        return new TableCell<S, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);

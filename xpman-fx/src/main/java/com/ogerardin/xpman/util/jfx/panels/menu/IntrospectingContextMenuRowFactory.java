@@ -1,6 +1,5 @@
 package com.ogerardin.xpman.util.jfx.panels.menu;
 
-import com.ogerardin.xpman.panels.aircrafts.UiAircraft;
 import com.ogerardin.xpman.util.SpelUtil;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.ContextMenu;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 import static javafx.beans.binding.Bindings.when;
 
 /**
- * A row factory that adds a customized context menu build by introspecting the item class and looking for specxific
+ * A row factory that adds a customized context menu built by introspecting the item class and looking for specxific
  * annotations.
  * @param <T> item class
  *
@@ -33,16 +32,15 @@ import static javafx.beans.binding.Bindings.when;
 public class IntrospectingContextMenuRowFactory<T> implements Callback<TableView<T>, TableRow<T>> {
 
     @NonNull
-    private final TableView<T> tableView;
-
-    @NonNull
     private final Class<? extends T> itemClass;
+
+    private final Object evaluationContextRoot;
 
     @Getter(lazy = true, value = AccessLevel.PRIVATE)
     private final List<Method> methods = computeRelevantMethods();
 
     @Override
-    public TableRow<T> call(TableView<T> param) {
+    public TableRow<T> call(TableView<T> tableView) {
         TableRow<T> row = new TableRow<>();
         addContextMenu(row);
         return row;
@@ -52,25 +50,24 @@ public class IntrospectingContextMenuRowFactory<T> implements Callback<TableView
      * Builds a context menu based on exposed methods of the item class.
      */
     protected void addContextMenu(TableRow<T> row) {
-        // build context menu
-        ContextMenu rowMenu = new ContextMenu(buildMenuItems());
 
-        // only display context menu for non-null items:
+        // build context menu
+        TableView<T> tableView = row.getTableView();
+        ContextMenu rowMenu = new ContextMenu(buildMenuItems(tableView));
+
+        // only display context menu for non-null items
         row.contextMenuProperty().bind(
                 when(Bindings.isNotNull(row.itemProperty()))
                         .then(rowMenu)
                         .otherwise((ContextMenu) null));
 
-        // cutomize menu for actual row item
-        row.setOnContextMenuRequested(event -> {
-            T item = getTableView().getSelectionModel().getSelectedItem();
-            contexualizeMenu(rowMenu, item);
-        });
+        // before displaying context menu, cutomize it for actual row item
+        row.setOnContextMenuRequested(event -> contexualizeMenu(rowMenu, row.getItem()));
     }
 
-    private MenuItem[] buildMenuItems() {
+    private MenuItem[] buildMenuItems(Object tableView) {
         return getMethods().stream()
-                .map(this::buildMenuItem)
+                .map(method -> buildMenuItem(method, tableView))
                 .toArray(MenuItem[]::new);
     }
 
@@ -94,10 +91,10 @@ public class IntrospectingContextMenuRowFactory<T> implements Callback<TableView
         }
     }
 
-    private MenuItem buildMenuItem(Method method) {
+    private MenuItem buildMenuItem(Method method, Object evalContextRoot) {
         ForEach forEach = method.getAnnotation(ForEach.class);
         if (forEach != null) {
-            return new ForEachMenuItem<UiAircraft>(tableView, forEach, method);
+            return new ForEachMenuItem<T>(evalContextRoot, forEach, method);
         }
 
         //TODO allow the use of @Value on methods that are not annotated with @ForEach
@@ -112,7 +109,7 @@ public class IntrospectingContextMenuRowFactory<T> implements Callback<TableView
             words[0] = StringUtils.capitalize(words[0]);
             text = String.join(" ", words);
         }
-        return new MethodMenuItem<>(tableView, text, method, null);
+        return new MethodMenuItem<>(evaluationContextRoot, text, method, null);
     }
 
     private void contexualizeMenu(ContextMenu contextMenu, T item) {

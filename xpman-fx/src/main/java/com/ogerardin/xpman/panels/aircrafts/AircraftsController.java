@@ -1,8 +1,10 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
+import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.aircrafts.AircraftManager;
+import com.ogerardin.xplane.events.EventListener;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -12,19 +14,20 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
+import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.file.Path;
-
 @Slf4j
-public class AircraftsController {
+public class AircraftsController implements EventListener<ManagerEvent<Aircraft>> {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
     private final ObservableObjectValue<XPlane> xPlaneProperty;
+
+    @Delegate
+    private EventListener<ManagerEvent<Aircraft>> eventListener;
 
     @FXML
     private ToolBar toolbar;
@@ -37,27 +40,29 @@ public class AircraftsController {
         xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
 
+    @FXML
+    public void initialize() {
+        aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
+        aircraftsTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiAircraft.class, this));
+
+        // create delegate event listener
+        eventListener = new TableViewManagerEventListener<>(aircraftsTable,
+                aircraft -> new UiAircraft(aircraft, xPlaneProperty.get()));
+
+        // disable toolbar whenever xPlaneProperty is null
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
+    }
+
     public void reload() {
         final XPlane xPlane = xPlaneProperty.get();
         if (xPlane == null) {
             aircraftsTable.setItems(null);
         } else {
             AircraftManager aircraftManager = xPlane.getAircraftManager();
-            aircraftManager.registerListener(
-                    new TableViewManagerEventListener<>(
-                            aircraftsTable,
-                            (Aircraft aircraft) -> new UiAircraft(aircraft, xPlaneProperty.get()))
-            );
+            // register ourselve to receive manager events and trigger reload
+            aircraftManager.registerListener(this);
             aircraftManager.reload();
         }
-    }
-
-    @FXML
-    public void initialize() {
-        aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
-        aircraftsTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(aircraftsTable, UiAircraft.class));
-        // disable toolbar whenever xPlaneProperty is null
-        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }
 
     public void installAircraft() {

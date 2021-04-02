@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 public class TableViewManagerEventListener<T, U> implements EventListener<ManagerEvent<T>> {
 
     @SuppressWarnings("ConstantConditions")
-    private final ImageView LOADING
-            = new ImageView(new Image(this.getClass().getResource("/loading.gif").toExternalForm()));
+    private final ImageView LOADING = new ImageView(new Image(this.getClass().getResource("/loading.gif").toExternalForm()));
 
     private final TableView<U> tableView;
     private final Function<T, U> mapper;

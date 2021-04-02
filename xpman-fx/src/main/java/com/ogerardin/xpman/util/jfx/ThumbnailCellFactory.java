@@ -4,7 +4,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -17,12 +16,12 @@ import java.nio.file.Path;
  * and renders it as a thumbnail
  */
 @Slf4j
-public class ThumbnailCellFactory<T> implements Callback<TableColumn<T, Path>, TableCell<T, Path>> {
+public class ThumbnailCellFactory<S> implements TableCellFactory<S, Path> {
 
 
     @Override
-    public TableCell<T, Path> call(TableColumn<T, Path> param) {
-        return new TableCell<T, Path>() {
+    public TableCell<S, Path> call(TableColumn<S, Path> param) {
+        return new TableCell<S, Path>() {
             @Override
             protected void updateItem(Path imagePath, boolean empty) {
                 ImageView imageView = null;
