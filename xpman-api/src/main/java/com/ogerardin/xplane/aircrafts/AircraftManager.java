@@ -97,5 +97,6 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     @Override
     public void install(InstallableArchive archive, Installer.ProgressListener progressListener) throws IOException {
         archive.installTo(getAircraftFolder(), progressListener);
+        reload();
     }
 }
