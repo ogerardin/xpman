@@ -20,6 +20,10 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Wizard page 1 controller: allows selection of the source archive.
+ * Valid (=Next enabled) only if the file exists.
+ */
 public class Page1Controller implements Validating {
 
     @Delegate

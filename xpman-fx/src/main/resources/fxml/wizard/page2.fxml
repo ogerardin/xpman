@@ -7,6 +7,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import com.ogerardin.xpman.panels.diag.SeverityIconCellFactory?>
 <ValidatingWizardPane prefHeight="359.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.install.wizard.Page2Controller">
     <headerText>Please review the messages below and press 'Next' to proceed with installation.</headerText>
     <content>
@@ -16,6 +17,9 @@
                     <cellValueFactory>
                         <PropertyValueFactory property="severity" />
                     </cellValueFactory>
+                    <cellFactory>
+                        <SeverityIconCellFactory />
+                    </cellFactory>
                 </TableColumn>
                 <TableColumn prefWidth="400.0" text="Message">
                     <cellValueFactory>
