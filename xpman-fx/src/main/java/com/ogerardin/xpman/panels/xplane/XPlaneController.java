@@ -2,17 +2,14 @@ package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.laminar.UpdateInformation;
-import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xpman.XPmanFX;
 import com.sun.jna.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.util.Duration;
 import lombok.SneakyThrows;
-import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the first tab pane, which contains a summary of X-Plane installation.
@@ -36,6 +33,12 @@ public class XPlaneController {
     @FXML
     private Hyperlink log;
 
+    @FXML
+    private Label releaseUpdate;
+
+    @FXML
+    private Label betaUpdate;
+
     public XPlaneController(XPmanFX mainController) {
         mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> {
             this.xPlane = xPlane;
@@ -45,29 +48,21 @@ public class XPlaneController {
     }
 
     private void checkUpdates(XPlane xPlane) {
-        final String latestBeta = UpdateInformation.getLatestBeta();
-        final String latestFinal = UpdateInformation.getLatestFinal();
-
         final String currentVersion = xPlane.getVersion();
         if (currentVersion != null) {
-            if (latestFinal.compareToIgnoreCase(currentVersion) > 0) {
-                // newer final
-                Notifications.create()
-                        .title("New release version")
-                        .text("Release version " + latestBeta + " is available (you have " + currentVersion + ")")
-                        .hideAfter(Duration.seconds(30.0))
-                        .position(Pos.TOP_RIGHT)
-                        .showInformation();
+            String latestFinal = UpdateInformation.getLatestFinal();
+            boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
+            if (hasReleaseUpdate) {
+                releaseUpdate.setText("Release version " + latestFinal + " is available");
             }
-            if (! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0) {
-                // newer beta
-                Notifications.create()
-                        .title("New beta version")
-                        .text("Beta version " + latestBeta + " is available (you have " + currentVersion + ")")
-                        .hideAfter(Duration.seconds(30.0))
-                        .position(Pos.TOP_RIGHT)
-                        .showInformation();
+            releaseUpdate.setVisible(hasReleaseUpdate);
+
+            String latestBeta = UpdateInformation.getLatestBeta();
+            boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
+            if (hasBetaUpdate) {
+                betaUpdate.setText("Beta version " + latestBeta + " is available");
             }
+            betaUpdate.setVisible(hasBetaUpdate);
         }
     }
 
