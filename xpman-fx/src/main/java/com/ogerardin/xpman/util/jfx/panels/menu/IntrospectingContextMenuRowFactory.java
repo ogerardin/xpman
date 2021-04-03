@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.jfx.panels.menu;
 
 import com.ogerardin.xpman.util.SpelUtil;
+import com.ogerardin.xpman.util.jfx.TableRowFactory;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -29,7 +30,7 @@ import static javafx.beans.binding.Bindings.when;
  * @see ForEach
  */
 @Data
-public class IntrospectingContextMenuRowFactory<T> implements Callback<TableView<T>, TableRow<T>> {
+public class IntrospectingContextMenuRowFactory<T> implements TableRowFactory<T> {
 
     @NonNull
     private final Class<? extends T> itemClass;
