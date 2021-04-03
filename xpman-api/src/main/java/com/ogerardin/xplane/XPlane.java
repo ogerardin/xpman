@@ -67,6 +67,9 @@ public class XPlane {
     }
 
 
+    /**
+     * This is intended for tests, to test against a real X-Plane installation if one can be found.
+     */
     @SneakyThrows
     public static Path getDefaultXPRootFolder() {
         // if we have a "X-Plane 11" resource directory, use it
