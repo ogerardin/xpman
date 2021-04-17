@@ -2,11 +2,11 @@ package com.ogerardin.xpman;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
-import com.ogerardin.xpman.config.PrefsConfigManager;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.JfxApp;
+import com.ogerardin.xpman.util.jfx.JfxAppPrefsManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.event.ActionEvent;
@@ -43,8 +43,10 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private Menu recentMenu;
 
+    private final JfxAppPrefsManager<XPManPrefs> prefsManager = new JfxAppPrefsManager<>(XPManPrefs.class);
+
     @Getter(value = AccessLevel.PROTECTED, lazy = true)
-    private final XPManPrefs config = PrefsConfigManager.load();
+    private final XPManPrefs config = prefsManager.load();
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
     public ObservableObjectValue<XPlane> xPlaneProperty() {
@@ -168,7 +170,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @Override
     protected void saveConfig(XPManPrefs config) {
-        PrefsConfigManager.save(config);
+        prefsManager.save(config);
     }
 
     @FXML
