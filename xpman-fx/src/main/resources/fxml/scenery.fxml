@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import com.ogerardin.xpman.util.jfx.BooleanCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.SpelValueFactory?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.scenery.SceneryController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <center>
@@ -52,6 +53,11 @@
                     <TableColumn editable="false" prefWidth="70.0" text="Tiles">
                         <cellValueFactory>
                             <PropertyValueFactory property="tileCount" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn editable="false" prefWidth="140.0" text="Class">
+                        <cellValueFactory>
+                            <SpelValueFactory expression="sceneryClass.name" />
                         </cellValueFactory>
                     </TableColumn>
                 </columns>

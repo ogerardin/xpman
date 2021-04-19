@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.util.jfx;
 
+import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import lombok.Data;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,15 +9,13 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+class JsonFileConfigPersisterTest {
 
-class JfxAppPrefsManagerTest {
-
-    private JfxAppPrefsManager<TestPrefs> prefsManager;
+    private JsonFileConfigPersister<TestPrefs> prefsManager;
 
     @BeforeEach
     void setUp() {
-        prefsManager = new JfxAppPrefsManager<>(TestPrefs.class);
+        prefsManager = new JsonFileConfigPersister<>(TestPrefs.class);
     }
 
     @AfterEach
@@ -26,13 +25,11 @@ class JfxAppPrefsManagerTest {
 
     @Test
     public void testSaveAndLoad() {
-        final TestPrefs prefs = new TestPrefs();
+        final TestPrefs prefs = prefsManager.getConfig();
         prefs.setBla("hahaha");
         prefs.setBli(Arrays.asList("hihihihi", "huhuhuhu"));
 
-        prefsManager.save(prefs);
-
-        final TestPrefs prefs1 = prefsManager.load();
+        prefsManager.save();
     }
 
     @Data

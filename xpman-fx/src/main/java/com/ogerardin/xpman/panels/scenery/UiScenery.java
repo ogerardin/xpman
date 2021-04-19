@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.scenery.SceneryPackage;
@@ -18,6 +19,8 @@ public class UiScenery {
     private final SceneryPackage sceneryPackage;
 
     private final XPlane xPlane;
+
+    private final SceneryClass sceneryClass;
 
     @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
