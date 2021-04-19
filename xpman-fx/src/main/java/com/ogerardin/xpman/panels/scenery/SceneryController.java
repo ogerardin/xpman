@@ -8,8 +8,12 @@ import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.scenery.SceneryManager;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.diag.DiagController;
+import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
+import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
 import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuRowFactory;
@@ -31,6 +35,8 @@ import java.util.List;
 public class SceneryController implements EventListener<ManagerEvent<SceneryPackage>> {
 
     private final ObservableObjectValue<XPlane> xPlaneProperty;
+    private final SceneryOrganizer sceneryOrganizer;
+    private final JsonFileConfigPersister<XPManPrefs> configManager;
 
     @Delegate
     private EventListener<ManagerEvent<SceneryPackage>> eventListener;
@@ -47,6 +53,19 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
     public SceneryController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
         xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
+        configManager = mainController.getConfigManager();
+        sceneryOrganizer = loadSceneryOrganizer(configManager.getConfig());
+    }
+
+    private SceneryOrganizer loadSceneryOrganizer(XPManPrefs config) {
+        final List<SceneryClass> sceneryClasses = config.getSceneryClasses();
+        if (sceneryClasses == null) {
+            SceneryOrganizer sceneryOrganizer = new SceneryOrganizer();
+            config.setSceneryClasses(sceneryOrganizer.getOrderedSceneryClasses());
+            return sceneryOrganizer;
+        }
+        return new SceneryOrganizer(sceneryClasses);
+
     }
 
     public void reload() {
@@ -76,7 +95,11 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
 
         eventListener = new TableViewManagerEventListener<>(
                 sceneryTable,
-                (SceneryPackage sceneryPackage) -> new UiScenery(sceneryPackage, xPlaneProperty.get()));
+                (SceneryPackage sceneryPackage) -> new UiScenery(
+                        sceneryPackage,
+                        xPlaneProperty.get(),
+                        sceneryOrganizer.sceneryClass(sceneryPackage))
+        );
 
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }

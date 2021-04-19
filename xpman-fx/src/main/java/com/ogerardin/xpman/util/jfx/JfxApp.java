@@ -57,13 +57,13 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     protected abstract C getConfig();
 
-    protected abstract void saveConfig(C config);
+    protected abstract void saveConfig();
 
     private void saveWindowPosition(Stage stage) {
         final Rectangle2D position = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
         final C config = getConfig();
         config.setLastPosition(position);
-        saveConfig(config);
+        saveConfig();
     }
 
     @FXML
