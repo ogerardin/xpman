@@ -28,29 +28,33 @@ public class UiScenery {
         Platforms.getCurrent().reveal(sceneryPackage.getFolder());
     }
 
-//    @SuppressWarnings("unused")
-//    @Label("'Enable Scenery Package'")
-//    @EnabledIf("! enabled")
-//    @OnSuccess("tableView.refresh()")
-//    public void enable() {
-//        xPlane.getSceneryManager().enableSceneryPackage(sceneryPackage);
-//    }
-//
-//    //TODO different warning when the package is a library because the library might be used by other scenery
-//    @SuppressWarnings("unused")
-//    @Label("'Disable Scenery Package'")
-//    @EnabledIf("enabled")
-//    @Confirm("'The entire folder ' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
-//            "+ ' will be moved to ' + xPlane.baseFolder.relativize(xPlane.sceneryManager.disabledSceneryFolder) " +
-//            "+ ' \n\nPress OK to continue.'")
-//    @OnSuccess("tableView.refresh()")
-//    public void disable() {
-//        xPlane.getSceneryManager().disableSceneryPackage(sceneryPackage);
-//    }
+    @SuppressWarnings("unused")
+    @Label("'Enable Scenery Package'")
+    @EnabledIf("! enabled")
+    @OnSuccess("reload()")
+    public void enable() {
+        xPlane.getSceneryManager().enableSceneryPackage(sceneryPackage);
+    }
+
+    //TODO different warning when the package is a library because the library might be used by other scenery
+    @SuppressWarnings("unused")
+    @Label("'Disable Scenery Package'")
+    @EnabledIf("enabled")
+    @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
+            "+ '\" will be moved to \"' + xPlane.baseFolder.relativize(xPlane.sceneryManager.disabledSceneryFolder) " +
+            "+ '\" \n" +
+            "\n" +
+            "Press OK to continue.'")
+    @OnSuccess("reload()")
+    public void disable() {
+        xPlane.getSceneryManager().disableSceneryPackage(sceneryPackage);
+    }
 
     @Label("'Move to Trash'")
-    @Confirm("'The entire folder ' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
-            "+ ' will be moved to the trash.\n\nPress OK to continue.'")
+    @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
+            "+ '\" will be moved to the trash.\n" +
+            "\n" +
+            "Press OK to continue.'")
     @OnSuccess("reload()")
     public void moveToTrash() {
         xPlane.getSceneryManager().moveSceneryPackageToTrash(sceneryPackage);

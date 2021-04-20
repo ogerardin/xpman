@@ -13,6 +13,7 @@ import java.util.Optional;
 public class SceneryOrganizer {
 
     private static final SceneryClass OTHER_SCENERY_CLASS = new SceneryClass("Other");
+    private static final SceneryClass LIBRARY_SCENERY_CLASS = new SceneryClass("Library");
 
     private final List<SceneryClass> orderedSceneryClasses;
 
@@ -22,13 +23,16 @@ public class SceneryOrganizer {
 
     private static List<SceneryClass> defaultSceneryClasses() {
         return Arrays.asList(
-                new SceneryClass("Airports", ".*[Aa]irport.*", ".*[^A-Z][A-Z]{4}[^A-Z].*"),
-                new SceneryClass("Overlay sceneries", ".*overlay.*"),
-                new SceneryClass("Mesh sceneries", "z\\+.*")
+                new SceneryClass("Airport", ".*[Aa]irport.*", ".*[^A-Z][A-Z]{4}[^A-Z].*"),
+                new SceneryClass("Overlay scenery", ".*overlay.*", ".*[Ll]andmark.*"),
+                new SceneryClass("Mesh scenery", "z\\+.*")
         );
     }
 
     public SceneryClass sceneryClass(SceneryPackage sceneryPackage) {
+        if (sceneryPackage.isLibrary()) {
+            return LIBRARY_SCENERY_CLASS;
+        }
         final String sceneryName = sceneryPackage.getFolder().getFileName().toString();
         final Optional<SceneryClass> sceneryClass = getOrderedSceneryClasses().stream()
                 .filter(c -> c.matches(sceneryName))
