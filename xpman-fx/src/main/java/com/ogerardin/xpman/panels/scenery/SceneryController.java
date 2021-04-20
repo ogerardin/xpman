@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class SceneryController implements EventListener<ManagerEvent<SceneryPackage>> {
@@ -82,6 +83,7 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
     @FXML
     public void initialize() {
         sceneryTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiScenery.class, this));
+        rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
 
         sceneryTable.itemsProperty().addListener((observable, oldValue, newValue) -> {
             // initially sort by rank

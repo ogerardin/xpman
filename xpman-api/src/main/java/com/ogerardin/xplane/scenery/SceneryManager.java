@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.scenery;
 
+import com.ogerardin.xplane.IllegalOperation;
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
@@ -15,11 +16,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class SceneryManager extends Manager<SceneryPackage> implements InstallTarget {
@@ -28,11 +31,16 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     @Getter
     private final Path sceneryFolder;
 
+    @NonNull
+    @Getter
+    private final Path disabledSceneryFolder;
+
     private List<SceneryPackage> sceneryPackages = null;
 
     public SceneryManager(@NonNull XPlane xPlane, @NonNull Path sceneryFolder) {
         super(xPlane);
         this.sceneryFolder = sceneryFolder;
+        this.disabledSceneryFolder = sceneryFolder.resolveSibling(sceneryFolder.getFileName() + " (disabled)");
     }
 
     public List<SceneryPackage> getSceneryPackages() {
@@ -54,7 +62,10 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
         fireEvent(new ManagerEvent.Loading<>());
 
         SceneryPacksIniFile sceneryPacksIniFile = getSceneryPacksIniFile();
-        sceneryPackages = getSceneryPackages(sceneryFolder, sceneryPacksIniFile);
+        sceneryPackages = Stream.of(
+                getSceneryPackages(sceneryFolder, sceneryPacksIniFile),
+                getSceneryPackages(disabledSceneryFolder, null)
+        ).flatMap(Collection::stream).collect(Collectors.toList());
 
         fireEvent(new ManagerEvent.Loaded<>(sceneryPackages));
     }
@@ -88,6 +99,40 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
             }
         }
         return sceneryPackage;
+    }
+
+    private boolean isEnabled(SceneryPackage sceneryPackage) {
+        return sceneryPackage.getFolder().startsWith(sceneryFolder);
+    }
+
+    @SneakyThrows
+    public void enableSceneryPackage(SceneryPackage sceneryPackage) {
+        if (isEnabled(sceneryPackage)) {
+            throw new IllegalOperation("SceneryPackage already enabled");
+        }
+        moveSceneryPackage(sceneryPackage, sceneryFolder);
+    }
+
+    @SneakyThrows
+    public void disableSceneryPackage(SceneryPackage sceneryPackage) {
+        if (! isEnabled(sceneryPackage)) {
+            throw new IllegalOperation("SceneryPackage already disabled");
+        }
+        moveSceneryPackage(sceneryPackage, disabledSceneryFolder);
+    }
+
+    @SneakyThrows
+    private void moveSceneryPackage(SceneryPackage sceneryPackage, Path targetFolder) {
+        // move the scenary folder
+        Path sourceFolder = sceneryPackage.getFolder();
+        // ...to the target folder, keeping the original folder name
+        Files.createDirectories(targetFolder);
+        Path target = targetFolder.resolve(sourceFolder.getFileName());
+        Files.move(sourceFolder, target);
+
+        // update scenery package
+        sceneryPackage.setFolder(target);
+        sceneryPackage.setEnabled(isEnabled(sceneryPackage));
     }
 
     @SneakyThrows
