@@ -10,7 +10,8 @@ import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
-import com.ogerardin.xpman.panels.diag.DiagController;
+import com.ogerardin.xpman.diag.DiagController;
+import com.ogerardin.xpman.panels.scenery.rules.RulesController;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
@@ -126,4 +127,17 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
         stage.show();
     }
 
+    @SneakyThrows
+    @FXML
+    private void editRules() {
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/rules.fxml"));
+        Pane pane = loader.load();
+        RulesController controller = loader.getController();
+        controller.setItems(sceneryOrganizer.getOrderedSceneryClasses());
+        Stage stage = new Stage();
+        stage.setTitle("Scenery classes");
+        stage.setScene(new Scene(pane));
+        stage.initOwner(this.sceneryTable.getScene().getWindow());
+        stage.show();
+    }
 }

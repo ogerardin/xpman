@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.panels.diag;
+package com.ogerardin.xpman.diag;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import javafx.fxml.FXML;

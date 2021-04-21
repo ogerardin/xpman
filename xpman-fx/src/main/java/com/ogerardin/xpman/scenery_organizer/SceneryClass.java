@@ -1,24 +1,21 @@
 package com.ogerardin.xpman.scenery_organizer;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Data
+@AllArgsConstructor
 public class SceneryClass {
 
     private String name;
 
-    private List<String> regexes;
+    private String regex;
 
-    public SceneryClass(String name, String... regexes) {
-        this.name = name;
-        this.regexes = Arrays.asList(regexes);
+    public SceneryClass(String name) {
+        this(name, null);
     }
 
     public boolean matches(String sceneryName) {
-        return getRegexes().stream()
-                .anyMatch(sceneryName::matches);
+        return sceneryName.matches(regex);
     }
 }
