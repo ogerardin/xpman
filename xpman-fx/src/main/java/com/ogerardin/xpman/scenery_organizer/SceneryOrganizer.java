@@ -23,8 +23,8 @@ public class SceneryOrganizer {
 
     private static List<SceneryClass> defaultSceneryClasses() {
         return Arrays.asList(
-                new SceneryClass("Airport", ".*[Aa]irport.*", ".*[^A-Z][A-Z]{4}[^A-Z].*"),
-                new SceneryClass("Overlay scenery", ".*overlay.*", ".*[Ll]andmark.*"),
+                new SceneryClass("Airport", ".*[Aa]irport.*|.*[^A-Z][A-Z]{4}[^A-Z].*"),
+                new SceneryClass("Overlay scenery", ".*overlay.*|.*[Ll]andmark.*"),
                 new SceneryClass("Mesh scenery", "z\\+.*")
         );
     }
