@@ -133,7 +133,7 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/rules.fxml"));
         Pane pane = loader.load();
         RulesController controller = loader.getController();
-        controller.setItems(sceneryOrganizer.getOrderedSceneryClasses());
+        controller.setSceneryOrganizer(sceneryOrganizer);
         Stage stage = new Stage();
         stage.setTitle("Scenery classes");
         stage.setScene(new Scene(pane));
