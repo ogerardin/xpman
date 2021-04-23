@@ -21,15 +21,12 @@
                             <LineNumberCellFactory />
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn prefWidth="168.0" text="Name">
+                    <TableColumn prefWidth="168.0" text="Name" fx:id="nameColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="name" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn prefWidth="385.0" text="RegEx">
-                        <cellFactory>
-                            <FontCellFactory />
-                        </cellFactory>
+                    <TableColumn prefWidth="385.0" text="RegEx" fx:id="regexColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="regex" />
                         </cellValueFactory>
@@ -44,9 +41,10 @@
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <items>
                     <Button mnemonicParsing="false" onAction="#add"  text="+" />
-                    <Button mnemonicParsing="false" onAction="#delete" text="-" />
+                    <Button mnemonicParsing="false" fx:id="deleteButton" onAction="#delete" text="-" />
                     <Button mnemonicParsing="false" fx:id="upButton" onAction="#up" text="▲" />
                     <Button mnemonicParsing="false" fx:id="downButton" onAction="#down" text="▼" />
+                    <Button mnemonicParsing="false" onAction="#restoreDefaults" text="Restore defaults" />
                 </items>
             </ToolBar>
         </top>
