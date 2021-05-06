@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.ogerardin.xpman.util.jfx.wizard.ValidatingWizardPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.LineNumberCellFactory?>
+<ValidatingWizardPane prefHeight="359.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.scenery.wizard.Page2Controller">
+    <headerText>Please review the resulting scenery_pack.ini and press 'Next' to apply.</headerText>
+    <content>
+        <TableView fx:id="sceneryTable" prefHeight="400.0" prefWidth="600.0">
+            <columns>
+                <TableColumn editable="false" prefWidth="58.0" text="Rank">
+                    <cellFactory>
+                        <LineNumberCellFactory />
+                    </cellFactory>
+                </TableColumn>
+                <TableColumn editable="false" prefWidth="249.0" text="Name">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="name" />
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+
+    </content>
+</ValidatingWizardPane>

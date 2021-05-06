@@ -10,6 +10,21 @@ import org.controlsfx.dialog.WizardPane;
 import java.lang.reflect.Constructor;
 import java.util.stream.Stream;
 
+/**
+ * An improved wizard based on controlfx's {@link org.controlsfx.dialog.Wizard}. Main differences are:
+ * <ul>
+ *     <li>Method {@link #setFlow(String...)} available to set a simple linear flow from a list of FXML pages</li
+ *     <li>When loading a page, if the page's controller class has a constructor that takes a {@link Wizard} parameter,
+ *     then use it (passing this) instead of the no-args constructor.</li>
+ *     <li>If the WizardPane is an instance of {@link ValidatingWizardPane} and its controller implements {@link Validating},
+ *     then the WizardPane's {@code invalidProperty} will be set to the controller's {@link Validating#invalidProperty()}.
+ *     As a consequence, the "Next" button's availability will be linked to the page's validity status, which itself may be
+ *     controlled through {@link org.controlsfx.validation.ValidationSupport}</li>
+ *     <li>If the WizardPane is an instance of {@link ValidatingWizardPane} and its controller implements {@link PageListener},
+ *     then the controller will be registered as a {@code PageListener}, which means that its {@link PageListener#onEnteringPage}
+ *     and {@link PageListener#onExitingPage} methods will be called when the page is displayed/left.</li>
+ * </ul>
+ */
 @Slf4j
 public class Wizard extends org.controlsfx.dialog.Wizard {
 

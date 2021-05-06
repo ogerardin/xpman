@@ -4,9 +4,8 @@ import com.ogerardin.xplane.scenery.SceneryPackage;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @RequiredArgsConstructor
@@ -38,5 +37,27 @@ public class SceneryOrganizer {
                 .filter(c -> c.matches(sceneryName))
                 .findFirst();
         return sceneryClass.orElse(OTHER_SCENERY_CLASS);
+    }
+
+    public int rank(SceneryPackage sceneryPackage) {
+        SceneryClass sceneryClass = sceneryClass(sceneryPackage);
+        if (sceneryClass == OTHER_SCENERY_CLASS) {
+            return 98;
+        }
+        else if (sceneryClass == LIBRARY_SCENERY_CLASS) {
+            return 99;
+        }
+        return getOrderedSceneryClasses().indexOf(sceneryClass);
+    }
+
+    public List<SceneryPackage> apply(List<SceneryPackage> sceneryPackages) {
+        final ArrayList<SceneryPackage> packages = new ArrayList<>(sceneryPackages);
+        packages.sort(Comparator.comparingInt(this::rank));
+        return packages;
+    }
+
+    public void setOrderedSceneryClasses(List<SceneryClass> sceneryClasses) {
+        this.orderedSceneryClasses.clear();
+        this.orderedSceneryClasses.addAll(sceneryClasses);
     }
 }
