@@ -39,7 +39,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
 
     /**
      * Returns an unmodifiable list of all Aircrafts available in the X-Plane folder.
-     * If the list has not alreaddy been loaded, this method will trigger a synchronous load.
+     * If the list has not already been loaded, this method will trigger a synchronous load.
      */
     public List<Aircraft> getAircrafts() {
         if (aircrafts == null) {

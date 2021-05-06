@@ -43,6 +43,10 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
         this.disabledSceneryFolder = sceneryFolder.resolveSibling(sceneryFolder.getFileName() + " (disabled)");
     }
 
+    /**
+     * Returns an unmodifiable list of all Scenery Packages available in the X-Plane folder.
+     * If the list has not already been loaded, this method will trigger a synchronous load.
+     */
     public List<SceneryPackage> getSceneryPackages() {
         if (sceneryPackages == null) {
             loadPackages();
@@ -50,6 +54,9 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
         return Collections.unmodifiableList(sceneryPackages);
     }
 
+    /**
+     * Trigger an asynchronous reload of the scenary package list.
+     */
     public void reload() {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(this::loadPackages);

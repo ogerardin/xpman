@@ -80,6 +80,9 @@ public class IntrospectionHelper {
         throw new InstantiationException("No constructor matched the specified parameters");
     }
 
+    /**
+     * Fail the instantiation by throwing a {@link InstantiationException} if the specified boolean is true
+     */
     public void require(boolean valid) throws InstantiationException {
         if (! valid) {
             throw new InstantiationException();
