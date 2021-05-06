@@ -13,11 +13,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import lombok.experimental.Delegate;
 
-public class PluginsController implements EventListener<ManagerEvent<Plugin>> {
+public class PluginsController {
 
     private final ObservableObjectValue<XPlane> xPlaneProperty;
 
-    @Delegate
     private EventListener<ManagerEvent<Plugin>> eventListener;
 
     @FXML
@@ -28,24 +27,23 @@ public class PluginsController implements EventListener<ManagerEvent<Plugin>> {
         xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
 
+    @FXML
+    public void initialize() {
+        pluginTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiPlugin.class, this));
+
+        eventListener = new TableViewManagerEventListener<>(pluginTable, UiPlugin::new);
+    }
+
     public void reload() {
         final XPlane xPlane = xPlaneProperty.get();
         if (xPlane == null) {
             pluginTable.setItems(null);
         } else {
             PluginManager pluginManager = xPlane.getPluginManager();
-            pluginManager.registerListener(this);
+            pluginManager.registerListener(eventListener);
             pluginManager.reload();
         }
     }
 
-
-    @FXML
-    public void initialize() {
-        pluginTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiPlugin.class, this));
-
-        // create delegate event listener
-        eventListener = new TableViewManagerEventListener<>(pluginTable, UiPlugin::new);
-    }
 
 }
