@@ -12,6 +12,7 @@ import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.diag.DiagController;
 import com.ogerardin.xpman.panels.scenery.rules.RulesController;
+import com.ogerardin.xpman.panels.scenery.wizard.OrganizeWizard;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
@@ -30,17 +31,18 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
+import lombok.var;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class SceneryController implements EventListener<ManagerEvent<SceneryPackage>> {
+public class SceneryController {
 
     private final ObservableObjectValue<XPlane> xPlaneProperty;
     private final SceneryOrganizer sceneryOrganizer;
-    private final JsonFileConfigPersister<XPManPrefs> configManager;
 
-    @Delegate
     private EventListener<ManagerEvent<SceneryPackage>> eventListener;
 
     @FXML
@@ -55,8 +57,38 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
     public SceneryController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
         xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
-        configManager = mainController.getConfigManager();
-        sceneryOrganizer = loadSceneryOrganizer(configManager.getConfig());
+
+        sceneryOrganizer = loadSceneryOrganizer(mainController.getConfigManager().getConfig());
+    }
+
+    @FXML
+    public void initialize() {
+        // add context menu to table rows
+        sceneryTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiScenery.class, this));
+
+        // sort nulls last for "rank" column (rank is null if scenery is disabled)
+        rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
+
+        // set tooltip for "rank" column
+        TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn, "The rank of this scenery in scenery_pack.ini");
+
+        // when items are assigned to the table, make sure the table is initially sorted by rank
+        sceneryTable.itemsProperty().addListener((observable, oldValue, newValue) -> {
+            rankColumn.setSortType(TableColumn.SortType.ASCENDING);
+            sceneryTable.getSortOrder().setAll(Collections.singletonList(rankColumn));
+            sceneryTable.sort();
+        });
+
+        eventListener = new TableViewManagerEventListener<>(
+                sceneryTable,
+                (SceneryPackage sceneryPackage) -> new UiScenery(
+                        sceneryPackage,
+                        xPlaneProperty.get(),
+                        sceneryOrganizer.sceneryClass(sceneryPackage))
+        );
+
+        // disable the toolbar if we don't have a current X-Plane instance
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }
 
     private SceneryOrganizer loadSceneryOrganizer(XPManPrefs config) {
@@ -67,7 +99,6 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
             return sceneryOrganizer;
         }
         return new SceneryOrganizer(sceneryClasses);
-
     }
 
     public void reload() {
@@ -76,35 +107,9 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
             sceneryTable.setItems(null);
         } else {
             SceneryManager sceneryManager = xPlane.getSceneryManager();
-            sceneryManager.registerListener(this);
+            sceneryManager.registerListener(eventListener);
             sceneryManager.reload();
         }
-    }
-
-    @FXML
-    public void initialize() {
-        sceneryTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiScenery.class, this));
-        rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
-
-        sceneryTable.itemsProperty().addListener((observable, oldValue, newValue) -> {
-            // initially sort by rank
-            rankColumn.setSortType(TableColumn.SortType.ASCENDING);
-            //noinspection unchecked
-            sceneryTable.getSortOrder().setAll(rankColumn);
-            sceneryTable.sort();
-        });
-
-        TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn, "The rank of this scenery in scenery_pack.ini");
-
-        eventListener = new TableViewManagerEventListener<>(
-                sceneryTable,
-                (SceneryPackage sceneryPackage) -> new UiScenery(
-                        sceneryPackage,
-                        xPlaneProperty.get(),
-                        sceneryOrganizer.sceneryClass(sceneryPackage))
-        );
-
-        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }
 
     public void installScenery() {
@@ -114,6 +119,7 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
         reload();
     }
 
+    @SuppressWarnings("unused")
     @SneakyThrows
     public  void displayCheckResults(List<InspectionMessage> results) {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/diag.fxml"));
@@ -139,5 +145,13 @@ public class SceneryController implements EventListener<ManagerEvent<SceneryPack
         stage.setScene(new Scene(pane));
         stage.initOwner(this.sceneryTable.getScene().getWindow());
         stage.show();
+    }
+
+    @FXML
+    private void organize() {
+        XPlane xPlane = xPlaneProperty.get();
+        OrganizeWizard wizard = new OrganizeWizard(xPlane, sceneryOrganizer);
+        wizard.showAndWait();
+        reload();
     }
 }

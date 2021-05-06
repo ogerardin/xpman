@@ -20,13 +20,12 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AircraftsController implements EventListener<ManagerEvent<Aircraft>> {
+public class AircraftsController {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
     private final ObservableObjectValue<XPlane> xPlaneProperty;
 
-    @Delegate
     private EventListener<ManagerEvent<Aircraft>> eventListener;
 
     @FXML
@@ -45,7 +44,6 @@ public class AircraftsController implements EventListener<ManagerEvent<Aircraft>
         aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
         aircraftsTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiAircraft.class, this));
 
-        // create delegate event listener
         eventListener = new TableViewManagerEventListener<>(aircraftsTable,
                 aircraft -> new UiAircraft(aircraft, xPlaneProperty.get()));
 
@@ -60,7 +58,7 @@ public class AircraftsController implements EventListener<ManagerEvent<Aircraft>
         } else {
             AircraftManager aircraftManager = xPlane.getAircraftManager();
             // register ourselve to receive manager events and trigger reload
-            aircraftManager.registerListener(this);
+            aircraftManager.registerListener(eventListener);
             aircraftManager.reload();
         }
     }
