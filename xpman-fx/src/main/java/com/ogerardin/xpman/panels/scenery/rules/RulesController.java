@@ -5,6 +5,7 @@ import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.ValidatingEditingCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -116,6 +117,10 @@ public class RulesController {
      public void setSceneryOrganizer(SceneryOrganizer sceneryOrganizer) {
         this.sceneryOrganizer = sceneryOrganizer;
         setItems(sceneryOrganizer.getOrderedSceneryClasses());
+    }
+
+    public List<SceneryClass> getItems() {
+        return tableView.getItems();
     }
 
     private static class RegexStringConverter extends StringConverter<String> {

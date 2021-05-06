@@ -27,8 +27,8 @@ public class InstallWizard extends Wizard {
         super("Install wizard");
         this.xPlane = xPlane;
         this.installType = installType;
-        this.setFlow("/fxml/wizard/page1.fxml",
-                "/fxml/wizard/page2.fxml",
-                "/fxml/wizard/page3.fxml");
+        this.setFlow("/fxml/install_wizard/page1.fxml",
+                "/fxml/install_wizard/page2.fxml",
+                "/fxml/install_wizard/page3.fxml");
     }
 }

@@ -15,7 +15,7 @@ public class TableViewUtil {
 
     public <S, T> void setColumnHeaderTooltip(TableView<S> tableView, TableColumn<S, T> tableColumn, String text) {
         // From https://stackoverflow.com/questions/23224826/how-to-add-a-tooltip-to-a-tableview-header-cell-in-javafx-8
-        // Relies on JavaFX internals and may break anytime...
+        // CAVEAT: Relies on JavaFX internals and may break anytime...
         Platform.runLater(() -> {
             Tooltip tooltip = new Tooltip(text);
             tooltip.setWrapText(true);
