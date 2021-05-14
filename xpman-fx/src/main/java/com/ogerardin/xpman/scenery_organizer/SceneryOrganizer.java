@@ -22,8 +22,9 @@ public class SceneryOrganizer {
 
     private static List<SceneryClass> defaultSceneryClasses() {
         return Arrays.asList(
-                new SceneryClass("Airport", ".*[Aa]irport.*|.*[^A-Z][A-Z]{4}[^A-Z].*"),
-                new SceneryClass("Overlay scenery", ".*overlay.*|.*[Ll]andmark.*"),
+                new SceneryClass("Airport", "^(?!Global).*[Aa]irport.*|(.*[^A-Z]|^)[A-Z]{4}[^A-Z].*|X-Plane Landmarks.*"),
+                new SceneryClass("Global Airports", "Global Airports"),
+                new SceneryClass("Overlay scenery", ".*overlay.*|.*world2xplane.*|.*trees.*|.*farms.*|.*osm2xp.*"),
                 new SceneryClass("Mesh scenery", "z\\+.*")
         );
     }
@@ -43,8 +44,7 @@ public class SceneryOrganizer {
         SceneryClass sceneryClass = sceneryClass(sceneryPackage);
         if (sceneryClass == OTHER_SCENERY_CLASS) {
             return 98;
-        }
-        else if (sceneryClass == LIBRARY_SCENERY_CLASS) {
+        } else if (sceneryClass == LIBRARY_SCENERY_CLASS) {
             return 99;
         }
         return getOrderedSceneryClasses().indexOf(sceneryClass);
