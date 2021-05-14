@@ -133,20 +133,6 @@ public class SceneryController {
         stage.show();
     }
 
-    @SneakyThrows
-    @FXML
-    private void editRules() {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/rules.fxml"));
-        Pane pane = loader.load();
-        RulesController controller = loader.getController();
-        controller.setSceneryOrganizer(sceneryOrganizer);
-        Stage stage = new Stage();
-        stage.setTitle("Scenery classes");
-        stage.setScene(new Scene(pane));
-        stage.initOwner(this.sceneryTable.getScene().getWindow());
-        stage.show();
-    }
-
     @FXML
     private void organize() {
         XPlane xPlane = xPlaneProperty.get();

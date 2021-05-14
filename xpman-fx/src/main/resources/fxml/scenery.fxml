@@ -82,7 +82,6 @@
                 <Button mnemonicParsing="false" onAction="#installScenery" text="Install..." />
                 <ComboBox prefWidth="150.0" promptText="Filter" />
                 <Button mnemonicParsing="false" onAction="#organize" text="Organize scenery_pack.ini" />
-                <Button mnemonicParsing="false" onAction="#editRules" text="Edit rules..." />
             </ToolBar>
         </top>
     </BorderPane>

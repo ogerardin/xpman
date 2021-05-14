@@ -82,6 +82,12 @@ public class RulesController {
 
     @FXML
     private void add() {
+        final int newPos = tableView.getItems().size();
+        tableView.getItems().add(newPos, new SceneryClass("New"));
+        tableView.getSelectionModel().select(newPos);
+        tableView.scrollTo(newPos);
+        tableView.layout();
+        tableView.edit(newPos, nameColumn);
     }
 
     @FXML

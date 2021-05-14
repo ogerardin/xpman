@@ -53,14 +53,14 @@ public class XPlaneController {
             String latestFinal = UpdateInformation.getLatestFinal();
             boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
             if (hasReleaseUpdate) {
-                releaseUpdate.setText("Release version " + latestFinal + " is available");
+                releaseUpdate.setText("Release version " + latestFinal + " is available. Please run the X-Plane Installer to update.");
             }
             releaseUpdate.setVisible(hasReleaseUpdate);
 
             String latestBeta = UpdateInformation.getLatestBeta();
             boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
             if (hasBetaUpdate) {
-                betaUpdate.setText("Beta version " + latestBeta + " is available");
+                betaUpdate.setText("Beta version " + latestBeta + " is available. Please run the X-Plane Installer to update.");
             }
             betaUpdate.setVisible(hasBetaUpdate);
         }
