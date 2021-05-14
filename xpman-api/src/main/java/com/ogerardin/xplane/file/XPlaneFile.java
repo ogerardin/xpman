@@ -10,7 +10,6 @@ import org.parboiled.parserunners.AbstractParseRunner;
 import org.parboiled.parserunners.BasicParseRunner;
 import org.parboiled.support.ParsingResult;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -54,7 +53,6 @@ public abstract class XPlaneFile<P extends XPlaneFileParser, R extends XPlaneFil
     }
 
 
-    @SuppressWarnings({"ConstantConditions"})
     @SneakyThrows
     private R parse()  {
         Objects.requireNonNull(file);
