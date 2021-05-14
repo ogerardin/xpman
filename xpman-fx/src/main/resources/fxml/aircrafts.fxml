@@ -14,7 +14,7 @@
 
             <TableView fx:id="aircraftsTable" prefHeight="400.0" prefWidth="600.0">
                 <columns>
-                    <TableColumn editable="false" prefWidth="174.0" text="Thumbnail">
+                    <TableColumn editable="false" prefWidth="174.0" text="Thumbnail" sortable="false">
                         <cellValueFactory>
                             <PropertyValueFactory property="thumb"/>
                         </cellValueFactory>
