@@ -28,9 +28,10 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
 
     private boolean enabled = false;
 
+    /** The rank of the scenery within scenery_packages.ini file (null if not listed) */
     private Integer rank = null;
 
-
+    /** The number of geo-tiles (*.dsf files) contained in the sceery */
     @SneakyThrows
     private int countTiles() {
         return FileUtils.findFiles(getEarthNavDataFolder(), path -> path.getFileName().toString().endsWith(".dsf")).size();
@@ -40,6 +41,7 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
         return folder.getFileName().toString();
     }
 
+    /** Whether the scenery contains an airport (file apt.dat) */
     @SuppressWarnings("unused")
     public boolean isAirport() {
         return Files.exists(getEarthNavDataFolder().resolve("apt.dat"));
@@ -49,11 +51,14 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
         return folder.resolve(EARTH_NAV_DATA);
     }
 
+    /** Whether the scenery is a library (containes a file library.txt) */
     @SuppressWarnings("unused")
     public boolean isLibrary() {
         return Files.exists(folder.resolve("library.txt"));
     }
 
+    /** The scenery version. As there is no standard way for a scenery to declare its version, this method
+     * should be overridden in specific scenery classes that provide a way to query the scenery version. */
     public String getVersion() {
         return null;
     }
