@@ -9,9 +9,12 @@ import javafx.scene.control.TableView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.controlsfx.dialog.WizardPane;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,10 +28,14 @@ public class Page2Controller implements PageListener {
 
     @Override
     public void onEnteringPage(WizardPane wizardPane) {
-        // apply scenery organizer rules to X-Plane scenery packs
-        final List<SceneryPackage> sceneryPackages = wizard.getXPlane().getSceneryManager().getSceneryPackages();
-        final SceneryOrganizer sceneryOrganizer = wizard.getSceneryOrganizer();
-        final List<SceneryPackage> sortedSceneryPacks = sceneryOrganizer.apply(sceneryPackages);
+        // get the list of enabled scenery packages, ordered by rank in sceneryPackages.ini
+        var sceneryPackages = wizard.getXPlane().getSceneryManager().getSceneryPackages().stream()
+                .filter(SceneryPackage::isEnabled)
+                .sorted(Comparator.comparingInt(SceneryPackage::getRank))
+                .collect(Collectors.toList());
+        // apply scenery organizer rules to get new ordered list
+        var sceneryOrganizer = wizard.getSceneryOrganizer();
+        var sortedSceneryPacks = sceneryOrganizer.apply(sceneryPackages);
         // display the result
         sceneryTable.setItems(new ObservableListWrapper<>(sortedSceneryPacks));
     }
