@@ -11,6 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * Specialized SceneryPackage class that handles the OpenSceneryX library.<p>
+ * See <a href="https://www.opensceneryx.com">www.opensceneryx.com</a>
+ */
 @SuppressWarnings("unused")
 public class OpenSceneryX extends SceneryPackage {
 
