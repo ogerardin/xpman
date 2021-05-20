@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Specialized SceneryPackage that handles XPFR sceneries.<p>
+ * See <a href="https://www.xpfr.org/?body=scene_accueil">www.xpfr.org</a>
+ */
 @SuppressWarnings("unused")
 public class XpfrScenery extends SceneryPackage {
 

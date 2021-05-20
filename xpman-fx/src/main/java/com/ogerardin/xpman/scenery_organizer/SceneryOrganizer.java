@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 @RequiredArgsConstructor
@@ -29,6 +28,15 @@ public class SceneryOrganizer {
         );
     }
 
+    /**
+     * @return the {@link SceneryClass} for the specified scenery, determined as follows:
+     * <ol>
+     *     <li>if the scenery is a library, then {@link #LIBRARY_SCENERY_CLASS}</li>
+     *     <li>otherwise the first item of {@link #orderedSceneryClasses} for which the scenery name matches
+     *     {@link SceneryClass#getRegex()} </li>
+     *     <li>in case no match was found, then {@link #OTHER_SCENERY_CLASS}</li>
+     * </ol>
+     */
     public SceneryClass sceneryClass(SceneryPackage sceneryPackage) {
         if (sceneryPackage.isLibrary()) {
             return LIBRARY_SCENERY_CLASS;
@@ -40,7 +48,12 @@ public class SceneryOrganizer {
         return sceneryClass.orElse(OTHER_SCENERY_CLASS);
     }
 
-    public int rank(SceneryPackage sceneryPackage) {
+    /**
+     * @return the rank of the scenery's class for sorting purposes.
+     * Special classes {@link #OTHER_SCENERY_CLASS} (not matched by any rule) and
+     * {@link #LIBRARY_SCENERY_CLASS} (detected) are assigned ranks 98 and 99.
+     */
+    public int sceneryClassRank(SceneryPackage sceneryPackage) {
         SceneryClass sceneryClass = sceneryClass(sceneryPackage);
         if (sceneryClass == OTHER_SCENERY_CLASS) {
             return 98;
@@ -51,8 +64,9 @@ public class SceneryOrganizer {
     }
 
     public List<SceneryPackage> apply(List<SceneryPackage> sceneryPackages) {
+        // make a copy so we don't sort the original list before the user OKs it
         final ArrayList<SceneryPackage> packages = new ArrayList<>(sceneryPackages);
-        packages.sort(Comparator.comparingInt(this::rank));
+        packages.sort(Comparator.comparingInt(this::sceneryClassRank));
         return packages;
     }
 
@@ -60,4 +74,5 @@ public class SceneryOrganizer {
         this.orderedSceneryClasses.clear();
         this.orderedSceneryClasses.addAll(sceneryClasses);
     }
+
 }

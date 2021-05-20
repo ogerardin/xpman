@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,7 +73,9 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
         sceneryPackages = Stream.of(
                 getSceneryPackages(sceneryFolder, sceneryPacksIniFile),
                 getSceneryPackages(disabledSceneryFolder, null)
-        ).flatMap(Collection::stream).collect(Collectors.toList());
+        ).flatMap(Collection::stream)
+                .sorted(Comparator.comparingInt(SceneryPackage::getRank))
+                .collect(Collectors.toList());
 
         fireEvent(new ManagerEvent.Loaded<>(sceneryPackages));
     }
