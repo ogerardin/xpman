@@ -19,7 +19,7 @@
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="70.0" text="Enabled?">
                         <cellValueFactory>
-                            <PropertyValueFactory property="enabled" />
+                            <PropertyValueFactory property="enabled"/>
                         </cellValueFactory>
                         <cellFactory>
                             <BooleanCellFactory/>
@@ -51,7 +51,7 @@
                             <BooleanCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" text="Tiles">
+                    <TableColumn editable="false" prefWidth="70.0" text="Tiles" style="-fx-alignment: CENTER-RIGHT;">
                         <cellValueFactory>
                             <PropertyValueFactory property="tileCount" />
                         </cellValueFactory>
