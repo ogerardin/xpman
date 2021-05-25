@@ -1,6 +1,5 @@
 package com.ogerardin.xpman.util.jfx.wizard;
 
-import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
 public interface PageListener {
