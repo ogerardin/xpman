@@ -8,7 +8,6 @@ import javafx.scene.control.TreeTableColumn;
  */
 public class BooleanTreeCellFactory<S> implements TreeTableCellFactory<S, Boolean> {
 
-
     @Override
     public TreeTableCell<S, Boolean> call(TreeTableColumn<S, Boolean> param) {
         return new TreeTableCell<S, Boolean>() {
