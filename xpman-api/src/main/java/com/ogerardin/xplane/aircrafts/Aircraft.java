@@ -1,17 +1,22 @@
 package com.ogerardin.xplane.aircrafts;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.inspection.*;
 import com.ogerardin.xplane.file.AcfFile;
-import lombok.*;
+import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionsProvider;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.WordUtils;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -123,15 +128,16 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
     @SneakyThrows
     public Map<String, URL> getLinks() {
-        final HashMap<String, URL> map = new HashMap<>();
+        return new HashMap<>();
+    }
+
+    @SuppressWarnings("unused")
+    @SneakyThrows
+    public Map<String, Path> getManuals() {
+        final HashMap<String, Path> map = new HashMap<>();
         Files.list(getAcfFile().getFile().getParent())
                 .filter(path -> path.getFileName().toString().toLowerCase().contains("manual"))
-                .forEach(path -> {
-                    try {
-                        map.put("Manual: " + path.getFileName().toString(), path.toUri().toURL());
-                    } catch (MalformedURLException ignored) {
-                    }
-                });
+                .forEach(path -> map.put("Manual: " + path.getFileName().toString(), path));
         return map;
     }
 

@@ -6,9 +6,9 @@ import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.SneakyThrows;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,17 +39,13 @@ public class ColimataConcorde extends Aircraft {
         );
     }
 
+    @Override
     @SneakyThrows
-    public Map<String, URL> getManuals() {
-        final HashMap<String, URL> manualsMap = new HashMap<>();
+    public Map<String, Path> getManuals() {
+        final HashMap<String, Path> manualsMap = new HashMap<>();
         Files.list(getAcfFile().getFile().getParent().resolve("MANUALS"))
                 .filter(path -> path.getFileName().toString().endsWith(".pdf"))
-                .forEach(path -> {
-                    try {
-                        manualsMap.put("Manual: " + path.getFileName().toString(), path.toUri().toURL());
-                    } catch (MalformedURLException ignored) {
-                    }
-                });
+                .forEach(path -> manualsMap.put("Manual: " + path.getFileName().toString(), path));
         return manualsMap;
     }
 
