@@ -16,6 +16,7 @@ import lombok.experimental.Delegate;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 
 @Data
@@ -66,6 +67,11 @@ public class UiAircraft {
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
+    }
+
+    @ForEach(group = "Manuals", iterable = "manuals.entrySet()", itemLabel = "#item.key")
+    public void openManual(@Value("#item.value") Path path) {
+        Platforms.getCurrent().openFile(path);
     }
 
     @SuppressWarnings("unused")

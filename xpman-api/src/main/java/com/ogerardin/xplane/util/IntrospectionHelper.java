@@ -81,7 +81,7 @@ public class IntrospectionHelper {
     }
 
     /**
-     * Fail the instantiation by throwing a {@link InstantiationException} if the specified boolean is true
+     * Fail the instantiation by throwing a {@link InstantiationException} if the specified boolean is not true
      */
     public void require(boolean valid) throws InstantiationException {
         if (! valid) {
