@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.SegmentedBar?>
 <?import org.controlsfx.glyphfont.Glyph?>
 <AnchorPane prefHeight="341.0" prefWidth="522.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.xplane.XPlaneController">
     <BorderPane AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
@@ -56,7 +50,8 @@
                 </Label>
                 <Hyperlink fx:id="log" onAction="#showLog" text="..." GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-                <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" prefWidth="91.0" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" prefWidth="91.0" text="Start X-Plane"
+                        GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <Label fx:id="releaseUpdate" text="..." GridPane.columnIndex="1" GridPane.rowIndex="3" visible="false">
                     <graphic>
                         <Glyph fontFamily="FontAwesome" icon="EXCLAMATION_TRIANGLE" style="-fx-text-fill: orange;"/>
@@ -67,6 +62,9 @@
                         <Glyph fontFamily="FontAwesome" icon="EXCLAMATION_TRIANGLE" style="-fx-text-fill: orange;"/>
                     </graphic>
                 </Label>
+                <SegmentedBar fx:id="breakdown" orientation="HORIZONTAL" GridPane.columnIndex="1" GridPane.rowIndex="7"
+                              GridPane.columnSpan="2">
+                </SegmentedBar>
             </GridPane>
         </center>
         <left>

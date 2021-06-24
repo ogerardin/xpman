@@ -105,6 +105,9 @@ public class XPlane {
         public Path customScenery() {
             return getBaseFolder().resolve("Custom Scenery");
         }
+        public Path globalScenery() {
+            return getBaseFolder().resolve("Global Scenery");
+        }
         public Path resources() {
             return getBaseFolder().resolve("Resources");
         }
