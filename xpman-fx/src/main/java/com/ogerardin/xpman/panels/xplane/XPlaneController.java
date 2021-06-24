@@ -4,12 +4,17 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.panels.xplane.breakdown.Segment;
+import com.ogerardin.xpman.panels.xplane.breakdown.SegmentInfoNode;
+import com.ogerardin.xpman.panels.xplane.breakdown.SegmentType;
+import com.ogerardin.xpman.panels.xplane.breakdown.SegmentView;
 import com.sun.jna.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import lombok.SneakyThrows;
+import org.controlsfx.control.SegmentedBar;
 
 /**
  * Controller for the first tab pane, which contains a summary of X-Plane installation.
@@ -20,24 +25,20 @@ public class XPlaneController {
 
     @FXML
     private Label appPath;
-
     @FXML
     private Button startXPlaneButton;
-
     @FXML
     private Hyperlink folder;
-
     @FXML
     private Label version;
-
     @FXML
     private Hyperlink log;
-
     @FXML
     private Label releaseUpdate;
-
     @FXML
     private Label betaUpdate;
+    @FXML
+    private SegmentedBar<Segment> breakdown;
 
     public XPlaneController(XPmanFX mainController) {
         mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> {
@@ -45,6 +46,11 @@ public class XPlaneController {
             updateDisplay(xPlane);
             checkUpdates(xPlane);
         });
+    }
+
+    public void initialize() {
+        breakdown.setSegmentViewFactory(SegmentView::new);
+        breakdown.setInfoNodeFactory(SegmentInfoNode::new);
     }
 
     private void checkUpdates(XPlane xPlane) {
@@ -73,6 +79,15 @@ public class XPlaneController {
         log.setText(xPlane.getLogPath().toString());
         // disable "start" button if current platform different from X-Plane detected platform
         startXPlaneButton.setDisable(Platform.getOSType() != xPlane.getVariant().getOsType());
+
+        breakdown.getSegments().setAll(
+                new Segment(SegmentType.AIRCRAFTS, xPlane.getAircraftManager().getAircraftFolder()),
+                new Segment(SegmentType.GLOBAL_SCENERY, xPlane.getPaths().globalScenery()),
+                new Segment(SegmentType.CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder()),
+                new Segment(SegmentType.CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder())
+//                new Segment(SegmentType.OTHER, )
+        );
+
     }
 
     @SneakyThrows
@@ -87,6 +102,6 @@ public class XPlaneController {
     @FXML
     private void showLog() {
         Platforms.getCurrent().openFile(xPlane.getLogPath());
-
     }
+
 }

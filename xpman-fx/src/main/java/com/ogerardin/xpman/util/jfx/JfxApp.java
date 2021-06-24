@@ -35,7 +35,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
         this.primaryStage = primaryStage;
 
         // catch-all exception handler (GUI version)
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> ErrorDialog.showError(throwable, primaryStage));
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> Platform.runLater(() -> ErrorDialog.showError(throwable, primaryStage)));
 
         log.debug("Setting up stage");
         setupStage(primaryStage);
