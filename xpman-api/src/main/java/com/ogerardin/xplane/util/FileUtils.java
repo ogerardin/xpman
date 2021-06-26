@@ -3,18 +3,15 @@ package com.ogerardin.xplane.util;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 @UtilityClass
 public class FileUtils {
@@ -36,4 +33,13 @@ public class FileUtils {
         return files;
     }
 
+    public static long getFolderSize(Path path) throws IOException {
+        if (! Files.isDirectory(path)) {
+            throw new IllegalArgumentException(path + " is not a directory");
+        }
+        return Files.walk(path)
+                .filter(Files::isRegularFile)
+                .mapToLong(p -> p.toFile().length())
+                .sum();
+    }
 }
