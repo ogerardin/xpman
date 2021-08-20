@@ -3,7 +3,6 @@ package com.ogerardin.xplane.navdata;
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.XPlane;
 import lombok.Getter;
-import org.parboiled.common.ImmutableList;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +19,7 @@ public class NavDataManager extends Manager<NavDataSet> {
     }
 
     public List<NavDataSet> loadNavDataSets() {
+        // See https://developer.x-plane.com/article/navdata-in-x-plane-11
         return Stream.of(
                 simWideOverride(),
                 baseNavData(),
@@ -31,31 +31,34 @@ public class NavDataManager extends Manager<NavDataSet> {
     }
 
     private NavDataSet simWideOverride() {
-        return new Arinc424DataSet("Sim-wide ARINC424 override", xPlane.getPaths().customData(), "earth_424.dat");
+        return new Arinc424DataSet("Sim-wide ARINC424 override",
+                xPlane, xPlane.getPaths().customData(), "earth_424.dat");
     }
 
     private NavDataSet baseNavData() {
-        return new XPNavDataSet("Base (shipped with X-Plane)", xPlane.getPaths().defaultData());
+        return new XPNavDataSet("Base (shipped with X-Plane)",
+                xPlane, xPlane.getPaths().defaultData());
     }
 
     private NavDataSet updatedBaseNavData() {
-        return new XPNavDataSet("Updated base (supplied by third-parties)", xPlane.getPaths().customData());
+        return new XPNavDataSet("Updated base (supplied by third-parties)",
+                xPlane, xPlane.getPaths().customData());
     }
 
     private NavDataSet faaUpdatedApproaches() {
-        return new Arinc424DataSet("FAA updated approaches", xPlane.getPaths().customData(),"FAACIFP18");
+        return new Arinc424DataSet("FAA updated approaches",
+                xPlane, xPlane.getPaths().customData(),"FAACIFP18");
     }
 
     private NavDataSet handPlacedLocalizers() {
         return new XPNavDataSet("Hand-placed localizers",
-                xPlane.getPaths().customScenery().resolve("Global Airports/Earth nav data"),
-                new String[] {"earth_nav.dat"}
-        );
+                xPlane, xPlane.getPaths().customScenery().resolve("Global Airports/Earth nav data"),
+                "earth_nav.dat");
     }
 
     private NavDataSet userData() {
-        return new XPNavDataSet("User data", xPlane.getPaths().customData(),
-                new String[] {"user_nav.dat", "user_fix.dat"});
+        return new XPNavDataSet("User data",
+                xPlane, xPlane.getPaths().customData(), "user_nav.dat", "user_fix.dat");
     }
 
 }
