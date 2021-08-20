@@ -29,7 +29,7 @@ public class XPlaneController {
 
     private XPlane xPlane;
 
-//    @FXML
+    //    @FXML
 //    private Label appPath;
     @FXML
     private Button startXPlaneButton;
@@ -86,32 +86,49 @@ public class XPlaneController {
         // disable "start" button if current platform different from X-Plane detected platform
         startXPlaneButton.setDisable(Platform.getOSType() != xPlane.getVariant().getOsType());
 
-        breakdown.getSegments().clear();
+//        breakdown.getSegments().clear();
+        breakdown.getSegments().setAll(
+                new Segment(SegmentType.AIRCRAFTS, 1),
+                new Segment(SegmentType.GLOBAL_SCENERY, 1),
+                new Segment(SegmentType.CUSTOM_SCENERY, 1),
+                new Segment(SegmentType.CUSTOM_SCENERY_DISABLED, 1),
+                new Segment(SegmentType.OTHER, 1)
+        );
+
         Executors.newSingleThreadExecutor().submit(() -> computeSegments(xPlane));
     }
 
     @SneakyThrows
     private void computeSegments(XPlane xPlane) {
-        long size = FileUtils.getFolderSize(xPlane.getBaseFolder());
-        size -= addSegment(SegmentType.AIRCRAFTS, xPlane.getAircraftManager().getAircraftFolder());
-        size -= addSegment(SegmentType.GLOBAL_SCENERY, xPlane.getPaths().globalScenery());
-        size -= addSegment(SegmentType.CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder());
-        size -= addSegment(SegmentType.CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder());
-        addSegment(SegmentType.OTHER, size);
+        final long size = FileUtils.getFolderSize(xPlane.getBaseFolder());
+
+        javafx.application.Platform.runLater(
+                () -> breakdown.getSegments().forEach(segment -> segment.setValue(size / 5.0))
+        );
+
+        long remainingSize = size;
+        remainingSize -= setSegment(SegmentType.AIRCRAFTS, xPlane.getAircraftManager().getAircraftFolder());
+        remainingSize -= setSegment(SegmentType.GLOBAL_SCENERY, xPlane.getPaths().globalScenery());
+        remainingSize -= setSegment(SegmentType.CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder());
+        remainingSize -= setSegment(SegmentType.CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder());
+        setSegment(SegmentType.OTHER, remainingSize);
     }
 
-    private long addSegment(SegmentType type, Path folder) throws IOException {
+    private long setSegment(SegmentType type, Path folder) throws IOException {
         if (! Files.exists(folder)) {
             return 0;
         }
         long folderSize = FileUtils.getFolderSize(folder);
-        addSegment(type, folderSize);
+        setSegment(type, folderSize);
         return folderSize;
     }
 
-    private void addSegment(SegmentType type, long folderSize) {
-        Segment segment = new Segment(type, folderSize);
-        javafx.application.Platform.runLater(() -> breakdown.getSegments().add(segment));
+    private void setSegment(SegmentType type, long folderSize) {
+        for (Segment segment : breakdown.getSegments()) {
+            if (segment.getType() == type) {
+                javafx.application.Platform.runLater(() -> segment.setValue(folderSize));
+            }
+        }
     }
 
     @SneakyThrows
