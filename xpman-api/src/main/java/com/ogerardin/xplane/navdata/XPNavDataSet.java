@@ -1,10 +1,12 @@
 package com.ogerardin.xplane.navdata;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ogerardin.xplane.XPlane;
 
+import java.nio.file.Path;
+
+/**
+ * A {@link NavDataSet} in the XPNAV1150/XPFIX1101/XPAWY1100/XPHOLD1140 formats
+ */
 public class XPNavDataSet extends NavDataSet {
 
     public static final String[] DEFAULT_FILES = {
@@ -16,16 +18,11 @@ public class XPNavDataSet extends NavDataSet {
             "earth_msa.dat"
     };
 
-    public XPNavDataSet(String name, Path folder) {
-        this(name, folder, DEFAULT_FILES);
+    public XPNavDataSet(String name, XPlane xPlane, Path folder) {
+        this(name, xPlane, folder, DEFAULT_FILES);
     }
 
-    public XPNavDataSet(String name, Path folder, String[] fileNames) {
-        super(name, folder);
-        List<NavDataFile> files = Arrays.stream(fileNames)
-                .map(folder::resolve)
-                .map(NavDataFile::new)
-                .collect(Collectors.toList());
-        setFiles(files);
+    public XPNavDataSet(String name, XPlane xPlane, Path folder, String... fileNames) {
+        super(name, xPlane, folder, fileNames);
     }
 }
