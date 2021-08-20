@@ -27,8 +27,7 @@ public class NavDataController {
     private TreeTableView<UiNavDataItem> treeTableView;
 
     public NavDataController(XPmanFX mainController) {
-        mainController.xPlaneProperty().addListener((observable, oldValue, newValue) -> updateView(newValue)
-        );
+        mainController.xPlaneProperty().addListener((observable, oldValue, newValue) -> updateView(newValue));
     }
 
     private void updateView(XPlane xPlane) {
