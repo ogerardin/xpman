@@ -20,7 +20,8 @@ public class InspectionMessage {
     @Singular
     private final List<Fix> fixes;
 
-    /** When true, indicates that the following inspections should be skipped */
+    /** When true, indicates that the following inspections should be skipped when this inspection
+     * is performed as part of {@link Inspections#inspect} */
     @Builder.Default
     private final boolean abort = false;
 

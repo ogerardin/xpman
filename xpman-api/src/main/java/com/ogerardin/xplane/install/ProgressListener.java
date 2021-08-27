@@ -1,5 +1,5 @@
 package com.ogerardin.xplane.install;
 
-public interface InstallProgressListener {
+public interface ProgressListener {
     void installing(double percent, String message);
 }

@@ -7,5 +7,5 @@ import java.io.IOException;
  */
 public interface InstallTarget {
 
-    void install(InstallableArchive archive, InstallProgressListener progressListener) throws IOException;
+    void install(InstallableArchive archive, ProgressListener progressListener) throws IOException;
 }
