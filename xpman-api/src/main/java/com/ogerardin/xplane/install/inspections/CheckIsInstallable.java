@@ -59,7 +59,7 @@ public class CheckIsInstallable implements Inspection<InstallableArchive> {
         }
         else {
             // perform InstallType-specific additional inspections
-            messages.addAll(actualInstallType.additionalChecks().inspect(zip));
+            messages.addAll(actualInstallType.additionalInspections().inspect(zip));
         }
 
         return messages;

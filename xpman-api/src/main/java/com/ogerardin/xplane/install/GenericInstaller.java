@@ -24,6 +24,7 @@ public class GenericInstaller {
     @NonNull
     private final InstallableArchive installableArchive;
 
+    /** The install type to perform or null for automatic based on archive contents */
     private final InstallType installType;
 
     @Getter(lazy = true)
@@ -56,7 +57,7 @@ public class GenericInstaller {
     }
 
     @SneakyThrows
-    public void install(InstallProgressListener progressListener) {
+    public void install(ProgressListener progressListener) {
         InstallType installType = getCandidateTypes().iterator().next();
         InstallTarget target = installType.target(xPlane);
         target.install(installableArchive, progressListener);

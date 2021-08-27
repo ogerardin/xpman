@@ -12,6 +12,8 @@ public interface InstallableArchive {
 
     int entryCount();
 
-    void installTo(Path targetFolder, InstallProgressListener progressListener) throws IOException;
+    void installTo(Path targetFolder, ProgressListener progressListener) throws IOException;
+
+    String getAsText(Path path) throws IOException;
 
 }

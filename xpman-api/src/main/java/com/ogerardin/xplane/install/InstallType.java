@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
+import com.ogerardin.xplane.install.inspections.custom.NavigraphCycleVersion;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import lombok.NonNull;
 import org.apache.commons.lang.WordUtils;
@@ -25,7 +26,7 @@ public enum InstallType {
         }
 
         @Override
-        public Inspection<InstallableArchive> additionalChecks() {
+        public Inspection<InstallableArchive> additionalInspections() {
             return Inspections.of(
                     new CheckHasSingleRootFolder()
             );
@@ -45,7 +46,7 @@ public enum InstallType {
         }
 
         @Override
-        public Inspection<InstallableArchive> additionalChecks() {
+        public Inspection<InstallableArchive> additionalInspections() {
             return Inspections.of(
                     new CheckHasSingleRootFolder()
             );
@@ -64,6 +65,14 @@ public enum InstallType {
         InstallTarget target(@NonNull XPlane xPlane) {
             return xPlane.getNavDataManager();
         }
+
+        @Override
+        public Inspection<InstallableArchive> additionalInspections() {
+            return Inspections.of(
+                    new NavigraphCycleVersion()
+            );
+        }
+
     };
 
     @Override
@@ -86,7 +95,7 @@ public enum InstallType {
                 .findAny();
     }
 
-    public Inspection<InstallableArchive> additionalChecks() {
+    public Inspection<InstallableArchive> additionalInspections() {
         return Inspections.empty();
     }
 
