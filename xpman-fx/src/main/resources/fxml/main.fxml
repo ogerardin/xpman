@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.input.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.*?>
-
 <VBox prefHeight="529.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ogerardin.xpman.XPmanFX">
     <MenuBar fx:id="mainMenu" VBox.vgrow="NEVER">
@@ -11,7 +10,7 @@
             <MenuItem mnemonicParsing="false" onAction="#open" text="Select X-Plane folder…"/>
             <Menu fx:id="recentMenu" mnemonicParsing="false" text="Open Recent"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem onAction="#installWizard" text="Install Wizard..."/>
+            <MenuItem onAction="#installWizard" text="Universal installer…"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" text="Preferences…"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
@@ -25,7 +24,7 @@
             <MenuItem mnemonicParsing="false" onAction="#help" text="? Help"/>
             <MenuItem mnemonicParsing="false" onAction="#github" text="XPman on github"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" onAction="#newIssue" text="Submit issue..."/>
+            <MenuItem mnemonicParsing="false" onAction="#newIssue" text="Submit issue…"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" onAction="#about" text="About XPman"/>
         </Menu>
