@@ -2,14 +2,18 @@ package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.install.InstallProgressListener;
+import com.ogerardin.xplane.install.InstallTarget;
+import com.ogerardin.xplane.install.InstallableArchive;
 import lombok.Getter;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class NavDataManager extends Manager<NavDataSet> {
+public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {
 
     @Getter(lazy = true)
     private final List<NavDataSet> navDataSets = loadNavDataSets();
@@ -61,4 +65,10 @@ public class NavDataManager extends Manager<NavDataSet> {
                 xPlane, xPlane.getPaths().customData(), "user_nav.dat", "user_fix.dat");
     }
 
+    @Override
+    public void install(InstallableArchive archive, InstallProgressListener progressListener) throws IOException {
+        archive.installTo(xPlane.getPaths().customScenery(), progressListener);
+        //TODO
+        //reload();
+    }
 }

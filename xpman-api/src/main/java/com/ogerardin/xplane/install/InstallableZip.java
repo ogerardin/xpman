@@ -44,7 +44,7 @@ public class InstallableZip implements InstallableArchive {
     }
 
     @Override
-    public void installTo(Path targetFolder, Installer.ProgressListener progressListener) throws IOException {
+    public void installTo(Path targetFolder, InstallProgressListener progressListener) throws IOException {
         log.info("Installing {} to {}", getFile(), targetFolder);
         int size = entryCount();
         AtomicInteger counter = new AtomicInteger();

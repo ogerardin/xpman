@@ -1,14 +1,14 @@
 package com.ogerardin.xplane.install.inspections;
 
-import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.PredicateInspection;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.install.InstallableArchive;
 
 /**
- * A {@link CheckInspection} that produces an aborting error if the source zip is not a valid archive.
+ * A {@link PredicateInspection} that produces an aborting error if the source zip is not a valid archive.
  */
-public class CheckIsValidArchive extends CheckInspection<InstallableArchive> {
+public class CheckIsValidArchive extends PredicateInspection<InstallableArchive> {
 
     public CheckIsValidArchive() {
         super(

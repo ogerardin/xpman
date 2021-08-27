@@ -26,7 +26,11 @@ public class Inspections<T> implements Inspection<T> {
         return new Inspections<>(inspections);
     }
 
-    @SafeVarargs
+    public static <T> Inspections<T> empty() {
+        return new Inspections<>();
+    }
+
+        @SafeVarargs
     public final Inspections<T> append(Inspection<T>... inspections) {
         this.inspections.addAll(Arrays.asList(inspections));
         return this;
@@ -40,7 +44,7 @@ public class Inspections<T> implements Inspection<T> {
     public List<InspectionMessage> inspect(T target) {
         return StreamEx.of(inspections)
                 .map(inspection -> inspection.inspect(target))
-                // short-circuit when one of the inspections return an aborting message
+                // short-circuit when one of the inspections returns an aborting message
                 .takeWhileInclusive(messages -> messages.stream().noneMatch(InspectionMessage::isAbort))
                 .toFlatList(Function.identity());
     }

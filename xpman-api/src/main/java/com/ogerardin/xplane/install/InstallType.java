@@ -1,6 +1,9 @@
 package com.ogerardin.xplane.install;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.Inspection;
+import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import lombok.NonNull;
 import org.apache.commons.lang.WordUtils;
@@ -12,24 +15,54 @@ import java.util.stream.Collectors;
 public enum InstallType {
     AIRCRAFT {
         @Override
+        boolean isMarker(Path path) {
+            return path.getFileName().toString().endsWith(".acf");
+        }
+
+        @Override
         InstallTarget target(@NonNull XPlane xPlane) {
             return xPlane.getAircraftManager();
         }
+
         @Override
-        boolean isMarker(Path path) {
-            return path.getFileName().toString().endsWith(".acf");
+        public Inspection<InstallableArchive> additionalChecks() {
+            return Inspections.of(
+                    new CheckHasSingleRootFolder()
+            );
         }
     },
 
     SCENERY {
         @Override
-        InstallTarget target(@NonNull XPlane xPlane) {
-            return xPlane.getSceneryManager();
-        }
-        @Override
         boolean isMarker(Path path) {
             return path.getFileName().toString().equals(SceneryPackage.EARTH_NAV_DATA)
                     && path.getNameCount() == 2;
+        }
+
+        @Override
+        InstallTarget target(@NonNull XPlane xPlane) {
+            return xPlane.getSceneryManager();
+        }
+
+        @Override
+        public Inspection<InstallableArchive> additionalChecks() {
+            return Inspections.of(
+                    new CheckHasSingleRootFolder()
+            );
+        }
+    },
+
+    NAVDATA {
+        @Override
+        boolean isMarker(Path path) {
+            return path.endsWith("earth_nav.dat")
+                    || path.endsWith("earth_awy.dat")
+                    || path.endsWith("earth_fix.dat");
+        }
+
+        @Override
+        InstallTarget target(@NonNull XPlane xPlane) {
+            return xPlane.getNavDataManager();
         }
     };
 
@@ -51,6 +84,10 @@ public enum InstallType {
         return Arrays.stream(InstallType.values())
                 .filter(installType -> installType.isMarker(path))
                 .findAny();
+    }
+
+    public Inspection<InstallableArchive> additionalChecks() {
+        return Inspections.empty();
     }
 
     abstract InstallTarget target(@NonNull XPlane xPlane);

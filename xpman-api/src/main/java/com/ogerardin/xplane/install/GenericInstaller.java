@@ -1,19 +1,20 @@
 package com.ogerardin.xplane.install;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
-import com.ogerardin.xplane.install.inspections.CheckIsInstallableType;
-import com.ogerardin.xplane.install.inspections.CheckIsValidArchive;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import lombok.*;
+import com.ogerardin.xplane.install.inspections.CheckIsInstallable;
+import com.ogerardin.xplane.install.inspections.CheckIsValidArchive;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
 /**
- * An {@link Installer} that is able to process any type of X-Plane installation archive.
+ * An installer that is able to process any type of X-Plane installation archive defined in {@link InstallType}
  */
 public class GenericInstaller {
 
@@ -49,14 +50,13 @@ public class GenericInstaller {
     private List<InspectionMessage> inspectArchive() {
         Inspections<InstallableArchive> archiveInspections = Inspections.of(
                 new CheckIsValidArchive(),
-                new CheckIsInstallableType(installType),
-                new CheckHasSingleRootFolder()
+                new CheckIsInstallable(installType)
         );
         return archiveInspections.inspect(installableArchive);
     }
 
     @SneakyThrows
-    public void install(Installer.ProgressListener progressListener) {
+    public void install(InstallProgressListener progressListener) {
         InstallType installType = getCandidateTypes().iterator().next();
         InstallTarget target = installType.target(xPlane);
         target.install(installableArchive, progressListener);
