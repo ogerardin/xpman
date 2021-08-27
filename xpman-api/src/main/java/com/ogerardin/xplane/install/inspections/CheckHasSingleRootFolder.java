@@ -1,10 +1,10 @@
 package com.ogerardin.xplane.install.inspections;
 
-import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.PredicateInspection;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.install.InstallableArchive;
 import lombok.SneakyThrows;
 
 import java.nio.file.Path;
@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A {@link CheckInspection} that produces an error if the source zip contains more than one root folder
+ * A {@link PredicateInspection} that produces an error if the source zip contains more than one root folder
  */
 public class CheckHasSingleRootFolder implements Inspection<InstallableArchive> {
 

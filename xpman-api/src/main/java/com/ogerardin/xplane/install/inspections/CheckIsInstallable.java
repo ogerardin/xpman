@@ -1,16 +1,19 @@
 package com.ogerardin.xplane.install.inspections;
 
-import com.ogerardin.xplane.install.InstallType;
-import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.install.InstallType;
+import com.ogerardin.xplane.install.InstallableArchive;
 import lombok.Data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Data
-public class CheckIsInstallableType implements Inspection<InstallableArchive> {
+public class CheckIsInstallable implements Inspection<InstallableArchive> {
 
     private final InstallType requiredInstallType;
 
@@ -53,6 +56,10 @@ public class CheckIsInstallableType implements Inspection<InstallableArchive> {
                             .abort(true)
                             .build()
             );
+        }
+        else {
+            // perform InstallType-specific additional inspections
+            messages.addAll(actualInstallType.additionalChecks().inspect(zip));
         }
 
         return messages;

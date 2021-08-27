@@ -8,11 +8,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * An {@link Inspection} that, when applied, may produce a single {@link InspectionMessage} provided by a given supplier
- * if a given predicate evaluates to false.
+ * An {@link Inspection} that, when applied, produces a single {@link InspectionMessage} provided by a given supplier
+ * if a given predicate evaluates to false, otherwise produces an empty message list.
  */
 @Data
-public class CheckInspection<T> implements Inspection<T> {
+public class PredicateInspection<T> implements Inspection<T> {
 
     private final Predicate<T> check;
 

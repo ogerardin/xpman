@@ -1,10 +1,10 @@
 package com.ogerardin.xplane.install.inspections;
 
-import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.inspection.CheckInspection;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.PredicateInspection;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.install.InstallableArchive;
 import lombok.Data;
 
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A {@link CheckInspection} that produces an error if the source zip does not contain any file with the specified
+ * A {@link PredicateInspection} that produces an error if the source zip does not contain any file with the specified
  * suffix.
  */
 @Data

@@ -4,9 +4,9 @@ import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
+import com.ogerardin.xplane.install.InstallProgressListener;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.install.Installer;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.*;
@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -95,7 +94,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     }
 
     @Override
-    public void install(InstallableArchive archive, Installer.ProgressListener progressListener) throws IOException {
+    public void install(InstallableArchive archive, InstallProgressListener progressListener) throws IOException {
         archive.installTo(getAircraftFolder(), progressListener);
         reload();
     }
