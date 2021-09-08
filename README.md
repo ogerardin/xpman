@@ -18,7 +18,8 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 - Standalone JavaFX application
 
 ## Status
-Early development stage.  
+Currently in development stages. Check [feature status](https://github.com/ogerardin/xpman/blob/master/features.md).
+USE AT YOUR OWN RISK! At this point I can't guarantee that it won't erase the whole X-Plane directory or set fire to your house.
 
 # Installing X-Plane Manager
 If you already have a [Java 8 runtime](https://www.oracle.com/java/technologies/javase-jre8-downloads.html), 
