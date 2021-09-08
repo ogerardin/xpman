@@ -1,30 +1,47 @@
 package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.Manager;
+import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {
 
-    @Getter(lazy = true)
-    private final List<NavDataSet> navDataSets = loadNavDataSets();
+    private List<NavDataSet> navDataSets = null;
 
     public NavDataManager(XPlane xPlane) {
         super(xPlane);
     }
 
+    public List<NavDataSet> getNavDataSets() {
+        if (navDataSets == null) {
+            loadNavDataSets();
+        }
+        return Collections.unmodifiableList(navDataSets);
+    }
+
+    public void reload() {
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(this::loadNavDataSets);
+    }
+
+
     public List<NavDataSet> loadNavDataSets() {
+
+        fireEvent(new ManagerEvent.Loading<>());
+
         // See https://developer.x-plane.com/article/navdata-in-x-plane-11
-        return Stream.of(
+        navDataSets = Stream.of(
                 simWideOverride(),
                 baseNavData(),
                 updatedBaseNavData(),
@@ -32,6 +49,10 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                 handPlacedLocalizers(),
                 userData()
         ).collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+
+        fireEvent(new ManagerEvent.Loaded<>(navDataSets));
+
+        return navDataSets;
     }
 
     private NavDataSet simWideOverride() {
@@ -68,7 +89,6 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     @Override
     public void install(InstallableArchive archive, ProgressListener progressListener) throws IOException {
         archive.installTo(xPlane.getPaths().customData(), progressListener);
-        //TODO
-        //reload();
+        reload();
     }
 }

@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.Data;
+import lombok.ToString;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +22,7 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 
     private final String name;
 
+    @ToString.Exclude
     private final XPlane xPlane;
 
     private final Path folder;
