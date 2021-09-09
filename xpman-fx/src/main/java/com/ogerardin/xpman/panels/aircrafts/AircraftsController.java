@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -57,13 +56,12 @@ public class AircraftsController {
             aircraftsTable.setItems(null);
         } else {
             AircraftManager aircraftManager = xPlane.getAircraftManager();
-            // register ourselve to receive manager events and trigger reload
             aircraftManager.registerListener(eventListener);
             aircraftManager.reload();
         }
     }
 
-    public void installAircraft() {
+    public void install() {
         XPlane xPlane = xPlaneProperty.get();
         InstallWizard wizard = new InstallWizard(xPlane, InstallType.AIRCRAFT);
         wizard.showAndWait();

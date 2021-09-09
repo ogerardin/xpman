@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Factory for a {@code TableCell<Path>} that assumes the {@link Path} value is the path of an image file
+ * Factory for a {@code TableCell<?, Path>} that assumes the {@link Path} value is the path of an image file
  * and renders it as a thumbnail
  */
 @Slf4j
