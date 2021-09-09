@@ -3,11 +3,13 @@ package com.ogerardin.xpman.panels.navdata;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.events.EventListener;
+import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.navdata.NavDataGroup;
 import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.jfx.panels.TreeTableViewManagerEventListener;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
@@ -24,7 +26,6 @@ import java.util.stream.Collectors;
 public class NavDataController {
 
     private static final Label PLACEHOLDER = new Label("No nav data to show");
-
 
     private final ObservableObjectValue<XPlane> xPlaneProperty;
 
@@ -57,7 +58,6 @@ public class NavDataController {
             treeTableView.setRoot(null);
         } else {
             NavDataManager navDataManager = xPlane.getNavDataManager();
-            // register ourselve to receive manager events and trigger reload
             navDataManager.registerListener(eventListener);
             navDataManager.reload();
         }
@@ -72,5 +72,13 @@ public class NavDataController {
         treeItem.getChildren().addAll(children);
         return treeItem;
     }
+
+    public void install() {
+        XPlane xPlane = xPlaneProperty.get();
+        InstallWizard wizard = new InstallWizard(xPlane, InstallType.NAVDATA);
+        wizard.showAndWait();
+        reload();
+    }
+
 
 }

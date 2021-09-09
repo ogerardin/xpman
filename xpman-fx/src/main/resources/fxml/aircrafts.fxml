@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.util.jfx.*?>
+<?import com.ogerardin.xpman.util.jfx.SpelValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.ThumbnailCellFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.panels.aircrafts.AircraftsController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                 AnchorPane.topAnchor="0.0">
+        <top>
+            <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <items>
+                    <Button mnemonicParsing="false" text="Reload" onAction="#reload"/>
+                    <Button mnemonicParsing="false" text="Analyze"/>
+                    <Button mnemonicParsing="false" text="Check for updates"/>
+                    <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
+                    <ComboBox prefWidth="150.0" promptText="Filter"/>
+                </items>
+            </ToolBar>
+        </top>
         <center>
-
             <TableView fx:id="aircraftsTable" prefHeight="400.0" prefWidth="600.0">
                 <columns>
                     <TableColumn editable="false" prefWidth="174.0" text="Thumbnail" sortable="false">
@@ -83,16 +93,5 @@
                 </columns>
             </TableView>
         </center>
-        <top>
-            <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                <items>
-                    <Button mnemonicParsing="false" text="Reload" onAction="#reload"/>
-                    <Button mnemonicParsing="false" text="Analyze"/>
-                    <Button mnemonicParsing="false" text="Check for updates"/>
-                    <Button mnemonicParsing="false" onAction="#installAircraft" text="Install..."/>
-                    <ComboBox prefWidth="150.0" promptText="Filter"/>
-                </items>
-            </ToolBar>
-        </top>
     </BorderPane>
 </AnchorPane>

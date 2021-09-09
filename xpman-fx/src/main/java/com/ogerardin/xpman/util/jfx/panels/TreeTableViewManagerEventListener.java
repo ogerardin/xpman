@@ -18,11 +18,11 @@ import java.util.function.Function;
  * An {@link EventListener} that handles {@link ManagerEvent}s from a {@link com.ogerardin.xplane.Manager}{@code <T>}
  * to update a given {@link javafx.scene.control.TreeTableView}{@code <U>}.
  * {@link ManagerEvent.Loading} triggers an animated placeholder.
- * {@link ManagerEvent.Loaded} triggers the display of loaded items after mapping from T to U
+ * {@link ManagerEvent.Loaded} triggers the display of loaded items after mapping from List{@code <T>} to TreeItem{@code <U>}
  * using the provided mapping function.
  *
  * @param <T> type of the items managed by the Manager
- * @param <U> type of the items displayed in the TableView
+ * @param <U> type of the items displayed in the TreeTableView
  */
 @Slf4j
 @Data
@@ -56,7 +56,7 @@ public class TreeTableViewManagerEventListener<T, U> implements EventListener<Ma
             // map items to UI items
             final TreeItem<U> root = mapper.apply(items);
 
-            // populate the tableView
+            // populate the treetableView
             Platform.runLater(() -> {
                 treeTableView.setRoot(root);
                 root.setExpanded(true);
