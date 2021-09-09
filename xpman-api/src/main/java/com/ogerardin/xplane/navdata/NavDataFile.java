@@ -1,6 +1,8 @@
 package com.ogerardin.xplane.navdata;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +13,8 @@ import java.nio.file.Path;
 @Data
 public class NavDataFile implements NavDataItem {
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final NavDataSet navDataSet;
 
     private final Path file;
