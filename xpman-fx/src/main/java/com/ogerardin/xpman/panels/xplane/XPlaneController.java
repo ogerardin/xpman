@@ -29,8 +29,6 @@ public class XPlaneController {
 
     private XPlane xPlane;
 
-    //    @FXML
-//    private Label appPath;
     @FXML
     private Button startXPlaneButton;
     @FXML
@@ -95,11 +93,17 @@ public class XPlaneController {
                 new Segment(SegmentType.OTHER, 1)
         );
 
+        // set all segments to "computing"
+        breakdown.getSegments().stream()
+                .<Runnable>map(segment -> () -> segment.computingProperty().setValue(true))
+                .forEach(javafx.application.Platform::runLater);
+
         Executors.newSingleThreadExecutor().submit(() -> computeSegments(xPlane));
     }
 
     @SneakyThrows
     private void computeSegments(XPlane xPlane) {
+
         final long size = FileUtils.getFolderSize(xPlane.getBaseFolder());
 
         javafx.application.Platform.runLater(
@@ -107,14 +111,14 @@ public class XPlaneController {
         );
 
         long remainingSize = size;
-        remainingSize -= setSegment(SegmentType.AIRCRAFTS, xPlane.getAircraftManager().getAircraftFolder());
-        remainingSize -= setSegment(SegmentType.GLOBAL_SCENERY, xPlane.getPaths().globalScenery());
-        remainingSize -= setSegment(SegmentType.CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder());
-        remainingSize -= setSegment(SegmentType.CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder());
+        remainingSize -= computeSegment(SegmentType.AIRCRAFTS, xPlane.getAircraftManager().getAircraftFolder());
+        remainingSize -= computeSegment(SegmentType.GLOBAL_SCENERY, xPlane.getPaths().globalScenery());
+        remainingSize -= computeSegment(SegmentType.CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder());
+        remainingSize -= computeSegment(SegmentType.CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder());
         setSegment(SegmentType.OTHER, remainingSize);
     }
 
-    private long setSegment(SegmentType type, Path folder) throws IOException {
+    private long computeSegment(SegmentType type, Path folder) throws IOException {
         if (! Files.exists(folder)) {
             return 0;
         }
@@ -124,11 +128,10 @@ public class XPlaneController {
     }
 
     private void setSegment(SegmentType type, long folderSize) {
-        for (Segment segment : breakdown.getSegments()) {
-            if (segment.getType() == type) {
-                javafx.application.Platform.runLater(() -> segment.setValue(folderSize));
-            }
-        }
+        breakdown.getSegments().stream()
+                .filter(segment -> segment.getType() == type)
+                .<Runnable>map(segment -> () -> segment.setValue(folderSize))
+                .forEach(javafx.application.Platform::runLater);
     }
 
     @SneakyThrows
