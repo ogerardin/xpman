@@ -2,6 +2,7 @@ package com.ogerardin.xplane.navdata;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ public class NavDataGroup implements NavDataItem {
 
     private final String name;
 
+    @ToString.Exclude
     private final List<? extends NavDataItem> items;
 
     @Override
