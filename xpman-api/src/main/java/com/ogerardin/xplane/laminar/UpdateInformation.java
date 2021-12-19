@@ -23,6 +23,7 @@ public class UpdateInformation {
     @SneakyThrows
     private ServersFileData loadData() {
         final URL url = new URL(SERVERS_URL);
+        //TODO FileUtils is from parboiled: use something else!
         final byte[] bytes = FileUtils.readAllBytes(url.openStream());
         String contents = new String(bytes, US_ASCII);
 
