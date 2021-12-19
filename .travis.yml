@@ -19,6 +19,7 @@ jobs:
       osx_image: xcode9.3 #latest image to support JDK8
       language: java
       jdk: oraclejdk8
+      before_script: git config --global http.sslverify "false"
     - os: windows
       # Java is not supported on Windows so we simulate it by using 'shell'
       language: shell
