@@ -9,7 +9,10 @@ import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -89,8 +92,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         // move the folder containing the .acf file...
         Path folder = acfFile.getParent();
         // ...to the trash
-        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
-        fileUtils.moveToTrash(new File[]{folder.toFile()});
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(new File[]{folder.toFile()});
     }
 
     @Override
