@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MirroringListTest {
 
     @Test
-    public void mirrors() {
+    void mirrors() {
 
         final ObservableListWrapper<String> observableList = new ObservableListWrapper<>(new ArrayList<>());
         observableList.add(UUID.randomUUID().toString());

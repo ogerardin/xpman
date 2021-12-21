@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Specialized SceneryPackage that handles XPFR sceneries.<p>
@@ -33,23 +34,26 @@ public class XpfrScenery extends SceneryPackage {
 
     @SneakyThrows
     private boolean hasXprfIdFile(Path folder) {
-        return Files.list(folder)
-                .map(path -> path.getFileName().toString())
-                .map(FILE_PATTERN::matcher)
-                .anyMatch(Matcher::matches);
+        try (Stream<Path> pathStream = Files.list(folder)) {
+            return pathStream
+                    .map(path -> path.getFileName().toString())
+                    .map(FILE_PATTERN::matcher)
+                    .anyMatch(Matcher::matches);
+        }
     }
 
     @SneakyThrows
     private String loadVersion() {
         Path folder = getFolder();
-        String version = Files.list(folder)
-                .map(path -> path.getFileName().toString())
-                .map(FILE_PATTERN::matcher)
-                .filter(Matcher::matches)
-                .findAny()
-                .map(matcher -> matcher.group(1))
-                .orElse(null);
-        return version;
+        try (Stream<Path> pathStream = Files.list(folder)) {
+            return pathStream
+                    .map(path -> path.getFileName().toString())
+                    .map(FILE_PATTERN::matcher)
+                    .filter(Matcher::matches)
+                    .findAny()
+                    .map(matcher -> matcher.group(1))
+                    .orElse(null);
+        }
     }
 
 

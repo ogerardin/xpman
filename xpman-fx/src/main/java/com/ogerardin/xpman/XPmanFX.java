@@ -60,7 +60,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
         String version = XPmanFX.class.getPackage().getImplementationVersion();
         log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
-        if (isDevMode()) {
+        if (DEV_MODE) {
             // dump all System properties
             System.getProperties().entrySet().stream()
                     .sorted(Comparator.comparing(entry -> (String) entry.getKey()))
@@ -93,7 +93,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         log.info("Opening X-Plane folder {}", folder);
         XPlane xplane = new XPlane(folder);
 
-        if ((xplane.getVariant() == XPlaneVariant.UNKNOWN) && !isDevMode()) {
+        if ((xplane.getVariant() == XPlaneVariant.UNKNOWN) && !DEV_MODE) {
             Alert alert = new Alert(Alert.AlertType.ERROR, String.format("%s is not a valid X-Plane folder.", folder.toString()));
             alert.initOwner(primaryStage);
             alert.showAndWait();

@@ -34,7 +34,7 @@ class ObjFileParserTest {
     private final boolean TRACE = false;
 
     @Test
-    public void testCanParseObj() throws IOException {
+    void testCanParseObj() throws IOException {
 
 //        Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
         Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");

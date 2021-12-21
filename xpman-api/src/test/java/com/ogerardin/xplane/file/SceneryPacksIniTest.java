@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 class SceneryPacksIniTest {
 
     @Test
-    public void testCanInstantiateAcfFile() {
+    void testCanInstantiateAcfFile() {
         Path file = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/scenery_packs.ini");
 
         final SceneryPacksIniFile sceneryPacksIniFile = new SceneryPacksIniFile(file);

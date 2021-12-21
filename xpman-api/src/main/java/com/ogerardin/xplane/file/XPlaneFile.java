@@ -44,7 +44,7 @@ public abstract class XPlaneFile<P extends XPlaneFileParser, R extends XPlaneFil
     @ToString.Exclude
     private final R data = parse();
 
-    public XPlaneFile(Path file, Class<P> parserClass) {
+    protected XPlaneFile(Path file, Class<P> parserClass) {
         this(file, parserClass, DEFAULT_PARSER_RUNNER_CLASS);
     }
 

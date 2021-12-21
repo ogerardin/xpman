@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Data
 @AllArgsConstructor
@@ -112,7 +113,7 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
         @Override
         public String toString() {
-            return WordUtils.capitalizeFully(name().replaceAll("_", " "));
+            return WordUtils.capitalizeFully(name().replace("_", " "));
         }
     }
 
@@ -135,9 +136,11 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     @SneakyThrows
     public Map<String, Path> getManuals() {
         final HashMap<String, Path> map = new HashMap<>();
-        Files.list(getAcfFile().getFile().getParent())
-                .filter(path -> path.getFileName().toString().toLowerCase().contains("manual"))
-                .forEach(path -> map.put("Manual: " + path.getFileName().toString(), path));
+        try (Stream<Path> pathStream = Files.list(getAcfFile().getFile().getParent())) {
+            pathStream
+                    .filter(path -> path.getFileName().toString().toLowerCase().contains("manual"))
+                    .forEach(path -> map.put("Manual: " + path.getFileName(), path));
+        }
         return map;
     }
 

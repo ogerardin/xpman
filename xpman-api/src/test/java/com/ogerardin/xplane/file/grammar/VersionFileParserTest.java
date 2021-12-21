@@ -28,7 +28,7 @@ class VersionFileParserTest {
     private final boolean TRACE = false;
 
     @Test
-    public void testCanParseVersions() throws IOException {
+    void testCanParseVersions() throws IOException {
 
         final URL serverList = getClass().getResource("/server_list_11.txt");
 

@@ -31,7 +31,7 @@ class AcfFileParserTest {
     private final boolean TRACE = true;
 
     @Test
-    public void testCanParseAcf() throws IOException {
+    void testCanParseAcf() throws IOException {
 
         Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 //        Path acfPath = getXPRootFolder().resolve("Aircraft/YAK-55M/YAK-55M.acf");

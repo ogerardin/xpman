@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -38,9 +39,8 @@ public class TerrainRadar extends Plugin {
     public String getVersion() {
         Path readme = getFolder().resolve("readme.txt");
         String firstLine;
-        try {
-            //noinspection OptionalGetWithoutIsPresent
-            firstLine = Files.lines(readme).findFirst().get();
+        try (Stream<String> lines = Files.lines(readme)) {
+            firstLine = lines.findFirst().orElse("");
         } catch (IOException e) {
             return super.getVersion();
         }
@@ -49,8 +49,7 @@ public class TerrainRadar extends Plugin {
         if (! matcher.matches()) {
             return super.getVersion();
         }
-        String version = matcher.group(1);
-        return version;
+        return matcher.group(1);
     }
 
     private String loadlatestVersion() {

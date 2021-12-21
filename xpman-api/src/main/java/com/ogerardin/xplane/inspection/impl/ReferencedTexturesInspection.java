@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReferencedTexturesInspection implements Inspection<SceneryPackage> {
 
-    public ReferencedTexturesInspection() {
-    }
-
     @SneakyThrows
     @Override
     public List<InspectionMessage> inspect(SceneryPackage target) {

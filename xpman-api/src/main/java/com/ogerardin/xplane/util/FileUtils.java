@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class FileUtils {
@@ -37,9 +38,11 @@ public class FileUtils {
         if (! Files.isDirectory(path)) {
             throw new IllegalArgumentException(path + " is not a directory");
         }
-        return Files.walk(path)
-                .filter(Files::isRegularFile)
-                .mapToLong(p -> p.toFile().length())
-                .sum();
+        try (Stream<Path> pathStream = Files.walk(path)) {
+            return pathStream
+                    .filter(Files::isRegularFile)
+                    .mapToLong(p -> p.toFile().length())
+                    .sum();
+        }
     }
 }

@@ -90,10 +90,12 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
         if (! Files.exists(sceneryFolder)) {
             return Collections.emptyList();
         }
-        return Files.list(sceneryFolder)
-                .filter(Files::isDirectory)
-                .map(folder -> getSceneryPackage(folder, iniFile))
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        try (Stream<Path> pathStream = Files.list(sceneryFolder)) {
+            return pathStream
+                    .filter(Files::isDirectory)
+                    .map(folder -> getSceneryPackage(folder, iniFile))
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        }
     }
 
     @SneakyThrows
@@ -148,7 +150,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     @SneakyThrows
     public void moveSceneryPackageToTrash(SceneryPackage sceneryPackage) {
         var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
-        fileUtils.moveToTrash(new File[]{sceneryPackage.getFolder().toFile()});
+        fileUtils.moveToTrash(sceneryPackage.getFolder().toFile());
     }
 
     @Override

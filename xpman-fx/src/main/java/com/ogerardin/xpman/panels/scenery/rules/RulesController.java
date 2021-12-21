@@ -129,17 +129,4 @@ public class RulesController {
         return tableView.getItems();
     }
 
-    private static class RegexStringConverter extends StringConverter<String> {
-        @Override
-        public String toString(String object) {
-            return object;
-        }
-
-        @SuppressWarnings("ResultOfMethodCallIgnored")
-        @Override
-        public String fromString(String string) {
-            Pattern.compile(string);
-            return string;
-        }
-    }
 }

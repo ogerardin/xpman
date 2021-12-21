@@ -29,16 +29,15 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 
     private List<NavDataFile> files = new ArrayList<>();
 
-    public NavDataSet(String name, XPlane xPlane, Path folder, String... fileNames) {
+    protected NavDataSet(String name, XPlane xPlane, Path folder, String... fileNames) {
         this.name = name;
         this.xPlane = xPlane;
         this.folder = folder;
-        List<NavDataFile> files = Arrays.stream(fileNames)
+        this.files = Arrays.stream(fileNames)
 //                .map(folder::resolve)
                 .map(Paths::get)
                 .map((Path file) -> new NavDataFile(this, file))
                 .collect(Collectors.toList());
-        setFiles(files);
     }
 
 

@@ -9,7 +9,7 @@ import java.nio.file.Path;
  */
 public class XPNavDataSet extends NavDataSet {
 
-    public static final String[] DEFAULT_FILES = {
+    protected static final String[] DEFAULT_FILES = {
             "earth_fix.dat",
             "earth_awy.dat",
             "earth_nav.dat",

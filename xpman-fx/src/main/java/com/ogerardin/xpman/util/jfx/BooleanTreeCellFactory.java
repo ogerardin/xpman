@@ -18,7 +18,7 @@ public class BooleanTreeCellFactory<S> implements TreeTableCellFactory<S, Boolea
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(value ? "Yes" : null);
+                    setText(Boolean.TRUE.equals(value) ? "Yes" : null);
                 }
             }
         };
