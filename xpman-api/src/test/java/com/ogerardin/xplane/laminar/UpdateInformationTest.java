@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
-public class UpdateInformationTest {
+class UpdateInformationTest {
 
     @Test
     void testGetLatestVersions() {

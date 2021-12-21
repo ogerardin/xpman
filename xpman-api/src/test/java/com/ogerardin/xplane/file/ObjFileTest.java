@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 class ObjFileTest {
 
     @Test
-    public void testCanInstantiateObjFile() {
+    void testCanInstantiateObjFile() {
         Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
 
         ObjFile objFile = new ObjFile(objPath);

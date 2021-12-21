@@ -24,7 +24,7 @@ class JsonFileConfigPersisterTest {
     }
 
     @Test
-    public void testSaveAndLoad() {
+    void testSaveAndLoad() {
         final TestPrefs prefs = prefsManager.getConfig();
         prefs.setBla("hahaha");
         prefs.setBli(Arrays.asList("hihihihi", "huhuhuhu"));

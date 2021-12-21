@@ -13,10 +13,10 @@ import java.util.List;
 @Slf4j
 @ExtendWith(TimingExtension.class)
 @DisabledIfNoXPlaneRootFolder
-public class PluginManagerTest {
+class PluginManagerTest {
 
     @Test
-    public void testLoadPlugins() throws InvalidConfig {
+    void testLoadPlugins() throws InvalidConfig {
 
         XPlane xplane = new XPlane(XPlane.getDefaultXPRootFolder());
 

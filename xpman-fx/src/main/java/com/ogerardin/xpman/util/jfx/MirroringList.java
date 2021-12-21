@@ -78,7 +78,7 @@ public class MirroringList<E, F> extends TransformationList<E, F> implements Obs
     @SuppressWarnings("unused")
     private interface DelegatingChangeExcluded<E> {
         List<E> getRemoved();
-        ObservableList<? extends E> getList();
+        ObservableList<E> getList();
         List<E> getAddedSubList();
     }
 

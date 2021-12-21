@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 class AcfFileTest {
 
     @Test
-    public void testCanInstantiateAcfFile() {
+    void testCanInstantiateAcfFile() {
         Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 
         AcfFile acfFile = new AcfFile(acfPath);

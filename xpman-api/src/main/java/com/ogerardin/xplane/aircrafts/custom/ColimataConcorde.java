@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class ColimataConcorde extends Aircraft {
@@ -43,9 +44,11 @@ public class ColimataConcorde extends Aircraft {
     @SneakyThrows
     public Map<String, Path> getManuals() {
         final HashMap<String, Path> manualsMap = new HashMap<>();
-        Files.list(getAcfFile().getFile().getParent().resolve("MANUALS"))
-                .filter(path -> path.getFileName().toString().endsWith(".pdf"))
-                .forEach(path -> manualsMap.put("Manual: " + path.getFileName().toString(), path));
+        try (Stream<Path> pathStream = Files.list(getAcfFile().getFile().getParent().resolve("MANUALS"))) {
+            pathStream
+                    .filter(path -> path.getFileName().toString().endsWith(".pdf"))
+                    .forEach(path -> manualsMap.put("Manual: " + path.getFileName().toString(), path));
+        }
         return manualsMap;
     }
 

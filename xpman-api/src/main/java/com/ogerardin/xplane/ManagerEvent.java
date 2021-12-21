@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
+@Data
 public abstract class ManagerEvent<T> {
 
     public static class Loading<T> extends ManagerEvent<T> {

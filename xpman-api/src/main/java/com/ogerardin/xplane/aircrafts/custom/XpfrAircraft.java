@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
@@ -33,13 +34,14 @@ public class XpfrAircraft extends Aircraft {
     @SneakyThrows
     private String loadVersion() {
         Path folder = getAcfFile().getFile().getParent();
-        String version = Files.list(folder)
-                .map(path -> FILE_PATTERN.matcher(path.getFileName().toString()))
-                .filter(Matcher::matches)
-                .findAny()
-                .map(matcher -> matcher.group(1))
-                .orElse(null);
-        return version;
+        try (Stream<Path> pathStream = Files.list(folder)) {
+            return pathStream
+                    .map(path -> FILE_PATTERN.matcher(path.getFileName().toString()))
+                    .filter(Matcher::matches)
+                    .findAny()
+                    .map(matcher -> matcher.group(1))
+                    .orElse(null);
+        }
     }
 
 

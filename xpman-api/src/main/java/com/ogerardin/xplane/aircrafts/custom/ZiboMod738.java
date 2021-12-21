@@ -52,7 +52,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         return channel.getLatestVersion();
     }
 
-    public ZiboMod738(AcfFile acfFile) throws Exception {
+    public ZiboMod738(AcfFile acfFile) throws InstantiationException {
         super(acfFile);
         IntrospectionHelper.require(getNotes().startsWith("ZIBOmod"));
     }
@@ -78,7 +78,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
      */
     private String loadVersionFromNotes() {
         String notes = getNotes();
-        Pattern pattern = Pattern.compile("(.+ )*v([0-9a-zA-Z.]+)$");
+        Pattern pattern = Pattern.compile(".+v([0-9a-zA-Z.]+)$");
         Matcher matcher = pattern.matcher(notes);
         if (! matcher.matches()) {
             return super.getVersion();
@@ -148,7 +148,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
                     .mapToInt(Integer::valueOf)
                     .max();
 
-            version = version.replaceAll("_", ".");
+            version = version.replace("_", ".");
             return maybePatch.isPresent() ? String.format("%s.%d", version, maybePatch.getAsInt()) : version;
         }
 

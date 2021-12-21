@@ -20,11 +20,10 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 @Slf4j
 public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
-    @Getter
-    private static final boolean devMode = Boolean.parseBoolean(System.getProperty("jfxapp.devmode", "false"));
+    protected static final boolean DEV_MODE = Boolean.parseBoolean(System.getProperty("jfxapp.devmode", "false"));
 
     static {
-        log.debug("dev mode: {}", devMode);
+        log.debug("dev mode: {}", DEV_MODE);
     }
 
     @Getter
@@ -68,7 +67,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     @FXML
     protected void quit() {
-        if (isDevMode()) {
+        if (DEV_MODE) {
             quitNow();
         }
 

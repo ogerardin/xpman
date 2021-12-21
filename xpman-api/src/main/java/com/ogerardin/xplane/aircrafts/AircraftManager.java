@@ -92,7 +92,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         // move the folder containing the .acf file...
         Path folder = acfFile.getParent();
         // ...to the trash
-        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(new File[]{folder.toFile()});
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
     }
 
     @Override

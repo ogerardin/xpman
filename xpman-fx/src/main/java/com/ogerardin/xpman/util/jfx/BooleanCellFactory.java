@@ -18,7 +18,7 @@ public class BooleanCellFactory<S> implements TableCellFactory<S, Boolean> {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(value ? "Yes" : null);
+                    setText(Boolean.TRUE.equals(value) ? "Yes" : null);
                 }
             }
         };

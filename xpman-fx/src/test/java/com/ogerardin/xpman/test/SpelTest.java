@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.is;
 class SpelTest {
 
     @Test
-    public void testSpel() {
+    void testSpel() {
         Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
 
         AcfFile acfFile = new AcfFile(acfPath);
@@ -34,7 +34,7 @@ class SpelTest {
     }
 
     @Test
-    public void testSpelVariables() {
+    void testSpelVariables() {
         Map<String, Object> variables = Maps.mapOf("var1", TRUE);
 
         assertThat(eval("#var1", null, variables), is(TRUE));
