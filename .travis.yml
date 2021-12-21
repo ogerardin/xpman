@@ -5,9 +5,6 @@ env:
     - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
     - secure: "jyAeN/eVtN3w7OokvcICAI/a4objozQnorb7FvqN0es0htdo+t8nGlHu7/F47yOd/g/y56Ok7A1y4Bylto04qsQQZJx5LW8Zk+3KbjPClqRUvJysdfmNZQmm5vEbgtyIUd9m6pLhKg046+t7m2Yjuz2ZlMQya1RCEqczYdwhKUGoZcqugo11jFXTIS1tMlwVtNPwn2FWdKxeMJw9Yau3w1aHa7bMZyitODdOe1mIDoK/X3g3eew9rtQ8M2WpdDuym211+iFvr0LppHkfN/x6mBNbTAxwRwGXdJgdNTVhHuRm2LBc6Xh9YKg0v0hYWscgekRw03ziidh0URSy4QHvF/+ZBtI3VK8wsLWpeFotbSpTP0QZb/afecTIco25SGCLIF6RrBp5EW+VcxLzqjUrV7W/cBMU3wxgGZgRZn5xoT95IEm1korRbxWyCIQSxyve3v/3+6c6ZES1iOW60705xfEDR8BahhMsN8C/v1rZz7HtY7u+IfdSALeAAA2/HEReKHVOsqzk5uGzUm5jgzxr0S2O3IoIBi29EkLrep5tcA+g3+720dHuTPhwmJtdIglBivnSRBWIg9xuDsj9KL8XdoVvvbJIf8zb1kLwXBnbIgbVsqWSUWTdudKqK0V/g+yGxmgdGA6ttFDreL7ttEqMMKJoiCSD31TCYk7mqlI1uXI="
 
-git:
-  depth: false
-
 jobs:
   include:
     - os: linux
@@ -22,7 +19,6 @@ jobs:
       osx_image: xcode9.3 #latest image to support JDK8
       language: java
       jdk: oraclejdk8
-      before_script: git config --global http.sslverify "false"
     - os: windows
       # Java is not supported on Windows so we simulate it by using 'shell'
       language: shell
