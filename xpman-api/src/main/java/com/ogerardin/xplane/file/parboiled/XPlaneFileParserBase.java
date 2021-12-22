@@ -10,7 +10,7 @@ import org.parboiled.annotations.SuppressSubnodes;
  * The main rule is always {@link #XPlaneFile()}.
  * Type of values is {@link #Object} so we can push anything.
  */
-public abstract class XPlaneFileParserBase extends BaseParser<Object> {
+abstract class XPlaneFileParserBase extends BaseParser<Object> {
 
     public abstract Rule XPlaneFile();
 

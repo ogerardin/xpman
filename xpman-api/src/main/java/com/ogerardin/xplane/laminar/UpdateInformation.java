@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 @UtilityClass
 public class UpdateInformation {
 
-    private final static String SERVERS_URL = "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt";
+    private static final String SERVERS_URL = "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt";
 
     @Getter(lazy = true, value = AccessLevel.PRIVATE)
     private final ServersFileData data = loadData();
@@ -28,8 +28,7 @@ public class UpdateInformation {
         String contents = new String(bytes, US_ASCII);
 
         ServersFile serversFile = new ServersFile();
-        final ServersFileData data = serversFile.parse(contents);
-        return data;
+        return serversFile.parse(contents);
     }
 
     public String getLatestBeta() {

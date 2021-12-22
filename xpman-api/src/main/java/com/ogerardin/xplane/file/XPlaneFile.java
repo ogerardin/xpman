@@ -12,8 +12,8 @@ import java.util.Objects;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Represents a generic X-Plane file.
- * @param <R> type of the result produced by the parser
+ * Base class for a generic parsable X-Plane file.
+ * @param <R> type of the result produced by the parsing.
  */
 @Data
 @Slf4j
@@ -24,11 +24,11 @@ public abstract class XPlaneFile<R extends XPlaneFileData> implements StringPars
     private final Path file;
 
     @NonNull
-    @Delegate
+    @Delegate //delegate the parse() method implementation to the actual parser
     private final StringParser<R> parser;
 
     /** Result of the parsing */
-    @Getter(lazy = true)
+    @Getter(lazy = true) //defer parsing until getData() is called
     @ToString.Exclude
     private final R data = parse();
 

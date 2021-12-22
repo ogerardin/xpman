@@ -7,7 +7,7 @@ import org.parboiled.Action;
 import org.parboiled.Rule;
 
 /**
- * StringParser for http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt
+ * Parser for http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt
  * Currently only extracts beta version and final version.
  */
 @Slf4j
