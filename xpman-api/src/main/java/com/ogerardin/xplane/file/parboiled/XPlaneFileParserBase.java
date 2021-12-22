@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.grammar;
+package com.ogerardin.xplane.file.parboiled;
 
 import com.ogerardin.xplane.file.data.Header;
 import org.parboiled.BaseParser;
@@ -10,7 +10,7 @@ import org.parboiled.annotations.SuppressSubnodes;
  * The main rule is always {@link #XPlaneFile()}.
  * Type of values is {@link #Object} so we can push anything.
  */
-public abstract class XPlaneFileParser extends BaseParser<Object> {
+public abstract class XPlaneFileParserBase extends BaseParser<Object> {
 
     public abstract Rule XPlaneFile();
 
