@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.grammar;
+package com.ogerardin.xplane.file.parboiled;
 
 import com.ogerardin.xplane.file.data.*;
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Slf4j
-public class SceneryPacksIniParser extends XPlaneFileParser {
+public class SceneryPacksIniParser extends XPlaneFileParserBase {
 
     static final String REQUIRED_TYPE = "SCENERY";
 

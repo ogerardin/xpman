@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.grammar;
+package com.ogerardin.xplane.file.parboiled;
 
 import com.ogerardin.xplane.file.data.*;
 import com.ogerardin.xplane.file.data.obj.ObjCommand;
@@ -11,11 +11,11 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.SuppressSubnodes;
 
 /**
- * Parser for OBJ8 file structure.
+ * StringParser for OBJ8 file structure.
  * Reference: https://developer.x-plane.com/article/obj8-file-format-specification/#OBJECT_SYNTAX
  */
 @Slf4j
-public class ObjFileParser extends XPlaneFileParser {
+public class ObjFileParser extends XPlaneFileParserBase {
 
     static final String REQUIRED_TYPE = "OBJ";
 

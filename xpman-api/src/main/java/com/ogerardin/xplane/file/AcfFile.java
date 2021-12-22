@@ -1,7 +1,8 @@
 package com.ogerardin.xplane.file;
 
 import com.ogerardin.xplane.file.data.acf.AcfFileData;
-import com.ogerardin.xplane.file.grammar.AcfFileParser;
+import com.ogerardin.xplane.file.parboiled.AcfFileParser;
+import com.ogerardin.xplane.file.parboiled.ParboiledParser;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -11,10 +12,10 @@ import java.util.Map;
  * Represents a parsed .acf file
  */
 @ToString(onlyExplicitlyIncluded = true)
-public class AcfFile extends XPlaneFile<AcfFileParser, AcfFileData> {
+public class AcfFile extends XPlaneFile<AcfFileData> {
 
     public AcfFile(Path file) {
-        super(file, AcfFileParser.class);
+        super(file, new ParboiledParser<>(AcfFileParser.class));
     }
 
     public String getProperty(String name) {
