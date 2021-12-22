@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.grammar;
+package com.ogerardin.xplane.file.parboiled;
 
 import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
