@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.grammar;
+package com.ogerardin.xplane.file.parboiled;
 
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
@@ -7,11 +7,11 @@ import org.parboiled.Action;
 import org.parboiled.Rule;
 
 /**
- * Parser for http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt
+ * StringParser for http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt
  * Currently only extracts beta version and final version.
  */
 @Slf4j
-public class ServersFileParser extends XPlaneFileParser {
+public class ServersFileParser extends XPlaneFileParserBase {
 
     static final String REQUIRED_TYPE = "SERVERS";
 

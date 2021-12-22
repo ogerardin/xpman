@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.file.grammar;
+package com.ogerardin.xplane.file.parboiled;
 
 import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.data.Header;
@@ -10,7 +10,7 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.SuppressSubnodes;
 
 @Slf4j
-public class AcfFileParser extends XPlaneFileParser {
+public class AcfFileParser extends XPlaneFileParserBase {
 
     static final String REQUIRED_TYPE = "ACF";
 
