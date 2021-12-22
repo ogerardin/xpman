@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.file.parboiled;
 
-import com.ogerardin.xplane.file.data.*;
+import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.obj.ObjCommand;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
@@ -11,7 +11,7 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.SuppressSubnodes;
 
 /**
- * StringParser for OBJ8 file structure.
+ * Very partial implementation of a parser for OBJ8 file structure.
  * Reference: https://developer.x-plane.com/article/obj8-file-format-specification/#OBJECT_SYNTAX
  */
 @Slf4j

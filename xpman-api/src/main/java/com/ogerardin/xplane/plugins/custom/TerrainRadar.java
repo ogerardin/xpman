@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.plugins.custom;
 
-import com.google.api.client.util.IOUtils;
+import com.google.common.io.ByteStreams;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
@@ -63,7 +63,7 @@ public class TerrainRadar extends Plugin {
             connection.connect();
             final InputStream inputStream = connection.getInputStream();
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            IOUtils.copy(inputStream, outputStream);
+            ByteStreams.copy(inputStream, outputStream);
             connection.disconnect();
             String html = outputStream.toString("UTF-8");
             Pattern pattern = Pattern.compile(".*\"softwareVersion\": \"([0-9.]+)\".*", Pattern.DOTALL);
