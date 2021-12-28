@@ -4,6 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <parent>
         <groupId>com.ogerardin.xplane</groupId>
         <artifactId>xpman</artifactId>
@@ -99,6 +112,11 @@
                 </dependency>
         -->
 
+        <dependency>
+            <groupId>com.github.petitparser</groupId>
+            <artifactId>petitparser-core</artifactId>
+            <version>2.3.1</version>
+        </dependency>
 
         <dependency>
             <groupId>one.util</groupId>

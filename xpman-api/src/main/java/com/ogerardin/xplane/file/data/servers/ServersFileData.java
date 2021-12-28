@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class ServersFileData extends XPlaneFileData {
 
     private String betaVersion;
