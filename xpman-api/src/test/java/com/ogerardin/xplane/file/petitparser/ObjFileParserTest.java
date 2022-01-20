@@ -1,6 +1,8 @@
 package com.ogerardin.xplane.file.petitparser;
 
+import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
+import com.ogerardin.xplane.XPlane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,32 +11,30 @@ import org.petitparser.parser.Parser;
 import org.petitparser.utils.Tracer;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
-class VersionFileParserTest {
+@DisabledIfNoXPlaneRootFolder
+class ObjFileParserTest {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final boolean TRACE = false;
 
     @Test
-    void testCanParseVersions() throws IOException, URISyntaxException {
+    void testCanParseObj() throws IOException {
 
-        final URL serverList = getClass().getResource("/server_list_11.txt");
+        Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
+//        Path objPath = XPlane.getDefaultXPRootFolder().resolve("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
 
-        final byte[] bytes = Files.readAllBytes(Paths.get(serverList.toURI()));
+        byte[] bytes = Files.readAllBytes(objPath);
         String fileContents = new String(bytes, US_ASCII);
 
-        Parser parser = new ServersFileParser().getParser();
-//        Parser parser = new ServersFileParserDefinition().build();
-
+        Parser parser = new ObjFileParser().getParser();
         if (TRACE) {
             parser = Tracer.on(parser, traceEvent -> log.debug(traceEvent.toString()));
         }
@@ -50,7 +50,6 @@ class VersionFileParserTest {
         log.debug("resultValue={}", (Object) result.get());
 
 //        log.debug(ParseTreeUtils.printNodeTree(result));
-
     }
 
 }

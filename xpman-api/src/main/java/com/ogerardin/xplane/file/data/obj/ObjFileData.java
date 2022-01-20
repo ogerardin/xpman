@@ -2,14 +2,16 @@ package com.ogerardin.xplane.file.data.obj;
 
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.XPlaneFileData;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 
 /** Parsing result for a .acf file */
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class ObjFileData extends XPlaneFileData {
 
     ObjAttributes attributes = new ObjAttributes();
@@ -21,6 +23,7 @@ public class ObjFileData extends XPlaneFileData {
     public ObjFileData(Header header) {
         super(header);
     }
+
 
     public static class ObjAttributes extends ArrayList<ObjAttribute> {}
 

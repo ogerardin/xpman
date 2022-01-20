@@ -1,6 +1,8 @@
 package com.ogerardin.xplane.file.petitparser;
 
+import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.util.TimingExtension;
+import com.ogerardin.xplane.XPlane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,31 +11,31 @@ import org.petitparser.parser.Parser;
 import org.petitparser.utils.Tracer;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
-class VersionFileParserTest {
+@DisabledIfNoXPlaneRootFolder
+class AcfFileParserTest {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final boolean TRACE = false;
 
     @Test
-    void testCanParseVersions() throws IOException, URISyntaxException {
+    void testCanParseAcf() throws IOException {
 
-        final URL serverList = getClass().getResource("/server_list_11.txt");
+        Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
+//        Path acfPath = getXPRootFolder().resolve("Aircraft/YAK-55M/YAK-55M.acf");
+//        Path acfPath = getXPRootFolder().resolve("Aircraft/RafaleC_solo_display/RafaleC.acf");
 
-        final byte[] bytes = Files.readAllBytes(Paths.get(serverList.toURI()));
-        String fileContents = new String(bytes, US_ASCII);
+        byte[] bytes = Files.readAllBytes(acfPath);
+        String fileContents = new String(bytes, UTF_8);
 
-        Parser parser = new ServersFileParser().getParser();
-//        Parser parser = new ServersFileParserDefinition().build();
+        Parser parser = new AcfFileParser().getParser();
 
         if (TRACE) {
             parser = Tracer.on(parser, traceEvent -> log.debug(traceEvent.toString()));
@@ -50,7 +52,6 @@ class VersionFileParserTest {
         log.debug("resultValue={}", (Object) result.get());
 
 //        log.debug(ParseTreeUtils.printNodeTree(result));
-
     }
 
 }

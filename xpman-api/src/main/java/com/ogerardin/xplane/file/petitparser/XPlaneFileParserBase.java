@@ -6,11 +6,16 @@ import lombok.Getter;
 import org.petitparser.context.Result;
 import org.petitparser.parser.Parser;
 import org.petitparser.parser.primitive.CharacterParser;
-import org.petitparser.parser.primitive.StringParser;
 
 import java.util.List;
 
-import static org.petitparser.parser.primitive.CharacterParser.*;
+import static org.petitparser.parser.primitive.CharacterParser.anyOf;
+import static org.petitparser.parser.primitive.CharacterParser.digit;
+import static org.petitparser.parser.primitive.CharacterParser.letter;
+import static org.petitparser.parser.primitive.CharacterParser.noneOf;
+import static org.petitparser.parser.primitive.CharacterParser.of;
+import static org.petitparser.parser.primitive.CharacterParser.range;
+import static org.petitparser.parser.primitive.StringParser.of;
 
 abstract class XPlaneFileParserBase<R extends XPlaneFileData>  {
 
@@ -29,14 +34,18 @@ abstract class XPlaneFileParserBase<R extends XPlaneFileData>  {
 
     protected abstract Parser XPlaneFile();
 
+    //
+    // Common constructs
+    //
+
     Parser JunkLine() {
         return noneOf("\r\n").star().seq(Newline());
     }
 
     Parser Header(String requiredType) {
-        return Origin().seq(JunkLine()).pick(0)
-                .seq(VersionSpec().seq(JunkLine()).pick(0))
-                .seq(FileType(requiredType).seq(Newline()).pick(0))
+        return Origin()
+                .seq(VersionSpec())
+                .seq(FileType(requiredType))
                 .map((List<String> values) -> new Header(values.get(0), values.get(1), values.get(2)));
     }
 
@@ -67,11 +76,17 @@ abstract class XPlaneFileParserBase<R extends XPlaneFileData>  {
     }
 
     Parser FileType(String requiredType) {
-        return StringParser.of(requiredType);
+        return of(requiredType).flatten()
+                .seq(Newline())
+                .pick(0);
     }
 
     Parser VersionSpec() {
-        return Version();
+        return digit().repeat(3, 4).flatten()
+                //.seq(of(" version").optional())
+                //.seq(Newline())
+                .seq(JunkLine())
+                .pick(0);
     }
 
     Parser WhiteSpace() {
@@ -91,7 +106,7 @@ abstract class XPlaneFileParserBase<R extends XPlaneFileData>  {
 //    }
 
     Parser Origin() {
-        return anyOf("IA").flatten();
+        return anyOf("IA").flatten().seq(Newline()).pick(0);
     }
 
     //

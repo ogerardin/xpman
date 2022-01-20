@@ -2,9 +2,12 @@ package com.ogerardin.xplane.file.data.acf;
 
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.XPlaneFileData;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /** Parsing result for a .acf file */
 @Getter
@@ -19,5 +22,12 @@ public class AcfFileData extends XPlaneFileData {
         this.properties = properties;
     }
 
-    public static class AcfProperties extends HashMap<String, String> {}
+    public static class AcfProperties extends HashMap<String, String> {
+        public AcfProperties() {
+        }
+
+        public AcfProperties(Map<String, String> propertyMap) {
+            super(propertyMap);
+        }
+    }
 }
