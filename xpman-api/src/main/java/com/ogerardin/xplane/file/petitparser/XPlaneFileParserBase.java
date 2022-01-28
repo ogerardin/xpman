@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.file.petitparser;
 
+import com.ogerardin.xplane.file.StringParser;
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.XPlaneFileData;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import static org.petitparser.parser.primitive.CharacterParser.of;
 import static org.petitparser.parser.primitive.CharacterParser.range;
 import static org.petitparser.parser.primitive.StringParser.of;
 
-abstract class XPlaneFileParserBase<R extends XPlaneFileData>  {
+abstract class XPlaneFileParserBase<R extends XPlaneFileData> implements StringParser<R> {
 
     @Getter(lazy = true)
     private final Parser parser = buildParser();

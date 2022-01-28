@@ -30,6 +30,11 @@ public class MirroringList<E, F> extends TransformationList<E, F> implements Obs
     }
 
     @Override
+    public int getViewIndex(int index) {
+        return index;
+    }
+
+    @Override
     public E get(int index) {
         return converter.apply(getSource().get(index));
     }

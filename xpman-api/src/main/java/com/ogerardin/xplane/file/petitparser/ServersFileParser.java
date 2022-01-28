@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.file.petitparser;
 
-import com.ogerardin.xplane.file.StringParser;
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
 import org.petitparser.parser.Parser;
@@ -10,7 +9,7 @@ import java.util.List;
 import static org.petitparser.parser.primitive.CharacterParser.noneOf;
 import static org.petitparser.parser.primitive.StringParser.of;
 
-public class ServersFileParser extends XPlaneFileParserBase<ServersFileData> implements StringParser<ServersFileData> {
+public class ServersFileParser extends XPlaneFileParserBase<ServersFileData> {
 
     static final String REQUIRED_TYPE = "SERVERS";
 
