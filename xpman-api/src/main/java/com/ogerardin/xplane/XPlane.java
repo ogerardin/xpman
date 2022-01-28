@@ -66,12 +66,14 @@ public class XPlane {
         return getVariant().getAppPath(baseFolder);
     }
 
+    @Getter(lazy = true)
+    private static final Path defaultXPRootFolder = computeDefaultXPRootFolder();
 
     /**
      * This is intended for tests, to test against a real X-Plane installation if one can be found.
      */
     @SneakyThrows
-    public static Path getDefaultXPRootFolder() {
+    private static Path computeDefaultXPRootFolder() {
         // if we have a "X-Plane 11" resource directory, use it
         URL xp11rsc = XPlane.class.getResource("/X-Plane 11/");
         if (xp11rsc != null) {
