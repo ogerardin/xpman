@@ -37,14 +37,18 @@
                         </cellFactory>
                     </TreeTableColumn>
                     <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Format">
+<!--
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="format" />
                         </cellValueFactory>
+-->
                     </TreeTableColumn>
                     <TreeTableColumn prefWidth="75.0" text="Version">
+<!--
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="version" />
                         </cellValueFactory>
+-->
                     </TreeTableColumn>
                 </columns>
             </TreeTableView>
