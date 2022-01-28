@@ -17,7 +17,6 @@
     <modules>
         <module>xpman-api</module>
         <module>xpman-fx</module>
-<!--        <module>xpman-guarana-fx</module>-->
         <module>xpman-fx-dist</module>
     </modules>
 
