@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-
-<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
+<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
     <graphic>
         <ImageView fitHeight="128.0" fitWidth="128.0">
             <Image url="@../icon.png" />
@@ -17,7 +18,7 @@
        <AnchorPane>
            <Text fx:id="title" text="X-Plane Manager ..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                <font>
-                   <Font name="System Bold" size="12.0" />
+                   <Font name="SansSerif Bold" size="14.0" />
                </font>
            </Text>
            <Text fx:id="build" layoutX="20.0" layoutY="49.0" text="Build ..." />
@@ -25,7 +26,7 @@
            <Text fx:id="vm" layoutX="20.0" layoutY="95.0" text="VM: ..." />
            <Hyperlink layoutX="16.0" layoutY="115.0" onAction="#openLink" text="github.com/ogerardin/xpman" />
            <Text layoutX="20.0" layoutY="151.0" text="© 2020 by Olivier Gérardin" />
-           <ImageView onMouseClicked="#showLicence" layoutX="12.0" layoutY="155.0" preserveRatio="true" smooth="false">
+           <ImageView layoutX="12.0" layoutY="155.0" onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
                <Image url="@../gplv3.png" />
            </ImageView>
        </AnchorPane>

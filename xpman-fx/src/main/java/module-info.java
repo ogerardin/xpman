@@ -11,6 +11,7 @@ module xpman.fx {
     requires com.sun.jna;
     requires commons.lang;
 
+    opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.navdata to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.plugins to  javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.scenery to  javafx.base, javafx.fxml, spring.expression;
