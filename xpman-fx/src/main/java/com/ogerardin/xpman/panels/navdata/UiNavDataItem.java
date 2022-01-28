@@ -8,7 +8,7 @@ import lombok.experimental.Delegate;
 public class UiNavDataItem {
 
     @Delegate
-    private final NavDataItem navDataItem;
+    final NavDataItem navDataItem;
 
     public UiNavDataItem() {
         this(null);

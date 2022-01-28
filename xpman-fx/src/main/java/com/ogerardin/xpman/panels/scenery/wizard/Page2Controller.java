@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.panels.scenery.wizard;
 
 import com.ogerardin.xplane.scenery.SceneryPackage;
-import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.fxml.FXML;
@@ -9,11 +8,9 @@ import javafx.scene.control.TableView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.controlsfx.dialog.WizardPane;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j

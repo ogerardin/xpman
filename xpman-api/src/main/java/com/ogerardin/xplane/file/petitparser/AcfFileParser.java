@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.file.petitparser;
 
-import com.ogerardin.xplane.file.StringParser;
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.data.acf.AcfProperty;
@@ -17,7 +16,7 @@ import static org.petitparser.parser.primitive.CharacterParser.of;
 import static org.petitparser.parser.primitive.StringParser.of;
 
 @Slf4j
-public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> implements StringParser<AcfFileData> {
+public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
 
     static final String REQUIRED_TYPE = "ACF";
 

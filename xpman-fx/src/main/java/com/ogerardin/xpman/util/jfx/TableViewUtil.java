@@ -1,11 +1,11 @@
 package com.ogerardin.xpman.util.jfx;
 
-import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.skin.TableColumnHeader;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 

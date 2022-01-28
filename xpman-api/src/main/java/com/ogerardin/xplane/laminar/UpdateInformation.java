@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.parboiled.common.FileUtils;
 
 import java.net.URL;
 
@@ -23,8 +22,7 @@ public class UpdateInformation {
     @SneakyThrows
     private ServersFileData loadData() {
         final URL url = new URL(SERVERS_URL);
-        //TODO FileUtils is from parboiled: use something else!
-        final byte[] bytes = FileUtils.readAllBytes(url.openStream());
+        final byte[] bytes = url.openStream().readAllBytes();
         String contents = new String(bytes, US_ASCII);
 
         ServersFile serversFile = new ServersFile();

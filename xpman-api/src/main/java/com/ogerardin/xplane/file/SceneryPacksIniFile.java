@@ -1,8 +1,7 @@
 package com.ogerardin.xplane.file;
 
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
-import com.ogerardin.xplane.file.parboiled.ParboiledParser;
-import com.ogerardin.xplane.file.parboiled.SceneryPacksIniParser;
+import com.ogerardin.xplane.file.petitparser.SceneryPacksIniParser;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -14,7 +13,7 @@ import java.nio.file.Path;
 public class SceneryPacksIniFile extends XPlaneFile<SceneryPackIniData> {
 
     public SceneryPacksIniFile(Path file) {
-        super(file, new ParboiledParser<>(SceneryPacksIniParser.class));
+        super(file, new SceneryPacksIniParser());
     }
 
     public SceneryPackIniData.SceneryPackList getSceneryPackList() {
