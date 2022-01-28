@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.scenery.wizard;
 
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
-import com.sun.javafx.collections.ObservableListWrapper;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import lombok.NonNull;
@@ -34,6 +34,6 @@ public class Page2Controller implements PageListener {
         var sceneryOrganizer = wizard.getSceneryOrganizer();
         var sortedSceneryPacks = sceneryOrganizer.apply(sceneryPackages);
         // display the result
-        sceneryTable.setItems(new ObservableListWrapper<>(sortedSceneryPacks));
+        sceneryTable.setItems(FXCollections.observableList(sortedSceneryPacks));
     }
 }

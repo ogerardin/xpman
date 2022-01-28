@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.util.jfx;
 
-import com.google.api.client.googleapis.notifications.NotificationUtils;
-import com.sun.javafx.collections.ObservableListWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class MirroringListTest {
     @Test
     void mirrors() {
 
-        final ObservableListWrapper<String> observableList = new ObservableListWrapper<>(new ArrayList<>());
+        final ObservableList<String> observableList = FXCollections.observableList(new ArrayList<>());
         observableList.add(UUID.randomUUID().toString());
 
         final MirroringList<String, String> mirroringList = new MirroringList<>(observableList, MirroringListTest::transform);
@@ -38,7 +38,7 @@ class MirroringListTest {
         return new StringBuilder(s).reverse().toString();
     }
 
-    private List<String> expected(ObservableListWrapper<String> observableList) {
+    private List<String> expected(ObservableList<String> observableList) {
         final List<String> expected = observableList.stream()
                 .map(MirroringListTest::transform)
                 .collect(Collectors.toList());

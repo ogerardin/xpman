@@ -5,10 +5,10 @@ import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import com.ogerardin.xpman.util.jfx.wizard.Validating;
-import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -62,7 +62,7 @@ public class Page2Controller implements Validating, PageListener {
 
         // perform inspection and display results
         List<InspectionMessage> messages = installer.inspect();
-        tableView.setItems(new ObservableListWrapper<>(messages));
+        tableView.setItems(FXCollections.observableList(messages));
 
         // validate page (and enable 'Next' button) only if there is no message with severity ERROR
         invalidProperty.set(messages.stream().anyMatch(InspectionMessage::isError));

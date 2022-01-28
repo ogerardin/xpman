@@ -2,8 +2,8 @@ package com.ogerardin.xpman.util.jfx.panels;
 
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.events.EventListener;
-import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
@@ -59,7 +59,7 @@ public class TableViewManagerEventListener<T, U> implements EventListener<Manage
 
             // populate the tableView
             Platform.runLater(() -> {
-                tableView.setItems(new ObservableListWrapper<>(uiItems));
+                tableView.setItems(FXCollections.observableList(uiItems));
                 // reset placeholder
                 tableView.placeholderProperty().setValue(defaultPlaceholder);
             });
