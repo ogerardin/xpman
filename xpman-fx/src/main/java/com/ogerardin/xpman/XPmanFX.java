@@ -7,6 +7,7 @@ import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.event.ActionEvent;
@@ -72,6 +73,10 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .map(propertyName -> String.format("  %s: %s", propertyName, System.getProperty(propertyName)))
                     .forEach(log::info);
         }
+
+        // Set the global stylesheet. This is basically a copy of moderna.css with an added default font,
+        // to avoid getting a garbage font.
+        Application.setUserAgentStylesheet(XPmanFX.class.getResource("/style.css").toExternalForm());
 
         // fire up JavaFX. This will instantiate a XPmanFX and call #start
         launch(args);
@@ -163,7 +168,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         loader.setControllerFactory(this::buildController);
         Pane mainPane = loader.load();
-        stage.setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+//        scene.getRoot().setStyle("-fx-font-family: 'sans-serif'");
+        stage.setScene(scene);
 
         restoreWindowPosition(stage);
     }
