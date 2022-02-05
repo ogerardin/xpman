@@ -17,9 +17,9 @@ import java.util.Map;
 @Slf4j
 public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity> {
 
-    private static final Image ICON_ERROR = new Image("/com/sun/javafx/scene/control/skin/modena/dialog-error.png");
-    private static final Image ICON_WARN = new Image("/com/sun/javafx/scene/control/skin/modena/dialog-warning.png");
-    private static final Image ICON_INFO = new Image("/com/sun/javafx/scene/control/skin/modena/dialog-information.png");
+    private static final Image ICON_ERROR = getImage("/img/dialog-error.png");
+    private static final Image ICON_WARN = getImage("/img/dialog-warning.png");
+    private static final Image ICON_INFO = getImage("/img/dialog-information.png");
 
     private static final Map<Severity, Image> SEVERITY_IMAGE_MAP = Maps.mapOf(
             Severity.ERROR, ICON_ERROR,
@@ -30,6 +30,10 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
     @Override
     public TableCell<T, Severity> call(TableColumn<T, Severity> param) {
         return new SeverityIconTableCell<>();
+    }
+
+    private static Image getImage(String name) {
+        return new Image(SeverityIconCellFactory.class.getResourceAsStream(name));
     }
 
 
