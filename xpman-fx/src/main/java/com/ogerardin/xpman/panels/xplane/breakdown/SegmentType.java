@@ -9,7 +9,7 @@ public enum SegmentType {
     AIRCRAFTS("Aircrafts", "purple"),
     GLOBAL_SCENERY("Global scenery", "cadetblue"),
     CUSTOM_SCENERY("Custom scenery", "lightcoral"),
-    CUSTOM_SCENERY_DISABLED("Disabled scxenery", "orange"),
+    CUSTOM_SCENERY_DISABLED("Disabled scenery", "orange"),
     OTHER("Other", "grey");
 
     private final String text;
