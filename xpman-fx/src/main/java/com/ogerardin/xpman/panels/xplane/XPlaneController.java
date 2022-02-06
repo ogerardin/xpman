@@ -119,10 +119,10 @@ public class XPlaneController {
     }
 
     private long computeSegment(SegmentType type, Path folder) throws IOException {
-        if (! Files.exists(folder)) {
-            return 0;
+        long folderSize = 0;
+        if (Files.exists(folder)) {
+            folderSize = FileUtils.getFolderSize(folder);
         }
-        long folderSize = FileUtils.getFolderSize(folder);
         setSegment(type, folderSize);
         return folderSize;
     }
