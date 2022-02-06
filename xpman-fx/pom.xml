@@ -71,6 +71,12 @@
             <groupId>de.jangassen</groupId>
             <artifactId>nsmenufx</artifactId>
             <version>3.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jna</artifactId>
+                    <groupId>net.java.dev.jna</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -1,4 +1,23 @@
 module xpman.api {
+    requires lombok;
+    requires org.slf4j;
+    requires one.util.streamex;
+    requires com.google.api.services.drive;
+    requires org.jsoup;
+    requires io.github.classgraph;
+    requires com.google.common;
+    requires google.api.client;
+    requires com.google.api.client;
+    requires com.google.api.client.json.jackson2;
+    requires com.sun.jna;
+    requires com.sun.jna.platform;
+
+    // filename-based automodules
+    requires commons.lang;
+    requires commons.configuration;
+    requires pecoff4j;
+    requires petitparser.core;
+
     exports com.ogerardin.xplane;
     exports com.ogerardin.xplane.util.platform;
     exports com.ogerardin.xplane.inspection;
@@ -11,22 +30,5 @@ module xpman.api {
     exports com.ogerardin.xplane.plugins;
     exports com.ogerardin.xplane.laminar;
     exports com.ogerardin.xplane.navdata;
-
-    requires lombok;
-    requires commons.lang;
-    requires org.slf4j;
-    requires one.util.streamex;
-    requires commons.configuration;
-    requires pecoff4j;
-    requires com.google.api.services.drive;
-    requires org.jsoup;
-    requires io.github.classgraph;
-    requires com.google.common;
-    requires google.api.client;
-    requires com.google.api.client;
-    requires com.google.api.client.json.jackson2;
-    requires petitparser.core;
-    requires com.sun.jna;
-    requires com.sun.jna.platform;
 
 }
