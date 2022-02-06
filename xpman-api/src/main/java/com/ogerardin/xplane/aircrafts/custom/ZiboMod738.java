@@ -92,9 +92,9 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         return Maps.merge(
                 super.getLinks(),
                 Maps.mapOf(
-                        "Facebook page", new URL("https://www.facebook.com/zibocommunity"),
-                        "X-Plane forum", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
-                        "Download page", channel.getUrl()
+                        "ZIBO community on Facebook", new URL("https://www.facebook.com/zibocommunity"),
+                        "ZIBO mod forum on X-Plane.org", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
+                        "Download page (" + channel.getName() + ")", channel.getUrl()
                 ));
     }
 
@@ -115,6 +115,11 @@ public class ZiboMod738 extends Aircraft implements Versioned {
          * The Google Drive folder ID of the folder containing published updates
          */
         private static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
+
+        @Override
+        public String getName() {
+            return "Google Drive";
+        }
 
         public String getLatestVersion() throws IOException, GeneralSecurityException {
             // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
@@ -166,6 +171,11 @@ public class ZiboMod738 extends Aircraft implements Versioned {
     static class ZiboUpdaterChannel implements PublicationChannel {
 
         public static final String ZIBOUPDATER_URL = "https://ziboupdater.net/getzibo";
+
+        @Override
+        public String getName() {
+            return "Zibo Updater";
+        }
 
         @SneakyThrows
         @Override
