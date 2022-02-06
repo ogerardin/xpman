@@ -6,6 +6,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {
 
     private List<NavDataSet> navDataSets = null;
@@ -38,6 +40,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
 
     public List<NavDataSet> loadNavDataSets() {
 
+        log.info("Loading nav data sets...");
         fireEvent(new ManagerEvent.Loading<>());
 
         // See https://developer.x-plane.com/article/navdata-in-x-plane-11
@@ -50,6 +53,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                 userData()
         ).collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
 
+        log.info("Loaded {} nav data sets", navDataSets.size());
         fireEvent(new ManagerEvent.Loaded<>(navDataSets));
 
         return navDataSets;

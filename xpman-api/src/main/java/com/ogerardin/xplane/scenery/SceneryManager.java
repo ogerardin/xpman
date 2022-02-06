@@ -9,10 +9,12 @@ import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.util.IntrospectionHelper;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,6 +69,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     @Synchronized
     public void loadPackages() {
 
+        log.info("Loading scenery packages...");
         fireEvent(new ManagerEvent.Loading<>());
 
         SceneryPacksIniFile sceneryPacksIniFile = getSceneryPacksIniFile();
@@ -77,6 +80,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
                 .sorted(Comparator.comparingInt(SceneryPackage::getRank))
                 .collect(Collectors.toList());
 
+        log.info("Loaded {} scenery packages", sceneryPackages.size());
         fireEvent(new ManagerEvent.Loaded<>(sceneryPackages));
     }
 
