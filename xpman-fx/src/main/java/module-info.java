@@ -8,9 +8,10 @@ module xpman.fx {
     requires org.controlsfx.controls;
     requires com.google.common;
     requires spring.expression;
-    requires com.sun.jna;
     requires commons.lang;
     requires logback.classic;
+    requires com.sun.jna;
+    requires com.sun.jna.platform;
 
     opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.navdata to javafx.base, javafx.fxml, spring.expression;

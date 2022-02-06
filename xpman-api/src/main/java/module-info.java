@@ -16,7 +16,6 @@ module xpman.api {
     requires commons.lang;
     requires org.slf4j;
     requires one.util.streamex;
-    requires com.sun.jna;
     requires commons.configuration;
     requires pecoff4j;
     requires com.google.api.services.drive;
@@ -27,6 +26,7 @@ module xpman.api {
     requires com.google.api.client;
     requires com.google.api.client.json.jackson2;
     requires petitparser.core;
+    requires com.sun.jna;
     requires com.sun.jna.platform;
 
 }
