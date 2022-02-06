@@ -10,7 +10,7 @@
 <DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
     <graphic>
         <ImageView fitHeight="128.0" fitWidth="128.0">
-            <Image url="@../icon.png" />
+            <Image url="@../img/icon.png" />
         </ImageView>
     </graphic>
    <ButtonType fx:constant="CLOSE" />
@@ -27,7 +27,7 @@
            <Hyperlink layoutX="16.0" layoutY="115.0" onAction="#openLink" text="github.com/ogerardin/xpman" />
            <Text layoutX="20.0" layoutY="151.0" text="© 2020 by Olivier Gérardin" />
            <ImageView layoutX="12.0" layoutY="155.0" onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
-               <Image url="@../gplv3.png" />
+               <Image url="@../img/gplv3.png" />
            </ImageView>
        </AnchorPane>
    </content>

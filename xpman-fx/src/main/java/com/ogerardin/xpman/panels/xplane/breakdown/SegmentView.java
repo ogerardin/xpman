@@ -11,7 +11,7 @@ import javafx.scene.layout.StackPane;
 
 public class SegmentView extends StackPane {
 
-    private final ImageView DOTS = new ImageView(new Image(SegmentView.class.getResource("/dots.gif").toExternalForm()));
+    private final ImageView DOTS = new ImageView(new Image(SegmentView.class.getResource("/img/dots.gif").toExternalForm()));
 
     public SegmentView(Segment segment) {
         Label label = new Label();

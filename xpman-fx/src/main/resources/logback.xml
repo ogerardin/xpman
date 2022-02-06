@@ -1,4 +1,4 @@
-<configuration debug="false">
+<configuration debug="false" packagingData="true">
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

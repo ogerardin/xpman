@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class TreeTableViewLoadTask<T> extends Task<Void> {
 
     private static final ImageView LOADING
-            = new ImageView(new Image(TreeTableViewLoadTask.class.getResource("/loading.gif").toExternalForm()));
+            = new ImageView(new Image(TreeTableViewLoadTask.class.getResource("/img/loading.gif").toExternalForm()));
 
     private final TreeTableView<T> treeTableView;
 

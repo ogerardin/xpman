@@ -10,6 +10,7 @@ module xpman.fx {
     requires spring.expression;
     requires com.sun.jna;
     requires commons.lang;
+    requires logback.classic;
 
     opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.navdata to javafx.base, javafx.fxml, spring.expression;
