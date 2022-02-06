@@ -15,7 +15,6 @@ import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -62,12 +61,13 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     @Synchronized
     private void loadAircrafts() {
 
+        log.info("Loading aircrafts...");
         fireEvent(new ManagerEvent.Loading<>());
 
         // find all .acf files under the Aircrafts folder
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
-        log.info("Found {} acf files", acfFiles.size());
+        log.debug("Found {} acf files", acfFiles.size());
 
         // build Aircraft object for each applicable file
         Predicate<AcfFile> isVersion11 = acf -> acf.getFileSpecVersion().matches("11(\\d\\d)");
@@ -76,8 +76,8 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
                 .filter(isVersion11)
                 .map(this::getAircraft)
                 .collect(Collectors.toList());
-        log.info("Loaded {} aircrafts", aircrafts.size());
 
+        log.info("Loaded {} aircrafts", aircrafts.size());
         fireEvent(new ManagerEvent.Loaded<>(aircrafts));
     }
 

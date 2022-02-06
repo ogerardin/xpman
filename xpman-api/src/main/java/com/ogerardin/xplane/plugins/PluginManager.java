@@ -54,6 +54,7 @@ public class PluginManager extends Manager<Plugin> {
     @Synchronized
     private void loadPlugins()  {
 
+        log.info("Loading plugins...");
         fireEvent(new ManagerEvent.Loading<>());
 
         try (Stream<Path> pathStream = Files.list(pluginsFolder)) {
@@ -68,6 +69,7 @@ public class PluginManager extends Manager<Plugin> {
             plugins = Collections.emptyList();
         }
 
+        log.info("Loaded {} plugins", plugins.size());
         fireEvent(new ManagerEvent.Loaded<>(plugins));
     }
 
