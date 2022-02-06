@@ -8,7 +8,7 @@ import java.util.Map;
 @UtilityClass
 public class Maps {
 
-    public final <K, V> Map<K, V> mapOf(Object... keyValues) {
+    public <K, V> Map<K, V> mapOf(Object... keyValues) {
         Map<K, V> map = new HashMap<>();
         for (int i = 0; i < keyValues.length; i+=2) {
             //noinspection unchecked
@@ -18,10 +18,10 @@ public class Maps {
     }
 
     @SafeVarargs
-    public final <K, V> Map<K, V> merge(Map<K, V>... maps) {
+    public <K, V> Map<K, V> merge(Map<K, V>... maps) {
         final HashMap<K, V> result = new HashMap<>();
         for (Map<K, V> map : maps) {
-            map.forEach(result::put);
+            result.putAll(map);
         }
         return result;
     }

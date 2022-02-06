@@ -30,7 +30,7 @@ public class IntrospectionHelper {
         String packegaName = XPlane.class.getPackage().getName();
         try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
-                .whitelistPackages(packegaName)
+                .acceptPackages(packegaName)
                 .scan()
         ) {
             ClassInfoList classInfoList = scanResult.getSubclasses(baseClass.getName());
