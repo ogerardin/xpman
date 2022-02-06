@@ -44,10 +44,12 @@ public class JsonFileConfigPersister<C> {
     private C loadConfig() {
         log.debug("Loading prefs for {} from file {}", configClass, file);
         try {
+            //noinspection ConstantConditions
             String json = new String(Files.readAllBytes(file));
             return GSON.fromJson(json, configClass);
         } catch (NoSuchFileException e) {
-            return configClass.newInstance();
+            //noinspection ConstantConditions
+            return configClass.getDeclaredConstructor().newInstance();
         }
     }
 

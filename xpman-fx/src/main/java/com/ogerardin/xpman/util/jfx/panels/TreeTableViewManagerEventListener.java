@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class TreeTableViewManagerEventListener<T, U> implements EventListener<ManagerEvent<T>> {
 
     @SuppressWarnings("ConstantConditions")
-    private final ImageView LOADING = new ImageView(new Image(this.getClass().getResource("/loading.gif").toExternalForm()));
+    private final ImageView LOADING = new ImageView(new Image(this.getClass().getResource("/img/loading.gif").toExternalForm()));
 
     private final TreeTableView<U> treeTableView;
     private final Function<List<T>, TreeItem<U>> mapper;

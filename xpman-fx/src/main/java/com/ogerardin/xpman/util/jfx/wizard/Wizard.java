@@ -76,7 +76,7 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
             return constructor.newInstance(this);
         } catch (NoSuchMethodException e) {
             // otherwise use no-arg constructor
-            return type.newInstance();
+            return type.getConstructor().newInstance();
         }
     }
 

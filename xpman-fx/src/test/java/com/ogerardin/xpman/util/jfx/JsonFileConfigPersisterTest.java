@@ -2,6 +2,7 @@ package com.ogerardin.xpman.util.jfx;
 
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ class JsonFileConfigPersisterTest {
         prefsManager.save();
     }
 
+    @EqualsAndHashCode(callSuper = true)
     @Data
     public static class TestPrefs extends JfxAppPrefs {
         private String bla;

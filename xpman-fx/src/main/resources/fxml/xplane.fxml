@@ -68,7 +68,7 @@
         <left>
             <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="TOP_CENTER">
                 <image>
-                    <Image url="@../x-plane.png" />
+                    <Image url="@../img/x-plane.png" />
                 </image>
             </ImageView>
         </left>

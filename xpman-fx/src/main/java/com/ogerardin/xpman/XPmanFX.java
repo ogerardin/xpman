@@ -7,7 +7,6 @@ import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.event.ActionEvent;
@@ -59,9 +58,12 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         // catch-all exception handler (text version)
         Thread.setDefaultUncaughtExceptionHandler((thread, e) -> log.error("Caught exception", e));
 
+//        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+//        root.setLevel(Level.DEBUG);
+
         String version = XPmanFX.class.getPackage().getImplementationVersion();
         log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
-        if (DEV_MODE) {
+        if (log.isDebugEnabled()) {
             // dump all System properties
             System.getProperties().entrySet().stream()
                     .sorted(Comparator.comparing(entry -> (String) entry.getKey()))
@@ -73,10 +75,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .map(propertyName -> String.format("  %s: %s", propertyName, System.getProperty(propertyName)))
                     .forEach(log::info);
         }
-
-        // Set the global stylesheet. This is basically a copy of moderna.css with an added default font,
-        // to avoid getting a garbage font.
-        Application.setUserAgentStylesheet(XPmanFX.class.getResource("/style.css").toExternalForm());
 
         // fire up JavaFX. This will instantiate a XPmanFX and call #start
         launch(args);
@@ -98,8 +96,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         log.info("Opening X-Plane folder {}", folder);
         XPlane xplane = new XPlane(folder);
 
-        if ((xplane.getVariant() == XPlaneVariant.UNKNOWN) && !DEV_MODE) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, String.format("%s is not a valid X-Plane folder.", folder.toString()));
+        if ((xplane.getVariant() == XPlaneVariant.UNKNOWN)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, String.format("%s is not a valid X-Plane folder.", folder));
             alert.initOwner(primaryStage);
             alert.showAndWait();
             return;
@@ -127,7 +125,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
             return constructor.newInstance(this);
         } catch (NoSuchMethodException e) {
             // otherwise use no-arg constructor
-            return type.newInstance();
+            return type.getConstructor().newInstance();
         }
     }
 

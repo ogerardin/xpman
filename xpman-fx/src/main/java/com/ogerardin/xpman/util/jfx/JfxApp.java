@@ -20,18 +20,16 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 @Slf4j
 public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
-    protected static final boolean DEV_MODE = Boolean.parseBoolean(System.getProperty("jfxapp.devmode", "false"));
-
-    static {
-        log.debug("dev mode: {}", DEV_MODE);
-    }
-
     @Getter
     protected Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+
+        // Set the global stylesheet. This is basically a copy of moderna.css with an added default font,
+        // to avoid getting a garbage font.
+        Application.setUserAgentStylesheet(getClass().getResource("/style.css").toExternalForm());
 
         // catch-all exception handler (GUI version)
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> Platform.runLater(() -> ErrorDialog.showError(throwable, primaryStage)));
@@ -67,10 +65,6 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     @FXML
     protected void quit() {
-        if (DEV_MODE) {
-            quitNow();
-        }
-
         Alert alert = new Alert(CONFIRMATION, "Do you really want to quit?");
         alert.initOwner(primaryStage);
         alert.showAndWait()
