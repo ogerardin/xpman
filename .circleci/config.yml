@@ -29,7 +29,13 @@ jobs:
   build-mac:
     macos:
       xcode: 13.2.1
-      shell: mvn -B -DskipTests clean package
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+      # Use mvn clean and package as the standard maven build phase
+      - run:
+          name: Build
+          command: mvn -B -DskipTests clean package
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
