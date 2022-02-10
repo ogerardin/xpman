@@ -33,7 +33,7 @@ jobs:
           shell: powershell.exe
           command: iwr -useb get.scoop.sh | iex
       - run:
-          name: Install JDK, Maven
+          name: Install dependencies
           shell: powershell.exe
           command: |
             scoop bucket add java
