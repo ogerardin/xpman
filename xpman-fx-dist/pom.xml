@@ -435,7 +435,8 @@
                                 <configuration>
                                     <description>${app.description}</description>
                                     <displayName>${app.name}</displayName>
-                                    <name>${app.name}</name>
+                                    <!-- temporary fix for https://github.com/fvarrui/JavaPackager/issues/144 -->
+                                    <name>X-Plane_Manager</name>
                                     <organizationName>${app.copyright}</organizationName>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
