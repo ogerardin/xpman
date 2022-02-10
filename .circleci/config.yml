@@ -20,6 +20,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Build
+          command: mvn -B -DskipTests clean package
+
+  build-windows:
+    executor:
+      name: win/default
+    steps:
+      - checkout
+      - run:
           name: Install scoop
           shell: powershell.exe
           command: iwr -useb get.scoop.sh | iex
@@ -30,15 +39,6 @@ jobs:
             scoop bucket add java
             scoop install openjdk11
             scoop install maven
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
-
-  build-windows:
-    executor:
-      name: win/default
-    steps:
-      - checkout
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
