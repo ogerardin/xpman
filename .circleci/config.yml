@@ -37,8 +37,11 @@ jobs:
           shell: powershell.exe
           command: |
             scoop bucket add java
+            scoop bucket add extras
             scoop install openjdk11
             scoop install maven
+            scoop install inno-setup
+            scoop install wixtoolset
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
