@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class TerrainRadar extends Plugin {
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ByteStreams.copy(inputStream, outputStream);
             connection.disconnect();
-            String html = outputStream.toString("UTF-8");
+            String html = outputStream.toString(StandardCharsets.UTF_8);
             Pattern pattern = Pattern.compile(".*\"softwareVersion\": \"([0-9.]+)\".*", Pattern.DOTALL);
             final Matcher matcher = pattern.matcher(html);
             if (matcher.matches()) {
@@ -81,7 +82,7 @@ public class TerrainRadar extends Plugin {
     @Override
     public Map<String, URL> getLinks() {
         return Maps.mapOf(
-                "X-Plane forum", new URL(XPLANE_FORUM_URL)
+                "Terrain radar X-Plane forum", new URL(XPLANE_FORUM_URL)
         );
     }
 

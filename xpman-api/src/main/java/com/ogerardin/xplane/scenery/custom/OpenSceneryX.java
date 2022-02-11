@@ -34,7 +34,7 @@ public class OpenSceneryX extends SceneryPackage {
     @Override
     public Map<String, URL> getLinks() {
         return Maps.merge(super.getLinks(),
-                Maps.mapOf("Home page", new URL("https://www.opensceneryx.com/"))
+                Maps.mapOf("OpenSceneryX project home page", new URL("https://www.opensceneryx.com/"))
         );
     }
 }
