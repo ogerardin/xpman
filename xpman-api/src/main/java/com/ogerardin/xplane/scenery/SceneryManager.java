@@ -30,6 +30,9 @@ import java.util.stream.Stream;
 @Slf4j
 public class SceneryManager extends Manager<SceneryPackage> implements InstallTarget {
 
+    // a comparator that compares SceneryPackages by rank with nulls last
+    public static final Comparator<SceneryPackage> SCENERY_PACKAGE_COMPARATOR = Comparator.comparing(SceneryPackage::getRank, Comparator.nullsLast(Comparator.naturalOrder()));
+
     @NonNull
     @Getter
     private final Path sceneryFolder;
@@ -77,7 +80,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
                 getSceneryPackages(sceneryFolder, sceneryPacksIniFile),
                 getSceneryPackages(disabledSceneryFolder, null)
         ).flatMap(Collection::stream)
-                .sorted(Comparator.comparingInt(SceneryPackage::getRank))
+//                .sorted(SCENERY_PACKAGE_COMPARATOR)
                 .collect(Collectors.toList());
 
         log.info("Loaded {} scenery packages", sceneryPackages.size());
