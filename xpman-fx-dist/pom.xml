@@ -74,6 +74,11 @@
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>3.0.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -413,7 +418,7 @@
             </build>
         </profile>
 
-        <!-- This profile generates a Windows EXE file, and a full installer. Requires Inno-setup. -->
+        <!-- This profile generates a Windows installer and a MSI file. Requires Inno-setup and Wix toolset. -->
         <profile>
             <activation>
                 <os>
@@ -464,8 +469,7 @@
             </build>
         </profile>
 
-        <!-- This profile generates a Linux launcher with bundled JRE, and a deb package.
-            The rpm generation is broken. -->
+        <!-- This profile generates a Linux launcher with bundled JRE, a deb package and a rpm package. -->
         <profile>
             <activation>
                 <os>
@@ -475,6 +479,26 @@
             <id>fvarrui-javapackager-linux</id>
             <build>
                 <plugins>
+                    <!-- rpm doesn't allow '-' in the version so we replace it with '_' -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sanitize-version</id>
+                                <goals>
+                                    <goal>regex-property</goal>
+                                </goals>
+                                <configuration>
+                                    <name>sanitizedVersion</name>
+                                    <value>${version}</value>
+                                    <regex>-</regex>
+                                    <replacement>_</replacement>
+                                    <failIfNoMatch>false</failIfNoMatch>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>io.github.fvarrui</groupId>
                         <artifactId>javapackager</artifactId>
@@ -489,6 +513,7 @@
                                     <displayName>${app.name}</displayName>
                                     <name>xpman</name>
                                     <organizationName>${app.copyright}</organizationName>
+                                    <version>${sanitizedVersion}</version>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
