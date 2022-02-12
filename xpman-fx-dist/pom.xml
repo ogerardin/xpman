@@ -513,6 +513,7 @@
                                     <displayName>${app.name}</displayName>
                                     <name>xpman</name>
                                     <organizationName>${app.copyright}</organizationName>
+                                    <!--suppress MavenModelInspection -->
                                     <version>${sanitizedVersion}</version>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
