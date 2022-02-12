@@ -19,7 +19,7 @@ public class RulesController {
     @FXML
     private TableView<SceneryClass> tableView;
     @FXML
-    private TableColumn<SceneryClass, Integer> rankColumn;
+    private TableColumn<SceneryClass, Integer> priorityColumn;
     @FXML
     private Button upButton;
     @FXML
