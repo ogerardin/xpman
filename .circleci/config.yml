@@ -10,6 +10,9 @@ jobs:
     docker:
       - image: circleci/jdk8:0.1.1
     steps:
+      - run:
+          name: Install Maven
+          command: apt-get install maven
       - checkout
       - run:
           name: Build
@@ -28,12 +31,10 @@ jobs:
     executor:
       name: win/default
     steps:
-      - checkout
       - run:
           name: Install Oracle JDK8
           shell: powershell.exe
-          command: |
-            choco install jdk8 -params 'installdir=c:\\jdk8'
+          command: choco install jdk8 -params 'installdir=c:\\jdk8'
       - run:
           name: Install scoop
           shell: powershell.exe
@@ -46,11 +47,10 @@ jobs:
             scoop install maven
             scoop install inno-setup
             scoop install wixtoolset
+      - checkout
       - run:
           name: Build
           command: |
-            $env:Path += ';C:\jdk8\bin' 
-            $env:Path            
             mvn -B -DskipTests clean package
 
 workflows:
