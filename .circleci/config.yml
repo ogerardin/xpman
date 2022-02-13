@@ -15,6 +15,7 @@ jobs:
           command: |
             apt-get update
             apt-get -y install maven
+            sed -i.bak '/<mirrors>/a<mirror><id>central-secure</id><url>https://repo.maven.apache.org/maven2</url><mirrorOf>central</mirrorOf></mirror>' /etc/maven/settings.xml
       - checkout
       - run:
           name: Build
