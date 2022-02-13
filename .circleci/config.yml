@@ -1,0 +1,61 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.4.0
+
+jobs:
+  build-linux:
+    docker:
+      - image: circleci/jdk8:0.1.1
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: mvn -B -DskipTests clean package
+
+  build-mac:
+    macos:
+      xcode: 13.2.1
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: mvn -B -DskipTests clean package
+
+  build-windows:
+    executor:
+      name: win/default
+    steps:
+      - checkout
+      - run:
+          name: Install Oracle JDK8
+          shell: powershell.exe
+          command: |
+            choco install jdk8 -params 'installdir=c:\\jdk8'
+      - run:
+          name: Install scoop
+          shell: powershell.exe
+          command: iwr -useb get.scoop.sh | iex
+      - run:
+          name: Install dependencies
+          shell: powershell.exe
+          command: |
+            scoop bucket add extras
+            scoop install maven
+            scoop install inno-setup
+            scoop install wixtoolset
+      - run:
+          name: Build
+          command: |
+            $env:Path += ';C:\jdk8\bin' 
+            $env:Path            
+            mvn -B -DskipTests clean package
+
+workflows:
+  default:
+    jobs:
+      - build-linux
+#      - build-mac
+      - build-windows
