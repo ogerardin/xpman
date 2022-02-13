@@ -12,7 +12,9 @@ jobs:
     steps:
       - run:
           name: Install Maven
-          command: apt-get install maven
+          command: |
+            apt-get update
+            apt-get install maven
       - checkout
       - run:
           name: Build
