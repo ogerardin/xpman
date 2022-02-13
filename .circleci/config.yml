@@ -16,10 +16,14 @@ jobs:
             apt-get update
             apt-get -y install maven
             sed -i.bak '/<mirrors>/a<mirror><id>central-secure</id><url>https://repo.maven.apache.org/maven2</url><mirrorOf>central</mirrorOf></mirror>' /etc/maven/settings.xml
+            cat /etc/maven/settings.xml
       - checkout
       - run:
           name: Build
-          command: mvn -B -DskipTests clean package
+          command: |
+            which java 
+            java -version
+            mvn -B -DskipTests clean package
 
   build-mac:
     macos:
