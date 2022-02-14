@@ -16,7 +16,7 @@ jobs:
           command: mvn -B -DskipTests clean package
   build-mac:
     macos:
-      xcode: 13.2.1
+      xcode: 13.3.0
     steps:
       - run:
           name: Install Maven
@@ -27,7 +27,6 @@ jobs:
           command: |
             /usr/libexec/java_home -V
             export JAVA_HOME=`/usr/libexec/java_home -v 11`
-            java -version
             mvn -v
             mvn -B -DskipTests clean package
 
