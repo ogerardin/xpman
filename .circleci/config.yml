@@ -26,6 +26,8 @@ jobs:
           name: Build
           command: |
             /usr/libexec/java_home -V
+            export JAVA_HOME=`/usr/libexec/java_home -v 11`
+            java -version
             mvn -v
             mvn -B -DskipTests clean package
 
