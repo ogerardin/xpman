@@ -20,6 +20,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Maven
+          command: brew install maven
+      - run:
           name: Build
           command: mvn -B -DskipTests clean package
 
