@@ -404,7 +404,7 @@
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
                                     <bundleJre>true</bundleJre>
-                                    <jrePath>${java.home}</jrePath>
+<!--                                    <jrePath>${java.home}</jrePath>-->
                                     <generateInstaller>true</generateInstaller>
                                     <macConfig>
                                         <generateDmg>true</generateDmg>
@@ -491,7 +491,7 @@
                                 </goals>
                                 <configuration>
                                     <name>sanitizedVersion</name>
-                                    <value>${version}</value>
+                                    <value>${project.version}</value>
                                     <regex>-</regex>
                                     <replacement>_</replacement>
                                     <failIfNoMatch>false</failIfNoMatch>
