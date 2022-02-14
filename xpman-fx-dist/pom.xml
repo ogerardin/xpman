@@ -74,6 +74,11 @@
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>3.0.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -475,6 +480,26 @@
             <id>fvarrui-javapackager-linux</id>
             <build>
                 <plugins>
+                    <!-- rpm doesn't allow '-' in the version so we replace it with '_' -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sanitize-version</id>
+                                <goals>
+                                    <goal>regex-property</goal>
+                                </goals>
+                                <configuration>
+                                    <name>sanitizedVersion</name>
+                                    <value>${project.version}</value>
+                                    <regex>-</regex>
+                                    <replacement>_</replacement>
+                                    <failIfNoMatch>false</failIfNoMatch>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>io.github.fvarrui</groupId>
                         <artifactId>javapackager</artifactId>
@@ -489,6 +514,8 @@
                                     <displayName>${app.name}</displayName>
                                     <name>xpman</name>
                                     <organizationName>${app.copyright}</organizationName>
+                                    <!--suppress MavenModelInspection -->
+                                    <version>${sanitizedVersion}</version>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
