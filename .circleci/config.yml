@@ -14,6 +14,7 @@ jobs:
           name: Install Maven
           command: |
             apt-get update
+            apt-get -y install unzip
             wget --no-check-certificate https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip
             unzip apache-maven-3.8.4-bin.zip
       - checkout
@@ -71,5 +72,5 @@ workflows:
   default:
     jobs:
       - build-linux
-      - build-mac
+#      - build-mac
       - build-windows
