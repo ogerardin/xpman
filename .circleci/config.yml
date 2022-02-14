@@ -9,6 +9,7 @@ jobs:
   build-linux:
     docker:
       - image: circleci/jdk8:0.1.1
+    resource_class: medium
     steps:
       - checkout
       - run:
