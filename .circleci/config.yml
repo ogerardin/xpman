@@ -18,12 +18,12 @@ jobs:
             apt-get -y install unzip
             wget --no-check-certificate https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip
             unzip apache-maven-3.8.4-bin.zip
+            ln -s apache-maven-3.8.4 maven
       - run:
           name: Build
           command: |
-            alias mvn=apache-maven-3.8.4/bin/mvn            
-            mvn -v
-            mvn -B -DskipTests clean package
+            maven/bin/mvn -v
+            maven/bin/mvn -B -DskipTests clean package
 
   build-mac:
     macos:
