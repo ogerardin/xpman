@@ -14,25 +14,29 @@ jobs:
           name: Install Maven
           command: |
             apt-get update
-            apt-get -y install maven
-            sed -i.bak '/<mirrors>/a<mirror><id>central-secure</id><url>https://repo.maven.apache.org/maven2</url><mirrorOf>central</mirrorOf></mirror>' /etc/maven/settings.xml
-            cat /etc/maven/settings.xml
+#            apt-get -y install maven
+#            sed -i.bak '/<mirrors>/a<mirror><id>central-secure</id><url>https://repo.maven.apache.org/maven2</url><mirrorOf>central</mirrorOf></mirror>' /etc/maven/settings.xml
+#            cat /etc/maven/settings.xml
+            wget https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip
+            unzip apache-maven-3.8.4-bin.zip
       - checkout
       - run:
           name: Build
           command: |
-            which java 
-            java -version
+            alias mvn=apache-maven-3.8.4/bin/mvn            
+            mvn -v
             mvn -B -DskipTests clean package
 
   build-mac:
     macos:
-      xcode: 13.2.1
+      xcode: 11.5.0
     steps:
       - checkout
       - run:
           name: Build
-          command: mvn -B -DskipTests clean package
+          command: |
+            mvn -v
+            mvn -B -DskipTests clean package
 
   build-windows:
     executor:
@@ -58,11 +62,12 @@ jobs:
       - run:
           name: Build
           command: |
+            mvn -v
             mvn -B -DskipTests clean package
 
 workflows:
   default:
     jobs:
       - build-linux
-#      - build-mac
+      - build-mac
       - build-windows
