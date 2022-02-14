@@ -18,19 +18,21 @@ jobs:
     macos:
       xcode: 13.2.1
     steps:
-      - checkout
       - run:
           name: Install Maven
           command: brew install maven
+      - checkout
       - run:
           name: Build
-          command: mvn -B -DskipTests clean package
+          command: |
+            /usr/libexec/java_home -V
+            mvn -v
+            mvn -B -DskipTests clean package
 
   build-windows:
     executor:
       name: win/default
     steps:
-      - checkout
       - run:
           name: Install scoop
           shell: powershell.exe
@@ -45,6 +47,7 @@ jobs:
             scoop install maven
             scoop install inno-setup
             scoop install wixtoolset
+      - checkout
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
