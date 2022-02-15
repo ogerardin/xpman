@@ -16,6 +16,15 @@ jobs:
           command: |
             mvn -v
             mvn -B -DskipTests clean package
+      - run:
+          name: Prepare artifacts
+          command: |
+            mkdir /tmp/artifacts
+            cd xpman-fx-dist/target
+            cp *.deb *.rpm /tmp/artifacts
+      - store_artifacts:
+          path: /tmp/artifacts
+          destination: linux
 
   build-mac:
     macos:
@@ -38,6 +47,15 @@ jobs:
             export JAVA_HOME=`/usr/libexec/java_home -v 11`
             mvn -v
             mvn -B -DskipTests clean package
+      - run:
+          name: Prepare artifacts
+          command: |
+            mkdir /tmp/artifacts
+            cd xpman-fx-dist/target
+            cp *.dmg *.pkg /tmp/artifacts
+      - store_artifacts:
+          path: /tmp/artifacts
+          destination: mac
 
   build-windows:
     executor:
@@ -63,6 +81,15 @@ jobs:
           command: |
             mvn -v
             mvn -B -DskipTests clean package
+      - run:
+          name: Prepare artifacts
+          command: |
+            mkdir .\artifacts
+            cp xpman-fx-dist\target\*.exe .\artifacts
+            cp xpman-fx-dist\target\*.msi .\artifacts
+      - store_artifacts:
+          path: .\artifacts
+          destination: windows
 
 workflows:
   default:
