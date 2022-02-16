@@ -28,10 +28,7 @@ Currently in development stages. Check [feature status](https://github.com/ogera
 USE AT YOUR OWN RISK! At this point I can't guarantee that it won't erase the whole X-Plane directory or set fire to your house.
 
 # Installing X-Plane Manager
-If you already have a [Java 8 runtime](https://www.oracle.com/java/technologies/javase-jre8-downloads.html), 
-grab the jar from [GitHub releases](https://github.com/ogerardin/xpman/releases) and run it by double-clicking.
-
-if you don't or if it doesn't work for some reason, grab the full bundle most appropriate for your platform and install
+Grab the package appropriate for your platform from [GitHub releases](https://github.com/ogerardin/xpman/releases) and install
 it.
 
 
