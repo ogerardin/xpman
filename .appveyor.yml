@@ -3,7 +3,7 @@ branches:
   only:
   - java11
 image:
-  - macOS-BigSur
+#  - macOS-BigSur
   - Ubuntu2004
 
 for:
@@ -40,7 +40,9 @@ for:
   stack: jdk 11
   init:
   - sh: >-
-      sudo apt-get -y install maven
+      update-java-alternatives -l
+      
+      update-java-alternatives -s java-11-openjdk-amd64
   cache: $HOME/.m2
   build_script:
   - sh: >-
