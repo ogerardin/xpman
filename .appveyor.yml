@@ -14,8 +14,11 @@ for:
   init:
   - sh: >-
       brew install maven
+      
       brew install openjdk@11
+      
       sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+
   environment:
     HOMEBREW_NO_INSTALL_CLEANUP: 1
     HOMEBREW_NO_AUTO_UPDATE: 1
@@ -23,8 +26,11 @@ for:
   build_script:
   - sh: >-
       /usr/libexec/java_home -V
+      
       export JAVA_HOME=`/usr/libexec/java_home -v 11`
+      
       mvn -v
+      
       mvn -B -DskipTests clean package
 
 -
@@ -34,9 +40,10 @@ for:
   stack: jdk 11
   init:
   - sh: >-
-      apt-get -y install maven
+      sudo apt-get -y install maven
   cache: $HOME/.m2
   build_script:
   - sh: >-
       mvn -v
+      
       mvn -B -DskipTests clean package
