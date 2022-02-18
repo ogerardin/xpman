@@ -40,18 +40,14 @@ for:
   init:
   - sh: >-
       update-java-alternatives -l || echo
+      
+      ls -l /usr/lib/jvm
   cache: $HOME/.m2
   build_script:
   - sh: >-
-      java -version
-      
-      export PATH=/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:$PATH
+      export PATH=/usr/lib/jvm/java-11-openjdk-amd64/bin:$PATH
       
       java -version
-      
-      ls -lR /usr/lib/jvm/java-1.11.0-openjdk-amd64
-      
-      echo $JAVA_HOME
       
       unset JAVA_HOME
       
