@@ -12,26 +12,27 @@ for:
     only:
       - image: macOS-BigSur
   init:
-  - sh: >-
+  - sh: |
+      epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
+      tcc_service_appleevents="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.finder\",0,$epochdate);"
+      sudo sqlite3 -echo "$HOME/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_appleevents"
+  - sh: |
       brew install maven
-      
       brew install openjdk@11
-      
       sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
-
   environment:
     HOMEBREW_NO_INSTALL_CLEANUP: 1
     HOMEBREW_NO_AUTO_UPDATE: 1
   cache: $HOME/.m2
   build_script:
-  - sh: >-
+  - sh: |
       /usr/libexec/java_home -V
-      
       export JAVA_HOME=`/usr/libexec/java_home -v 11`
-      
       mvn -v
-      
       mvn -B -DskipTests clean package
+  artifacts:
+    - path: xpman-fx-dist/target/*.dmg
+    - path: xpman-fx-dist/target/*.pkg
 
 -
   matrix:
@@ -39,18 +40,18 @@ for:
       - image: Ubuntu2004
   stack: jdk 11
   init:
-  - sh: >-
+  - sh: |
       sudo rm /usr/lib/jvm/java-11-openjdk-amd64/java-11-openjdk-amd64
   cache: $HOME/.m2
   build_script:
-  - sh: >-
-      export PATH=${JAVA_HOME_11_X64}/bin:$PATH
-      
+  - sh: |
+      export PATH=${JAVA_HOME_11_X64}/bin:$PATH      
       unset JAVA_HOME
-      
       mvn -v
-      
       mvn -B -DskipTests clean package
+  artifacts:
+    - path: xpman-fx-dist/target/*.deb
+    - path: xpman-fx-dist/target/*.rpm
 
 -
   matrix:
@@ -72,3 +73,7 @@ for:
         set JAVA_HOME=C:\Progra~1\Java\jdk11
         mvn -v
         mvn -B -DskipTests clean package
+  artifacts:
+    - path: xpman-fx-dist\target\*.exe
+    - path: xpman-fx-dist\target\*.msi
+
