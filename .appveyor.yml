@@ -68,8 +68,9 @@ for:
         scoop install wixtoolset
   build_script:
     - cmd: |
-        set PATH
-        set "PATH=C:\Program Files\Java\jdk11;%PATH%"
+        set
+        path C:\Program Files\Java\jdk11;%PATH%
+        java -version
         set JAVA_HOME=
         mvn -v
         mvn -B -DskipTests clean package
