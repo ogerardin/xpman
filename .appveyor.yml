@@ -68,8 +68,8 @@ for:
         scoop install wixtoolset
   build_script:
     - cmd: |
-      java -version
-      set PATH=%JAVA_HOME%\bin;%PATH%
-      java -version
-      mvn -v
-      mvn -B -DskipTests clean package
+        java -version
+        set PATH=%JAVA_HOME%\bin;%PATH%
+        java -version
+        mvn -v
+        mvn -B -DskipTests clean package
