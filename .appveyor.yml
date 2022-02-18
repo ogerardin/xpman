@@ -2,6 +2,7 @@ branches:
   only:
   - java11
 image:
+  - Visual Studio 2022
   - Ubuntu2004
   - macOS-BigSur
 
@@ -49,4 +50,26 @@ for:
       
       mvn -v
       
+      mvn -B -DskipTests clean package
+
+-
+  matrix:
+    only:
+      - image: Visual Studio 2022
+  environment:
+    - JAVA_HOME: C:\Program Files\Java\jdk11
+  cache:
+    - "%USERPROFILE%\\.m2"
+  init:
+    - ps: iwr -useb get.scoop.sh | iex
+    - cmd: |
+        scoop bucket add extras
+        scoop install inno-setup
+        scoop install wixtoolset
+  build_script:
+    -cmd: |
+      java -version
+      set PATH=%JAVA_HOME%\bin;%PATH%
+      java -version
+      mvn -v
       mvn -B -DskipTests clean package
