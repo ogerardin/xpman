@@ -39,13 +39,11 @@ for:
   stack: jdk 11
   init:
   - sh: >-
-      update-java-alternatives -l || echo
-      
-      ls -l /usr/lib/jvm
+      ls -l /usr/lib/jvm/java-11-openjdk-amd64
   cache: $HOME/.m2
   build_script:
   - sh: >-
-      export PATH=/usr/lib/jvm/java-11-openjdk-amd64/bin:$PATH
+      export PATH=${JAVA_HOME_11_X64}/bin:$PATH
       
       java -version
       
