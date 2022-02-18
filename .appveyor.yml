@@ -41,9 +41,9 @@ for:
   - sh: >-
       update-java-alternatives -l
       
-      #sudo update-alternatives --set java /usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/java
+      sudo update-alternatives --set java /usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/java
       
-      sudo update-java-alternatives -s java-1.11.0-openjdk-amd64 || echo
+      #sudo update-java-alternatives -s java-1.11.0-openjdk-amd64 || echo
       
       java -version
   cache: $HOME/.m2
