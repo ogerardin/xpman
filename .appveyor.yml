@@ -43,7 +43,13 @@ for:
   cache: $HOME/.m2
   build_script:
   - sh: >-
-      PATH=/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:$PATH
+      java -version
+      
+      export PATH=/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:$PATH
+      
+      java -version
+      
+      export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
       
       mvn -v
       
