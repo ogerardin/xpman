@@ -57,7 +57,7 @@ for:
     only:
       - image: Visual Studio 2022
   environment:
-    JAVA_HOME: "C:\Program Files\Java\jdk11"
+    JAVA_HOME: C:\Program Files\Java\jdk11
   cache:
     - "%USERPROFILE%\\.m2"
   init:
