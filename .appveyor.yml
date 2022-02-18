@@ -39,7 +39,7 @@ for:
   stack: jdk 11
   init:
   - sh: >-
-      update-java-alternatives -l
+      update-java-alternatives -l || echo
   cache: $HOME/.m2
   build_script:
   - sh: >-
