@@ -42,7 +42,7 @@ for:
   - sh: >-
       update-java-alternatives -l
       
-      update-java-alternatives -s java-1.11.0-openjdk-amd64
+      sudo update-java-alternatives -s java-1.11.0-openjdk-amd64
   cache: $HOME/.m2
   build_script:
   - sh: >-
