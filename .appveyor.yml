@@ -3,8 +3,8 @@ branches:
   only:
   - java11
 image:
-#  - macOS-BigSur
   - Ubuntu2004
+  - macOS-BigSur
 
 for:
 -
