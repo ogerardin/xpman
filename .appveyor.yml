@@ -41,10 +41,14 @@ for:
   init:
   - sh: >-
       update-java-alternatives -l
+      
+      #sudo update-alternatives --set java /usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/java
+      
+      update-java-alternatives -s java-1.11.0-openjdk-amd64 || echo
   cache: $HOME/.m2
   build_script:
   - sh: >-
-      PATH=/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:$PATH
+      #PATH=/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:$PATH
       
       mvn -v
       
