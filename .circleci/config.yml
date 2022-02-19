@@ -19,12 +19,16 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir /tmp/artifacts
-            cd xpman-fx-dist/target
-            cp *.deb *.rpm /tmp/artifacts
-      - store_artifacts:
-          path: /tmp/artifacts
-          destination: linux
+            mkdir -p workspace/artifacts            
+            cp xpman-fx-dist/target/*.deb workspace/artifacts
+            cp xpman-fx-dist/target/*.rpm workspace/artifacts
+#      - store_artifacts:
+#          path: workspace/artifacts
+#          destination: linux
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - artifacts
 
   build-mac:
     macos:
@@ -50,12 +54,16 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir /tmp/artifacts
-            cd xpman-fx-dist/target
-            cp *.dmg *.pkg /tmp/artifacts
-      - store_artifacts:
-          path: /tmp/artifacts
-          destination: mac
+            mkdir -p workspace/artifacts            
+            cp xpman-fx-dist/target/*.pkg workspace/artifacts
+            cp xpman-fx-dist/target/*.dmg workspace/artifacts
+#      - store_artifacts:
+#          path: workspace/artifacts
+#          destination: mac
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - artifacts
 
   build-windows:
     executor:
@@ -84,12 +92,29 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir .\artifacts
-            cp xpman-fx-dist\target\*.exe .\artifacts
-            cp xpman-fx-dist\target\*.msi .\artifacts
-      - store_artifacts:
-          path: .\artifacts
-          destination: windows
+            mkdir workspace\artifacts
+            copy xpman-fx-dist\target\*.exe workspace\artifacts
+            copy xpman-fx-dist\target\*.msi workspace\artifacts
+#      - store_artifacts:
+#          path: workspace\artifacts
+#          destination: windows
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - artifacts
+
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:latest
+    steps:
+      - attach_workspace:
+          at: workspace
+      - run:
+          name: Publish Release on GitHub
+          command: |
+#            VERSION=$(my-binary --version)
+#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} workspace/artifacts/
+            ls -lR workspace
 
 workflows:
   default:
@@ -97,3 +122,9 @@ workflows:
       - build-linux
       - build-mac
       - build-windows
+      - publish-github-release:
+          requires:
+            - build-linux
+            - build-mac
+            - build-windows
+
