@@ -15,10 +15,7 @@ jobs:
           name: Generate cache seed
           command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
-          keys:
-            - maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
-            - maven-{{ checksum "effective-pom.xml" }}
-            - maven-
+          key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
           name: Build
           command: |
@@ -60,10 +57,7 @@ jobs:
           name: Generate cache seed
           command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
-          keys:
-            - maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
-            - maven-{{ checksum "effective-pom.xml" }}
-            - maven-
+          key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
           name: Build
           command: |
@@ -112,10 +106,7 @@ jobs:
           shell: bash.exe
           command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
-          keys:
-            - maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
-            - maven-{{ checksum "effective-pom.xml" }}
-            - maven-
+          key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
           name: Build
           command: |
