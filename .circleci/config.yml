@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Generate cache seed
-          command: mvn help:effective-pom -Doutput=effective-pom.xml
+          command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}
       - run:
@@ -55,7 +55,7 @@ jobs:
       - checkout
       - run:
           name: Generate cache seed
-          command: mvn help:effective-pom -Doutput=effective-pom.xml
+          command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}
       - run:
@@ -103,7 +103,8 @@ jobs:
       - checkout
       - run:
           name: Generate cache seed
-          command: mvn help:effective-pom "-Doutput=effective-pom.xml"
+          shell: bash.exe
+          command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml"
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}
       - run:
