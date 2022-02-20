@@ -104,7 +104,7 @@ jobs:
       - run:
           name: Generate cache seed
           shell: bash.exe
-          command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml"
+          command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}
       - run:
