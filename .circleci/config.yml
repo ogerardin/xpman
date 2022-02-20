@@ -12,10 +12,19 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Generate cache seed
+          command: mvn help:effective-pom -Doutput=effective-pom.xml
+      - restore_cache:
+          key: maven-{{ checksum "effective-pom.xml" }}
+      - run:
           name: Build
           command: |
             mvn -v
             mvn -B -DskipTests clean package
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-{{ checksum "effective-pom.xml" }}
       - run:
           name: Prepare artifacts
           command: |
@@ -35,7 +44,7 @@ jobs:
       xcode: 13.3.0
     steps:
       - run:
-          name: Fix Finder got an error - AppleEvent timed out. (-1712)
+          name: Fix "Finder got an error - AppleEvent timed out. (-1712)"
           command: |
             epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
             tcc_service_appleevents="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.finder\",0,$epochdate);"
@@ -45,12 +54,21 @@ jobs:
           command: brew install maven
       - checkout
       - run:
+          name: Generate cache seed
+          command: mvn help:effective-pom -Doutput=effective-pom.xml
+      - restore_cache:
+          key: maven-{{ checksum "effective-pom.xml" }}
+      - run:
           name: Build
           command: |
             /usr/libexec/java_home -V
             export JAVA_HOME=`/usr/libexec/java_home -v 11`
             mvn -v
             mvn -B -DskipTests clean package
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-{{ checksum "effective-pom.xml" }}
       - run:
           name: Prepare artifacts
           command: |
@@ -75,7 +93,6 @@ jobs:
           command: iwr -useb get.scoop.sh | iex
       - run:
           name: Install dependencies
-          shell: powershell.exe
           command: |
             scoop bucket add java
             scoop bucket add extras
@@ -85,10 +102,19 @@ jobs:
             scoop install wixtoolset
       - checkout
       - run:
+          name: Generate cache seed
+          command: mvn help:effective-pom -Doutput=effective-pom.xml
+      - restore_cache:
+          key: maven-{{ checksum "effective-pom.xml" }}
+      - run:
           name: Build
           command: |
             mvn -v
             mvn -B -DskipTests clean package
+      - save_cache:
+          paths:
+            - C:\Users\circleci\.m2
+          key: maven-{{ checksum "effective-pom.xml" }}
       - run:
           name: Prepare artifacts
           command: |
@@ -107,14 +133,20 @@ jobs:
     docker:
       - image: cibuilds/github:latest
     steps:
+      - run:
+          name: Install Maven
+          command: |
+            apk add maven
+            mvn -v
+      - checkout
       - attach_workspace:
           at: workspace
       - run:
           name: Publish Release on GitHub
           command: |
             ls -lR workspace
-#            VERSION=$(my-binary --version)
-#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} workspace/artifacts/
+            VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete -prerelease "${VERSION}" workspace/artifacts/
 
 workflows:
   default:
