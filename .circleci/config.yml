@@ -15,16 +15,19 @@ jobs:
           name: Generate cache seed
           command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
-          key: maven-{{ checksum "effective-pom.xml" }}
+          keys:
+            - maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
+            - maven-{{ checksum "effective-pom.xml" }}
+            - maven-
       - run:
           name: Build
           command: |
             mvn -v
             mvn -B -DskipTests clean package
       - save_cache:
+          key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
             - ~/.m2
-          key: maven-{{ checksum "effective-pom.xml" }}
       - run:
           name: Prepare artifacts
           command: |
@@ -57,7 +60,10 @@ jobs:
           name: Generate cache seed
           command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
-          key: maven-{{ checksum "effective-pom.xml" }}
+          keys:
+            - maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
+            - maven-{{ checksum "effective-pom.xml" }}
+            - maven-
       - run:
           name: Build
           command: |
@@ -66,9 +72,9 @@ jobs:
             mvn -v
             mvn -B -DskipTests clean package
       - save_cache:
+          key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
             - ~/.m2
-          key: maven-{{ checksum "effective-pom.xml" }}
       - run:
           name: Prepare artifacts
           command: |
@@ -106,16 +112,19 @@ jobs:
           shell: bash.exe
           command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
-          key: maven-{{ checksum "effective-pom.xml" }}
+          keys:
+            - maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
+            - maven-{{ checksum "effective-pom.xml" }}
+            - maven-
       - run:
           name: Build
           command: |
             mvn -v
             mvn -B -DskipTests clean package
       - save_cache:
+          key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
             - C:\Users\circleci\.m2
-          key: maven-{{ checksum "effective-pom.xml" }}
       - run:
           name: Prepare artifacts
           command: |
