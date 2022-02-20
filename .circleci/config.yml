@@ -103,8 +103,7 @@ jobs:
       - checkout
       - run:
           name: Generate cache seed
-          shell: cmd.exe
-          command: mvn help:effective-pom -Doutput=effective-pom.xml
+          command: mvn help:effective-pom "-Doutput=effective-pom.xml"
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}
       - run:
