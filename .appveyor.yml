@@ -13,10 +13,6 @@ for:
       - image: macOS-BigSur
   init:
   - sh: |
-      epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
-      tcc_service_appleevents="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.finder\",0,$epochdate);"
-      sudo sqlite3 -echo "$HOME/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_appleevents"
-  - sh: |
       brew install maven
       brew install openjdk@11
       sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
@@ -27,7 +23,9 @@ for:
   build_script:
   - sh: |
       /usr/libexec/java_home -V
-      export JAVA_HOME=`/usr/libexec/java_home -v 11`
+      export JAVA_HOME=`/usr/libexec/java_home -v 11`      
+      JavaPath=$(which java)
+      sudo sqlite3 "$HOME/Library/Application Support/com.apple.TCC/TCC.db" "insert into access (service, client, client_type, allowed, prompt_count, indirect_object_identifier_type, indirect_object_identifier) values ('kTCCServiceAppleEvents', '$JavaPath', 1, 1, 1, 0, 'com.apple.finder')"
       mvn -v
       mvn -B -DskipTests clean package
   artifacts:
