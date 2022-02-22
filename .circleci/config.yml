@@ -8,7 +8,7 @@ orbs:
 jobs:
   build-linux:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:17.0.2
     steps:
       - checkout
       - run:
@@ -50,8 +50,10 @@ jobs:
             tcc_service_appleevents="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.finder\",0,$epochdate);"
             sudo sqlite3 "/Users/distiller/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_appleevents"
       - run:
-          name: Install Maven
-          command: brew install maven
+          name: Install Java 17 and Maven
+          command: |
+            brew install openjdk@17
+            brew install maven
       - checkout
       - run:
           name: Generate cache seed
@@ -62,7 +64,7 @@ jobs:
           name: Build
           command: |
             /usr/libexec/java_home -V
-            export JAVA_HOME=`/usr/libexec/java_home -v 11`
+            export JAVA_HOME=`/usr/libexec/java_home -v 17`
             mvn -v
             mvn -B -DskipTests clean package
       - save_cache:
@@ -96,7 +98,7 @@ jobs:
           command: |
             scoop bucket add java
             scoop bucket add extras
-            scoop install openjdk11
+            scoop install openjdk17
             scoop install maven
             scoop install inno-setup
             scoop install wixtoolset
@@ -147,7 +149,14 @@ jobs:
           command: |
             ls -lR workspace
             VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete -prerelease "${VERSION}" workspace/artifacts/
+            DATE=$(date +%Y-%m-%d)
+            ghr -u ${CIRCLE_PROJECT_USERNAME} \
+              -r ${CIRCLE_PROJECT_REPONAME} \
+              -c ${CIRCLE_SHA1} \
+              -n "$VERSION ($DATE)" \
+              -delete \
+              "${VERSION}" \
+              workspace/artifacts/
 
 workflows:
   default:
