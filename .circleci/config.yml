@@ -42,6 +42,9 @@ jobs:
   build-mac:
     macos:
       xcode: 13.3.0
+    environment:
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
     steps:
       - run:
           name: Fix "Finder got an error - AppleEvent timed out. (-1712)"
@@ -53,6 +56,7 @@ jobs:
           name: Install Java 17 and Maven
           command: |
             brew install openjdk@17
+            sudo ln -sfn /usr/local/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
             brew install maven
       - checkout
       - run:
