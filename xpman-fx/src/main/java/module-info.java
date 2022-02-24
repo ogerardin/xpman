@@ -6,7 +6,6 @@ module xpman.fx {
     requires org.slf4j;
     requires com.google.gson;
     requires org.controlsfx.controls;
-    requires com.google.common;
     requires spring.expression;
     requires commons.lang;
     requires logback.classic;
