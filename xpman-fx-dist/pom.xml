@@ -405,6 +405,7 @@
                                     <copyDependencies>false</copyDependencies>
                                     <bundleJre>true</bundleJre>
 <!--                                    <jrePath>${java.home}</jrePath>-->
+                                    <customizedJre>false</customizedJre>
                                     <generateInstaller>true</generateInstaller>
                                     <macConfig>
                                         <generateDmg>true</generateDmg>
@@ -446,7 +447,8 @@
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
                                     <bundleJre>true</bundleJre>
-                                    <jrePath>${java.home}</jrePath>
+<!--                                    <jrePath>${java.home}</jrePath>-->
+                                    <customizedJre>false</customizedJre>
                                     <generateInstaller>true</generateInstaller>
                                     <winConfig>
                                         <fileVersion>1.0.0.0</fileVersion>
@@ -519,7 +521,8 @@
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
                                     <bundleJre>true</bundleJre>
-                                    <jrePath>${java.home}</jrePath>
+<!--                                    <jrePath>${java.home}</jrePath>-->
+                                    <customizedJre>false</customizedJre>
                                     <generateInstaller>true</generateInstaller>
                                     <linuxConfig>
                                         <generateDeb>true</generateDeb>
