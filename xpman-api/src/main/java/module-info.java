@@ -2,15 +2,11 @@ module xpman.api {
     requires lombok;
     requires org.slf4j;
     requires one.util.streamex;
-    requires com.google.api.services.drive;
     requires org.jsoup;
     requires io.github.classgraph;
-    requires com.google.common;
-    requires google.api.client;
-    requires com.google.api.client;
-    requires com.google.api.client.json.jackson2;
     requires com.sun.jna;
     requires com.sun.jna.platform;
+    requires org.apache.commons.io;
 
     // filename-based automodules
     requires commons.lang;

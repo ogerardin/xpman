@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.aircrafts.custom;
 
-import com.google.api.services.drive.model.File;
 import com.ogerardin.xplane.PublicationChannel;
 import com.ogerardin.xplane.Versioned;
 import com.ogerardin.xplane.XPlane;
@@ -10,7 +9,6 @@ import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.impl.RecommendedPluginsInspection;
 import com.ogerardin.xplane.plugins.custom.AviTab;
 import com.ogerardin.xplane.plugins.custom.TerrainRadar;
-import com.ogerardin.xplane.util.GoogleDriveClient;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
@@ -24,11 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,66 +96,6 @@ public class ZiboMod738 extends Aircraft implements Versioned {
     public Inspections<Aircraft> getInspections(XPlane xPlane) {
         return super.getInspections(xPlane)
                 .append(new RecommendedPluginsInspection<>(xPlane, AviTab.class, TerrainRadar.class));
-    }
-
-
-    /**
-     * This class uses the ZiboMod Google Drive https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ
-     * to extract the latest version. Unfortunately something has changed lately and the access doesn't work anonymously
-     * anymore. Prefer {@link ZiboUpdaterChannel}.
-     */
-    static class GoogleDriveChannel implements PublicationChannel {
-        /**
-         * The Google Drive folder ID of the folder containing published updates
-         */
-        private static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
-
-        @Override
-        public String getName() {
-            return "Google Drive";
-        }
-
-        public String getLatestVersion() throws IOException, GeneralSecurityException {
-            // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
-            // Patches are published as incremental files B738X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
-
-            // obtain list of files on the Google Drive
-            GoogleDriveClient client = new GoogleDriveClient();
-            List<File> files = client.getFiles(ZIBO_FOLDER_ID);
-
-            // try to find file matching full version pattern and extract version
-            Pattern pattern = Pattern.compile("B737-800X_([\\d_]+)_full.zip");
-            Optional<String> maybeVersion = files.stream()
-                    .map(File::getName)
-                    .map(pattern::matcher)
-                    .filter(Matcher::matches)
-                    .findAny()
-                    .map(matcher -> matcher.group(1));
-            if (! maybeVersion.isPresent()) {
-                log.warn("Failed to determine ZIBO major version from Google Drive");
-                return null;
-            }
-
-            // try to find patches for this version, keep the max
-            String version = maybeVersion.get();
-            Pattern pattern2 = Pattern.compile("B738X_" + version + "_(\\d+).zip");
-            OptionalInt maybePatch = files.stream()
-                    .map(File::getName)
-                    .map(pattern2::matcher)
-                    .filter(Matcher::matches)
-                    .map(matcher -> matcher.group(1))
-                    .mapToInt(Integer::valueOf)
-                    .max();
-
-            version = version.replace("_", ".");
-            return maybePatch.isPresent() ? String.format("%s.%d", version, maybePatch.getAsInt()) : version;
-        }
-
-        @SneakyThrows
-        @Override
-        public URL getUrl() {
-            return new URL("https://drive.google.com/drive/folders/" + GoogleDriveChannel.ZIBO_FOLDER_ID);
-        }
     }
 
     /**

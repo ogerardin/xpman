@@ -1,12 +1,12 @@
 package com.ogerardin.xplane.plugins.custom;
 
-import com.google.common.io.ByteStreams;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class TerrainRadar extends Plugin {
             connection.connect();
             final InputStream inputStream = connection.getInputStream();
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ByteStreams.copy(inputStream, outputStream);
+            IOUtils.copy(inputStream, outputStream);
             connection.disconnect();
             String html = outputStream.toString(StandardCharsets.UTF_8);
             Pattern pattern = Pattern.compile(".*\"softwareVersion\": \"([0-9.]+)\".*", Pattern.DOTALL);
