@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.util;
 
-import com.google.common.io.CharStreams;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -68,7 +68,7 @@ public class ZipUtils {
                 }
                 InputStream inputStream = zip.getInputStream(zipEntry);
                 try (Reader reader = new InputStreamReader(inputStream)) {
-                    return CharStreams.toString(reader);
+                    return IOUtils.toString(reader);
                 }
             }
         }
