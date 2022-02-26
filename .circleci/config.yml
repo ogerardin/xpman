@@ -106,6 +106,7 @@ jobs:
             scoop install maven
             scoop install inno-setup
             scoop install wixtoolset
+            scoop install imagemagick
       - checkout
       - run:
           name: Generate cache seed
