@@ -15,9 +15,6 @@
     <description>
         This module packages the app in forms suitable for distribution.
     </description>
-    <!-- References:
-          https://medium.com/@adam_carroll/java-packager-with-jdk11-31b3d620f4a8
-    -->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,6 +24,7 @@
         <app.copyright>(c) Olivier Gérardin 2022</app.copyright>
         <app.vendor>Olivier Gérardin</app.vendor>
         <app.name>X-Plane Manager</app.name>
+        <app.shortName>xpman</app.shortName>
         <app.description>Configuration Manager for Laminar Research X-Plane</app.description>
         <!--Default when not available from git-commit-id-maven-plugin-->
         <git.build.number>0</git.build.number>
@@ -207,11 +205,15 @@
                                     <displayName>${app.name}</displayName>
                                     <name>${app.name}</name>
                                     <organizationName>${app.copyright}</organizationName>
+                                    <licenseFile>../LICENSE</licenseFile>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
-                                    <bundleJre>true</bundleJre>
+                                    <additionalResources>
+                                        <additionalResource>${project.basedir}/${app.name}.l4j.ini</additionalResource>
+                                    </additionalResources>
 <!--                                    <jrePath>${java.home}</jrePath>-->
+                                    <bundleJre>true</bundleJre>
                                     <customizedJre>false</customizedJre>
                                     <generateInstaller>true</generateInstaller>
                                     <macConfig>
@@ -281,7 +283,6 @@
                         </executions>
                     </plugin>
 
-
                     <plugin>
                         <groupId>io.github.fvarrui</groupId>
                         <artifactId>javapackager</artifactId>
@@ -297,9 +298,13 @@
                                     <displayName>${app.name}</displayName>
                                     <name>${app.name}</name>
                                     <organizationName>${app.copyright}</organizationName>
+                                    <licenseFile>../LICENSE</licenseFile>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
+                                    <additionalResources>
+                                        <additionalResource>${project.basedir}/${app.name}.l4j.ini</additionalResource>
+                                    </additionalResources>
                                     <bundleJre>true</bundleJre>
 <!--                                    <jrePath>${java.home}</jrePath>-->
                                     <customizedJre>false</customizedJre>
@@ -373,13 +378,17 @@
                                 <configuration>
                                     <description>${app.description}</description>
                                     <displayName>${app.name}</displayName>
-                                    <name>xpman</name>
+                                    <name>${app.shortName}</name>
                                     <organizationName>${app.copyright}</organizationName>
+                                    <licenseFile>../LICENSE</licenseFile>
                                     <!--suppress MavenModelInspection -->
                                     <version>${sanitizedVersion}</version>
                                     <mainClass>${app.runnableMainClass}</mainClass>
                                     <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
                                     <copyDependencies>false</copyDependencies>
+                                    <additionalResources>
+                                        <additionalResource>${project.basedir}/${app.shortName}.l4j.ini</additionalResource>
+                                    </additionalResources>
                                     <bundleJre>true</bundleJre>
 <!--                                    <jrePath>${java.home}</jrePath>-->
                                     <customizedJre>false</customizedJre>
