@@ -27,10 +27,6 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        // Set the global stylesheet. This is basically a copy of moderna.css with an added default font,
-        // to avoid getting a garbage font.
-        Application.setUserAgentStylesheet(getClass().getResource("/style.css").toExternalForm());
-
         // catch-all exception handler (GUI version)
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> Platform.runLater(() -> ErrorDialog.showError(throwable, primaryStage)));
 
