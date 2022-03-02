@@ -6,15 +6,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks the conditional availability of a method.
+ * Indicates that the action associated with the annotated method is onlay available if a specific expression evaluates
+ * to true.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EnabledIf {
 
     /**
-     * Boolean expression to determine if the annotated method is applicable.
-     * The expression is evaluated with the target object as context root.
+     * SpEL expression used to determine if the annotated method is available.
+     * The expression is evaluated with the target object as context root and is expected to evaluata as a boolean.
      */
     String value();
 }

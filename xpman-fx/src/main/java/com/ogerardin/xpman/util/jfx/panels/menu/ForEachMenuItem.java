@@ -57,10 +57,9 @@ public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
         log.debug("Contextualizing {} for {}", this, target);
         getItems().clear();
         Object exprValue = SpelUtil.eval(forEach.iterable(), target);
-        if (! (exprValue instanceof Iterable)) {
+        if (! (exprValue instanceof Iterable iterable)) {
             throw new IllegalArgumentException(String.format("Expected Iterable, got %s", exprValue));
         }
-        Iterable<?> iterable = (Iterable<?>) exprValue;
         for (Object item : iterable) {
             MenuItem menuItem = buildMenuItem(method, target, item);
             log.debug("Adding item {}", menuItem);

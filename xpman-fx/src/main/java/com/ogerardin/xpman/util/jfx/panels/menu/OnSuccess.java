@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface OnSuccess {
 
-    /** Expression to evaluate after the method has been successfully invoked.
-     * The expression is evaluated with the controller as context root and a variable named {@link #resultVariableName()}
-     * containing the result of the method invocation. */
+    /** SpEL expression to be evaluated after the method has been successfully invoked.
+     * The expression is evaluated with the JavaFX controller as context root and a variable named as per
+     * {@link #resultVariableName} (default "result") containing the result of the method invocation. */
     String value();
 
     /** Name of the variable that represents the result of the method invocation. Default: "result" */

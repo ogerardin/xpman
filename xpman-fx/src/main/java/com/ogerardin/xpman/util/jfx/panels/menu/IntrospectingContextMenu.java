@@ -1,14 +1,12 @@
 package com.ogerardin.xpman.util.jfx.panels.menu;
 
 import com.ogerardin.xpman.util.SpelUtil;
-import com.ogerardin.xpman.util.jfx.TableRowFactory;
-import javafx.beans.binding.Bindings;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.util.Callback;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
@@ -17,21 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static javafx.beans.binding.Bindings.when;
-
 /**
- * A row factory that adds a customized context menu built by introspecting the item class and looking for specxific
- * annotations.
- * @param <T> item class
+ * Base class for implementing a {@link ContextMenu} that is built dynamically by introspecting a target class.
+ * The menu can be attached to any Node using {@link javafx.scene.Node#setOnContextMenuRequested} and contextualized
+ * using {@link #contexualizeMenu}
  *
- * @see Label
- * @see EnabledIf
- * @see Confirm
- * @see ForEach
+ * @see MethodMenuItem
+ * @param <T>
  */
 @Data
-public class IntrospectingContextMenuRowFactory<T> implements TableRowFactory<T> {
-
+public abstract class IntrospectingContextMenu<T> {
     @NonNull
     private final Class<? extends T> itemClass;
 
@@ -40,33 +33,7 @@ public class IntrospectingContextMenuRowFactory<T> implements TableRowFactory<T>
     @Getter(lazy = true, value = AccessLevel.PRIVATE)
     private final List<Method> methods = computeRelevantMethods();
 
-    @Override
-    public TableRow<T> call(TableView<T> tableView) {
-        TableRow<T> row = new TableRow<>();
-        addContextMenu(row);
-        return row;
-    }
-
-    /**
-     * Builds a context menu based on exposed methods of the item class.
-     */
-    protected void addContextMenu(TableRow<T> row) {
-
-        // build context menu
-        TableView<T> tableView = row.getTableView();
-        ContextMenu rowMenu = new ContextMenu(buildMenuItems(tableView));
-
-        // only display context menu for non-null items
-        row.contextMenuProperty().bind(
-                when(Bindings.isNotNull(row.itemProperty()))
-                        .then(rowMenu)
-                        .otherwise((ContextMenu) null));
-
-        // before displaying context menu, cutomize it for actual row item
-        row.setOnContextMenuRequested(event -> contexualizeMenu(rowMenu, row.getItem()));
-    }
-
-    private MenuItem[] buildMenuItems(Object tableView) {
+    protected MenuItem[] buildMenuItems(Object tableView) {
         return getMethods().stream()
                 .map(method -> buildMenuItem(method, tableView))
                 .toArray(MenuItem[]::new);
@@ -77,9 +44,9 @@ public class IntrospectingContextMenuRowFactory<T> implements TableRowFactory<T>
                 // skip if method is an Object method
                 .filter(this::isNotObjectMethod)
                 // skip non public or abstract methods
-                .filter(method -> Modifier.isPublic(method.getModifiers()) && ! Modifier.isAbstract(method.getModifiers()))
+                .filter(method -> Modifier.isPublic(method.getModifiers()) && !Modifier.isAbstract(method.getModifiers()))
                 // skip setters/getters
-                .filter(method -> ! method.getName().startsWith("set") && ! method.getName().startsWith("get") && ! method.getName().startsWith("is"))
+                .filter(method -> !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().startsWith("is"))
                 .collect(Collectors.toList());
     }
 
@@ -113,7 +80,10 @@ public class IntrospectingContextMenuRowFactory<T> implements TableRowFactory<T>
         return new MethodMenuItem<>(evaluationContextRoot, text, method, null);
     }
 
-    private void contexualizeMenu(ContextMenu contextMenu, T item) {
+    /** Customize the menu for the current row item by calling {@link Contextualizable#contextualize(Object)} on
+     * all {@link MenuItem}s that implement {@link Contextualizable}, passing it the current orw item.
+     */
+    protected void contexualizeMenu(ContextMenu contextMenu, T item) {
         contextMenu.getItems().stream()
                 .filter(Contextualizable.class::isInstance)
                 .map(menuItem -> (Contextualizable<T>) menuItem)
