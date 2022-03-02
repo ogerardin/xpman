@@ -9,7 +9,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
 
 Note: the "master" branch requires Oracle Java 8 and is not developed anymore.
-Migration to Java 11 is underway in branch "java11", which will become the main branch at some point.
+Current development happens in the ["java17" branch](https://github.com/ogerardin/xpman/tree/java17), which will become the main branch at some point.
 
 # X-Plane Manager
 X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's wonderful flight simulator X-Plane.
