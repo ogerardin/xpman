@@ -32,6 +32,7 @@ jobs:
             cp xpman-fx-dist/target/*.deb workspace/artifacts
             cp xpman-fx-dist/target/*.rpm workspace/artifacts
             for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/linux/"); done
+            ls -l workspace/artifacts
 #      - store_artifacts:
 #          path: workspace/artifacts
 #          destination: linux
@@ -83,6 +84,7 @@ jobs:
             cp xpman-fx-dist/target/*.pkg workspace/artifacts
             cp xpman-fx-dist/target/*.dmg workspace/artifacts
             for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/mac/"); done
+            ls -l workspace/artifacts
 #      - store_artifacts:
 #          path: workspace/artifacts
 #          destination: mac
@@ -129,10 +131,11 @@ jobs:
           name: Prepare artifacts
           shell: bash
           command: |
-            mkdir -p workspace\artifacts
-            copy xpman-fx-dist/target/*.exe workspace/artifacts
-            copy xpman-fx-dist/target/*.msi workspace/artifacts
+            mkdir -p workspace/artifacts
+            cp xpman-fx-dist/target/*.exe workspace/artifacts
+            cp xpman-fx-dist/target/*.msi workspace/artifacts
             for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/windows/"); done
+            ls -l workspace/artifacts
 #      - store_artifacts:
 #          path: workspace\artifacts
 #          destination: windows
