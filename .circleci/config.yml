@@ -31,6 +31,7 @@ jobs:
             mkdir -p workspace/artifacts            
             cp xpman-fx-dist/target/*.deb workspace/artifacts
             cp xpman-fx-dist/target/*.rpm workspace/artifacts
+            for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/linux/"); done
 #      - store_artifacts:
 #          path: workspace/artifacts
 #          destination: linux
@@ -81,6 +82,7 @@ jobs:
             mkdir -p workspace/artifacts            
             cp xpman-fx-dist/target/*.pkg workspace/artifacts
             cp xpman-fx-dist/target/*.dmg workspace/artifacts
+            for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/mac/"); done
 #      - store_artifacts:
 #          path: workspace/artifacts
 #          destination: mac
@@ -111,7 +113,7 @@ jobs:
       - run:
           name: Generate cache seed
           shell: bash.exe
-          command: find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
+          command: /bin/usr/find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
@@ -125,10 +127,12 @@ jobs:
             - C:\Users\circleci\.m2
       - run:
           name: Prepare artifacts
+          shell: bash
           command: |
-            mkdir workspace\artifacts
-            copy xpman-fx-dist\target\*.exe workspace\artifacts
-            copy xpman-fx-dist\target\*.msi workspace\artifacts
+            mkdir -p workspace\artifacts
+            copy xpman-fx-dist/target/*.exe workspace/artifacts
+            copy xpman-fx-dist/target/*.msi workspace/artifacts
+            for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/windows/"); done
 #      - store_artifacts:
 #          path: workspace\artifacts
 #          destination: windows
