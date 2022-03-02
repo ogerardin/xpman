@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Slf4j
 @ToString
 @Builder
-public class ProcessExecutor {
+public class CommandExecutor {
 
     private final String command;
     private final String[] cmdarray;

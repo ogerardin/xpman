@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.util.platform;
 
-import com.ogerardin.xplane.exec.ProcessExecutor;
+import com.ogerardin.xplane.exec.CommandExecutor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,10 +18,10 @@ public class MacPlatform implements Platform {
         // if path is a directory, use any contained file otherwise the Finder will not select the directory
         if (Files.isDirectory(path) && ! path.getFileName().toString().endsWith(".app")) {
             try (Stream<Path> pathStream = Files.list(path)) {
-                path = pathStream.findAny().orElse(path);
+                path = pathStream.findFirst().orElse(path);
             }
         }
-        ProcessExecutor.exec("open", "-R", path.toString());
+        CommandExecutor.exec("open", "-R", path.toString());
     }
 
     @Override
@@ -32,18 +32,18 @@ public class MacPlatform implements Platform {
     @SneakyThrows
     @Override
     public void openUrl(URL url) {
-        ProcessExecutor.exec("open", url.toString());
+        CommandExecutor.exec("open", url.toString());
     }
 
     @Override
     @SneakyThrows
     public void startApp(Path app) {
-        ProcessExecutor.exec("open", app.toString());
+        CommandExecutor.exec("open", app.toString());
     }
 
     @Override
     @SneakyThrows
     public void openFile(Path file) {
-        ProcessExecutor.exec("open", file.toString());
+        CommandExecutor.exec("open", file.toString());
     }
 }
