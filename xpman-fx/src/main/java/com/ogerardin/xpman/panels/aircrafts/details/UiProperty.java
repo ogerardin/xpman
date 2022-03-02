@@ -10,7 +10,7 @@ public class UiProperty {
     private final PropertyTreeItem item;
 
     public String getValue() {
-        return item instanceof PropertyTreeValue ? ((PropertyTreeValue) item).getValue() : null;
+        return (item instanceof PropertyTreeValue ptv) ? ptv.getValue() : null;
     }
 
 }
