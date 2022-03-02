@@ -50,9 +50,9 @@ public class TableViewManagerEventListener<T, U> implements EventListener<Manage
                 tableView.setItems(null);
             });
 
-        } else if (event instanceof ManagerEvent.Loaded) {
+        } else if (event instanceof ManagerEvent.Loaded<T> loadedEvent) {
             log.debug("Manager has finished loading items");
-            final List<T> items = ((ManagerEvent.Loaded<T>) event).getItems();
+            final List<T> items = loadedEvent.getItems();
 
             // map items to UI items
             final List<U> uiItems = items.stream().map(mapper).collect(Collectors.toList());

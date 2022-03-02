@@ -9,7 +9,7 @@ import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
-import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuRowFactory;
+import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
@@ -41,7 +41,7 @@ public class AircraftsController {
     @FXML
     public void initialize() {
         aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
-        aircraftsTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiAircraft.class, this));
+        aircraftsTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(UiAircraft.class, this));
 
         eventListener = new TableViewManagerEventListener<>(aircraftsTable,
                 aircraft -> new UiAircraft(aircraft, xPlaneProperty.get()));

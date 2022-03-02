@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.util.jfx.BooleanCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.SpelValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
@@ -31,6 +30,14 @@
         <center>
             <TableView fx:id="sceneryTable" prefHeight="400.0" prefWidth="600.0">
                 <columns>
+                    <TableColumn editable="false" prefWidth="48.0" sortable="false">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="iconUrl"/>
+                        </cellValueFactory>
+                        <cellFactory>
+                            <UrlImageCellFactory height="24.0"/>
+                        </cellFactory>
+                    </TableColumn>
                     <TableColumn fx:id="rankColumn" editable="false" prefWidth="58.0" text="Rank">
                         <cellValueFactory>
                             <PropertyValueFactory property="rank" />
