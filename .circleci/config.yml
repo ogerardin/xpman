@@ -9,6 +9,7 @@ jobs:
   build-linux:
     docker:
       - image: cimg/openjdk:17.0.2
+    resource_class: medium
     steps:
       - checkout
       - run:
@@ -116,7 +117,7 @@ jobs:
       - run:
           name: Generate cache seed
           shell: cmd.exe
-          command: %USERPROFILE%\scoop\shims\find . -name pom.xml | sort | xargs cat > effective-pom.xml
+          command: `%USERPROFILE%\scoop\shims\find . -name pom.xml | sort | xargs cat > effective-pom.xml`
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
