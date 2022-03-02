@@ -54,14 +54,11 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
         WizardPane wizardPane = loader.load();
 
         Object controller = loader.getController();
-        if (wizardPane instanceof ValidatingWizardPane) {
-            ValidatingWizardPane validatingWizardPane = (ValidatingWizardPane) wizardPane;
-            if (controller instanceof Validating) {
-                Validating validatingController = (Validating) controller;
+        if (wizardPane instanceof ValidatingWizardPane validatingWizardPane) {
+            if (controller instanceof Validating validatingController) {
                 validatingWizardPane.setInvalidProperty(validatingController.invalidProperty());
             }
-            if (controller instanceof PageListener) {
-                PageListener pageListenerController = (PageListener) controller;
+            if (controller instanceof PageListener pageListenerController) {
                 validatingWizardPane.setPageListener(pageListenerController);
             }
         }
