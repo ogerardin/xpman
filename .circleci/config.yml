@@ -28,10 +28,9 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir -p workspace/artifacts/linux            
-            cp xpman-fx-dist/target/*.deb workspace/artifacts/linux
-            cp xpman-fx-dist/target/*.rpm workspace/artifacts/linux
-            cp xpman-fx-dist/target/*-repackaged.jar workspace/artifacts/linux
+            mkdir -p workspace/artifacts            
+            cp xpman-fx-dist/target/*.deb workspace/artifacts
+            cp xpman-fx-dist/target/*.rpm workspace/artifacts
 #      - store_artifacts:
 #          path: workspace/artifacts
 #          destination: linux
@@ -79,11 +78,10 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir -p workspace/artifacts/mac            
-            cp xpman-fx-dist/target/*.pkg workspace/artifacts/mac
-            cp xpman-fx-dist/target/*.dmg workspace/artifacts/mac
-            cp xpman-fx-dist/target/*-repackaged.jar workspace/artifacts/mac
-      #      - store_artifacts:
+            mkdir -p workspace/artifacts            
+            cp xpman-fx-dist/target/*.pkg workspace/artifacts
+            cp xpman-fx-dist/target/*.dmg workspace/artifacts
+#      - store_artifacts:
 #          path: workspace/artifacts
 #          destination: mac
       - persist_to_workspace:
@@ -128,10 +126,9 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir workspace\artifacts\windows
-            copy xpman-fx-dist\target\*.exe workspace\artifacts\windows
-            copy xpman-fx-dist\target\*.msi workspace\artifacts\windows
-            copy xpman-fx-dist\target\*-repackaged.jar workspace\artifacts\windows
+            mkdir workspace\artifacts
+            copy xpman-fx-dist\target\*.exe workspace\artifacts
+            copy xpman-fx-dist\target\*.msi workspace\artifacts
 #      - store_artifacts:
 #          path: workspace\artifacts
 #          destination: windows
