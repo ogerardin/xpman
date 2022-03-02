@@ -1,7 +1,8 @@
 package com.ogerardin.xplane.scenery;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.inspection.*;
+import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionsProvider;
 import com.ogerardin.xplane.inspection.impl.ReferencedTexturesInspection;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.*;
@@ -60,6 +61,11 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
     /** The scenery version. As there is no standard way for a scenery to declare its version, this method
      * should be overridden in specific scenery classes that provide a way to query the scenery version. */
     public String getVersion() {
+        return null;
+    }
+
+    /** An optional URL that points to an icon for this scenery. */
+    public URL getIconUrl() {
         return null;
     }
 
