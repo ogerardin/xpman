@@ -23,9 +23,9 @@ import java.util.List;
 public class UiAircraft {
 
     @Delegate
-    private final Aircraft aircraft;
+    protected final Aircraft aircraft;
 
-    private final XPlane xPlane;
+    protected final XPlane xPlane;
 
     @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
@@ -54,7 +54,7 @@ public class UiAircraft {
 //    }
 
     @SuppressWarnings("unused")
-    @Label("'Move to Trash'")
+    @Label("'Move aircraft to Trash'")
     @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '\" will be moved to the trash. '" +
             "+ 'This will impact all aircrafts contained in the same folder.'" +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)

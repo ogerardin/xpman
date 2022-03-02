@@ -7,11 +7,10 @@ import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.plugins.PluginManager;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
-import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuRowFactory;
+import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
-import lombok.experimental.Delegate;
 
 public class PluginsController {
 
@@ -29,7 +28,7 @@ public class PluginsController {
 
     @FXML
     public void initialize() {
-        pluginTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiPlugin.class, this));
+        pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(UiPlugin.class, this));
 
         eventListener = new TableViewManagerEventListener<>(pluginTable, UiPlugin::new);
     }

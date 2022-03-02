@@ -16,8 +16,7 @@ import java.nio.file.Path;
  * and renders it as a thumbnail
  */
 @Slf4j
-public class ThumbnailCellFactory<S> implements TableCellFactory<S, Path> {
-
+public class PathImageCellFactory<S> implements TableCellFactory<S, Path> {
 
     @Override
     public TableCell<S, Path> call(TableColumn<S, Path> param) {

@@ -20,7 +20,6 @@ import javafx.scene.control.TreeTableView;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class NavDataController {
@@ -40,7 +39,6 @@ public class NavDataController {
 
     public NavDataController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
-//        mainController.xPlaneProperty().addListener((observable, oldValue, newValue) -> updateView(newValue));
         xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
 
@@ -68,7 +66,7 @@ public class NavDataController {
         TreeItem<UiNavDataItem> treeItem = new TreeItem<>(value);
         List<TreeItem<UiNavDataItem>> children = navDataItem.getChildren().stream()
                 .map(this::treeItem)
-                .collect(Collectors.toList());
+                .toList();
         treeItem.getChildren().addAll(children);
         return treeItem;
     }

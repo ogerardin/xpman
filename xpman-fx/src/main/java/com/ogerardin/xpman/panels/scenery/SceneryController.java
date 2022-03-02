@@ -16,7 +16,7 @@ import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
-import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuRowFactory;
+import com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
@@ -59,7 +59,7 @@ public class SceneryController {
     @FXML
     public void initialize() {
         // add context menu to table rows
-        sceneryTable.setRowFactory(new IntrospectingContextMenuRowFactory<>(UiScenery.class, this));
+        sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(UiScenery.class, this));
 
         // sort nulls last for "rank" column (rank is null if scenery is disabled)
         rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));

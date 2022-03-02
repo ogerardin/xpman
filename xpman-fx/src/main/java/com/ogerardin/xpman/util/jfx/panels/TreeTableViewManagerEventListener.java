@@ -49,9 +49,9 @@ public class TreeTableViewManagerEventListener<T, U> implements EventListener<Ma
                 treeTableView.setRoot(null);
             });
 
-        } else if (event instanceof ManagerEvent.Loaded) {
+        } else if (event instanceof ManagerEvent.Loaded<T> loadedEvent) {
             log.debug("Manager has finished loading items");
-            final List<T> items = ((ManagerEvent.Loaded<T>) event).getItems();
+            final List<T> items = loadedEvent.getItems();
 
             // map items to UI items
             final TreeItem<U> root = mapper.apply(items);
