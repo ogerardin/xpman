@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.util.platform;
 
-import com.ogerardin.xplane.exec.ProcessExecutor;
+import com.ogerardin.xplane.exec.CommandExecutor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +14,7 @@ public class WindowsPlatform implements Platform {
     @Override
     public void reveal(Path path) {
         String explorerParam = "/select,\"" + path.toString() + "\"";
-        ProcessExecutor.exec("cmd", "/c", "explorer.exe " + explorerParam);
+        CommandExecutor.exec("cmd", "/c", "explorer.exe " + explorerParam);
     }
 
     @Override
@@ -25,18 +25,18 @@ public class WindowsPlatform implements Platform {
     @SneakyThrows
     @Override
     public void openUrl(URL url) {
-        ProcessExecutor.exec("cmd", "/c", String.format("start %s", url.toString()));
+        CommandExecutor.exec("cmd", "/c", String.format("start %s", url.toString()));
     }
 
     @SneakyThrows
     @Override
     public void openFile(Path file) {
-        ProcessExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file.toString()));
+        CommandExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file.toString()));
     }
 
     @SneakyThrows
     @Override
     public void startApp(Path app) {
-        ProcessExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app.toString()));
+        CommandExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app.toString()));
     }
 }
