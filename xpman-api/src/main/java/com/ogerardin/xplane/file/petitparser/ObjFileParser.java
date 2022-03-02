@@ -38,14 +38,14 @@ public class ObjFileParser extends XPlaneFileParserBase<ObjFileData> {
     }
 
     private static void addItem(ObjFileData objFileData, Object o) {
-        if (o instanceof ObjAttribute) {
-            objFileData.getAttributes().add((ObjAttribute) o);
+        if (o instanceof ObjAttribute oa) {
+            objFileData.getAttributes().add(oa);
         }
-        else if (o instanceof ObjDatum) {
-            objFileData.getData().add((ObjDatum) o);
+        else if (o instanceof ObjDatum od) {
+            objFileData.getData().add(od);
         }
-        else if (o instanceof ObjCommand) {
-            objFileData.getCommands().add((ObjCommand) o);
+        else if (o instanceof ObjCommand oc) {
+            objFileData.getCommands().add(oc);
         }
         //ignore any other type
     }
