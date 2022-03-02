@@ -13,8 +13,12 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
 
-import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
-
+/**
+ * A {@link MenuItem} that, when activated, triggers the execution of a {@link Method}. The execution can be
+ * controlled by annotations on the method, such as @{@link EnabledIf}, @{@link Confirm} or @{@link OnSuccess}.
+ *
+ * @param <T> type of the {@link Method}'s target
+ */
 @Slf4j
 public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
 
@@ -34,6 +38,7 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
         OnSuccess onSuccess = method.getAnnotation(OnSuccess.class);
 
         setOnAction(event -> {
+            // action was triggered
             if (confirm != null) {
                 // we must confirm before executing the method: eval message and display alert
                 String confirmMessage = (String) SpelUtil.eval(confirm.value(), this.getTarget());
@@ -67,11 +72,10 @@ public class MethodMenuItem<T> extends MenuItem implements Contextualizable<T> {
 
     @Override
     public void contextualize(T target) {
-//        this.target = target;
         setTarget(target);
 
         if (enabledIfExpr != null) {
-            Boolean enabled = (Boolean) SpelUtil.eval(enabledIfExpr,target);
+            Boolean enabled = (Boolean) SpelUtil.eval(enabledIfExpr, target);
             setVisible(enabled);
         }
 

@@ -12,8 +12,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Label {
 
-    /**
-     * String expression to be used as label for the action.
-     */
+    /** SpEL expression to be used as label for the action. */
     String value();
 }
