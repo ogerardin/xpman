@@ -106,16 +106,17 @@ jobs:
           command: |
             scoop bucket add java
             scoop bucket add extras
+            scoop install unxutils
             scoop install openjdk17
             scoop install maven
+            scoop install imagemagick
             scoop install inno-setup
             scoop install wixtoolset
-            scoop install imagemagick
       - checkout
       - run:
           name: Generate cache seed
-          shell: bash.exe
-          command: /bin/usr/find . -name 'pom.xml' | sort | xargs cat > effective-pom.xml
+          shell: cmd.exe
+          command: %USERPROFILE%\scoop\shims\find . -name pom.xml | sort | xargs cat > effective-pom.xml
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
@@ -129,7 +130,7 @@ jobs:
             - C:\Users\circleci\.m2
       - run:
           name: Prepare artifacts
-          shell: bash
+          shell: bash.exe
           command: |
             mkdir -p workspace/artifacts
             cp xpman-fx-dist/target/*.exe workspace/artifacts
