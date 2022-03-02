@@ -6,6 +6,7 @@ import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.WordUtils;
@@ -13,10 +14,7 @@ import org.apache.commons.lang.WordUtils;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Data
@@ -28,8 +26,11 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
     private final String name;
 
+    @Getter(lazy = true)
+    private final List<Livery> liveries = loadLiveries();
+
     public Aircraft(AcfFile acfFile) {
-        this(acfFile, null);
+        this(acfFile, (String) null);
     }
 
     private String getProperty(String name) {
@@ -88,11 +89,27 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
         return null;
     }
 
+    public boolean isExtraAircraft() {
+        return getAcfFile().getFile().getParent().getFileName().toString().equals("Extra Aircraft");
+    }
+
     public Category getCategory() {
         return Arrays.stream(Category.values())
                 .filter(category -> Objects.equals(getProperty(category.property), "1"))
                 .findAny()
                 .orElse(null);
+    }
+
+    @SneakyThrows
+    private List<Livery> loadLiveries() {
+        Path liveriesFolder = getAcfFile().getFile().resolveSibling("liveries");
+        if (! Files.isDirectory(liveriesFolder)) {
+            return Collections.emptyList();
+        }
+        return Files.list(liveriesFolder)
+                .filter(Files::isDirectory)
+                .map(path -> new Livery(this, path))
+                .toList();
     }
 
     @AllArgsConstructor
