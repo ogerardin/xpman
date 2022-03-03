@@ -199,6 +199,13 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman/wiki"));
     }
 
+    @FXML
+    public void installIvap(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "This feature has not been implemented yet");
+        alert.setHeaderText("Not implemented yet");
+        alert.showAndWait();
+    }
+
     private class RecentMenuItem extends MenuItem {
         public RecentMenuItem(String folder) {
             super(folder);
