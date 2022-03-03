@@ -107,7 +107,6 @@ jobs:
           command: |
             scoop bucket add java
             scoop bucket add extras
-            scoop install unxutils
             scoop install openjdk17
             scoop install maven
             scoop install imagemagick
@@ -117,7 +116,7 @@ jobs:
       - run:
           name: Generate cache seed
           shell: cmd.exe
-          command: '%USERPROFILE%\scoop\shims\find . -name pom.xml | sort | xargs cat > effective-pom.xml'
+          command: type pom.xml xpman-api\pom.xml xpman-fx\pom.xml xpman-fx-dist\pom.xml > effective-pom.xml
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
