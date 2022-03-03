@@ -117,7 +117,7 @@ jobs:
       - run:
           name: Generate cache seed
           shell: cmd.exe
-          command: `%USERPROFILE%\scoop\shims\find . -name pom.xml | sort | xargs cat > effective-pom.xml`
+          command: '%USERPROFILE%\scoop\shims\find . -name pom.xml | sort | xargs cat > effective-pom.xml'
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
