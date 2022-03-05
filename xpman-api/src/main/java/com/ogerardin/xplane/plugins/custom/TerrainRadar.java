@@ -31,14 +31,18 @@ public class TerrainRadar extends Plugin {
     private final String latestVersion = loadlatestVersion();
 
 
-    public TerrainRadar(Path folder) throws InstantiationException {
-        super(folder, "Terrain Radar");
-        IntrospectionHelper.require(folder.endsWith("TerrainRadar"));
+    public TerrainRadar(Path xplFile) throws InstantiationException {
+        super(xplFile, "Terrain Radar");
+        IntrospectionHelper.require(isTerrainRadar(xplFile));
+    }
+
+    private boolean isTerrainRadar(Path xplFile) {
+        return xplFile.getParent().endsWith("TerrainRadar/64");
     }
 
     @Override
     public String getVersion() {
-        Path readme = getFolder().resolve("readme.txt");
+        Path readme = getXplFile().getParent().resolveSibling("readme.txt");
         String firstLine;
         try (Stream<String> lines = Files.lines(readme)) {
             firstLine = lines.findFirst().orElse("");

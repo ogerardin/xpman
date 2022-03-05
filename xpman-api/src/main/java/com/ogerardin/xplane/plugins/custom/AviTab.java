@@ -18,9 +18,9 @@ public class AviTab extends Plugin {
 
     //TODO ability to manage charts
 
-    public AviTab(Path folder) throws InstantiationException {
-        super(folder, "AviTab: VR-compatible tablet with PDF viewer, moving maps and more");
-        IntrospectionHelper.require(folder.endsWith("AviTab"));
+    public AviTab(Path xplFile) throws InstantiationException {
+        super(xplFile, "AviTab: VR-compatible tablet with PDF viewer, moving maps and more");
+        IntrospectionHelper.require(xplFile.equals("AviTab.xpl"));
     }
 
     @SneakyThrows

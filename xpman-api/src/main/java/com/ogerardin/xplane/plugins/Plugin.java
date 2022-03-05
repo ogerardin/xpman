@@ -15,12 +15,21 @@ import java.util.Map;
 @AllArgsConstructor
 public class Plugin implements InspectionsProvider<Plugin> {
 
-    private final Path folder;
+    private final Path xplFile;
 
     private final String name;
 
-    public Plugin(Path folder) {
-        this(folder, folder.getFileName().toString());
+    @SuppressWarnings("unused")
+    public Plugin(Path xplFile) {
+        this(xplFile, computeName(xplFile));
+    }
+
+    private static String computeName(Path xplFile) {
+        Path folder = xplFile.getParent();
+        if (folder.endsWith("64") || folder.endsWith("32")) {
+            folder = folder.getParent();
+        }
+        return folder.getFileName().toString();
     }
 
     public String getVersion() {
