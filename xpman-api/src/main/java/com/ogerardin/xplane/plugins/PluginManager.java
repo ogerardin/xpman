@@ -33,7 +33,7 @@ public class PluginManager extends Manager<Plugin> {
 
     private  List<Plugin> plugins = null;
 
-    private static final Map<String, Class<? extends Platform>> PLAFORM_PLUGIN_MAP = Maps.mapOf(
+    private static final Map<String, Class<? extends Platform>> PLATFORM_PLUGIN_MAP = Maps.mapOf(
             "mac.xpl", MacPlatform.class,
             "win.xpl", WindowsPlatform.class,
             "lin.xpl", LinuxPlatform.class
@@ -83,13 +83,13 @@ public class PluginManager extends Manager<Plugin> {
 
     private boolean isNotUnwantedPlatform(Path xplFile) {
         String filename = xplFile.getFileName().toString();
-        Class<? extends Platform> pluginPlatform = PLAFORM_PLUGIN_MAP.get(filename);
+        Class<? extends Platform> pluginPlatform = PLATFORM_PLUGIN_MAP.get(filename);
         return (pluginPlatform == null) || (pluginPlatform == MacPlatform.class);
     }
 
     private Optional<Plugin> maybeGetPlugin(Path xplFile) {
         try {
-            final Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xplFile);
+            final Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xPlane, xplFile);
             return Optional.of(plugin);
         } catch (InstantiationException e) {
             return Optional.empty();
