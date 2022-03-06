@@ -1,5 +1,7 @@
 package com.ogerardin.xplane.plugins.custom;
 
+import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
@@ -19,12 +21,22 @@ import java.util.regex.Pattern;
 @Slf4j
 public class XIvAp extends Plugin {
 
+    private static final Map<XPlaneVariant, String> PLATFORM_NAME_MAP = Maps.mapOf(
+            XPlaneVariant.MAC, "Mac OS",
+            XPlaneVariant.WINDOWS, "Windows",
+            XPlaneVariant.LINUX, "Linux"
+    );
+
     private static final String IVAP_HOME_URL = "https://www.ivao.aero/softdev/ivap.asp";
     private static final String X_IVAP_MANUAL_URL = "https://wiki.ivao.aero/en/home/devops/manuals/xivap";
 
-    public XIvAp(Path xplFile) throws InstantiationException {
-        super(xplFile, "X-IvAp (Pilot client for the IVAO network)");
-        IntrospectionHelper.require(xplFile.getFileName().toString().equals("X-IvAp-64.xpl"));
+    public XIvAp(XPlane xPlane, Path xplFile) throws InstantiationException {
+        super(xPlane, xplFile, "X-IvAp", "Pilot client for the IVAO network");
+        IntrospectionHelper.require(isXIvAp(xplFile));
+    }
+
+    private boolean isXIvAp(Path xplFile) {
+        return xplFile.getFileName().toString().equals("X-IvAp-64.xpl");
     }
 
     @SneakyThrows
@@ -42,9 +54,8 @@ public class XIvAp extends Plugin {
         Document doc = Jsoup.connect(IVAP_HOME_URL).get();
 
         Pattern pattern = Pattern.compile("v([0-9.]+).+Current");
-        //TODO use X-Plane Variant to find appropriate platform
-        String platform = "Mac OS";
-        return doc.select("div#dl td:matches(X-IvAp for X-Plane.*\\(" + platform + "\\))").stream()
+        String platformName = PLATFORM_NAME_MAP.get(getXPlane().getVariant());
+        return doc.select("div#dl td:matches(X-IvAp for X-Plane.*\\(" + platformName + "\\))").stream()
                 .findFirst()
                 .map(Element::parent)
                 .map(element -> element.selectFirst("a"))
