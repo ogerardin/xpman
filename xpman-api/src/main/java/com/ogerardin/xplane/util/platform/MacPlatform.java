@@ -42,6 +42,12 @@ public class MacPlatform implements Platform {
     }
 
     @Override
+    public boolean isRunnable(Path path) {
+        return Files.isDirectory(path)
+                && path.getFileName().toString().endsWith(".app");
+    }
+
+    @Override
     @SneakyThrows
     public void openFile(Path file) {
         CommandExecutor.exec("open", file.toString());

@@ -25,4 +25,8 @@ public interface Platform {
     default void startApp(Path app) {
         throw new UnsupportedOperationException();
     }
+
+    default boolean isRunnable(Path path)  {
+        return false;
+    }
 }

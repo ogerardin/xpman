@@ -10,6 +10,8 @@
             <MenuItem mnemonicParsing="false" onAction="#open" text="Select X-Plane folder…"/>
             <Menu fx:id="recentMenu" mnemonicParsing="false" text="Open Recent"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem onAction="#installWizard" text="Universal installer…"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" text="Preferences…"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem id="quit" mnemonicParsing="false" onAction="#quit" text="Quit">
@@ -18,10 +20,7 @@
                 </accelerator>
             </MenuItem>
         </Menu>
-        <Menu mnemonicParsing="false" text="Tools">
-            <MenuItem onAction="#installWizard" text="Universal installer…"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem onAction="#installIvap" text="Install IvAp..."/>
+        <Menu fx:id="toolsMenu" mnemonicParsing="false" text="Tools">
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
             <MenuItem mnemonicParsing="false" onAction="#help" text="? Help"/>

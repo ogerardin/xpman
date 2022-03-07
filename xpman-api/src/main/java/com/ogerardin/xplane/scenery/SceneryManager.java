@@ -43,10 +43,10 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
 
     private List<SceneryPackage> sceneryPackages = null;
 
-    public SceneryManager(@NonNull XPlane xPlane, @NonNull Path sceneryFolder) {
+    public SceneryManager(@NonNull XPlane xPlane) {
         super(xPlane);
-        this.sceneryFolder = sceneryFolder;
-        this.disabledSceneryFolder = sceneryFolder.resolveSibling(sceneryFolder.getFileName() + " (disabled)");
+        this.sceneryFolder = xPlane.getPaths().customScenery();
+        this.disabledSceneryFolder = xPlane.getPaths().disabledCustomScenery();
     }
 
     /**

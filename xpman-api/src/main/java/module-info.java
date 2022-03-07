@@ -26,5 +26,6 @@ module xpman.api {
     exports com.ogerardin.xplane.plugins;
     exports com.ogerardin.xplane.laminar;
     exports com.ogerardin.xplane.navdata;
+    exports com.ogerardin.xplane.tools;
 
 }

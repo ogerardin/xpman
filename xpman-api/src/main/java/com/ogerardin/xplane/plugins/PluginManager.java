@@ -41,9 +41,9 @@ public class PluginManager extends Manager<Plugin> {
 
 
 
-    public PluginManager(@NonNull XPlane xPlane, @NonNull Path pluginsFolder) {
+    public PluginManager(@NonNull XPlane xPlane) {
         super(xPlane);
-        this.pluginsFolder = pluginsFolder;
+        this.pluginsFolder = xPlane.getPaths().plugins();
     }
 
     public List<Plugin> getPlugins() {
