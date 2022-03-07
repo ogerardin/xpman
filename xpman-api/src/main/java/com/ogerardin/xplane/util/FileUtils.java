@@ -22,7 +22,7 @@ public class FileUtils {
             return Collections.emptyList();
         }
         List<Path> files = new ArrayList<>();
-        Files.walkFileTree(startFolder, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(startFolder, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 if (predicate.test(file)) {

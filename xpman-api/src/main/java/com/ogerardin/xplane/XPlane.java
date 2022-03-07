@@ -4,6 +4,7 @@ import com.ogerardin.xplane.aircrafts.AircraftManager;
 import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xplane.plugins.PluginManager;
 import com.ogerardin.xplane.scenery.SceneryManager;
+import com.ogerardin.xplane.tools.ToolsManager;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,22 +31,27 @@ public class XPlane {
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final AircraftManager aircraftManager = new AircraftManager(this, paths.aircraft());
+    private final AircraftManager aircraftManager = new AircraftManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final SceneryManager sceneryManager = new SceneryManager(this, paths.customScenery());
+    private final SceneryManager sceneryManager = new SceneryManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final PluginManager pluginManager = new PluginManager(this, paths.plugins());
+    private final PluginManager pluginManager = new PluginManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final NavDataManager navDataManager = new NavDataManager(this);
+
+    @Getter(lazy = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private final ToolsManager toolsManager = new ToolsManager(this);
 
     public XPlane(Path baseFolder) throws InvalidConfig {
         if (!Files.isDirectory(baseFolder)) {
@@ -62,7 +68,7 @@ public class XPlane {
                 .orElse(XPlaneVariant.UNKNOWN);
     }
 
-    public Path getAppPath() {
+    public Path getXPlaneExecutable() {
         return getVariant().getAppPath(baseFolder);
     }
 
@@ -107,6 +113,10 @@ public class XPlane {
         public Path customScenery() {
             return getBaseFolder().resolve("Custom Scenery");
         }
+        /** Custom disabled scenary folder (not X-Plane standard) */
+        public Path disabledCustomScenery() {
+            return customScenery().resolveSibling(customScenery().getFileName() + " (disabled)");
+        }
         public Path globalScenery() {
             return getBaseFolder().resolve("Global Scenery");
         }
@@ -119,6 +129,8 @@ public class XPlane {
         public Path plugins() {
             return resources().resolve("plugins");
         }
+        /** Custom tools folder (not X-Plane standard) */
+        public Path tools() { return resources().resolve("tools"); }
     }
 }
 

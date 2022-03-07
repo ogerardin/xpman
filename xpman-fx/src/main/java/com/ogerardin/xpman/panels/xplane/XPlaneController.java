@@ -136,11 +136,11 @@ public class XPlaneController {
 
     @SneakyThrows
     public void showFolder() {
-        Platforms.getCurrent().reveal(xPlane.getAppPath());
+        Platforms.getCurrent().reveal(xPlane.getXPlaneExecutable());
     }
 
     public void startXPlane() {
-        Platforms.getCurrent().startApp(xPlane.getAppPath());
+        Platforms.getCurrent().startApp(xPlane.getXPlaneExecutable());
     }
 
     @FXML

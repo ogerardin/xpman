@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Slf4j
@@ -38,5 +39,10 @@ public class WindowsPlatform implements Platform {
     @Override
     public void startApp(Path app) {
         CommandExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app.toString()));
+    }
+
+    @Override
+    public boolean isRunnable(Path path) {
+        return Files.isExecutable(path);
     }
 }

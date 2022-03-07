@@ -1,7 +1,10 @@
 package com.ogerardin.xpman;
 
+import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
+import com.ogerardin.xplane.tools.Tool;
+import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -35,6 +38,9 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class XPmanFX extends JfxApp<XPManPrefs> {
+
+    @FXML
+    private Menu toolsMenu;
 
     @FXML
     private MenuBar mainMenu;
@@ -110,6 +116,29 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         saveConfig();
 
         updateRecent();
+
+        updateTools();
+    }
+
+    private void updateTools() {
+        ToolsManager toolsManager = xPlaneProperty().get().getToolsManager();
+        toolsManager.registerListener(this::updateToolsMenu);
+        toolsManager.reload();
+    }
+
+    private void updateToolsMenu(ManagerEvent<Tool> event) {
+        if (event instanceof ManagerEvent.Loaded<Tool> loadedEvent) {
+            List<MenuItem> menuItems = loadedEvent.getItems().stream()
+                    .map(this::newToolMenuItem)
+                    .toList();
+            toolsMenu.getItems().setAll(menuItems);
+        }
+    }
+
+    private MenuItem newToolMenuItem(Tool tool) {
+        MenuItem menuItem = new MenuItem(tool.getName());
+        menuItem.setOnAction(event -> Platforms.getCurrent().startApp(tool.getPath()));
+        return menuItem;
     }
 
     @SneakyThrows

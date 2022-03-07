@@ -33,9 +33,9 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
 
     private List<Aircraft> aircrafts = null;
 
-    public AircraftManager(@NonNull XPlane xPlane, @NonNull Path aircraftFolder) {
+    public AircraftManager(@NonNull XPlane xPlane) {
         super(xPlane);
-        this.aircraftFolder = aircraftFolder;
+        this.aircraftFolder = xPlane.getPaths().aircraft();
     }
 
     /**
