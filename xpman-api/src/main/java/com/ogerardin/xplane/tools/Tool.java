@@ -6,6 +6,7 @@ import com.ogerardin.xplane.inspection.InspectionsProvider;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
 
@@ -19,7 +20,7 @@ public class Tool implements InspectionsProvider<Tool> {
 
     public Tool(Path path) {
         this.path = path;
-        this.name = path.getFileName().toString();
+        this.name = FilenameUtils.removeExtension(path.getFileName().toString());
     }
 
     void run() {
