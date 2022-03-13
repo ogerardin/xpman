@@ -29,5 +29,6 @@ module xpman.fx {
     opens com.ogerardin.xpman.util.jfx to javafx.base, javafx.fxml, com.google.gson;
     opens com.ogerardin.xpman.util.jfx.wizard to javafx.base, javafx.fxml;
 
+    exports com.ogerardin.xpman.panels.aircrafts;
     exports com.ogerardin.xpman;
 }

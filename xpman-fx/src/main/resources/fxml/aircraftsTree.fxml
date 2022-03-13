@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.ogerardin.xpman.util.jfx.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.ogerardin.xpman.panels.aircrafts.Aircrafts2Controller">
+            fx:controller="com.ogerardin.xpman.panels.aircrafts.TreeAircraftsController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                 AnchorPane.topAnchor="0.0">
         <top>
@@ -20,19 +21,17 @@
             </ToolBar>
         </top>
         <center>
-            <TreeTableView fx:id="aircraftsTreeTable" prefHeight="400.0" prefWidth="600.0" showRoot="false">
+            <TreeTableView fx:id="aircraftsTreeTable" prefHeight="400.0" prefWidth="600.0" showRoot="false" >
                 <columns>
-<!--
                     <TreeTableColumn editable="false" prefWidth="174.0" text="Thumbnail" sortable="false">
                         <cellValueFactory>
-                            <PropertyValueFactory property="thumb"/>
+                            <TreeItemPropertyValueFactory property="icon"/>
                         </cellValueFactory>
                         <cellFactory>
-                            <PathImageCellFactory/>
+                            <PathImageCell.TreeTableCellFactory fitHeight="150.0" preserveRatio="true"/>
                         </cellFactory>
                     </TreeTableColumn>
--->
-                    <TreeTableColumn editable="false" prefWidth="200.0" text="Name">
+                    <TreeTableColumn editable="false" prefWidth="300.0" text="Name">
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="name"/>
                         </cellValueFactory>

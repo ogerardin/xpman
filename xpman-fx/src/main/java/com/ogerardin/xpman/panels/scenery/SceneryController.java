@@ -59,7 +59,7 @@ public class SceneryController {
     @FXML
     public void initialize() {
         // add context menu to table rows
-        sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(UiScenery.class, this));
+        sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
 
         // sort nulls last for "rank" column (rank is null if scenery is disabled)
         rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));

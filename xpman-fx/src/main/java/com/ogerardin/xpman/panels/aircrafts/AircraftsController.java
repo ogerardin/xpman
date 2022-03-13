@@ -41,7 +41,7 @@ public class AircraftsController {
     @FXML
     public void initialize() {
         aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
-        aircraftsTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(UiAircraft.class, this));
+        aircraftsTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
 
         eventListener = new TableViewManagerEventListener<>(aircraftsTable,
                 aircraft -> new UiAircraft(aircraft, xPlaneProperty.get()));
