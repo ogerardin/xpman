@@ -1,11 +1,11 @@
 package com.ogerardin.xplane.inspection.impl;
 
-import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.file.ObjFile;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class ReferencedTexturesInspection implements Inspection<SceneryPackage> {
@@ -36,7 +35,7 @@ public class ReferencedTexturesInspection implements Inspection<SceneryPackage> 
                             .object(file.toString())
                             .message("Missing texture: " + texture.getReference())
                             .build())
-                    .collect(Collectors.toList());
+                    .toList();
             result.addAll(inspectionMessages);
         }
         return result;

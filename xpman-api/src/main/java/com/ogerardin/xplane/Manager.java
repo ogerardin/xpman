@@ -11,7 +11,6 @@ import lombok.experimental.Delegate;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 public abstract class Manager<T extends InspectionsProvider<T>> implements Inspection<T>, EventSource<ManagerEvent<T>> {
@@ -26,7 +25,7 @@ public abstract class Manager<T extends InspectionsProvider<T>> implements Inspe
         final List<InspectionMessage> inspectionMessages = inspections.stream()
                 .map(inspection -> inspection.inspect(target))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
         return inspectionMessages;
     }
 

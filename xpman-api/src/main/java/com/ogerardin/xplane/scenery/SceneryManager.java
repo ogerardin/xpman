@@ -81,7 +81,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
                 getSceneryPackages(disabledSceneryFolder, null)
         ).flatMap(Collection::stream)
 //                .sorted(SCENERY_PACKAGE_COMPARATOR)
-                .collect(Collectors.toList());
+                .toList();
 
         log.info("Loaded {} scenery packages", sceneryPackages.size());
         fireEvent(new ManagerEvent.Loaded<>(sceneryPackages));

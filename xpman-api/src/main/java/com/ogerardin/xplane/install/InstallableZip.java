@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Data
@@ -23,7 +22,7 @@ public class InstallableZip implements InstallableArchive {
 
     @SneakyThrows
     private List<Path> loadPaths() {
-        return ZipUtils.zipPaths(this.zipFile).collect(Collectors.toList());
+        return ZipUtils.zipPaths(this.zipFile).toList();
     }
 
     @Override

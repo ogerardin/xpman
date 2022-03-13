@@ -1,14 +1,13 @@
 package com.ogerardin.xplane.inspection.impl;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.plugins.Plugin;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecommendedPluginsInspection<T> implements Inspection<T> {
 
@@ -32,7 +31,7 @@ public class RecommendedPluginsInspection<T> implements Inspection<T> {
                         .message("Recommended plugin " + pluginClass.getSimpleName() + " is not installed for this plane")
                         .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static Boolean pluginInstalled(XPlane xPlane, Class<? extends Plugin> wantedPluginClass) {

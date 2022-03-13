@@ -9,7 +9,6 @@ import lombok.Data;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A {@link PredicateInspection} that produces an error if the source zip does not contain any file with the specified
@@ -27,7 +26,7 @@ public class CheckHasFilesWithType implements Inspection<InstallableArchive> {
                 .map(path -> InspectionMessage.builder()
                         .severity(Severity.INFO).message("Found " + path)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         if (! messages.isEmpty()) {
             return messages;
         }
