@@ -4,11 +4,9 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.WordUtils;
 
 import java.net.URL;
@@ -27,6 +25,8 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     private final String name;
 
     @Getter(lazy = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private final List<Livery> liveries = loadLiveries();
 
     public Aircraft(AcfFile acfFile) {
@@ -102,14 +102,18 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
     @SneakyThrows
     private List<Livery> loadLiveries() {
-        Path liveriesFolder = getAcfFile().getFile().resolveSibling("liveries");
+        Path liveriesFolder = getLiveriesFolder();
         if (! Files.isDirectory(liveriesFolder)) {
             return Collections.emptyList();
         }
         return Files.list(liveriesFolder)
                 .filter(Files::isDirectory)
-                .map(path -> new Livery(this, path))
+                .map(path -> new Livery(this, acfFile.getFile().relativize(path)))
                 .toList();
+    }
+
+    public Path getLiveriesFolder() {
+        return getAcfFile().getFile().resolveSibling("liveries");
     }
 
     @AllArgsConstructor
@@ -136,12 +140,18 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
     @SuppressWarnings("unused")
     public Path getThumb() {
+        return getAcfDerivedFile("_icon11_thumb.png");
+    }
+
+    public Path getIcon() {
+        return getAcfDerivedFile("_icon11.png");
+    }
+
+    private Path getAcfDerivedFile(String suffix) {
         Path file = getAcfFile().getFile();
-        String filename = file.getFileName().toString();
-        int dot = filename.lastIndexOf('.');
-        String thumbFilename = filename.substring(0, dot) + "_icon11_thumb.png";
-        Path thumbFile = file.resolveSibling(thumbFilename);
-        return thumbFile;
+        String acfFilename = file.getFileName().toString();
+        String derivedFilename = FilenameUtils.removeExtension(acfFilename) + suffix;
+        return file.resolveSibling(derivedFilename);
     }
 
     @SneakyThrows

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class AircraftManager extends Manager<Aircraft> implements InstallTarget {
@@ -75,7 +74,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
                 .map(AcfFile::new)
                 .filter(isVersion11)
                 .map(this::getAircraft)
-                .collect(Collectors.toList());
+                .toList();
 
         log.info("Loaded {} aircrafts", aircrafts.size());
         fireEvent(new ManagerEvent.Loaded<>(aircrafts));
@@ -99,5 +98,12 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     public void install(InstallableArchive archive, ProgressListener progressListener) throws IOException {
         archive.installTo(getAircraftFolder(), progressListener);
         reload();
+    }
+
+    @SneakyThrows
+    public void moveLiveryToTrash(Livery livery) {
+        Path folder = livery.getAircraft().getLiveriesFolder().resolve(livery.getFolder());
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+
     }
 }

@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A nav data folder containing a set of {@link NavDataFile}s
@@ -37,7 +36,7 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 //                .map(folder::resolve)
                 .map(Paths::get)
                 .map((Path file) -> new NavDataFile(this, file))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 

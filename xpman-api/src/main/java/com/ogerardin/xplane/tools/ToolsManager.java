@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class ToolsManager extends Manager<Tool> {
@@ -66,7 +65,7 @@ public class ToolsManager extends Manager<Tool> {
         // build Tool object for each applicable file
         tools = toolFiles.stream()
                 .map(this::getTool)
-                .collect(Collectors.toList());
+                .toList();
 
         log.info("Loaded {} tools", tools.size());
         fireEvent(new ManagerEvent.Loaded<>(tools));
