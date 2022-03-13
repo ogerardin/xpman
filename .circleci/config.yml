@@ -101,7 +101,9 @@ jobs:
       - run:
           name: Install scoop
           shell: powershell.exe
-          command: iwr -useb get.scoop.sh | iex
+          command: |
+            iwr -useb get.scoop.sh -outfile 'install.ps1'
+            .\install.ps1 -RunAsAdmin
       - run:
           name: Install dependencies
           command: |
