@@ -98,6 +98,7 @@ jobs:
     executor:
       name: win/default
     steps:
+      - checkout
       - run:
           name: Install scoop
           shell: powershell.exe
@@ -114,7 +115,6 @@ jobs:
             scoop install imagemagick
             scoop install inno-setup
             scoop install wixtoolset
-      - checkout
       - run:
           name: Generate cache seed
           shell: cmd.exe
