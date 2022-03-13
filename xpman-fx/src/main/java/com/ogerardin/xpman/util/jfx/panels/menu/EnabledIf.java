@@ -15,7 +15,7 @@ public @interface EnabledIf {
 
     /**
      * SpEL expression used to determine if the annotated method is available.
-     * The expression is evaluated with the target object as context root and is expected to evaluata as a boolean.
+     * The expression is evaluated with the target object as context root and is expected to evaluate as a boolean.
      */
     String value();
 }
