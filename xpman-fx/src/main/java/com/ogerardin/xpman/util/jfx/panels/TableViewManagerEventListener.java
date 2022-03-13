@@ -4,6 +4,8 @@ import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.events.EventListener;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
@@ -13,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * An {@link EventListener} that handles {@link ManagerEvent}s from a {@link com.ogerardin.xplane.Manager}{@code <T>}
@@ -55,11 +56,17 @@ public class TableViewManagerEventListener<T, U> implements EventListener<Manage
             final List<T> items = loadedEvent.getItems();
 
             // map items to UI items
-            final List<U> uiItems = items.stream().map(mapper).collect(Collectors.toList());
+            final List<U> uiItems = items.stream().map(mapper).toList();
+
+            // build ObservableList based on the items
+            ObservableList<U> observableList = FXCollections.observableList(uiItems);
+            // wrap it in SortedList to allow sorting through the UI (clicking on colmun header)
+            SortedList<U> sortedList = new SortedList<>(observableList);
 
             // populate the tableView
             Platform.runLater(() -> {
-                tableView.setItems(FXCollections.observableList(uiItems));
+                sortedList.comparatorProperty().bind(tableView.comparatorProperty());
+                tableView.setItems(sortedList);
                 // reset placeholder
                 tableView.placeholderProperty().setValue(defaultPlaceholder);
             });
