@@ -17,10 +17,11 @@
         </rollingPolicy>
     </appender>
 
+    <logger name="com.ogerardin.xplane.scenery" level="DEBUG" />
 
     <logger name="com.ogerardin.xpman.util.SpelUtil" level="INFO" />
 
-    <logger name="com.ogerardin.xplane.scenery" level="DEBUG" />
+    <logger name="com.ogerardin.xpman.util.jfx.panels.menu.IntrospectingContextMenuTreeTableRowFactory" level="DEBUG" />
 
     <root level="info">
         <appender-ref ref="CONSOLE" />

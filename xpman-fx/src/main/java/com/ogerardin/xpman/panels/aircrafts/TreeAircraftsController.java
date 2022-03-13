@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-public class Aircrafts2Controller {
+public class TreeAircraftsController {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
@@ -38,7 +38,7 @@ public class Aircrafts2Controller {
     @FXML
     private TreeTableView<UiAircraft> aircraftsTreeTable;
 
-    public Aircrafts2Controller(XPmanFX mainController) {
+    public TreeAircraftsController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
         xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
@@ -46,7 +46,7 @@ public class Aircrafts2Controller {
     @FXML
     public void initialize() {
         aircraftsTreeTable.placeholderProperty().setValue(PLACEHOLDER);
-        aircraftsTreeTable.setRowFactory(new IntrospectingContextMenuTreeTableRowFactory<>(UiAircraft.class, this));
+        aircraftsTreeTable.setRowFactory(new IntrospectingContextMenuTreeTableRowFactory<>(this));
 
         eventListener = new TreeTableViewManagerEventListener<>(aircraftsTreeTable,
                 aircrafts -> treeItem(aircrafts, xPlaneProperty.get()));
@@ -101,7 +101,8 @@ public class Aircrafts2Controller {
     }
 
     private TreeItem<UiAircraft> treeItem(XPlane xPlane, Aircraft aircraft, Livery livery) {
-        return new TreeItem<>(new UiLivery(xPlane, aircraft, livery));
+        UiLivery value = new UiLivery(xPlane, aircraft, livery);
+        return new TreeItem<>(value);
     }
 
     public void install() {

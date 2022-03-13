@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
 
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class Page2Controller implements PageListener {
         var sceneryPackages = wizard.getXPlane().getSceneryManager().getSceneryPackages().stream()
                 .filter(SceneryPackage::isEnabled)
                 .sorted(Comparator.comparingInt(SceneryPackage::getRank))
-                .collect(Collectors.toList());
+                .toList();
         // apply scenery organizer rules to get new ordered list
         var sceneryOrganizer = wizard.getSceneryOrganizer();
         var sortedSceneryPacks = sceneryOrganizer.apply(sceneryPackages);

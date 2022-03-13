@@ -28,7 +28,7 @@ public class PluginsController {
 
     @FXML
     public void initialize() {
-        pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(UiPlugin.class, this));
+        pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
 
         eventListener = new TableViewManagerEventListener<>(pluginTable, UiPlugin::new);
     }

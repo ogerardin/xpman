@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class AcfTreeController {
     @FXML
@@ -66,7 +65,7 @@ public class AcfTreeController {
         TreeItem<UiProperty> treeItem = new TreeItem<>(value);
         List<TreeItem<UiProperty>> children = propertyTreeItem.getChildren().stream()
                 .map(AcfTreeController::treeItem)
-                .collect(Collectors.toList());
+                .toList();
         treeItem.getChildren().addAll(children);
         return treeItem;
     }

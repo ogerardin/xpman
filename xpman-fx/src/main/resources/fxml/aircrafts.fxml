@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.util.jfx.PathImageCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.SpelValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
@@ -29,7 +28,7 @@
                             <PropertyValueFactory property="thumb"/>
                         </cellValueFactory>
                         <cellFactory>
-                            <PathImageCellFactory/>
+                            <PathImageCell.TableCellFactory/>
                         </cellFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="200.0" text="Name">
