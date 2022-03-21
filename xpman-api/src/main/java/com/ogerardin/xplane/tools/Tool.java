@@ -56,7 +56,7 @@ public class Tool implements InspectionsProvider<Tool> {
         return (executable != null);
     }
 
-    public String loadVersion() {
+    private String loadVersion() {
         if (executable == null) {
             return null;
         }
