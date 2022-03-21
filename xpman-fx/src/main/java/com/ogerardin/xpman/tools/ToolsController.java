@@ -18,6 +18,9 @@ public class ToolsController {
     private final XPlane xPlane;
 
     @FXML
+    private ToggleButton installedButton;
+
+    @FXML
     private TableView<UiTool> tableView;
 
     private FilteredList<UiTool> filteredList;
@@ -33,6 +36,8 @@ public class ToolsController {
         ObservableList<UiTool> observableUiTools = FXCollections.observableList(uiTools);
         filteredList = new FilteredList<>(observableUiTools);
         tableView.setItems(filteredList);
+        // initially display installed
+        installedButton.fire();
     }
 
     @FXML

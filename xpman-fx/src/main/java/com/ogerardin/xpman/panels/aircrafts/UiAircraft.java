@@ -5,7 +5,7 @@ import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.panels.aircrafts.details.AcfTreeController;
-import com.ogerardin.xpman.util.jfx.panels.menu.*;
+import com.ogerardin.xpman.util.jfx.menu.annotation.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;

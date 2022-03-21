@@ -1,7 +1,9 @@
-package com.ogerardin.xpman.util.jfx.panels.menu;
+package com.ogerardin.xpman.util.jfx.menu;
 
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;
+import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Value;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -17,25 +19,20 @@ import java.util.Map;
  * @param <T> type of the target object
  */
 @Slf4j
-public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
+public class ForEachMenuItem<T> extends Menu {
 
-    private final Object evalContextRoot;
     private final ForEach forEach;
-    private final Method method;
-    private final String[] paramValueExpr;
 
-    public ForEachMenuItem(Object evalContextRoot, ForEach forEach, Method method) {
+    public ForEachMenuItem(Object evalContextRoot, ForEach forEach, Method method, T target) {
         super(forEach.group());
-        this.evalContextRoot = evalContextRoot;
         this.forEach = forEach;
-        this.method = method;
 
+        // extract @Value expression for each of the method's param
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        this.paramValueExpr = new String[parameterAnnotations.length];
-
+        String[] paramValueExpr = new String[parameterAnnotations.length];
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] annotations = parameterAnnotations[i];
-            this.paramValueExpr[i] = Arrays.stream(annotations)
+            paramValueExpr[i] = Arrays.stream(annotations)
                     .filter(annotation -> annotation.annotationType() == Value.class)
                     .findAny()
                     .map(Value.class::cast)
@@ -44,27 +41,21 @@ public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
                     .value();
         }
 
-        // hide this Menu when there are no children
-        visibleProperty().bind(Bindings.isNotEmpty(getItems()));
-    }
-
-    /**
-     * Contextualize this Menu by evaluating the Iterable expression with the target object as context and building
-     * the corresponding MenuItems.
-     */
-    @Override
-    public void contextualize(T target) {
+        // build submenu items
         log.debug("Contextualizing {} for {}", this, target);
         getItems().clear();
-        Object exprValue = SpelUtil.eval(forEach.iterable(), target);
+        Object exprValue = SpelUtil.eval(this.forEach.iterable(), target);
         if (! (exprValue instanceof Iterable iterable)) {
             throw new IllegalArgumentException(String.format("Expected Iterable, got %s", exprValue));
         }
         for (Object item : iterable) {
-            MenuItem menuItem = buildMenuItem(method, target, item);
+            MenuItem menuItem = buildMenuItem(method, target, item, evalContextRoot, paramValueExpr);
             log.debug("Adding item {}", menuItem);
             getItems().add(menuItem);
         }
+
+        // hide this Menu when there are no children
+        visibleProperty().bind(Bindings.isNotEmpty(getItems()));
     }
 
     /**
@@ -74,8 +65,10 @@ public class ForEachMenuItem<T> extends Menu implements Contextualizable<T> {
      * @param target the target object
      * @param item the iterable value associated with the current action
      */
-    private MenuItem buildMenuItem(Method method, T target, Object item) {
-        Map<String, Object> contextVariables = Maps.mapOf(forEach.itemVariableName(), item);
+    private MenuItem buildMenuItem(Method method, T target, Object item, Object evalContextRoot, String[] paramValueExpr) {
+        Map<String, Object> contextVariables = Maps.mapOf(
+                forEach.itemVariableName(), item
+        );
 
         // compute parameter values
         Object[] paramValues = new Object[method.getParameterCount()];

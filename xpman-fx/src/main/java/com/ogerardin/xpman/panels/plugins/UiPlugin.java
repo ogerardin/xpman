@@ -2,9 +2,9 @@ package com.ogerardin.xpman.panels.plugins;
 
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.platform.Platforms;
-import com.ogerardin.xpman.util.jfx.panels.menu.ForEach;
-import com.ogerardin.xpman.util.jfx.panels.menu.Label;
-import com.ogerardin.xpman.util.jfx.panels.menu.Value;
+import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Value;
 import lombok.Data;
 import lombok.experimental.Delegate;
 

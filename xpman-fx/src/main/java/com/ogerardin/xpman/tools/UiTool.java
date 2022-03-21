@@ -2,7 +2,7 @@ package com.ogerardin.xpman.tools;
 
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.util.platform.Platforms;
-import com.ogerardin.xpman.util.jfx.panels.menu.EnabledIf;
+import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import lombok.Data;
 import lombok.experimental.Delegate;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.util.jfx.ActionsCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.IdentityCellValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.menu.ActionsCellFactory?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -29,7 +29,7 @@
                             <IdentityCellValueFactory/>
                         </cellValueFactory>
                         <cellFactory>
-                            <ActionsCellFactory/>
+                            <ActionsCellFactory style="HYPERLINK"/>
                         </cellFactory>
                     </TableColumn>
                 </columns>
@@ -41,7 +41,7 @@
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <SegmentedButton styleClass="dark">
                     <buttons>
-                        <ToggleButton text="Installed" onAction="#filterInstalled"  />
+                        <ToggleButton fx:id="installedButton" text="Installed" onAction="#filterInstalled" />
                         <ToggleButton text="Available" onAction="#filterAvailable" />
                     </buttons>
                 </SegmentedButton>

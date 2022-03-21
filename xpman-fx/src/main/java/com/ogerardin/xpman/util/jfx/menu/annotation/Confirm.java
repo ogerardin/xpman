@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.jfx.panels.menu;
+package com.ogerardin.xpman.util.jfx.menu.annotation;
 
 import javafx.scene.control.Alert;
 
