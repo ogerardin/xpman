@@ -1,7 +1,7 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.jfx.menu;
 
 import com.ogerardin.xpman.util.SpelUtil;
-import com.ogerardin.xpman.util.jfx.panels.menu.Label;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang.StringUtils;
 

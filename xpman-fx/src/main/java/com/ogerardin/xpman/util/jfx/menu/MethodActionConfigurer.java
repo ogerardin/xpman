@@ -1,38 +1,39 @@
-package com.ogerardin.xpman.util.jfx.panels.menu;
+package com.ogerardin.xpman.util.jfx.menu;
 
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
+import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
+import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Window;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-/**
- */
-@Slf4j
-public class MethodButton<T> extends Button implements Contextualizable<T> {
+@Data
+public class MethodActionConfigurer<T, R> {
 
-    private final String enabledIfExpr;
+    private final Supplier<Window> windowSupplier;
+    private final Method method;
+    private final Object evalContextRoot;
+    private final T target;
+    private final Object[] paramValues;
 
-    @Setter @Getter
-    private T target;
+    @Getter(lazy = true)
+    private final MethodAction<T, R> methodAction = buildMethodAction();
 
-    public MethodButton(Method method, String text, Object evalContextRoot, T target, Object... paramValues) {
-        super(text);
-        this.target = target;
+    private MethodAction<T, R> buildMethodAction() {
 
         EnabledIf enabledIf = method.getAnnotation(EnabledIf.class);
-        this.enabledIfExpr = (enabledIf != null) ? enabledIf.value() : null;
+        String enabledIfExpr = (enabledIf != null) ? enabledIf.value() : null;
 
-        var builder = new MethodAction.MethodActionBuilder<>()
+        var builder = new MethodAction.MethodActionBuilder<T, R>()
                 .method(method)
                 .target(target)
                 .paramValues(paramValues);
@@ -40,7 +41,7 @@ public class MethodButton<T> extends Button implements Contextualizable<T> {
         Confirm confirm = method.getAnnotation(Confirm.class);
         if (confirm != null) {
             // we must confirm before executing the method: eval message and display alert
-            builder.confirm(() -> this.confirm(getScene().getWindow(), text, confirm.alertType(), confirm.value()));
+            builder.confirm(() -> this.confirm(windowSupplier.get(), confirm.alertType(), confirm.value()));
         }
         OnSuccess onSuccess = method.getAnnotation(OnSuccess.class);
         if (onSuccess != null) {
@@ -48,9 +49,7 @@ public class MethodButton<T> extends Button implements Contextualizable<T> {
             builder.onSuccess(result -> this.onSuccess(result, onSuccess.resultVariableName(), onSuccess.value(), evalContextRoot));
         }
 
-        MethodAction<Object> methodAction = builder.build();
-
-        setOnAction(event -> methodAction.run());
+        return builder.build();
     }
 
     private void onSuccess(Object result, String resultVariableName, String onSuccessExpr, Object evalContextRoot) {
@@ -58,25 +57,13 @@ public class MethodButton<T> extends Button implements Contextualizable<T> {
         SpelUtil.eval(onSuccessExpr, evalContextRoot, contextVariables);
     }
 
-    private boolean confirm(Window ownerWindow, String title, AlertType alertType, String msgExpression) {
+    private boolean confirm(Window ownerWindow, Alert.AlertType alertType, String msgExpression) {
         String confirmMessage = (String) SpelUtil.eval(msgExpression, getTarget());
         Alert alert = new Alert(alertType, confirmMessage, ButtonType.OK, ButtonType.CANCEL);
-        alert.setTitle(title);
+        alert.setTitle("Confirm");
         alert.initOwner(ownerWindow);
         Optional<ButtonType> choice = alert.showAndWait();
         return choice.orElse(ButtonType.CANCEL) == ButtonType.OK;
-    }
-
-
-    @Override
-    public void contextualize(T target) {
-        setTarget(target);
-
-        if (enabledIfExpr != null) {
-            Boolean enabled = (Boolean) SpelUtil.eval(enabledIfExpr, target);
-            setVisible(enabled);
-        }
-
     }
 
 }
