@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.ogerardin.xpman.util.jfx.ActionsCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.IdentityCellValueFactory?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.SegmentedButton?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ogerardin.xpman.tools.ToolsController">
+    <BorderPane prefHeight="418.0" prefWidth="623.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <center>
+            <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <columns>
+                    <TableColumn prefWidth="75.0" text="Icon">
+                    </TableColumn>
+                    <TableColumn prefWidth="150.0" text="Name">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="name"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="75.0" text="Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="version"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="250.0" text="Actions">
+                        <cellValueFactory>
+                            <IdentityCellValueFactory/>
+                        </cellValueFactory>
+                        <cellFactory>
+                            <ActionsCellFactory/>
+                        </cellFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </center>
+        <right>
+        </right>
+        <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <SegmentedButton styleClass="dark">
+                    <buttons>
+                        <ToggleButton text="Installed" onAction="#filterInstalled"  />
+                        <ToggleButton text="Available" onAction="#filterAvailable" />
+                    </buttons>
+                </SegmentedButton>
+            </ToolBar>
+        </top>
+    </BorderPane>
+</AnchorPane>

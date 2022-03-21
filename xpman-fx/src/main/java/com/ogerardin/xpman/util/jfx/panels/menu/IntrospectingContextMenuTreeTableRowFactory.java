@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  * @see ForEach
  */
 @Slf4j
-public class IntrospectingContextMenuTreeTableRowFactory<T> extends IntrospectingContextMenu<T>
+public class IntrospectingContextMenuTreeTableRowFactory<T> extends IntrospectingContextMenuFactory<T>
         implements TreeTableRowFactory<T> {
 
     public IntrospectingContextMenuTreeTableRowFactory(Object evaluationContextRoot) {

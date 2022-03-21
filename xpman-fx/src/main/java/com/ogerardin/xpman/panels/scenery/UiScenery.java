@@ -1,17 +1,18 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xpman.scenery_organizer.SceneryClass;
-import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.util.jfx.panels.menu.*;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
 import java.util.List;
 
+@SuppressWarnings("ClassCanBeRecord")
 @Data
 public class UiScenery {
 

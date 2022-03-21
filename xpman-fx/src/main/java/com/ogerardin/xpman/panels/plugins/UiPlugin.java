@@ -10,6 +10,7 @@ import lombok.experimental.Delegate;
 
 import java.net.URL;
 
+@SuppressWarnings("ClassCanBeRecord")
 @Data
 public class UiPlugin {
 

@@ -12,6 +12,8 @@
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem onAction="#installWizard" text="Universal installer…"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem onAction="#manageTools" text="Manage tools..."/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" text="Preferences…"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem id="quit" mnemonicParsing="false" onAction="#quit" text="Quit">
