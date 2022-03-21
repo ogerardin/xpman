@@ -3,7 +3,6 @@ package com.ogerardin.xplane.tools;
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,9 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @Slf4j
 public class ToolsManager extends Manager<Tool> {
@@ -41,7 +42,7 @@ public class ToolsManager extends Manager<Tool> {
     }
 
     /**
-     * Trigger an asynchronous reload of the aircraft list.
+     * Trigger an asynchronous reload of the list.
      */
     public void reload() {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -55,25 +56,33 @@ public class ToolsManager extends Manager<Tool> {
         log.info("Loading tools...");
         fireEvent(new ManagerEvent.Loading<>());
 
-        // find all runnable files under the tools folder
+        // find all installed tools (runnable file under the tools folder)
         Predicate<Path> isRunnable = p -> Platforms.getCurrent().isRunnable(p);
-        List<Path> toolFiles = Files.list(toolsFolder)
+        List<Tool> installedTools = Files.list(toolsFolder)
                 .filter(isRunnable)
-                .toList();
-        log.debug("Found {} tools", toolFiles.size());
-
-        // build Tool object for each applicable file
-        tools = toolFiles.stream()
                 .map(this::getTool)
                 .toList();
+        log.debug("Found {} installed tools", installedTools.size());
 
-        log.info("Loaded {} tools", tools.size());
-        fireEvent(new ManagerEvent.Loaded<>(tools));
+        // find available tools (=all manifests except already installed)
+        List<Tool> availableTools = ToolManifest.getAllManifests().stream()
+                .filter(m -> installedTools.stream().noneMatch(tool -> tool.getManifest() == m))
+                .map(Tool::new)
+                .toList();
+        log.debug("Found {} available tools", availableTools.size());
+
+        tools = Stream.concat(installedTools.stream(), availableTools.stream()).toList();
+
+        log.info("Loaded {} tools", this.tools.size());
+        fireEvent(new ManagerEvent.Loaded<>(this.tools));
     }
 
     @SneakyThrows
     private Tool getTool(Path path) {
-        return IntrospectionHelper.getBestSubclassInstance(Tool.class, path);
+        Optional<ToolManifest> maybeManifest = ToolManifest.getAllManifests().stream()
+                .filter(manifest -> path.endsWith(manifest.getExeName()))
+                .findAny();
+        return maybeManifest.map(m -> new Tool(path, m)).orElseGet(() -> new Tool(path));
     }
 
 }
