@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class IntrospectingContextMenuTableRowFactory<T>
-        extends IntrospectingContextMenu<T>
+        extends IntrospectingContextMenuFactory<T>
         implements TableRowFactory<T> {
 
     public IntrospectingContextMenuTableRowFactory(Object evaluationContextRoot) {

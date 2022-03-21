@@ -12,7 +12,6 @@ import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -137,7 +136,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     private MenuItem newToolMenuItem(Tool tool) {
         MenuItem menuItem = new MenuItem(tool.getName());
-        menuItem.setOnAction(event -> Platforms.getCurrent().startApp(tool.getPath()));
+        menuItem.setOnAction(event -> Platforms.getCurrent().startApp(tool.getExecutable()));
         return menuItem;
     }
 
@@ -208,31 +207,37 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     @FXML
-    private void installWizard(ActionEvent actionEvent) {
+    private void installWizard() {
         InstallWizard wizard = new InstallWizard(xPlaneProperty().getValue());
         wizard.showAndWait();
     }
 
     @FXML
-    public void newIssue(ActionEvent actionEvent) throws MalformedURLException {
+    public void newIssue() throws MalformedURLException {
         Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman/issues/new"));
     }
 
     @FXML
-    public void github(ActionEvent actionEvent) throws MalformedURLException {
+    public void github() throws MalformedURLException {
         Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman"));
     }
 
     @FXML
-    public void help(ActionEvent actionEvent) throws MalformedURLException {
+    public void help() throws MalformedURLException {
         Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman/wiki"));
     }
 
+    @SneakyThrows
     @FXML
-    public void installIvap(ActionEvent actionEvent) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, "This feature has not been implemented yet");
-        alert.setHeaderText("Not implemented yet");
-        alert.showAndWait();
+    public void manageTools() {
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/tools/tools.fxml"));
+        loader.setControllerFactory(this::buildController);
+        Pane pane = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Tools Manager");
+        stage.setScene(new Scene(pane));
+        stage.initOwner(primaryStage);
+        stage.show();
     }
 
     private class RecentMenuItem extends MenuItem {

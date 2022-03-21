@@ -20,6 +20,7 @@ import org.controlsfx.control.SegmentedBar;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -48,7 +49,8 @@ public class XPlaneController {
         mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> {
             this.xPlane = xPlane;
             updateDisplay(xPlane);
-            checkUpdates(xPlane);
+            final ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(() -> checkUpdates(xPlane));
         });
     }
 
