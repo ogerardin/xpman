@@ -10,7 +10,12 @@ public class Platforms {
     private final Platform current = currentPlatform();
 
     private Platform currentPlatform() {
-        return switch (com.sun.jna.Platform.getOSType()) {
+        int osType = com.sun.jna.Platform.getOSType();
+        return getPlatform(osType);
+    }
+
+    public Platform getPlatform(int osType) {
+        return switch (osType) {
             case com.sun.jna.Platform.MAC -> new MacPlatform();
             case com.sun.jna.Platform.WINDOWS -> new WindowsPlatform();
             case com.sun.jna.Platform.LINUX -> new LinuxPlatform();
