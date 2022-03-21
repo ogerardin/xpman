@@ -1,5 +1,7 @@
 package com.ogerardin.xplane.util.platform;
 
+import lombok.NonNull;
+
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -10,23 +12,23 @@ public interface Platform {
     }
 
     /** Reveal in Finder / show in Explorer or equivalent */
-    default void reveal(Path path) {
+    default void reveal(@NonNull Path path) {
         throw new UnsupportedOperationException();
     }
 
-    default void openFile(Path path) {
+    default void openFile(@NonNull Path path) {
         throw new UnsupportedOperationException();
     }
 
-    default void openUrl(URL url) {
+    default void openUrl(@NonNull URL url) {
         throw new UnsupportedOperationException();
     }
 
-    default void startApp(Path app) {
+    default void startApp(@NonNull Path app) {
         throw new UnsupportedOperationException();
     }
 
-    default boolean isRunnable(Path path)  {
+    default boolean isRunnable(@NonNull Path path)  {
         return false;
     }
 }
