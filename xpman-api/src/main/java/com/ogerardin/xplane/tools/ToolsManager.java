@@ -56,7 +56,7 @@ public class ToolsManager extends Manager<Tool> {
         log.info("Loading tools...");
         fireEvent(new ManagerEvent.Loading<>());
 
-        // find all installed tools (runnable file under the tools folder)
+        // find all installed tools (runnable files under the tools folder)
         Predicate<Path> isRunnable = p -> Platforms.getCurrent().isRunnable(p);
         List<Tool> installedTools = Files.list(toolsFolder)
                 .filter(isRunnable)
@@ -85,4 +85,21 @@ public class ToolsManager extends Manager<Tool> {
         return maybeManifest.map(m -> new Tool(path, m)).orElseGet(() -> new Tool(path));
     }
 
+    public void installTool(Tool tool) {
+        if (! tool.isInstallable()) {
+            throw new IllegalStateException("Tool must be installable");
+        }
+        tool.getManifest().getInstaller().accept(xPlane);
+        reload();
+    }
+
+    @SneakyThrows
+    public void uninstallTool(Tool tool) {
+        if (! tool.isInstalled()) {
+            throw new IllegalStateException("Tool must be installed");
+        }
+        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+        fileUtils.moveToTrash(tool.getExecutable().toFile());
+        reload();
+    }
 }

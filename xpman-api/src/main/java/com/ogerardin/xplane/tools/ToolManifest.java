@@ -30,6 +30,7 @@ public class ToolManifest {
 
     private static List<ToolManifest> loadAll() {
         return Arrays.asList(
+
                 new ToolManifestBuilder()
                         .name("X-CSL updater")
                         .platform(Platform.MAC)
@@ -37,6 +38,7 @@ public class ToolManifest {
                         .versionGetter(MacPlatform::getMacVersion)
                         .installer(xPlane -> ToolUtils.installFromDmg(xPlane, "https://csl.x-air.ru/download/src/409"))
                         .build(),
+
                 new ToolManifestBuilder()
                         .name("X-Plane installer")
                         .platform(Platform.MAC)
