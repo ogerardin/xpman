@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.tools;
 
+import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xpman.XPmanFX;
@@ -23,7 +24,7 @@ public class ToolsController {
     @FXML
     private TableView<UiTool> tableView;
 
-    private FilteredList<UiTool> filteredList;
+    private FilteredList<UiTool> filteredList= new FilteredList<>(FXCollections.emptyObservableList());
 
     public ToolsController(XPmanFX mainController) {
         this.xPlane = mainController.xPlaneProperty().get();
@@ -31,32 +32,38 @@ public class ToolsController {
 
     @FXML
     public void initialize() {
-        List<Tool> tools = xPlane.getToolsManager().getTools();
-        List<UiTool> uiTools = tools.stream().map(UiTool::new).toList();
-        ObservableList<UiTool> observableUiTools = FXCollections.observableList(uiTools);
-        filteredList = new FilteredList<>(observableUiTools);
-        tableView.setItems(filteredList);
+        xPlane.getToolsManager().registerListener(event -> {
+            if (event instanceof ManagerEvent.Loaded<Tool> e) {
+                setItems(e.getItems());
+            }
+        });
+        xPlane.getToolsManager().reload();
+
         // initially display installed
         installedButton.fire();
     }
 
+    private void setItems(List<Tool> tools) {
+        List<UiTool> uiTools = tools.stream()
+                .map(tool -> new UiTool(tool, xPlane))
+                .toList();
+        ObservableList<UiTool> observableUiTools = FXCollections.observableList(uiTools);
+        // create new FilteredList with same predicate as previous one (to retain current filter)
+        filteredList = new FilteredList<>(observableUiTools, filteredList.getPredicate());
+        tableView.setItems(filteredList);
+    }
+
     @FXML
     public void filterInstalled(ActionEvent event) {
-        if (event.getSource() instanceof ToggleButton button && ! button.isSelected()) {
-            filteredList.setPredicate(uiTool -> true);
-        }
-        else {
-            filteredList.setPredicate(UiTool::isRunnable);
-        }
+        filteredList.setPredicate(event.getSource() instanceof ToggleButton button && !button.isSelected() ? (uiTool -> true) : UiTool::isRunnable);
     }
 
     @FXML
     public void filterAvailable(ActionEvent event) {
-        if (event.getSource() instanceof ToggleButton button && ! button.isSelected()) {
-            filteredList.setPredicate(uiTool -> true);
-        }
-        else {
-            filteredList.setPredicate(UiTool::isInstallable);
-        }
+        filteredList.setPredicate(event.getSource() instanceof ToggleButton button && !button.isSelected() ? (uiTool -> true) : UiTool::isInstallable);
+    }
+
+    public void reload() {
+        xPlane.getToolsManager().reload();
     }
 }
