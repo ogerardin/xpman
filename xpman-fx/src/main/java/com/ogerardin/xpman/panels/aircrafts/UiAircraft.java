@@ -83,6 +83,7 @@ public class UiAircraft {
         return xPlane.getAircraftManager().inspect(aircraft);
     }
 
+    @SuppressWarnings("unused")
     @Label("'Explore properties'")
     public void details() throws IOException {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/acftree.fxml"));
