@@ -3,6 +3,7 @@ package com.ogerardin.xpman;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
+import com.ogerardin.xplane.tools.InstalledTool;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -128,15 +129,17 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private void updateToolsMenu(ManagerEvent<Tool> event) {
         if (event instanceof ManagerEvent.Loaded<Tool> loadedEvent) {
             List<MenuItem> menuItems = loadedEvent.getItems().stream()
+                    .filter(InstalledTool.class::isInstance)
+                    .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)
                     .toList();
             toolsMenu.getItems().setAll(menuItems);
         }
     }
 
-    private MenuItem newToolMenuItem(Tool tool) {
+    private MenuItem newToolMenuItem(InstalledTool tool) {
         MenuItem menuItem = new MenuItem(tool.getName());
-        menuItem.setOnAction(event -> Platforms.getCurrent().startApp(tool.getExecutable()));
+        menuItem.setOnAction(event -> Platforms.getCurrent().startApp(tool.getApp()));
         return menuItem;
     }
 
