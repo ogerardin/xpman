@@ -56,7 +56,7 @@ public class MacPlatform implements Platform {
     }
 
     @SneakyThrows
-    public static String getMacVersion(Path appPath) {
+    public static String getMacAppVersion(Path appPath) {
         Path plistFile = appPath.resolve("Contents").resolve("info.plist");
         XMLPropertyListConfiguration plist = new XMLPropertyListConfiguration(plistFile.toFile());
         return plist.getString("CFBundleShortVersionString");

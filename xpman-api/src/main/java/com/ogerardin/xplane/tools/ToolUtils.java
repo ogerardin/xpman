@@ -18,6 +18,16 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ToolUtils {
 
+    /**
+     * This method will in sequence:
+     * <ol>
+     *     <li>download a DMG file from the specified URL to a temporary file</li>
+     *     <li>mount it</li>
+     *     <li>look for a single app at the root of the mounted filesystem</li>
+     *     <li>copy this app to the tools folder</li>
+     *     <li>unmount the DMG and delete the temporary file</li>
+     * </ol>
+     */
     @SneakyThrows
     public static void installFromDmg(XPlane xPlane, String url) {
         Path tempFile = null;
@@ -51,7 +61,7 @@ public class ToolUtils {
         } finally {
             if (mountPoint != null) {
                 log.info("Detaching {}", mountPoint);
-                CommandExecutor.exec("hdiutil", "detach", mountPoint);
+                CommandExecutor.exec("hdiutil", "detach", "-force", mountPoint);
             }
             if (tempFile != null) {
                 log.info("Deleting {}", tempFile);

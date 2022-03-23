@@ -58,16 +58,16 @@ public class ToolsManager extends Manager<Tool> {
 
         // find all installed tools (runnable files under the tools folder)
         Predicate<Path> isRunnable = p -> Platforms.getCurrent().isRunnable(p);
-        List<Tool> installedTools = Files.list(toolsFolder)
+        List<InstalledTool> installedTools = Files.list(toolsFolder)
                 .filter(isRunnable)
                 .map(this::getTool)
                 .toList();
         log.debug("Found {} installed tools", installedTools.size());
 
         // find available tools (=all manifests except already installed)
-        List<Tool> availableTools = ToolManifest.getAllManifests().stream()
+        List<InstallableTool> availableTools = ToolManifest.getAllManifests().stream()
                 .filter(m -> installedTools.stream().noneMatch(tool -> tool.getManifest() == m))
-                .map(Tool::new)
+                .map(InstallableTool::new)
                 .toList();
         log.debug("Found {} available tools", availableTools.size());
 
@@ -78,28 +78,37 @@ public class ToolsManager extends Manager<Tool> {
     }
 
     @SneakyThrows
-    private Tool getTool(Path path) {
+    private InstalledTool getTool(Path path) {
         Optional<ToolManifest> maybeManifest = ToolManifest.getAllManifests().stream()
                 .filter(manifest -> path.endsWith(manifest.getExeName()))
                 .findAny();
-        return maybeManifest.map(m -> new Tool(path, m)).orElseGet(() -> new Tool(path));
+        return maybeManifest
+                .map(m -> new InstalledTool(path, m))
+                .orElseGet(() -> new InstalledTool(path));
     }
 
     public void installTool(Tool tool) {
-        if (! tool.isInstallable()) {
+        if (!(tool instanceof InstallableTool installableTool)) {
             throw new IllegalStateException("Tool must be installable");
         }
-        tool.getManifest().getInstaller().accept(xPlane);
+        installableTool.getManifest().getInstaller().accept(xPlane);
         reload();
     }
 
     @SneakyThrows
     public void uninstallTool(Tool tool) {
-        if (! tool.isInstalled()) {
+        if (!(tool instanceof InstalledTool installedTool)) {
             throw new IllegalStateException("Tool must be installed");
         }
         var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
-        fileUtils.moveToTrash(tool.getExecutable().toFile());
+        fileUtils.moveToTrash(installedTool.getApp().toFile());
         reload();
+    }
+
+    public void launchTool(Tool tool) {
+        if (!(tool instanceof InstalledTool installedTool)) {
+            throw new IllegalStateException("Tool must be installed");
+        }
+        Platforms.getCurrent().startApp(installedTool.getApp());
     }
 }
