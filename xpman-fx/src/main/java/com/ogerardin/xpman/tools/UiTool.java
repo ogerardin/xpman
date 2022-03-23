@@ -2,7 +2,6 @@ package com.ogerardin.xpman.tools;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Tool;
-import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -32,7 +31,7 @@ public class UiTool {
 
     @EnabledIf("runnable")
     public void run() {
-        Platforms.getCurrent().startApp(getExecutable());
+        xPlane.getToolsManager().launchTool(tool);
     }
 
 
