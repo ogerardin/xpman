@@ -80,7 +80,7 @@ public class ToolsManager extends Manager<Tool> {
     @SneakyThrows
     private InstalledTool getTool(Path path) {
         Optional<ToolManifest> maybeManifest = ToolManifest.getAllManifests().stream()
-                .filter(manifest -> path.endsWith(manifest.getExeName()))
+                .filter(manifest -> manifest.getInstallChecker().test(path))
                 .findAny();
         return maybeManifest
                 .map(m -> new InstalledTool(path, m))
