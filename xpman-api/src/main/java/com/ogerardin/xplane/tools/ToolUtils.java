@@ -3,14 +3,18 @@ package com.ogerardin.xplane.tools;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.exec.CommandExecutor;
 import com.ogerardin.xplane.exec.ExecResults;
+import com.ogerardin.xplane.util.platform.MacPlatform;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,8 +53,7 @@ public class ToolUtils {
             log.info("  mounted on {}", mountPoint);
 
             Path app = Files.list(Path.of(mountPoint))
-                    .filter(Files::isDirectory)
-                    .filter(path -> path.getFileName().toString().endsWith(".app"))
+                    .filter(MacPlatform.MacApp::isMacApp)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No .app found in DMG!"));
             log.info("Found app: {}", app);
@@ -73,5 +76,21 @@ public class ToolUtils {
 
     public static void installFromZip(XPlane xPlane, String url) {
 
+    }
+
+    static Predicate<Path> hasString(String s) {
+        return path -> {
+            try {
+                Path executable = new MacPlatform.MacApp(path).executable();
+                return CommandExecutor.exec("fgrep", s, executable.toString()).getExitValue() == 0;
+            } catch (IOException | InterruptedException | ConfigurationException e) {
+                log.warn(e.toString());
+                return false;
+            }
+        };
+    }
+
+    static Predicate<Path> hasName(String name) {
+        return path -> path.getFileName().toString().equals(name);
     }
 }

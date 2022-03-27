@@ -5,6 +5,7 @@ import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Data
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode
 public abstract class Tool implements InspectionsProvider<Tool> {
 
+    @NonNull
     private final String name;
+
     private final ToolManifest manifest;
 
     @Override
