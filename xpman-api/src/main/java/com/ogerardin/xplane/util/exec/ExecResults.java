@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.exec;
+package com.ogerardin.xplane.util.exec;
 
 import lombok.Data;
 

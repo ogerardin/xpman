@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.tools;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.exec.CommandExecutor;
-import com.ogerardin.xplane.exec.ExecResults;
+import com.ogerardin.xplane.util.exec.CommandExecutor;
+import com.ogerardin.xplane.util.exec.ExecResults;
 import com.ogerardin.xplane.util.platform.MacPlatform;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -92,5 +92,11 @@ public class ToolUtils {
 
     static Predicate<Path> hasName(String name) {
         return path -> path.getFileName().toString().equals(name);
+    }
+
+    @SneakyThrows
+    static void defaultUninstaller(InstalledTool t) {
+        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+        fileUtils.moveToTrash(t.getApp().toFile());
     }
 }

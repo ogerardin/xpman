@@ -7,6 +7,8 @@ import java.nio.file.Path;
 
 public interface Platform {
 
+    int getOsType();
+
     default String revealLabel() {
         return "Show in files";
     }
