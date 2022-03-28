@@ -50,7 +50,7 @@ public class InstallableZip implements InstallableArchive {
         ZipUtils.unzip(this.zipFile, targetFolder, filename -> {
             int count = counter.incrementAndGet();
 //            log.debug("Progress: {} / {}= {}", count, size, (double) count / size);
-            progressListener.installing((double) count / size, filename);
+            progressListener.progress((double) count / size, filename);
         });
     }
 

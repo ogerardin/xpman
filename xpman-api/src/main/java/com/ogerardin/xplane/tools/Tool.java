@@ -8,6 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * A tool is an external application that can be run to provide X-Plane related functionality.
+ * Tools managed by X-Plane Manager are always installed in the {X-Plane root folder}/Resources/tools folder
+ * A tool is described by a {@link ToolManifest}.
+ */
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode
@@ -29,9 +34,6 @@ public abstract class Tool implements InspectionsProvider<Tool> {
 
     public abstract boolean isRunnable();
 
-    public  String getVersion() {
-        return null;
-    }
-
+    public abstract String getVersion();
 
 }

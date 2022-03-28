@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.util.platform;
 
-import com.ogerardin.xplane.exec.CommandExecutor;
+import com.ogerardin.xplane.util.exec.CommandExecutor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,9 @@ import java.nio.file.Path;
 
 @Slf4j
 public class WindowsPlatform implements Platform {
+
+    @Getter
+    public final int osType = com.sun.jna.Platform.WINDOWS;
 
     @SneakyThrows
     @Override

@@ -3,11 +3,13 @@ package com.ogerardin.xplane.tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * An uninstalled tool (available for download/installation).
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class InstallableTool extends Tool {
 
-    /** Constructs a non-installed (available) tool */
     public InstallableTool(ToolManifest manifest) {
         super(manifest.getName(), manifest);
     }
@@ -24,4 +26,8 @@ public class InstallableTool extends Tool {
         return false;
     }
 
+    @Override
+    public String getVersion() {
+        return getManifest().getAvailableVersionGetter().get();
+    }
 }

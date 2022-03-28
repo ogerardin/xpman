@@ -4,6 +4,7 @@ import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.sun.jna.Platform;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -66,6 +67,7 @@ public class ToolsManager extends Manager<Tool> {
 
         // find available tools (=all manifests except already installed)
         List<InstallableTool> availableTools = ToolManifest.getAllManifests().stream()
+                .filter(m -> m.getPlatform() == Platform.getOSType())
                 .filter(m -> installedTools.stream().noneMatch(tool -> tool.getManifest() == m))
                 .map(InstallableTool::new)
                 .toList();

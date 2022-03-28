@@ -8,6 +8,9 @@ import org.apache.commons.io.FilenameUtils;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/**
+ * A locally installed tool. It may be associated to a {@link ToolManifest} or not.
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class InstalledTool extends Tool {
