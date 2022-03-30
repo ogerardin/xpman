@@ -1,37 +1,32 @@
 package com.ogerardin.xpman.tools;
 
-import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
-import lombok.Data;
-import lombok.SneakyThrows;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
 @SuppressWarnings("ClassCanBeRecord")
-@Data
+@RequiredArgsConstructor
 public class UiTool {
 
     @Delegate
     private final Tool tool;
 
-    private final XPlane xPlane;
+    private final ToolsController controller;
 
     @EnabledIf("installable")
     public void install() {
-        //TODO run this as a Task
-        xPlane.getToolsManager().installTool(tool);
+        controller.installTool(tool);
     }
 
-    @SneakyThrows
     @EnabledIf("installed")
     public void uninstall() {
-        //TODO run this as a Task?
-        xPlane.getToolsManager().uninstallTool(tool);
+        controller.uninstallTool(tool);
     }
 
     @EnabledIf("runnable")
     public void run() {
-        xPlane.getToolsManager().launchTool(tool);
+        controller.runTool(tool);
     }
 
 
