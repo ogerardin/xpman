@@ -77,7 +77,7 @@ public class ToolsController {
 
     private void setItems(List<Tool> tools) {
         List<UiTool> uiTools = tools.stream()
-                .map(tool -> new UiTool(tool, xPlane))
+                .map(tool -> new UiTool(tool, this))
                 .toList();
         ObservableList<UiTool> observableUiTools = FXCollections.observableList(uiTools);
         // create new FilteredList with same predicate as previous one (to retain current filter)
@@ -97,5 +97,17 @@ public class ToolsController {
 
     public void reload() {
         xPlane.getToolsManager().reload();
+    }
+
+    public void installTool(Tool tool) {
+        xPlane.getToolsManager().installTool(tool);
+    }
+
+    public void uninstallTool(Tool tool) {
+        xPlane.getToolsManager().uninstallTool(tool);
+    }
+
+    public void runTool(Tool tool) {
+        xPlane.getToolsManager().launchTool(tool);
     }
 }
