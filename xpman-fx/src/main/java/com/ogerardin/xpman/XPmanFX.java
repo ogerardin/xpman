@@ -33,7 +33,6 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -89,6 +88,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void open() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Please select X-Plane directory");
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
         if (selectedDirectory == null) {
             return;
@@ -104,6 +104,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
         if ((xplane.getVariant() == XPlaneVariant.UNKNOWN)) {
             Alert alert = new Alert(Alert.AlertType.ERROR, String.format("%s is not a valid X-Plane folder.", folder));
+            alert.setHeaderText("Invalid X-Plane folder");
             alert.initOwner(primaryStage);
             alert.showAndWait();
             return;
@@ -176,13 +177,16 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         if (config.getLastXPlanePath() != null) {
             Platform.runLater(() -> openXPlane(Paths.get(config.getLastXPlanePath()).toFile()));
         }
+        else {
+            Platform.runLater(this::open);
+        }
     }
 
     private void updateRecent() {
         final XPManPrefs config = getConfig();
-        List<MenuItem> menuItems = config.getRecentPaths().stream()
+        List<? extends MenuItem> menuItems = config.getRecentPaths().stream()
                 .map(RecentMenuItem::new)
-                .collect(Collectors.toList());
+                .toList();
         recentMenu.getItems().setAll(menuItems);
     }
 
