@@ -1,10 +1,10 @@
 package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.navdata.NavDataItem;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
-@Data
+@RequiredArgsConstructor
 public class UiNavDataItem {
 
     @Delegate
@@ -12,9 +12,5 @@ public class UiNavDataItem {
 
     public UiNavDataItem() {
         this(null);
-    }
-
-    public UiNavDataItem(NavDataItem navDataItem) {
-        this.navDataItem = navDataItem;
     }
 }
