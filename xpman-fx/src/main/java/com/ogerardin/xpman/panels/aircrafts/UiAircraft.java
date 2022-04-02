@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Delegate;
 
@@ -20,7 +20,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
-@RequiredArgsConstructor
+@Data
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 public class UiAircraft {
 

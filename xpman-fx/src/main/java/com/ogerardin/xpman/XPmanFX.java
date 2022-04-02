@@ -144,11 +144,11 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         return menuItem;
     }
 
+    @SuppressWarnings("unchecked")
     @SneakyThrows
     private <C> C buildController(Class<C> type) {
         if (type == this.getClass()) {
             // don't reinstantiate this class, use the existing instance
-            //noinspection unchecked
             return (C) this;
         }
         try {

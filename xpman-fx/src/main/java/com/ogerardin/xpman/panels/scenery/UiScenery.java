@@ -6,14 +6,14 @@ import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.util.jfx.menu.annotation.*;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
 import java.util.List;
 
 @SuppressWarnings("ClassCanBeRecord")
-@RequiredArgsConstructor
+@Data
 public class UiScenery {
 
     @Delegate

@@ -5,19 +5,27 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.tools.ToolManifest;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.util.jfx.console.ConsoleController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class ToolsController {
 
@@ -99,15 +107,33 @@ public class ToolsController {
         xPlane.getToolsManager().reload();
     }
 
+    @SneakyThrows
     public void installTool(Tool tool) {
-        xPlane.getToolsManager().installTool(tool);
+        ConsoleController consoleController = displayConsole("Installing " + tool.getName());
+        Executors.newSingleThreadExecutor().submit(() -> {
+            xPlane.getToolsManager().installTool(tool, consoleController);
+        });
     }
 
+    @SneakyThrows
     public void uninstallTool(Tool tool) {
-        xPlane.getToolsManager().uninstallTool(tool);
+        ConsoleController consoleController = displayConsole("Uninstalling " + tool.getName());
+        Executors.newSingleThreadExecutor().submit(() -> {
+            xPlane.getToolsManager().uninstallTool(tool, consoleController);
+        });
     }
 
     public void runTool(Tool tool) {
         xPlane.getToolsManager().launchTool(tool);
     }
+
+    public static ConsoleController displayConsole(@NonNull String title) throws IOException {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        FXMLLoader loader = new FXMLLoader(ConsoleController.class.getResource("/fxml/console.fxml"));
+        dialog.setDialogPane(loader.load());
+        dialog.setTitle(title);
+        dialog.show();
+        return loader.getController();
+    }
+
 }
