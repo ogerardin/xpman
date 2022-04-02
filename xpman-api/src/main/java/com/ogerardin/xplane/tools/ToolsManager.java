@@ -3,6 +3,7 @@ package com.ogerardin.xplane.tools;
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.sun.jna.Platform;
 import lombok.Getter;
@@ -89,21 +90,21 @@ public class ToolsManager extends Manager<Tool> {
                 .orElseGet(() -> new InstalledTool(path));
     }
 
-    public void installTool(Tool tool) {
+    public void installTool(Tool tool, ProgressListener progressListener) {
         if (!(tool instanceof InstallableTool installableTool)) {
             throw new IllegalStateException("Tool must be installable");
         }
-        installableTool.getManifest().getInstaller().accept(xPlane);
+        installableTool.getManifest().getInstaller().install(xPlane, progressListener);
+
         reload();
     }
 
     @SneakyThrows
-    public void uninstallTool(Tool tool) {
+    public void uninstallTool(Tool tool, ProgressListener consoleController) {
         if (!(tool instanceof InstalledTool installedTool)) {
             throw new IllegalStateException("Tool must be installed");
         }
-        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
-        fileUtils.moveToTrash(installedTool.getApp().toFile());
+        installedTool.getManifest().getUninstaller().uninstall(installedTool, consoleController);
         reload();
     }
 

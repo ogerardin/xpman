@@ -7,8 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A daemon Thread that reads the specified {@link InputStream} as long as EOF is not reached and stores
@@ -18,17 +17,15 @@ import java.util.List;
 @Data
 class StreamGobbler extends Thread {
     private final InputStream inputStream;
-    private IOException exception = null;
-    private List<String> lines = new ArrayList<>();
+    private final Consumer<String> lineConsumer;
 
-    StreamGobbler(InputStream inputStream) {
+    private IOException exception = null;
+
+    StreamGobbler(InputStream inputStream, Consumer<String> lineConsumer) {
         this.inputStream = inputStream;
+        this.lineConsumer = lineConsumer;
         this.setDaemon(true);
         this.start();
-    }
-
-    List<String> getLines() {
-        return lines;
     }
 
     @Override
@@ -37,7 +34,7 @@ class StreamGobbler extends Thread {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null) {
-                lines.add(line);
+                lineConsumer.accept(line);
             }
         }
         catch (IOException ioe) {
