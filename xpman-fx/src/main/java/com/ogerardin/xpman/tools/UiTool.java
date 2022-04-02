@@ -2,11 +2,11 @@ package com.ogerardin.xpman.tools;
 
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import lombok.experimental.Delegate;
 
 @SuppressWarnings("ClassCanBeRecord")
-@RequiredArgsConstructor
+@Data
 public class UiTool {
 
     @Delegate

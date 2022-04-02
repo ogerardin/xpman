@@ -4,7 +4,6 @@ import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;

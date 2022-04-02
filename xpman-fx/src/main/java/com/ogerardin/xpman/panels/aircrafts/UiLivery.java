@@ -9,10 +9,10 @@ import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import javafx.scene.control.Alert;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
-import java.nio.file.Path;
-
+@Getter
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(callSuper = false)
 public class UiLivery extends UiAircraft {
@@ -23,19 +23,6 @@ public class UiLivery extends UiAircraft {
     public UiLivery(XPlane xPlane, Aircraft aircraft, Livery livery) {
         super(aircraft, xPlane);
         this.livery = livery;
-    }
-
-    @Override
-    public String getName() {
-        return livery.getName();
-    }
-
-    public Path getThumb() {
-        return livery.getThumb();
-    }
-
-    public Path getIcon() {
-        return livery.getIcon();
     }
 
     @Override
