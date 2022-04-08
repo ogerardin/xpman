@@ -1,0 +1,11 @@
+{
+  "platform": "MAC",
+  "name": "X-CSL updater for IvAp client",
+  "version": "1.2.0",
+  "description": "X-CSL is library of online traffic models for users of the X-Plane flight simulator who fly in IVAO network.\nThis version is for X-IvAp Pilot Client version 0.4.x (and ALTITUDE Pilot Client version 1.9.19b and below)",
+  "url": "https://csl.x-air.ru/download/src/362#x-csl-updater-ivap.dmg",
+  "installChecker": {
+    "name": "X-CSL-Updater.app",
+    "string": "1.2.0"
+  }
+}

@@ -10,7 +10,7 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = true)
 public class InstallableTool extends Tool {
 
-    public InstallableTool(ToolManifest manifest) {
+    public InstallableTool(Manifest manifest) {
         super(manifest.getName(), manifest);
     }
 
@@ -28,6 +28,6 @@ public class InstallableTool extends Tool {
 
     @Override
     public String getVersion() {
-        return getManifest().getAvailableVersionGetter().get();
+        return getManifest().getVersion();
     }
 }
