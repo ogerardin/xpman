@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.plist.XMLPropertyListConfiguration;
+import org.apache.commons.lang.StringUtils;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -24,7 +25,7 @@ public class MacPlatform implements Platform {
     public void reveal(@NonNull Path path) {
         // if path is a directory, use any contained file otherwise the Finder will not select the directory
         // (except if it's an app)
-        if (Files.isDirectory(path) && ! MacApp.isMacApp(path)) {
+        if (Files.isDirectory(path) && ! AppBundle.isAppBundle(path)) {
             try (Stream<Path> pathStream = Files.list(path)) {
                 path = pathStream.findFirst().orElse(path);
             }
@@ -51,7 +52,7 @@ public class MacPlatform implements Platform {
 
     @Override
     public boolean isRunnable(@NonNull Path path) {
-        return MacApp.isMacApp(path);
+        return AppBundle.isAppBundle(path);
     }
 
     @Override
@@ -60,19 +61,20 @@ public class MacPlatform implements Platform {
         CommandExecutor.exec("open", file.toString());
     }
 
+    @Override
     @SneakyThrows
-    public static String getMacAppVersion(Path appPath) {
-        return new MacApp(appPath).plist().getString("CFBundleShortVersionString");
+    public String getVersion(Path appPath) {
+        return new AppBundle(appPath).version();
     }
 
     /**
      * Represents a macOS application bundle
      * @see <a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/Introduction/Introduction.html">Bundle Programming Guide</a>
      */
-    public record MacApp(Path app) {
-        public MacApp {
-            if (!isMacApp(app)) {
-                throw new IllegalArgumentException(app.toString() + " is not a Mac app");
+    public record AppBundle(Path app) {
+        public AppBundle {
+            if (!isAppBundle(app)) {
+                throw new IllegalArgumentException(app.toString() + " is not a Mac app bundle");
             }
         }
 
@@ -89,13 +91,19 @@ public class MacPlatform implements Platform {
             return macOsDir().resolve(executable);
         }
 
+        @SneakyThrows
+        public String version() {
+            String version = plist().getString("CFBundleShortVersionString");
+            return StringUtils.isBlank(version) ? null : version;
+        }
+
         public XMLPropertyListConfiguration plist() throws ConfigurationException {
             Path plistFile = contentsDir().resolve("info.plist");
             return new XMLPropertyListConfiguration(plistFile.toFile());
 
         }
 
-        public static boolean isMacApp(Path app) {
+        public static boolean isAppBundle(Path app) {
             return Files.isDirectory(app) && app.getFileName().toString().endsWith(".app");
         }
     }
