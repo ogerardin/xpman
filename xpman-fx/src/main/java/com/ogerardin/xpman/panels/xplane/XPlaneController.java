@@ -9,7 +9,6 @@ import com.ogerardin.xpman.panels.xplane.breakdown.Segment;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentInfoNode;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentType;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentView;
-import com.sun.jna.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -84,7 +83,7 @@ public class XPlaneController {
 //        appPath.setText(xPlane.getAppPath().toString());
         log.setText(xPlane.getLogPath().toString());
         // disable "start" button if current platform different from X-Plane detected platform
-        startXPlaneButton.setDisable(Platform.getOSType() != xPlane.getVariant().getOsType());
+        startXPlaneButton.setDisable(! xPlane.getVariant().getPlatform().isCurrent());
 
 //        breakdown.getSegments().clear();
         breakdown.getSegments().setAll(
