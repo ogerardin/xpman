@@ -52,8 +52,9 @@ public class LinuxPlatform implements Platform {
         return Files.isExecutable(path);
     }
 
+    @Override
     @SneakyThrows
-    public static String getELFVersion(Path exePath) {
+    public String getVersion(Path exePath) {
         // there seem to be no symbol in the ELF symbol table pointing to the version string :(
 /*
         ElfFile elfFile = ElfFile.from(Files.newInputStream(exePath));
@@ -67,6 +68,6 @@ public class LinuxPlatform implements Platform {
             channel.read(buffer);
         }
 */
-        return "unknown";
+        return null;
     }
 }

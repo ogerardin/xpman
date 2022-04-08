@@ -1,25 +1,38 @@
 package com.ogerardin.xplane.util.platform;
 
 import lombok.Getter;
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Delegate;
 
-@UtilityClass
-public class Platforms {
+import java.util.Arrays;
+
+/**
+ * Known platforms as an enum.
+ * The actual implementation is delagated to keep this enum short and readable.
+ */
+@RequiredArgsConstructor
+public enum Platforms implements Platform {
+    WINDOWS(new WindowsPlatform()),
+    MAC(new MacPlatform()),
+    LINUX(new LinuxPlatform()),
+    UNKNOWN(new UnknownPlatform());
+
+    @Delegate
+    private final Platform delegate;
 
     @Getter(lazy = true)
-    private final Platform current = currentPlatform();
+    private static final Platform current = currentPlatform();
 
-    private Platform currentPlatform() {
+    private static Platform currentPlatform() {
         int osType = com.sun.jna.Platform.getOSType();
         return getPlatform(osType);
     }
 
-    public Platform getPlatform(int osType) {
-        return switch (osType) {
-            case com.sun.jna.Platform.MAC -> new MacPlatform();
-            case com.sun.jna.Platform.WINDOWS -> new WindowsPlatform();
-            case com.sun.jna.Platform.LINUX -> new LinuxPlatform();
-            default -> new UnknownPlatform();
-        };
+    public static Platform getPlatform(int osType) {
+        return Arrays.stream(values())
+                .filter(p -> p.getOsType() == osType)
+                .findAny()
+                .orElse(UNKNOWN);
     }
+
 }

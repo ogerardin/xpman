@@ -62,8 +62,9 @@ public class WindowsPlatform implements Platform {
         return Files.isExecutable(path);
     }
 
+    @Override
     @SneakyThrows
-    public static String getPEVersion(Path exePath) {
+    public String getVersion(Path exePath) {
         PE pe = PEParser.parse(exePath.toString());
         ResourceDirectory rd = pe.getImageData().getResourceTable();
 

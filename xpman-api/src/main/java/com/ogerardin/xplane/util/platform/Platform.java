@@ -7,7 +7,12 @@ import java.nio.file.Path;
 
 public interface Platform {
 
+    /** The int value of {@link com.sun.jna.Platform} that matches this platform */
     int getOsType();
+
+    default boolean isCurrent() {
+        return getOsType() == com.sun.jna.Platform.getOSType();
+    }
 
     default String revealLabel() {
         return "Show in files";
@@ -32,5 +37,9 @@ public interface Platform {
 
     default boolean isRunnable(@NonNull Path path)  {
         return false;
+    }
+
+    default String getVersion(Path app) {
+        return null;
     }
 }
