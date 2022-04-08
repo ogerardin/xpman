@@ -13,6 +13,7 @@ module xpman.api {
     requires commons.configuration;
     requires pecoff4j;
     requires petitparser.core;
+    requires com.google.gson;
 
     exports com.ogerardin.xplane;
     exports com.ogerardin.xplane.util.platform;
@@ -27,5 +28,7 @@ module xpman.api {
     exports com.ogerardin.xplane.laminar;
     exports com.ogerardin.xplane.navdata;
     exports com.ogerardin.xplane.tools;
+
+    opens com.ogerardin.xplane.tools to com.google.gson;
 
 }

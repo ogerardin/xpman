@@ -5,7 +5,6 @@ import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.util.platform.Platforms;
-import com.sun.jna.Platform;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -14,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,10 @@ public class ToolsManager extends Manager<Tool> {
     private final Path toolsFolder;
 
     private List<Tool> tools = null;
+
+    @Getter(lazy = true)
+    private final List<Manifest> manifests = loadManifests();
+
 
     public ToolsManager(@NonNull XPlane xPlane) {
         super(xPlane);
@@ -67,8 +72,10 @@ public class ToolsManager extends Manager<Tool> {
         log.debug("Found {} installed tools", installedTools.size());
 
         // find available tools (=all manifests except already installed)
-        List<InstallableTool> availableTools = ToolManifest.getAllManifests().stream()
-                .filter(m -> m.getPlatform() == Platform.getOSType())
+        List<InstallableTool> availableTools = getManifests().stream()
+                // current platform only
+                .filter(m -> m.getPlatform().isCurrent())
+                // not already installed
                 .filter(m -> installedTools.stream().noneMatch(tool -> tool.getManifest() == m))
                 .map(InstallableTool::new)
                 .toList();
@@ -82,7 +89,7 @@ public class ToolsManager extends Manager<Tool> {
 
     @SneakyThrows
     private InstalledTool getTool(Path path) {
-        Optional<ToolManifest> maybeManifest = ToolManifest.getAllManifests().stream()
+        Optional<Manifest> maybeManifest = getManifests().stream()
                 .filter(manifest -> manifest.getInstallChecker().test(path))
                 .findAny();
         return maybeManifest
@@ -92,9 +99,9 @@ public class ToolsManager extends Manager<Tool> {
 
     public void installTool(Tool tool, ProgressListener progressListener) {
         if (!(tool instanceof InstallableTool installableTool)) {
-            throw new IllegalStateException("Tool must be installable");
+            throw new IllegalStateException("Tool is not an InstallableTool");
         }
-        installableTool.getManifest().getInstaller().install(xPlane, progressListener);
+        ToolUtils.install(xPlane, installableTool.getManifest().getUrl(), progressListener);
 
         reload();
     }
@@ -102,16 +109,30 @@ public class ToolsManager extends Manager<Tool> {
     @SneakyThrows
     public void uninstallTool(Tool tool, ProgressListener consoleController) {
         if (!(tool instanceof InstalledTool installedTool)) {
-            throw new IllegalStateException("Tool must be installed");
+            throw new IllegalStateException("Tool is not an InstalledTool");
         }
-        installedTool.getManifest().getUninstaller().uninstall(installedTool, consoleController);
+        ToolUtils.defaultUninstaller(installedTool, consoleController);
         reload();
     }
 
     public void launchTool(Tool tool) {
         if (!(tool instanceof InstalledTool installedTool)) {
-            throw new IllegalStateException("Tool must be installed");
+            throw new IllegalStateException("Tool is not an InstalledTool");
         }
         Platforms.getCurrent().startApp(installedTool.getApp());
     }
+
+    @SneakyThrows
+    private List<Manifest> loadManifests() {
+        //noinspection ConstantConditions
+        Path toolsDir = Paths.get(getClass().getResource("/tools").toURI());
+        List<Manifest> manifests = Files.list(toolsDir)
+                .map(JsonManifestLoader::loadManifest)
+                .filter(Objects::nonNull)
+                .toList();
+        return manifests;
+    }
+
+
+
 }

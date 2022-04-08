@@ -10,6 +10,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,20 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ToolUtils {
 
+    public static void install(XPlane xPlane, URL url, ProgressListener progressListener) {
+        String path = url.getPath();
+        String ref = url.getRef();
+        if (path.endsWith(".dmg") || (ref != null && ref.endsWith(".dmg"))) {
+            installFromDmg(xPlane, url, progressListener);
+        }
+        else if (path.endsWith(".zip") || (ref != null && ref.endsWith(".zip"))) {
+            installFromZip(xPlane, url, progressListener);
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported URL: " + url);
+        }
+    }
+
     /**
      * This method will in sequence:
      * <ol>
@@ -36,15 +51,15 @@ public class ToolUtils {
      * </ol>
      */
     @SneakyThrows
-    public static void installFromDmg(XPlane xPlane, String url, ProgressListener progressListener) {
+    public static void installFromDmg(XPlane xPlane, URL url, ProgressListener progressListener) {
         Path tempFile = null;
         String mountPoint = null;
         Exception exception = null;
         try {
-            progressListener.progress(0.0, "Downloading DMG");
-            tempFile = Files.createTempFile("", ".dmg");
+            progressListener.progress(0.0, "Downloading...");
+            tempFile = Files.createTempFile(ToolUtils.class.getSimpleName(), ".dmg");
             progressListener.output("Downloading " + url + " to " + tempFile);
-            FileUtils.copyURLToFile(new URL(url), tempFile.toFile());
+            FileUtils.copyURLToFile(url, tempFile.toFile());
 
             progressListener.progress(0.50, "Mounting DMG");
             progressListener.output("Attaching " + tempFile);
@@ -59,7 +74,7 @@ public class ToolUtils {
             progressListener.output("  mounted on " + mountPoint);
 
             Path app = Files.list(Path.of(mountPoint))
-                    .filter(MacPlatform.MacApp::isMacApp)
+                    .filter(MacPlatform.AppBundle::isAppBundle)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No .app found in DMG!"));
             progressListener.output("Found app: " + app);
@@ -90,14 +105,15 @@ public class ToolUtils {
 
     }
 
-    public static void installFromZip(XPlane xPlane, String url, ProgressListener progressListener) {
-
+    public static void installFromZip(XPlane xPlane, URL url, ProgressListener progressListener) {
+        throw new NotImplementedException("Installation from ZIP not supported yet");
     }
 
     static Predicate<Path> hasString(String s) {
         return path -> {
             try {
-                Path executable = new MacPlatform.MacApp(path).executable();
+                //TODO make it work for non-Mac platforms
+                Path executable = new MacPlatform.AppBundle(path).executable();
                 return CommandExecutor.exec("fgrep", s, executable.toString()).getExitValue() == 0;
             } catch (IOException | InterruptedException | ConfigurationException e) {
                 log.warn("fgrep failed: {}", e.toString());
@@ -110,12 +126,12 @@ public class ToolUtils {
         return path -> path.getFileName().toString().equals(name);
     }
 
-    static void defaultUninstaller(InstalledTool t, ProgressListener progressListener) {
+    static void defaultUninstaller(InstalledTool tool, ProgressListener progressListener) {
         Exception exception = null;
         try {
-            progressListener.progress(null, "Deleting...");
+            progressListener.progress( "Deleting...");
 
-            File appFile = t.getApp().toFile();
+            File appFile = tool.getApp().toFile();
             progressListener.output("Deleting " + appFile);
             var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
             fileUtils.moveToTrash(appFile);

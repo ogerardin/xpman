@@ -1,0 +1,9 @@
+{
+  "platform": "MAC",
+  "name": "X-Updater",
+  "description": "X-Updater is used for updating FlightFactor's products.",
+  "url": "https://x-updater.com/X-Updater-Installer.dmg",
+  "installChecker": {
+    "name": "x-updater-client.app"
+  }
+}

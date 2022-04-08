@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * A tool is an external application that can be run to provide X-Plane related functionality.
  * Tools managed by X-Plane Manager are always installed in the {X-Plane root folder}/Resources/tools folder
- * A tool is described by a {@link ToolManifest}.
+ * A tool is described by a {@link Manifest}.
  */
 @Data
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public abstract class Tool implements InspectionsProvider<Tool> {
     @NonNull
     private final String name;
 
-    private final ToolManifest manifest;
+    private final Manifest manifest;
 
     @Override
     public Inspections<Tool> getInspections(XPlane xPlane) {

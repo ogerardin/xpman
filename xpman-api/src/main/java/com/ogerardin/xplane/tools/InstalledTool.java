@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * A locally installed tool. It may be associated to a {@link ToolManifest} or not.
+ * A locally installed tool. It may be associated to a {@link Manifest} or not.
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +22,7 @@ public class InstalledTool extends Tool {
     private final String version = loadVersion();
 
 
-    private InstalledTool(@NonNull Path app, String name, ToolManifest manifest) {
+    private InstalledTool(@NonNull Path app, String name, Manifest manifest) {
         super(name, manifest);
         this.app = app;
     }
@@ -37,7 +37,7 @@ public class InstalledTool extends Tool {
     }
 
     /** Constructs an installed tool with specified manifest */
-    public InstalledTool(@NonNull Path app, @NonNull ToolManifest manifest) {
+    public InstalledTool(@NonNull Path app, @NonNull Manifest manifest) {
         this(app, manifest.getName(), manifest);
     }
 
@@ -50,17 +50,16 @@ public class InstalledTool extends Tool {
     }
 
     public boolean isRunnable() {
-        return (app != null);
+        return true;
     }
 
     private String loadVersion() {
-        if (app == null) {
+        Manifest manifest = getManifest();
+        if (manifest == null) {
             return null;
         }
-        return Optional.ofNullable(getManifest())
-                .map(ToolManifest::getInstalledVersionGetter)
-                .map(versionGetter -> versionGetter.apply(app))
-                .orElse(null);
+        return Optional.ofNullable(manifest.getPlatform().getVersion(app))
+                .orElse(manifest.getVersion());
     }
 
 
