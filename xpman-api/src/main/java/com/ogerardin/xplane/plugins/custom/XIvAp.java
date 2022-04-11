@@ -27,7 +27,7 @@ public class XIvAp extends Plugin {
             XPlaneVariant.LINUX, "Linux"
     );
 
-    private static final String IVAP_HOME_URL = "https://www.ivao.aero/softdev/ivap.asp";
+    private static final String IVAP_HOME_URL = "https://www.ivao.aero/softdev/ivap.aspx";
     private static final String X_IVAP_MANUAL_URL = "https://wiki.ivao.aero/en/home/devops/manuals/xivap";
 
     public XIvAp(XPlane xPlane, Path xplFile) throws InstantiationException {
