@@ -150,6 +150,7 @@ jobs:
   publish-github-release:
     docker:
       - image: cibuilds/github:latest
+    resource_class: small
     steps:
       - run:
           name: Install Maven
