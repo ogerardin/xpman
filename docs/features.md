@@ -20,3 +20,5 @@
 | Scenery   | auto-order scenery_pack.ini                                                | Done, to be tested               |
 | Scenery   | install scenery from zip                                                   | Done                             |
 | Scenery   | generate flight plan for FMS / ATC                                         |                                  |
+| Tools     | instal tool from manifest                                                  |                                  |
+| Tools     | uninstal tool                                                              |                                  |

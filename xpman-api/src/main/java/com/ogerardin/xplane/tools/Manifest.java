@@ -19,6 +19,7 @@ public class Manifest {
 
     @NonNull
     private final String name;
+    private final URL homepage;
     private final String version;
     private final String description;
     /** target platform for this tool */

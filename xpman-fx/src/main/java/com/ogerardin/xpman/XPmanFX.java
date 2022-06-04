@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -54,6 +55,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private final XPManPrefs config = configManager.getConfig();
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
+
     public ObservableObjectValue<XPlane> xPlaneProperty() {
         return xPlaneProperty;
     }
@@ -133,7 +135,11 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .filter(InstalledTool.class::isInstance)
                     .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)
-                    .toList();
+                    .collect(Collectors.toList());
+            menuItems.add(new SeparatorMenuItem());
+            MenuItem manageTools = new MenuItem("Manage Tools...");
+            manageTools.setOnAction(e -> manageTools());
+            menuItems.add(manageTools);
             toolsMenu.getItems().setAll(menuItems);
         }
     }
@@ -176,8 +182,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         XPManPrefs config = getConfig();
         if (config.getLastXPlanePath() != null) {
             Platform.runLater(() -> openXPlane(Paths.get(config.getLastXPlanePath()).toFile()));
-        }
-        else {
+        } else {
             Platform.runLater(this::open);
         }
     }
