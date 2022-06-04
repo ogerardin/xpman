@@ -99,7 +99,7 @@ public class ToolsManager extends Manager<Tool> {
 
     public void installTool(Tool tool, ProgressListener progressListener) {
         if (!(tool instanceof InstallableTool installableTool)) {
-            throw new IllegalStateException("Tool is not an InstallableTool");
+            throw new IllegalArgumentException("Tool is not an InstallableTool");
         }
         ToolUtils.install(xPlane, installableTool.getManifest().getUrl(), progressListener);
 
@@ -109,7 +109,7 @@ public class ToolsManager extends Manager<Tool> {
     @SneakyThrows
     public void uninstallTool(Tool tool, ProgressListener consoleController) {
         if (!(tool instanceof InstalledTool installedTool)) {
-            throw new IllegalStateException("Tool is not an InstalledTool");
+            throw new IllegalArgumentException("Tool is not an InstalledTool");
         }
         ToolUtils.defaultUninstaller(installedTool, consoleController);
         reload();
@@ -117,7 +117,7 @@ public class ToolsManager extends Manager<Tool> {
 
     public void launchTool(Tool tool) {
         if (!(tool instanceof InstalledTool installedTool)) {
-            throw new IllegalStateException("Tool is not an InstalledTool");
+            throw new IllegalArgumentException("Tool is not an InstalledTool");
         }
         Platforms.getCurrent().startApp(installedTool.getApp());
     }

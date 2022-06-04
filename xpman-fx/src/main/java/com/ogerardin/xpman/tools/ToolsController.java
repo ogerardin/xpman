@@ -4,6 +4,7 @@ import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Manifest;
 import com.ogerardin.xplane.tools.Tool;
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.console.ConsoleController;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -21,6 +23,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -65,20 +68,26 @@ public class ToolsController {
             detail.getChildren().clear();
             return;
         }
-        Text title = new Text(uiTool.getName() + "\n");
-        Font origFont = title.getFont();
-        Font titleFont = Font.font(origFont.getFamily(), origFont.getSize() * 2);
-        title.setFont(titleFont);
+        List<Node> nodes = new ArrayList<>();
+        {
+            Text title = new Text(uiTool.getName() + "\n");
+            Font origFont = title.getFont();
+            Font titleFont = Font.font(origFont.getFamily(), origFont.getSize() * 2);
+            title.setFont(titleFont);
+            nodes.add(title);
+        }
         Manifest manifest = uiTool.getManifest();
-        Text descr;
         if (manifest != null) {
-            descr = new Text("\n" + manifest.getDescription());
+            nodes.add(new Text("\n" + manifest.getDescription()));
+            if (manifest.getHomepage() != null) {
+                Hyperlink hyperlink = new Hyperlink("Tool homepage");
+                hyperlink.setOnAction(event -> Platforms.getCurrent().openUrl(manifest.getHomepage()) );
+                nodes.add(hyperlink);
+            }
+        } else {
+            nodes.add(new Text("No description available"));
         }
-        else {
-            descr = new Text("No description available");
-        }
-        Hyperlink hyperlink = new Hyperlink("More info");
-        detail.getChildren().setAll(title, descr, hyperlink);
+        detail.getChildren().setAll(nodes);
     }
 
     private void setItems(List<Tool> tools) {
@@ -89,6 +98,9 @@ public class ToolsController {
         // create new FilteredList with same predicate as previous one (to retain current filter)
         filteredList = new FilteredList<>(observableUiTools, filteredList.getPredicate());
         tableView.setItems(filteredList);
+        if (!filteredList.isEmpty()) {
+            tableView.getSelectionModel().select(0);
+        }
     }
 
     @FXML
