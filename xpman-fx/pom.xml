@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>5.3.17</version>
+            <version>5.3.20</version>
             <!--Excluding spring-jcl as it conflicts with commons-logging,
                 see https://github.com/spring-projects/spring-framework/issues/21146-->
             <exclusions>
