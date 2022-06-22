@@ -3,7 +3,7 @@ package com.ogerardin.xplane.util;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveRequestInitializer;
 import com.google.api.services.drive.model.File;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GoogleDriveClient {
     private static final String APPLICATION_NAME = "X-Plane Manager";
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     public static final String API_KEY = "AIzaSyB4Rez-VcN9j9DQAq3cu3PU-Ef3wyz-hq8";
 
