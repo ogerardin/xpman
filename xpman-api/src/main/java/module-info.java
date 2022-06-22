@@ -14,6 +14,10 @@ module xpman.api {
     requires pecoff4j;
     requires petitparser.core;
     requires com.google.gson;
+    requires com.google.api.client;
+    requires com.google.api.client.json.jackson2;
+    requires com.google.api.services.drive;
+    requires google.api.client;
 
     exports com.ogerardin.xplane;
     exports com.ogerardin.xplane.util.platform;
