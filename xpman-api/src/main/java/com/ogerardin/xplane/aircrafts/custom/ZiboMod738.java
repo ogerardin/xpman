@@ -102,16 +102,12 @@ public class ZiboMod738 extends Aircraft implements Versioned {
 
 
     /**
-     * This class uses the ZiboMod Google Drive https://drive.google.com/drive/folders/0B-tdl3VvPeOOYm12Wm80V04wdDQ
-     * to extract the latest version. Unfortunately something has changed lately and the access doesn't work anonymously
-     * anymore. Prefer {@link ZiboUpdaterChannel}.
+     * This class uses the ZiboMod Google Drive https://drive.google.com/drive/folders/1RHz4PQqWNGGpVG9GaHr84kuGs8LM2xyK
+     * to extract the latest version.
+     * Note: there is also a torrents versrion; https://drive.google.com/drive/folders/12ggG4G1c0h_EIDgIaQAmU9bnuUWSOLrc
      */
     static class GoogleDriveChannel implements PublicationChannel {
-        /**
-         * The Google Drive folder ID of the folder containing published updates
-         */
-        //private static final String ZIBO_FOLDER_ID = "0B-tdl3VvPeOOYm12Wm80V04wdDQ";
-        private static final String ZIBO_TORRENTS_FOLDER_ID = "12ggG4G1c0h_EIDgIaQAmU9bnuUWSOLrc";
+        /** The Google Drive folder ID of the folder containing published updates */
         private static final String ZIBO_FOLDER_ID = "1RHz4PQqWNGGpVG9GaHr84kuGs8LM2xyK";
 
         @Override
