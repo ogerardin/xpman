@@ -21,7 +21,7 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 
 ## Status
 Currently in development stages. Some things work, some don't... 
-Check [feature status](https://github.com/ogerardin/xpman/blob/master/features.md).
+Check [feature status](https://github.com/ogerardin/xpman/blob/main/features.md).
 
 USE AT YOUR OWN RISK! At this point I can't guarantee that it won't erase the whole X-Plane directory or set fire to your house.
 
