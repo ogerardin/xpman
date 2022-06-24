@@ -19,16 +19,14 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 - Work on all platforms supported by X-Plane (Windows, Mac, Linux)  
 - Offer idiomatic installation (e.g. setup.exe on Windows) and close-to-native look and feel
 
-
-## Architecture
-- Standalone JavaFX application
-
 ## Status
-Currently in development stages. Check [feature status](https://github.com/ogerardin/xpman/blob/master/features.md).
+Currently in development stages. Some things work, some don't... 
+Check [feature status](https://github.com/ogerardin/xpman/blob/master/features.md).
+
 USE AT YOUR OWN RISK! At this point I can't guarantee that it won't erase the whole X-Plane directory or set fire to your house.
 
 # Installing X-Plane Manager
-Doanload the package appropriate for your platform from [GitHub releases](https://github.com/ogerardin/xpman/releases) and install
+Download the package appropriate for your platform from [GitHub releases](https://github.com/ogerardin/xpman/releases) and install
 it.
 All packages are bundled with a JRE so you don't have to worry about installing Java.
 
@@ -38,8 +36,13 @@ To run the installer you have to click on "More info" then "Run anyway". X-Plane
 doesn't contain any malware, it's 100% open source and all the code used to build and package it
 is public and auditable.
 
+## Development
+X-Plane Manager is a Standalone JavaFX application. The "main" branch is now using Java 17. 
 
-
+It is split in 3 modules:
+- xpman-api is a pure Java API to interact with X-Plane's installation.
+- xpman-fx is the JavaFX UI built on top of xpman-api
+- xpman-fx-dist is responsible for packaging xpman-fx in distributable forms
 
 
 
