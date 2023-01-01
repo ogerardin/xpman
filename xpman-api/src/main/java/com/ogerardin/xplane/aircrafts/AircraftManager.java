@@ -72,7 +72,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         Predicate<AcfFile> isVersion11 = acf -> acf.getFileSpecVersion().matches("11(\\d\\d)");
         aircrafts = acfFiles.parallelStream()
                 .map(AcfFile::new)
-                .filter(isVersion11)
+//                .filter(isVersion11)
                 .map(this::getAircraft)
                 .toList();
 

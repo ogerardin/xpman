@@ -44,7 +44,7 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
 
     /** Whether the scenery contains an airport (file apt.dat) */
     @SuppressWarnings("unused")
-    public boolean isAirport() {
+    public boolean getHasAirport() {
         return Files.exists(getEarthNavDataFolder().resolve("apt.dat"));
     }
 
