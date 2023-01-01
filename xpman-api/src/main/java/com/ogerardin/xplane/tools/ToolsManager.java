@@ -14,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
@@ -65,11 +62,17 @@ public class ToolsManager extends Manager<Tool> {
 
         // find all installed tools (runnable files under the tools folder)
         Predicate<Path> isRunnable = p -> Platforms.getCurrent().isRunnable(p);
-        List<InstalledTool> installedTools = Files.list(toolsFolder)
-                .filter(isRunnable)
-                .map(this::getTool)
-                .toList();
-        log.debug("Found {} installed tools", installedTools.size());
+        List<InstalledTool> installedTools = new ArrayList<>();
+        try (Stream<Path> pathStream = Files.list(toolsFolder)) {
+            installedTools.addAll(pathStream
+                    .filter(isRunnable)
+                    .map(this::getTool)
+                    .toList());
+            log.debug("Found {} installed tools", installedTools.size());
+        }
+        catch (Throwable t) {
+            log.warn("Failed to load installed tools: {}", t.toString());
+        }
 
         // find available tools (=all manifests except already installed)
         List<InstallableTool> availableTools = getManifests().stream()
