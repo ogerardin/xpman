@@ -61,9 +61,9 @@
                             <PropertyValueFactory property="version" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="68.0" text="Airport?">
+                    <TableColumn editable="false" prefWidth="68.0" text="Has airport?">
                         <cellValueFactory>
-                            <PropertyValueFactory property="airport" />
+                            <PropertyValueFactory property="hasAirport" />
                         </cellValueFactory>
                         <cellFactory>
                             <BooleanCellFactory/>
@@ -77,7 +77,7 @@
                             <BooleanCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" text="Tiles" style="-fx-alignment: CENTER-RIGHT;">
+                    <TableColumn editable="false" prefWidth="70.0" text="Tile count" style="-fx-alignment: CENTER-RIGHT;">
                         <cellValueFactory>
                             <PropertyValueFactory property="tileCount" />
                         </cellValueFactory>

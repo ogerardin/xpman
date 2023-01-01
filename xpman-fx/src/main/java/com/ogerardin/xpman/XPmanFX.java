@@ -125,21 +125,17 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     private void updateTools() {
         ToolsManager toolsManager = xPlaneProperty().get().getToolsManager();
-        toolsManager.registerListener(this::updateToolsMenu);
+        toolsManager.registerListener(this::handleToolsEvent);
         toolsManager.reload();
     }
 
-    private void updateToolsMenu(ManagerEvent<Tool> event) {
+    private void handleToolsEvent(ManagerEvent<Tool> event) {
         if (event instanceof ManagerEvent.Loaded<Tool> loadedEvent) {
             List<MenuItem> menuItems = loadedEvent.getItems().stream()
                     .filter(InstalledTool.class::isInstance)
                     .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)
                     .collect(Collectors.toList());
-            menuItems.add(new SeparatorMenuItem());
-            MenuItem manageTools = new MenuItem("Manage Tools...");
-            manageTools.setOnAction(e -> manageTools());
-            menuItems.add(manageTools);
             toolsMenu.getItems().setAll(menuItems);
         }
     }

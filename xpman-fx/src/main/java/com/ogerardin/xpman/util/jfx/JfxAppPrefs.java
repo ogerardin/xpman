@@ -1,11 +1,19 @@
 package com.ogerardin.xpman.util.jfx;
 
-import javafx.geometry.Rectangle2D;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 public class JfxAppPrefs {
 
-    Rectangle2D lastPosition;
+    WindowPosition lastPosition;
 
+    @Data
+    @AllArgsConstructor
+    static class WindowPosition {
+        double x;
+        double y;
+        double width;
+        double height;
+    }
 }
