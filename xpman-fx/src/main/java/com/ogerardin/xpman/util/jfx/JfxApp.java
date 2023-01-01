@@ -3,7 +3,6 @@ package com.ogerardin.xpman.util.jfx;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
@@ -39,10 +38,10 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     protected abstract void setupStage(Stage primaryStage);
 
     protected void restoreWindowPosition(Stage stage) {
-        final Rectangle2D lastPosition = getConfig().getLastPosition();
+        final JfxAppPrefs.WindowPosition lastPosition = getConfig().getLastPosition();
         if (lastPosition != null) {
-            stage.setX(lastPosition.getMinX());
-            stage.setY(lastPosition.getMinY());
+            stage.setX(lastPosition.getX());
+            stage.setY(lastPosition.getY());
             stage.setWidth(lastPosition.getWidth());
             stage.setHeight(lastPosition.getHeight());
         }
@@ -53,7 +52,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     protected abstract void saveConfig();
 
     private void saveWindowPosition(Stage stage) {
-        final Rectangle2D position = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+        final JfxAppPrefs.WindowPosition position = new JfxAppPrefs.WindowPosition(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
         final C config = getConfig();
         config.setLastPosition(position);
         saveConfig();

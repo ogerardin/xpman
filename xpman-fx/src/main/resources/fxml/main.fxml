@@ -3,55 +3,52 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.*?>
-<VBox prefHeight="529.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.ogerardin.xpman.XPmanFX">
+<VBox prefHeight="529.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.XPmanFX">
     <MenuBar fx:id="mainMenu" VBox.vgrow="NEVER">
         <Menu mnemonicParsing="false" text="File">
-            <MenuItem mnemonicParsing="false" onAction="#open" text="Select X-Plane folder..."/>
-            <Menu fx:id="recentMenu" mnemonicParsing="false" text="Open Recent"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem onAction="#installWizard" text="Universal installer..."/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" text="Preferences..."/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" onAction="#open" text="Select X-Plane folder..." />
+            <Menu fx:id="recentMenu" mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem onAction="#installWizard" text="Universal installer..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#manageTools" text="Manage tools..."/>
+            <MenuItem mnemonicParsing="false" text="Preferences..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem id="quit" mnemonicParsing="false" onAction="#quit" text="Quit">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" code="Q" control="UP" meta="ANY" shift="UP" shortcut="UP"/>
+                    <KeyCodeCombination alt="UP" code="Q" control="UP" meta="ANY" shift="UP" shortcut="UP" />
                 </accelerator>
             </MenuItem>
         </Menu>
         <Menu fx:id="toolsMenu" mnemonicParsing="false" text="Tools">
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
-            <MenuItem mnemonicParsing="false" onAction="#help" text="? Help"/>
-            <MenuItem mnemonicParsing="false" onAction="#github" text="XPman on github"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" onAction="#newIssue" text="Submit issue…"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" onAction="#about" text="About XPman"/>
+            <MenuItem mnemonicParsing="false" onAction="#help" text="? Help" />
+            <MenuItem mnemonicParsing="false" onAction="#github" text="XPman on github" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#newIssue" text="Submit issue…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#about" text="About XPman" />
         </Menu>
     </MenuBar>
     <AnchorPane VBox.vgrow="ALWAYS">
-        <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <center>
-                <TabPane prefHeight="371.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE"
-                         BorderPane.alignment="CENTER">
+                <TabPane prefHeight="371.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <Tab text="X-Plane">
-                        <fx:include source="xplane.fxml"/>
+                        <fx:include source="xplane.fxml" />
                     </Tab>
                     <Tab text="Aircrafts">
-                        <fx:include source="aircrafts.fxml"/>
+                        <fx:include source="aircrafts.fxml" />
                     </Tab>
                     <Tab text="Scenery">
-                        <fx:include source="scenery.fxml"/>
+                        <fx:include source="scenery.fxml" />
                     </Tab>
                     <Tab text="Nav data">
-                        <fx:include source="navdata.fxml"/>
+                        <fx:include source="navdata.fxml" />
                     </Tab>
                     <Tab text="Plugins">
-                        <fx:include source="plugins.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                        <fx:include source="plugins.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                     </Tab>
                 </TabPane>
             </center>
