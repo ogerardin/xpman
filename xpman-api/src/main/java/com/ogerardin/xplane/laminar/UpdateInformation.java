@@ -1,32 +1,38 @@
 package com.ogerardin.xplane.laminar;
 
+import com.ogerardin.xplane.IllegalOperation;
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.file.ServersFile;
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
+import lombok.*;
 
+import java.io.InputStream;
 import java.net.URL;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
-@UtilityClass
+@Data
 public class UpdateInformation {
 
-    private static final String SERVERS_URL = "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt";
+    @NonNull
+    private final XPlaneMajorVersion majorVersion;
 
     @Getter(lazy = true, value = AccessLevel.PRIVATE)
     private final ServersFileData data = loadData();
 
     @SneakyThrows
     private ServersFileData loadData() {
-        final URL url = new URL(SERVERS_URL);
-        final byte[] bytes = url.openStream().readAllBytes();
-        String contents = new String(bytes, US_ASCII);
+        if (majorVersion.getServerListUrl() == null) {
+            throw new IllegalOperation("Server list URL unknown for version " + majorVersion.name());
+        }
+        final URL url = new URL(majorVersion.getServerListUrl());
+        try (InputStream inputStream = url.openStream()) {
+            final byte[] bytes = inputStream.readAllBytes();
+            String contents = new String(bytes, US_ASCII);
+            ServersFile serversFile = new ServersFile();
+            return serversFile.parse(contents);
+        }
 
-        ServersFile serversFile = new ServersFile();
-        return serversFile.parse(contents);
     }
 
     public String getLatestBeta() {
