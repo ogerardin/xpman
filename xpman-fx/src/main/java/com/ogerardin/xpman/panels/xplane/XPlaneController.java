@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -9,6 +10,7 @@ import com.ogerardin.xpman.panels.xplane.breakdown.Segment;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentInfoNode;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentType;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentView;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -60,21 +62,31 @@ public class XPlaneController {
 
     private void checkUpdates(XPlane xPlane) {
         final String currentVersion = xPlane.getVersion();
-        if (currentVersion != null) {
-            String latestFinal = UpdateInformation.getLatestFinal();
-            boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
+        if (currentVersion == null) {
+            return;
+        }
+        XPlaneMajorVersion majorVersion = XPlaneMajorVersion.of(currentVersion);
+        if (majorVersion == XPlaneMajorVersion.OTHER) {
+            return;
+        }
+        UpdateInformation updateInformation = new UpdateInformation(majorVersion);
+
+        String latestFinal = updateInformation.getLatestFinal();
+        boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
+        String latestBeta = updateInformation.getLatestBeta();
+        boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
+
+        Platform.runLater(() -> {
             if (hasReleaseUpdate) {
                 releaseUpdate.setText("Release version " + latestFinal + " is available. Run the X-Plane Installer to update.");
             }
             releaseUpdate.setVisible(hasReleaseUpdate);
 
-            String latestBeta = UpdateInformation.getLatestBeta();
-            boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
             if (hasBetaUpdate) {
                 betaUpdate.setText("Beta version " + latestBeta + " is available. Run the X-Plane Installer to update.");
             }
             betaUpdate.setVisible(hasBetaUpdate);
-        }
+        });
     }
 
     private void updateDisplay(XPlane xPlane) {
