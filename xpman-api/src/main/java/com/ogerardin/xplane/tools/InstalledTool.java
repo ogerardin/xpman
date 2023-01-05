@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * A locally installed tool. It may be associated to a {@link Manifest} or not.
+ * A locally installed tool. It may be associated to a {@link Manifest} or not (if it was installed manually).
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)
