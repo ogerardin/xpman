@@ -29,6 +29,9 @@ public class XPlane {
     private final String version = getVariant().getVersion(baseFolder);
 
     @Getter(lazy = true)
+    private final XPlaneMajorVersion majorVersion = XPlaneMajorVersion.of(getVersion());
+
+    @Getter(lazy = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final AircraftManager aircraftManager = new AircraftManager(this);

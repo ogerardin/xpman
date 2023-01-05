@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -65,11 +64,7 @@ public class XPlaneController {
         if (currentVersion == null) {
             return;
         }
-        XPlaneMajorVersion majorVersion = XPlaneMajorVersion.of(currentVersion);
-        if (majorVersion == XPlaneMajorVersion.OTHER) {
-            return;
-        }
-        UpdateInformation updateInformation = new UpdateInformation(majorVersion);
+        UpdateInformation updateInformation = new UpdateInformation(xPlane.getMajorVersion());
 
         String latestFinal = updateInformation.getLatestFinal();
         boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
