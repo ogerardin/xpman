@@ -2,6 +2,7 @@ package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.laminar.UpdateInformation;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
@@ -20,8 +21,6 @@ import org.controlsfx.control.SegmentedBar;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Controller for the first tab pane, which contains a summary of X-Plane installation.
@@ -49,8 +48,7 @@ public class XPlaneController {
         mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> {
             this.xPlane = xPlane;
             updateDisplay(xPlane);
-            final ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(() -> checkUpdates(xPlane));
+            AsyncHelper.runAsync(() -> checkUpdates(xPlane));
         });
     }
 
@@ -106,7 +104,7 @@ public class XPlaneController {
                 .<Runnable>map(segment -> () -> segment.computingProperty().setValue(true))
                 .forEach(javafx.application.Platform::runLater);
 
-        Executors.newSingleThreadExecutor().submit(() -> computeSegments(xPlane));
+        AsyncHelper.runAsync(() -> computeSegments(xPlane));
     }
 
     @SneakyThrows

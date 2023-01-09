@@ -1,6 +1,7 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.test;
 
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
+import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.AfterEach;

@@ -37,4 +37,6 @@ module xpman.fx {
     exports com.ogerardin.xpman.tools;
     exports com.ogerardin.xpman.util.jfx.console;
     exports com.ogerardin.xpman;
+    exports com.ogerardin.xpman.util;
+    exports com.ogerardin.xpman.util.jfx;
 }

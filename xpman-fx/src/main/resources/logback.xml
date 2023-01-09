@@ -18,10 +18,12 @@
     </appender>
 
 <!--    <logger name="com.ogerardin.xplane.scenery" level="DEBUG" />-->
+<!--    <logger name="com.ogerardin.xplane.tools" level="DEBUG" />-->
+<!--    <logger name="com.ogerardin.xpman.tools" level="DEBUG" />-->
 
 <!--    <logger name="com.ogerardin.xpman.util.SpelUtil" level="DEBUG" />-->
 
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="CONSOLE" />
 <!--        <appender-ref ref="FILE" />-->
     </root>

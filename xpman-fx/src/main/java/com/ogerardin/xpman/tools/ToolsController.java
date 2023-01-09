@@ -4,6 +4,7 @@ import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Manifest;
 import com.ogerardin.xplane.tools.Tool;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.util.jfx.console.ConsoleController;
@@ -25,7 +26,6 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class ToolsController {
 
@@ -120,17 +120,13 @@ public class ToolsController {
     @SneakyThrows
     public void installTool(Tool tool) {
         ConsoleController consoleController = displayConsole("Installing " + tool.getName());
-        Executors.newSingleThreadExecutor().submit(() -> {
-            xPlane.getToolsManager().installTool(tool, consoleController);
-        });
+        AsyncHelper.runAsync(() -> xPlane.getToolsManager().installTool(tool, consoleController));
     }
 
     @SneakyThrows
     public void uninstallTool(Tool tool) {
         ConsoleController consoleController = displayConsole("Uninstalling " + tool.getName());
-        Executors.newSingleThreadExecutor().submit(() -> {
-            xPlane.getToolsManager().uninstallTool(tool, consoleController);
-        });
+        AsyncHelper.runAsync(() -> xPlane.getToolsManager().uninstallTool(tool, consoleController));
     }
 
     public void runTool(Tool tool) {

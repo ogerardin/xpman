@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.aircrafts.details;
 
 import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xpman.util.jfx.panels.TreeTableViewLoadTask;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
@@ -9,7 +10,6 @@ import javafx.scene.control.TreeTableView;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 public class AcfTreeController {
     @FXML
@@ -21,7 +21,7 @@ public class AcfTreeController {
                 () -> new UiProperty(getPropertyTree(aircraft)),
                 uiProperty -> treeItem(uiProperty.getItem())
         );
-        Executors.newSingleThreadExecutor().submit(loadTask);
+        AsyncHelper.runAsync(loadTask);
     }
 
     /**
