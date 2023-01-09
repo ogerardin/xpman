@@ -3,6 +3,7 @@ package com.ogerardin.xplane.plugins;
 import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
@@ -13,7 +14,6 @@ import com.ogerardin.xplane.util.platform.WindowsPlatform;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Slf4j
 public class PluginManager extends Manager<Plugin> {
@@ -58,13 +56,12 @@ public class PluginManager extends Manager<Plugin> {
      * Trigger an asynchronous reload of the aircraft list.
      */
     public void reload() {
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(this::loadPlugins);
+        AsyncHelper.runAsync(this::loadPlugins);
     }
 
 
     @SneakyThrows
-    @Synchronized
+//    @Synchronized
     private void loadPlugins()  {
 
         log.info("Loading plugins...");

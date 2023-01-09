@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +22,7 @@ public class IntrospectionHelper {
     /**
      * Returns all subclasses of the specified base class
      */
+    @Synchronized
     public List<Class<?>> findAllSubclasses(Class<?> baseClass) {
         final List<Class<?>> cachedResult = classToSubclasses.get(baseClass);
         if (cachedResult != null) {
@@ -42,11 +44,19 @@ public class IntrospectionHelper {
     }
 
     /**
-     * Returns an new instance of {@link C} matching the specified constructor parameters.
-     * Each known subclass of C is examined in sequence:
-     * - if the class exposes a constructor compatible with the specified params, it is invoked with the specified params.
-     * - if the constructor succeeds, the resulting instance is returned.
-     * If all subclasses of C have been examined and none succeeded, an instance of baseClass is returned.
+     * Returns a new {@link C} constructed by invoking a constructor on a subclass of C, with fallback to C itself.
+     * For each known subclass X of C, an attempt is made to construct an instance of X by invoking a constructor
+     * that accepts the specified params; if it succeeds then this instance is returned.
+     * If all subclasses of C have been examined and no constructor succeeded, an attempt is made to construct an instance
+     * of C similarly by invoking a constructor that accepts the specified arguments.
+     * <br>
+     * This is useful for example to obtain an instance of a specialized subclass of Aircraft.
+     * The idea is that constructors of an Aircraft subclass will fail if the class does not match the actual aircraft
+     * file, thus prompting this method to return a default Aircraft instance. On the contrary
+     * if a subclass (such as {@link com.ogerardin.xplane.aircrafts.custom.ZiboMod738}) recognizes an aircraft file, its constructor
+     * will succeed prompting this method to return the specialized instance.
+     * The method {@link #require} may be used in the constructor to throw a {@link InstantiationException} if a
+     * condition is not met.
      */
     public <C> C getBestSubclassInstance(Class<C> baseClass, Object... constructorParams) throws InstantiationException {
 
@@ -56,6 +66,7 @@ public class IntrospectionHelper {
         for (Class<?> candidateClass : candidateClasses) {
             try {
                 C instance = newInstance(candidateClass, constructorParams);
+                // constructor of a subclass succeeded, return the result
                 log.debug("Matched {}({})", candidateClass.getSimpleName(), constructorParams);
                 return instance;
             } catch (Exception ignored) {
@@ -73,7 +84,7 @@ public class IntrospectionHelper {
         for (Constructor<?> constructor : baseClass.getDeclaredConstructors()) {
             try {
                 return (C) constructor.newInstance(constructorParams);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 // constructor failed: just ignore
             }
         }

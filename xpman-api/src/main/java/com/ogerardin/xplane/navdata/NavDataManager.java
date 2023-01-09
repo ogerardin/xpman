@@ -6,13 +6,12 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.util.AsyncHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,8 +32,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     public void reload() {
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(this::loadNavDataSets);
+        AsyncHelper.runAsync(this::loadNavDataSets);
     }
 
 
