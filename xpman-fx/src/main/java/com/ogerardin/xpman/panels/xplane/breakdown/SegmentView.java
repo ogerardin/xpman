@@ -9,9 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
+import java.util.Objects;
+
 public class SegmentView extends StackPane {
 
-    private final ImageView DOTS = new ImageView(new Image(SegmentView.class.getResource("/img/dots.gif").toExternalForm()));
+    private final ImageView DOTS = new ImageView(new Image(Objects.requireNonNull(SegmentView.class.getResource("/img/dots.gif")).toExternalForm()));
 
     public SegmentView(Segment segment) {
         Label label = new Label();
