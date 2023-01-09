@@ -29,4 +29,5 @@ public abstract class Manager<T extends InspectionsProvider<T>> implements Inspe
         return inspectionMessages;
     }
 
+    public abstract void reload();
 }
