@@ -8,7 +8,6 @@ import com.ogerardin.xplane.tools.ToolsManager;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,14 +82,10 @@ public class XPlane {
      */
     @SneakyThrows
     private static Path computeDefaultXPRootFolder() {
-        // if we have a "X-Plane 11" resource directory, use it
-        URL xp11rsc = XPlane.class.getResource("/X-Plane 11/");
-        if (xp11rsc != null) {
-            return Paths.get(xp11rsc.toURI());
-        }
-        // otherwise try a few common places
         Path userHome = Paths.get(System.getProperty("user.home"));
         Path xplaneRoot = Stream.of(
+                userHome.resolve("Applications").resolve("X-Plane 12"),
+                userHome.resolve("Desktop").resolve("X-Plane 12"),
                 userHome.resolve("Applications").resolve("X-Plane 11"),
                 userHome.resolve("Desktop").resolve("X-Plane 11")
         )
