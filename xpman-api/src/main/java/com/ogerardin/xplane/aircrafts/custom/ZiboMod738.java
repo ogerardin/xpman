@@ -131,7 +131,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
                     .filter(Matcher::matches)
                     .findAny()
                     .map(matcher -> matcher.group(1));
-            if (! maybeVersion.isPresent()) {
+            if (maybeVersion.isEmpty()) {
                 log.warn("Failed to determine ZIBO version from Google Drive");
                 return null;
             }
