@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.ogerardin.xpman.util.jfx.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.observable.test.TestObservableController">
+      <TableView fx:id="aircraftsTable" prefHeight="444.0" prefWidth="864.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+          <columns>
+              <TableColumn editable="false" prefWidth="174.0" sortable="false" text="Thumbnail">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="thumb" />
+                  </cellValueFactory>
+                  <cellFactory>
+                      <PathImageCell.TableCellFactory />
+                  </cellFactory>
+              </TableColumn>
+              <TableColumn editable="false" prefWidth="200.0" text="Name">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="name" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn editable="false" prefWidth="200.0" text="Studio/Author">
+                  <cellValueFactory>
+                      <SpelValueFactory expression="(studio?:'-') + '&#10;' + (author?:'-')" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn editable="false" prefWidth="150.0" text="Manufacturer">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="manufacturer" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn editable="false" prefWidth="105.0" text="Category">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="category" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="105.0" text="Version">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="version" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="105.0" text="Latest Version">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="latestVersion" />
+                  </cellValueFactory>
+              </TableColumn>
+              <!--
+                                  <TableColumn prefWidth="105.0" text="Notes">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="notes" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                                        <TableColumn prefWidth="105.0" text="Description">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="description" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                                        <TableColumn prefWidth="105.0" text="Callsign">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="callsign" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                                        <TableColumn prefWidth="105.0" text="ICAO code">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="icaoCode" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                                        <TableColumn prefWidth="105.0" text="Tail number">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="tailNumber" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                    -->
+
+          </columns>
+      </TableView>
+</AnchorPane>
