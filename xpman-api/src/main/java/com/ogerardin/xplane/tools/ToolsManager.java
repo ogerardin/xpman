@@ -4,19 +4,17 @@ import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -49,12 +47,11 @@ public class ToolsManager extends Manager<Tool> {
      * Trigger an asynchronous reload of the list.
      */
     public void reload() {
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(this::loadTools);
+        AsyncHelper.runAsync(this::loadTools);
     }
 
     @SneakyThrows
-    @Synchronized
+//    @Synchronized
     private void loadTools() {
 
         log.info("Loading tools...");

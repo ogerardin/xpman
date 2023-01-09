@@ -8,11 +8,11 @@ import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,12 +62,11 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
      * Trigger an asynchronous reload of the scenary package list.
      */
     public void reload() {
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(this::loadPackages);
+        AsyncHelper.runAsync(this::loadPackages);
     }
 
     @SneakyThrows
-    @Synchronized
+//    @Synchronized
     public void loadPackages() {
 
         log.info("Loading scenery packages...");

@@ -7,20 +7,20 @@ import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 @Slf4j
@@ -51,14 +51,15 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     /**
      * Trigger an asynchronous reload of the aircraft list.
      */
+    @Override
     public void reload() {
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(this::loadAircrafts);
+        AsyncHelper.runAsync(this::loadAircrafts);
     }
 
     @SneakyThrows
-    @Synchronized
+//    @Synchronized
     private void loadAircrafts() {
+        Instant t0 = Instant.now();
 
         log.info("Loading aircrafts...");
         fireEvent(new ManagerEvent.Loading<>());
@@ -76,7 +77,10 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
                 .map(this::getAircraft)
                 .toList();
 
-        log.info("Loaded {} aircrafts", aircrafts.size());
+        Instant t1 = Instant.now();
+        long duration = Duration.between(t0, t1).toMillis();
+
+        log.info("Loaded {} aircrafts in {} ms", aircrafts.size(), duration);
         fireEvent(new ManagerEvent.Loaded<>(aircrafts));
     }
 
