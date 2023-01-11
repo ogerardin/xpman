@@ -6,6 +6,10 @@ import lombok.Singular;
 
 import java.util.List;
 
+/**
+ * A message produced as the result of running an {@link Inspection}.
+ * Includes a {@link Severity}, a text message, and possibly a list of {@link Fix}es.
+ */
 @Data
 @Builder
 public class InspectionMessage {

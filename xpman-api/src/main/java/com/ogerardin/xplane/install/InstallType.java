@@ -13,6 +13,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a type of installation that can be performed with an {@link InstallableArchive}.
+ */
 public enum InstallType {
     AIRCRAFT {
         @Override
@@ -99,7 +102,15 @@ public enum InstallType {
         return Inspections.empty();
     }
 
-    abstract InstallTarget target(@NonNull XPlane xPlane);
-
+    /**
+     * Returns true if the specified Path, when found in an {@link InstallableArchive}, identifies the archive
+     * as an installer for this type
+     */
     abstract boolean isMarker(Path path);
+
+    /**
+     * Returns the {@link InstallTarget} for this type, e.g. for an aircraft the target will be the
+     * {@link com.ogerardin.xplane.aircrafts.AircraftManager}.
+     */
+    abstract InstallTarget target(@NonNull XPlane xPlane);
 }
