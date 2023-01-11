@@ -30,7 +30,7 @@ public class Inspections<T> implements Inspection<T> {
         return new Inspections<>();
     }
 
-        @SafeVarargs
+    @SafeVarargs
     public final Inspections<T> append(Inspection<T>... inspections) {
         this.inspections.addAll(Arrays.asList(inspections));
         return this;

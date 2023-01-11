@@ -23,11 +23,13 @@ public class CheckIsInstallable implements Inspection<InstallableArchive> {
         Set<InstallType> candidateTypes = InstallType.candidateTypes(zip);
 
         if (candidateTypes.isEmpty()) {
-            return Collections.singletonList(InspectionMessage.builder()
-                    .severity(Severity.ERROR).message("Archive type could not be identified. " +
-                            "Either file is not an installable X-Plane add-on, or it is corrupt.")
-                    .abort(true)
-                    .build()
+            return Collections.singletonList(
+                    InspectionMessage.builder()
+                            .severity(Severity.ERROR)
+                            .message("Archive type could not be identified. " +
+                                    "Either file is not an installable X-Plane add-on, or it is corrupt.")
+                            .abort(true)
+                            .build()
             );
         }
 
@@ -56,8 +58,7 @@ public class CheckIsInstallable implements Inspection<InstallableArchive> {
                             .abort(true)
                             .build()
             );
-        }
-        else {
+        } else {
             // perform InstallType-specific additional inspections
             messages.addAll(actualInstallType.additionalInspections().inspect(zip));
         }

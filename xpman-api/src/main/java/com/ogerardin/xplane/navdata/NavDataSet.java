@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneEntity;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.List;
  * A nav data folder containing a set of {@link NavDataFile}s
  */
 @Data
-public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, NavDataItem {
+public abstract class NavDataSet extends XPlaneEntity implements InspectionsProvider<NavDataSet>, NavDataItem {
 
     private final String name;
 

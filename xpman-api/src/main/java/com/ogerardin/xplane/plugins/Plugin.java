@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneEntity;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class Plugin implements InspectionsProvider<Plugin> {
+public class Plugin extends XPlaneEntity implements InspectionsProvider<Plugin> {
 
     private final XPlane xPlane;
 
