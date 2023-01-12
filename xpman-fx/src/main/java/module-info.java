@@ -39,4 +39,5 @@ module xpman.fx {
     exports com.ogerardin.xpman;
     exports com.ogerardin.xpman.util;
     exports com.ogerardin.xpman.util.jfx;
+    exports com.ogerardin.xpman.panels;
 }

@@ -1,47 +1,42 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.events.EventListener;
 import com.ogerardin.xplane.plugins.Plugin;
-import com.ogerardin.xplane.plugins.PluginManager;
+import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
-import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 
 public class PluginsController {
 
-    private final ObservableObjectValue<XPlane> xPlaneProperty;
-
-    private EventListener<ManagerEvent<Plugin>> eventListener;
+    private final XPlaneProperty xPlaneProperty;
 
     @FXML
     private TableView<UiPlugin> pluginTable;
 
+    private ManagerItemsObservableList<Plugin, UiPlugin> uiItems;
+
     public PluginsController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
-        xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
 
     @FXML
     public void initialize() {
-        pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+        uiItems = new ManagerItemsObservableList<>(
+                this.xPlaneProperty,
+                XPlane::getPluginManager,
+                UiPlugin::new
+        );
+        pluginTable.setItems(uiItems);
 
-        eventListener = new TableViewManagerEventListener<>(pluginTable, UiPlugin::new);
+        // add context menu
+        pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
     }
 
     public void reload() {
-        final XPlane xPlane = xPlaneProperty.get();
-        if (xPlane == null) {
-            pluginTable.setItems(null);
-        } else {
-            PluginManager pluginManager = xPlane.getPluginManager();
-            pluginManager.registerListener(eventListener);
-            pluginManager.reload();
-        }
+        uiItems.reload();
     }
 
 

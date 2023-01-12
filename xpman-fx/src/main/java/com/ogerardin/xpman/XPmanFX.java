@@ -12,7 +12,6 @@ import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -56,7 +55,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
 
-    public ObservableObjectValue<XPlane> xPlaneProperty() {
+    public XPlaneProperty xPlaneProperty() {
         return xPlaneProperty;
     }
 
