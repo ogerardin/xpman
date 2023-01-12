@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public abstract class Manager<T extends XPlaneEntity> implements Inspection<T>, EventSource<ManagerEvent<T>> {
+public abstract class Manager<T> implements Inspection<T>, EventSource<ManagerEvent<T>> {
 
     protected final XPlane xPlane;
 
