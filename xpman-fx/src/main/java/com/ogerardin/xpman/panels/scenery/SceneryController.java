@@ -1,24 +1,22 @@
 package com.ogerardin.xpman.panels.scenery;
 
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.events.EventListener;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.install.InstallType;
-import com.ogerardin.xplane.scenery.SceneryManager;
 import com.ogerardin.xplane.scenery.SceneryPackage;
+import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.diag.DiagController;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.panels.scenery.wizard.OrganizeWizard;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
-import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableObjectValue;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -35,10 +33,8 @@ import java.util.List;
 
 public class SceneryController {
 
-    private final ObservableObjectValue<XPlane> xPlaneProperty;
+    private final XPlaneProperty xPlaneProperty;
     private final SceneryOrganizer sceneryOrganizer;
-
-    private EventListener<ManagerEvent<SceneryPackage>> eventListener;
 
     @FXML
     private ToolBar toolbar;
@@ -49,10 +45,10 @@ public class SceneryController {
     @FXML
     private TableColumn<UiScenery, Integer> rankColumn;
 
+    private ManagerItemsObservableList<SceneryPackage, UiScenery> uiItems;
+
     public SceneryController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
-        xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
-
         sceneryOrganizer = loadSceneryOrganizer(mainController.getConfigManager().getConfig());
     }
 
@@ -61,29 +57,30 @@ public class SceneryController {
         // add context menu to table rows
         sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
 
-        // sort nulls last for "rank" column (rank is null if scenery is disabled)
+        // sort bt rank with nulls last (rank is null if scenery is disabled)
+        rankColumn.setSortType(TableColumn.SortType.ASCENDING);
         rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
+        sceneryTable.getSortOrder().setAll(Collections.singletonList(rankColumn));
 
         // set tooltip for "rank" column
         TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn, "The rank of this scenery in scenery_pack.ini");
 
-        // when items are assigned to the table, make sure the table is initially sorted by rank
-        sceneryTable.itemsProperty().addListener((observable, oldValue, newValue) -> {
-            rankColumn.setSortType(TableColumn.SortType.ASCENDING);
-            sceneryTable.getSortOrder().setAll(Collections.singletonList(rankColumn));
-            sceneryTable.sort();
-        });
+        // disable the toolbar if we don't have a current X-Plane instance
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
 
-        eventListener = new TableViewManagerEventListener<>(
-                sceneryTable,
+        uiItems = new ManagerItemsObservableList<>(
+                this.xPlaneProperty,
+                XPlane::getSceneryManager,
                 (SceneryPackage sceneryPackage) -> new UiScenery(
                         sceneryPackage,
                         xPlaneProperty.get(),
                         sceneryOrganizer.sceneryClass(sceneryPackage))
         );
 
-        // disable the toolbar if we don't have a current X-Plane instance
-        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
+        // wrap items in SortedList to allow sorting through the UI (clicking on column header)
+        SortedList<UiScenery> sortedUiItems = new SortedList<>(uiItems);
+        sortedUiItems.comparatorProperty().bind(sceneryTable.comparatorProperty());
+        sceneryTable.setItems(sortedUiItems);
     }
 
     private SceneryOrganizer loadSceneryOrganizer(XPManPrefs config) {
@@ -97,14 +94,7 @@ public class SceneryController {
     }
 
     public void reload() {
-        final XPlane xPlane = xPlaneProperty.get();
-        if (xPlane == null) {
-            sceneryTable.setItems(null);
-        } else {
-            SceneryManager sceneryManager = xPlane.getSceneryManager();
-            sceneryManager.registerListener(eventListener);
-            sceneryManager.reload();
-        }
+        uiItems.reload();
     }
 
     public void installScenery() {

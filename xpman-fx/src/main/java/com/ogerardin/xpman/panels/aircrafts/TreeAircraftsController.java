@@ -1,18 +1,16 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
-import com.ogerardin.xplane.aircrafts.AircraftManager;
 import com.ogerardin.xplane.aircrafts.Livery;
-import com.ogerardin.xplane.events.EventListener;
 import com.ogerardin.xplane.install.InstallType;
+import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
-import com.ogerardin.xpman.util.jfx.panels.TreeTableViewManagerEventListener;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableObjectValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -22,16 +20,17 @@ import javafx.scene.control.TreeTableView;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.function.Function;
 
-/** EXPERIMENTAL */
+/**
+ * EXPERIMENTAL
+ */
 @Slf4j
 public class TreeAircraftsController {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
-    private final ObservableObjectValue<XPlane> xPlaneProperty;
-
-    private EventListener<ManagerEvent<Aircraft>> eventListener;
+    private final XPlaneProperty xPlaneProperty;
 
     @FXML
     private ToolBar toolbar;
@@ -39,35 +38,42 @@ public class TreeAircraftsController {
     @FXML
     private TreeTableView<UiAircraft> aircraftsTreeTable;
 
+    private ManagerItemsObservableList<Aircraft, Aircraft> items;
+
     public TreeAircraftsController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
-        xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
 
     @FXML
     public void initialize() {
         aircraftsTreeTable.placeholderProperty().setValue(PLACEHOLDER);
+
         aircraftsTreeTable.setRowFactory(new IntrospectingContextMenuTreeTableRowFactory<>(this));
 
-        eventListener = new TreeTableViewManagerEventListener<>(aircraftsTreeTable,
-                aircrafts -> treeItem(aircrafts, xPlaneProperty.get()));
+        // we can't set the ManagerItemsObservableList directly as a model of the tree, so we just
+        // create it, and we will listen to changes to build the tree model
+        items = new ManagerItemsObservableList<>(
+                this.xPlaneProperty,
+                XPlane::getAircraftManager,
+                Function.identity()
+        );
+        items.addListener((ListChangeListener<Aircraft>) change -> {
+                    List<? extends Aircraft> aircrafts = change.getList();
+                    TreeItem<UiAircraft> root = treeItem(aircrafts, xPlaneProperty.get());
+                    root.setExpanded(true);
+                    aircraftsTreeTable.setRoot(root);
+                }
+        );
 
         // disable toolbar whenever xPlaneProperty is null
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
     }
 
     public void reload() {
-        final XPlane xPlane = xPlaneProperty.get();
-        if (xPlane == null) {
-            aircraftsTreeTable.setRoot(null);
-        } else {
-            AircraftManager aircraftManager = xPlane.getAircraftManager();
-            aircraftManager.registerListener(eventListener);
-            aircraftManager.reload();
-        }
+        items.reload();
     }
 
-    private TreeItem<UiAircraft> treeItem(List<Aircraft> aircrafts, XPlane xPlane) {
+    private TreeItem<UiAircraft> treeItem(List<? extends Aircraft> aircrafts, XPlane xPlane) {
         TreeItem<UiAircraft> treeItem = new TreeItem<>();
         List<TreeItem<UiAircraft>> children = aircrafts.stream()
                 .map(aircraft -> treeItem(aircraft, xPlane))
@@ -88,7 +94,7 @@ public class TreeAircraftsController {
 
             @Override
             public ObservableList<TreeItem<UiAircraft>> getChildren() {
-                if (! loaded) {
+                if (!loaded) {
                     loaded = true;
                     List<TreeItem<UiAircraft>> liveries = aircraft.getLiveries().stream()
                             .map(livery -> treeItem(xPlane, aircraft, livery))

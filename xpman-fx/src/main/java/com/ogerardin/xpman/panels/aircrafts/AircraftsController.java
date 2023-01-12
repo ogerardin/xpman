@@ -1,31 +1,28 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
-import com.ogerardin.xplane.aircrafts.AircraftManager;
-import com.ogerardin.xplane.events.EventListener;
 import com.ogerardin.xplane.install.InstallType;
+import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.panels.Controller;
+import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
-import com.ogerardin.xpman.util.jfx.panels.TableViewManagerEventListener;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AircraftsController {
+public class AircraftsController extends Controller {
 
     private static final Label PLACEHOLDER = new Label("No aircrafts to show");
 
-    private final ObservableObjectValue<XPlane> xPlaneProperty;
-
-    private EventListener<ManagerEvent<Aircraft>> eventListener;
+    private final XPlaneProperty xPlaneProperty;
 
     @FXML
     private ToolBar toolbar;
@@ -33,39 +30,43 @@ public class AircraftsController {
     @FXML
     private TableView<UiAircraft> aircraftsTable;
 
+    private ManagerItemsObservableList<Aircraft, UiAircraft> uiItems;
+
     public AircraftsController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
-        xPlaneProperty.addListener((observable, oldValue, newValue) -> reload());
     }
 
     @FXML
     public void initialize() {
-        aircraftsTable.placeholderProperty().setValue(PLACEHOLDER);
-        aircraftsTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+        uiItems = new ManagerItemsObservableList<>(
+                this.xPlaneProperty,
+                XPlane::getAircraftManager,
+                aircraft -> new UiAircraft(aircraft, xPlaneProperty.get())
+        );
+        aircraftsTable.setItems(uiItems);
 
-        eventListener = new TableViewManagerEventListener<>(aircraftsTable,
-                aircraft -> new UiAircraft(aircraft, xPlaneProperty.get()));
+        // add context menu
+        aircraftsTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
 
         // disable toolbar whenever xPlaneProperty is null
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
-    }
 
-    public void reload() {
-        final XPlane xPlane = xPlaneProperty.get();
-        if (xPlane == null) {
-            aircraftsTable.setItems(null);
-        } else {
-            AircraftManager aircraftManager = xPlane.getAircraftManager();
-            aircraftManager.registerListener(eventListener);
-            aircraftManager.reload();
-        }
+        // show "loading" animation when aircraft list is loading
+        aircraftsTable.placeholderProperty().bind(
+                Bindings.when(uiItems.getLoadingProperty())
+                        .then((Node) LOADING)
+                        .otherwise(PLACEHOLDER)
+        );
     }
 
     public void install() {
         XPlane xPlane = xPlaneProperty.get();
         InstallWizard wizard = new InstallWizard(xPlane, InstallType.AIRCRAFT);
         wizard.showAndWait();
-        reload();
+        uiItems.reload();
     }
 
+    public void reload() {
+        uiItems.reload();
+    }
 }
