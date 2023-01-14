@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Data
@@ -45,13 +44,7 @@ public class InstallableZip implements InstallableArchive {
     @Override
     public void installTo(Path targetFolder, ProgressListener progressListener) throws IOException {
         log.info("Installing {} to {}", getZipFile(), targetFolder);
-        int size = entryCount();
-        AtomicInteger counter = new AtomicInteger();
-        ZipUtils.unzip(this.zipFile, targetFolder, filename -> {
-            int count = counter.incrementAndGet();
-//            log.debug("Progress: {} / {}= {}", count, size, (double) count / size);
-            progressListener.progress((double) count / size, filename);
-        });
+        ZipUtils.unzip(this.zipFile, targetFolder, progressListener);
     }
 
     @Override

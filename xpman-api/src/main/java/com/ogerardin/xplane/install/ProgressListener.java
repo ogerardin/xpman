@@ -11,7 +11,7 @@ package com.ogerardin.xplane.install;
 public interface ProgressListener {
     /**
      * Signal a change in the progress.
-     * @param percent the new progress value. Numbers between 0.0 and 1.0 are interpreted as a percentage.
+     * @param percent the new progress value. Numbers between 0.0 and 1.0 (included) are interpreted as a percentage.
      *                Negative values are interpreted as "indeterminate progress" and should cause any visual
      *                representation to change to a "spinning wheel" or similar.
      *                A null value means "no change in progress".

@@ -1,7 +1,9 @@
 package com.ogerardin.xplane.tools;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.install.InstallableZip;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.install.SubProgressListener;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
 import com.ogerardin.xplane.util.platform.MacPlatform;
@@ -10,7 +12,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,8 +106,37 @@ public class ToolUtils {
 
     }
 
+    @SneakyThrows
     public static void installFromZip(XPlane xPlane, URL url, ProgressListener progressListener) {
-        throw new NotImplementedException("Installation from ZIP not supported yet");
+        Path tempFile = null;
+        Exception exception = null;
+        try {
+            progressListener.progress(0.0, "Downloading...");
+            tempFile = Files.createTempFile(ToolUtils.class.getSimpleName(), ".zip");
+            progressListener.output("Downloading " + url + " to " + tempFile);
+            FileUtils.copyURLToFile(url, tempFile.toFile());
+
+            // TODO handle cases where the ZIP doesn't contain a single executable
+            progressListener.progress(0.50, "Extracting zip");
+            progressListener.output("Extracting " + tempFile);
+            InstallableZip installableZip = new InstallableZip(tempFile);
+            SubProgressListener subProgressListener = new SubProgressListener(progressListener, .51, 1.00);
+            installableZip.installTo(xPlane.getPaths().tools(), subProgressListener);
+
+        }
+        catch (Exception e) {
+            exception = e;
+            progressListener.output("Caught exception: " + e);
+        }
+        finally {
+            if (tempFile != null) {
+                progressListener.output("Deleting " + tempFile);
+                Files.deleteIfExists(tempFile);
+            }
+
+            progressListener.output("Done!");
+            progressListener.progress(1.00, exception!= null ? "Failed" : "Completed");
+        }
     }
 
     static Predicate<Path> hasString(String s) {

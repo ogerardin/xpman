@@ -133,6 +133,4 @@ public class ToolsManager extends Manager<Tool> {
         return manifests;
     }
 
-
-
 }

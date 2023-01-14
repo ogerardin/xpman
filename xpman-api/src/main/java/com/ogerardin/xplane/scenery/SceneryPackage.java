@@ -1,7 +1,6 @@
 package com.ogerardin.xplane.scenery;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.XPlaneEntity;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import com.ogerardin.xplane.inspection.impl.ReferencedTexturesInspection;
@@ -17,7 +16,7 @@ import java.util.Map;
 
 @Data
 @Slf4j
-public class SceneryPackage extends XPlaneEntity implements InspectionsProvider<SceneryPackage> {
+public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
 

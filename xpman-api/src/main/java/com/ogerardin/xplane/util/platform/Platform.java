@@ -35,6 +35,7 @@ public interface Platform {
         throw new UnsupportedOperationException();
     }
 
+    /** Is the specified path an existing runnable for this platform? */
     default boolean isRunnable(@NonNull Path path)  {
         return false;
     }

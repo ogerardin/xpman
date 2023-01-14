@@ -13,6 +13,7 @@ module xpman.api {
     requires commons.configuration;
     requires pecoff4j;
     requires petitparser.core;
+    requires zip4j;
 
     requires com.google.gson;
     requires com.google.api.client;
@@ -35,5 +36,6 @@ module xpman.api {
     exports com.ogerardin.xplane.tools;
 
     opens com.ogerardin.xplane.tools to com.google.gson;
+    exports com.ogerardin.xplane.install.inspections;
 
 }
