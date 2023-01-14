@@ -1,7 +1,6 @@
 package com.ogerardin.xplane.tools;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.XPlaneEntity;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
 import lombok.Data;
@@ -17,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public abstract class Tool extends XPlaneEntity implements InspectionsProvider<Tool> {
+public abstract class Tool implements InspectionsProvider<Tool> {
 
     @NonNull
     private final String name;

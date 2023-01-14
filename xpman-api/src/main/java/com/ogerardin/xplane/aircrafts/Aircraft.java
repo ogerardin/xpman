@@ -1,7 +1,6 @@
 package com.ogerardin.xplane.aircrafts;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.XPlaneEntity;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
@@ -19,7 +18,7 @@ import java.util.stream.Stream;
 @Data
 @AllArgsConstructor
 @Slf4j
-public class Aircraft extends XPlaneEntity implements InspectionsProvider<Aircraft> {
+public class Aircraft implements InspectionsProvider<Aircraft> {
 
     private final AcfFile acfFile;
 
