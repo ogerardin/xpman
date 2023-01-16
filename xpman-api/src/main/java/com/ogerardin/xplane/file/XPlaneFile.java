@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public abstract class XPlaneFile<R extends XPlaneFileData> implements StringParser<R> {
 
     @Getter
+    @NonNull
     private final Path file;
 
     @NonNull

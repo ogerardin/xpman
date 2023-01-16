@@ -7,7 +7,7 @@ import lombok.ToString;
 import java.nio.file.Path;
 
 /**
- * Represents a parsed scenery_packs.ini file
+ * Represents a parsed scenery_packs.ini file (prioritized list of sceneries)
  */
 @ToString(onlyExplicitlyIncluded = true)
 public class SceneryPacksIniFile extends XPlaneFile<SceneryPackIniData> {

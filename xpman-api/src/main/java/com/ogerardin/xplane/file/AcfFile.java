@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 /**
- * Represents a parsed .acf file
+ * Represents a parsed .acf file (aircraft description)
  */
 @ToString(onlyExplicitlyIncluded = true)
 public class AcfFile extends XPlaneFile<AcfFileData> {
