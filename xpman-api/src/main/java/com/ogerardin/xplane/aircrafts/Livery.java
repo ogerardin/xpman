@@ -17,10 +17,12 @@ public class Livery {
         return folder.getFileName().toString();
     }
 
+    @SuppressWarnings("unused")
     public Path getThumb() {
         return getAcfDerivedFile("_icon11_thumb.png");
     }
 
+    @SuppressWarnings("unused")
     public Path getIcon() {
         return getAcfDerivedFile("_icon11.png");
     }

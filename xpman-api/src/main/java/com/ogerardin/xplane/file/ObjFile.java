@@ -7,7 +7,7 @@ import lombok.ToString;
 import java.nio.file.Path;
 
 /**
- * Represents a parsed .obj file
+ * Represents a parsed .obj file (scenery object)
  */
 @ToString(onlyExplicitlyIncluded = true)
 public class ObjFile extends XPlaneFile<ObjFileData> {

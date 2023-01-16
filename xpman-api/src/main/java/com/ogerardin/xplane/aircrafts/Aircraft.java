@@ -143,6 +143,7 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
         return getAcfDerivedFile("_icon11_thumb.png");
     }
 
+    @SuppressWarnings("unused")
     public Path getIcon() {
         return getAcfDerivedFile("_icon11.png");
     }
