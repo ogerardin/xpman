@@ -6,6 +6,7 @@
         </encoder>
     </appender>
 
+<!--
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>xpman.log</file>
         <encoder>
@@ -16,6 +17,7 @@
             <maxHistory>7</maxHistory>
         </rollingPolicy>
     </appender>
+-->
 
 <!--    <logger name="com.ogerardin.xplane.scenery" level="DEBUG" />-->
 <!--    <logger name="com.ogerardin.xplane.tools" level="DEBUG" />-->
