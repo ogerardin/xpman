@@ -8,7 +8,7 @@ module xpman.fx {
     requires org.controlsfx.controls;
     requires spring.expression;
     requires commons.lang;
-    requires logback.classic;
+    requires ch.qos.logback.classic;
     requires com.sun.jna;
     requires com.sun.jna.platform;
 
