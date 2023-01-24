@@ -6,12 +6,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum XPlaneMajorVersion {
-    XP11("http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt"),
+    XP11(11,"http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt"),
 
-    XP12("https://lookup.x-plane.com/_lookup_12_/server_list_12.txt"),
+    XP12(12, "https://lookup.x-plane.com/_lookup_12_/server_list_12.txt"),
 
-    OTHER(null);
+    OTHER(0, null);
 
+    private final int major;
     private final String serverListUrl;
 
     public static XPlaneMajorVersion of(String version) {
@@ -24,5 +25,9 @@ public enum XPlaneMajorVersion {
         else {
             return OTHER;
         }
+    }
+
+    public String specString() {
+        return String.format("%02d00", major);
     }
 }

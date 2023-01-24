@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.inspection.InspectionsProvider;
+import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -174,7 +175,9 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
 
     @Override
     public Inspections<Aircraft> getInspections(XPlane xPlane) {
-        return new Inspections<>();
+        return Inspections.of(
+                new AircraftSpecInspection(xPlane)
+        );
     }
 
 }
