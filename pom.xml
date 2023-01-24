@@ -45,6 +45,13 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
                     <version>2.22.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>9.1</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
