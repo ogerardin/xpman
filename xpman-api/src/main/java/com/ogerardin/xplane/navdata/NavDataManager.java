@@ -7,6 +7,7 @@ import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.util.AsyncHelper;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -15,20 +16,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
-public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
 
-    private List<NavDataSet> navDataSets = null;
+@Slf4j
+@ToString
+public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {
 
     public NavDataManager(XPlane xPlane) {
         super(xPlane);
     }
 
     public List<NavDataSet> getNavDataSets() {
-        if (navDataSets == null) {
+        if (items == null) {
             loadNavDataSets();
         }
-        return Collections.unmodifiableList(navDataSets);
+        return Collections.unmodifiableList(items);
     }
 
     public void reload() {
@@ -36,13 +39,13 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
 
-    public List<NavDataSet> loadNavDataSets() {
+    public void loadNavDataSets() {
 
         log.info("Loading nav data sets...");
-        fireEvent(new ManagerEvent.Loading<>());
+        fireEvent(ManagerEvent.<NavDataSet>builder().type(LOADING).source(this).build());
 
         // See https://developer.x-plane.com/article/navdata-in-x-plane-11
-        navDataSets = Stream.of(
+        items = Stream.of(
                 simWideOverride(),
                 baseNavData(),
                 updatedBaseNavData(),
@@ -51,10 +54,8 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                 userData()
         ).collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
 
-        log.info("Loaded {} nav data sets", navDataSets.size());
-        fireEvent(new ManagerEvent.Loaded<>(navDataSets));
-
-        return navDataSets;
+        log.info("Loaded {} nav data sets", items.size());
+        fireEvent( ManagerEvent.<NavDataSet>builder().type(LOADED).source(this).items(items).build());
     }
 
     private NavDataSet simWideOverride() {

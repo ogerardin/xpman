@@ -1,19 +1,24 @@
 package com.ogerardin.xplane;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-public abstract class ManagerEvent<T> {
+@Getter
+@Builder
+@EqualsAndHashCode
+@ToString()
+public class ManagerEvent<T> {
 
-    public static class Loading<T> extends ManagerEvent<T> {
+    public enum Type {
+        LOADING, LOADED;
     }
 
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    public static class Loaded<T> extends ManagerEvent<T> {
-        private final List<T> items;
-    }
+    @NonNull
+    private final Type type;
+
+    private final Manager<T> source;
+
+    @ToString.Exclude
+    private final List<T> items;
 }

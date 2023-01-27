@@ -14,6 +14,7 @@ import com.ogerardin.xplane.util.platform.WindowsPlatform;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -22,14 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+
 @Slf4j
+@ToString
 public class PluginManager extends Manager<Plugin> {
 
     @NonNull
     @Getter
     private final Path pluginsFolder;
-
-    private  List<Plugin> plugins = null;
 
     private static final Map<String, Class<? extends Platform>> PLATFORM_PLUGIN_MAP = Maps.mapOf(
             "mac.xpl", MacPlatform.class,
@@ -45,10 +48,10 @@ public class PluginManager extends Manager<Plugin> {
     }
 
     public List<Plugin> getPlugins() {
-        if (plugins == null) {
+        if (items == null) {
             loadPlugins();
         }
-        return Collections.unmodifiableList(plugins);
+        return Collections.unmodifiableList(items);
     }
 
 
@@ -65,17 +68,17 @@ public class PluginManager extends Manager<Plugin> {
     private void loadPlugins()  {
 
         log.info("Loading plugins...");
-        fireEvent(new ManagerEvent.Loading<>());
+        fireEvent(ManagerEvent.<Plugin>builder().type(LOADING).source(this).build());
 
-        this.plugins = FileUtils.findFiles(pluginsFolder, path -> path.getFileName().toString().endsWith(".xpl")).stream()
+        items = FileUtils.findFiles(pluginsFolder, path -> path.getFileName().toString().endsWith(".xpl")).stream()
                 .filter(this::isNotUnwantedPlatform)
                 .map(this::maybeGetPlugin)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
 
-        log.info("Loaded {} plugins", this.plugins.size());
-        fireEvent(new ManagerEvent.Loaded<>(this.plugins));
+        log.info("Loaded {} plugins", items.size());
+        fireEvent(ManagerEvent.<Plugin>builder().type(LOADED).source(this).items(items).build());
     }
 
     private boolean isNotUnwantedPlatform(Path xplFile) {

@@ -9,6 +9,7 @@ import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -18,14 +19,16 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+
 @Slf4j
+@ToString
 public class ToolsManager extends Manager<Tool> {
 
     @NonNull
     @Getter
     private final Path toolsFolder;
-
-    private List<Tool> tools = null;
 
     @Getter(lazy = true)
     private final List<Manifest> manifests = loadManifests();
@@ -37,10 +40,10 @@ public class ToolsManager extends Manager<Tool> {
     }
 
     public List<Tool> getTools() {
-        if (tools == null) {
+        if (items == null) {
             loadTools();
         }
-        return Collections.unmodifiableList(tools);
+        return Collections.unmodifiableList(items);
     }
 
     /**
@@ -55,7 +58,7 @@ public class ToolsManager extends Manager<Tool> {
     private void loadTools() {
 
         log.info("Loading tools...");
-        fireEvent(new ManagerEvent.Loading<>());
+        fireEvent(ManagerEvent.<Tool>builder().type(LOADING).source(this).build());
 
         // find all installed tools (runnable files under the tools folder)
         Predicate<Path> isRunnable = p -> Platforms.getCurrent().isRunnable(p);
@@ -81,10 +84,10 @@ public class ToolsManager extends Manager<Tool> {
                 .toList();
         log.debug("Found {} available tools", availableTools.size());
 
-        tools = Stream.concat(installedTools.stream(), availableTools.stream()).toList();
+        items = Stream.concat(installedTools.stream(), availableTools.stream()).toList();
 
-        log.info("Loaded {} tools", this.tools.size());
-        fireEvent(new ManagerEvent.Loaded<>(this.tools));
+        log.info("Loaded {} tools", items.size());
+        fireEvent(ManagerEvent.<Tool>builder().type(LOADED).source(this).items(items).build());
     }
 
     @SneakyThrows
