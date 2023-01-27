@@ -13,6 +13,7 @@ import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -25,7 +26,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+
 @Slf4j
+@ToString
 public class SceneryManager extends Manager<SceneryPackage> implements InstallTarget {
 
     // a comparator that compares SceneryPackages by rank with nulls last
@@ -39,8 +44,6 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     @Getter
     private final Path disabledSceneryFolder;
 
-    private List<SceneryPackage> sceneryPackages = null;
-
     public SceneryManager(@NonNull XPlane xPlane) {
         super(xPlane);
         this.sceneryFolder = xPlane.getPaths().customScenery();
@@ -52,10 +55,10 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
      * If the list has not already been loaded, this method will trigger a synchronous load.
      */
     public List<SceneryPackage> getSceneryPackages() {
-        if (sceneryPackages == null) {
+        if (items == null) {
             loadPackages();
         }
-        return Collections.unmodifiableList(sceneryPackages);
+        return Collections.unmodifiableList(items);
     }
 
     /**
@@ -70,18 +73,18 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     public void loadPackages() {
 
         log.info("Loading scenery packages...");
-        fireEvent(new ManagerEvent.Loading<>());
+        fireEvent(ManagerEvent.<SceneryPackage>builder().type(LOADING).source(this).build());
 
         SceneryPacksIniFile sceneryPacksIniFile = getSceneryPacksIniFile();
-        sceneryPackages = Stream.of(
+        items = Stream.of(
                 getSceneryPackages(sceneryFolder, sceneryPacksIniFile),
                 getSceneryPackages(disabledSceneryFolder, null)
         ).flatMap(Collection::stream)
 //                .sorted(SCENERY_PACKAGE_COMPARATOR)
                 .toList();
 
-        log.info("Loaded {} scenery packages", sceneryPackages.size());
-        fireEvent(new ManagerEvent.Loaded<>(sceneryPackages));
+        log.info("Loaded {} scenery packages", items.size());
+        fireEvent(ManagerEvent.<SceneryPackage>builder().type(LOADED).source(this).items(items).build());
     }
 
     private SceneryPacksIniFile getSceneryPacksIniFile() {
