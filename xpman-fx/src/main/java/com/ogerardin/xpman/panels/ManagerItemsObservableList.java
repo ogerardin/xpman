@@ -18,6 +18,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * This class provides an {@link ObservableList} whose items are loaded from a backing {@link Manager}
+ * and mapped using a mapping funtion {@link #mapper}.
+ * It is intended to be used as a value for the "items" property of a {@link javafx.scene.control.TableView}.
+ * It also exposes property {@link #loadingProperty} that can be used for example to display an animation
+ * while the Manager is loading items.
+ * Note that the manager is not specified directly but obtained from an {@link XPlane} instance using function
+ * {@link #managerGetter}, which allows automatic reloading in case of XPlane instance change.
+ *
+ * @param <T> the type of items handled by the Manager
+ * @param <U> the type of items contained in the list.
+ */
 @Slf4j
 public class ManagerItemsObservableList<T, U>
         implements EventListener<ManagerEvent<T>>, ObservableList<U> {
@@ -29,10 +41,10 @@ public class ManagerItemsObservableList<T, U>
     private final Function<T, U> mapper;
 
     @Getter
-    private BooleanProperty loadingProperty = new SimpleBooleanProperty();
+    private final BooleanProperty loadingProperty = new SimpleBooleanProperty();
 
     @Delegate
-    private ObservableList<U> observableList = FXCollections.observableArrayList();
+    private final ObservableList<U> observableList = FXCollections.observableArrayList();
 
     private Manager<T> manager;
 
@@ -55,25 +67,24 @@ public class ManagerItemsObservableList<T, U>
 
     @Override
     public void onEvent(ManagerEvent<T> event) {
-        log.debug("Received event: {}", event.getClass());
+        log.debug("Received event: {}", event);
 
-        if (event instanceof ManagerEvent.Loading) {
-            log.debug("Manager is loading items");
-            Platform.runLater(() -> {
-                getLoadingProperty().set(true);
-                observableList.clear();
-            });
-
-        } else if (event instanceof ManagerEvent.Loaded<T> loadedEvent) {
-            log.debug("Manager has finished loading, {} items loaded", loadedEvent.getItems().size());
-            Platform.runLater(() -> {
-                getLoadingProperty().set(false);
-                final List<T> items = loadedEvent.getItems();
-                // map items to UI items
-                final List<U> uiItems = items.stream().map(mapper).toList();
-                observableList.setAll(uiItems);
-            });
-
+        switch (event.getType()) {
+            case LOADING -> {
+                Platform.runLater(() -> {
+                    getLoadingProperty().set(true);
+                    observableList.clear();
+                });
+            }
+            case LOADED -> {
+                Platform.runLater(() -> {
+                    getLoadingProperty().set(false);
+                    final List<T> items = event.getItems();
+                    // map items to UI items
+                    final List<U> uiItems = items.stream().map(mapper).toList();
+                    observableList.setAll(uiItems);
+                });
+            }
         }
 
     }

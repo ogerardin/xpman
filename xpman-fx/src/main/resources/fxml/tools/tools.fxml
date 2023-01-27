@@ -8,11 +8,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.TextFlow?>
 <?import org.controlsfx.control.SegmentedButton?>
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.ogerardin.xpman.tools.ToolsController">
-    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<AnchorPane prefHeight="600.0" prefWidth="909.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.tools.ToolsController">
+    <BorderPane prefHeight="600.0" prefWidth="946.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-146.0" AnchorPane.topAnchor="0.0">
         <center>
-            <SplitPane>
+            <SplitPane dividerPositions="0.5">
                 <TableView fx:id="tableView" prefHeight="300.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                     <columns>
 <!--
@@ -21,27 +20,27 @@
 -->
                         <TableColumn prefWidth="250.0" text="Name">
                             <cellValueFactory>
-                                <PropertyValueFactory property="name"/>
+                                <PropertyValueFactory property="name" />
                             </cellValueFactory>
                         </TableColumn>
                         <TableColumn prefWidth="75.0" text="Version">
                             <cellValueFactory>
-                                <PropertyValueFactory property="version"/>
+                                <PropertyValueFactory property="version" />
                             </cellValueFactory>
                         </TableColumn>
                         <TableColumn prefWidth="250.0">
                             <cellValueFactory>
-                                <IdentityCellValueFactory/>
+                                <IdentityCellValueFactory />
                             </cellValueFactory>
                             <cellFactory>
-                                <ActionsCellFactory style="HYPERLINK"/>
+                                <ActionsCellFactory style="HYPERLINK" />
                             </cellFactory>
                         </TableColumn>
                     </columns>
                 </TableView>
                 <TextFlow fx:id="detail">
                     <padding>
-                        <Insets topRightBottomLeft="10"/>
+                        <Insets topRightBottomLeft="10" />
                     </padding>
                 </TextFlow>
             </SplitPane>
@@ -52,8 +51,8 @@
             <ToolBar BorderPane.alignment="CENTER">
                 <SegmentedButton styleClass="dark">
                     <buttons>
-                        <ToggleButton fx:id="installedButton" text="Installed" onAction="#filterInstalled" />
-                        <ToggleButton text="Available" onAction="#filterAvailable" />
+                        <ToggleButton fx:id="installedButton" onAction="#filterInstalled" text="Installed" />
+                        <ToggleButton onAction="#filterAvailable" text="Available" />
                     </buttons>
                 </SegmentedButton>
             </ToolBar>

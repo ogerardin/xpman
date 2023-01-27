@@ -82,6 +82,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .forEach(log::info);
         }
 
+        System.setProperty("prism.lcdtext", "false");
+        System.setProperty("prism.text", "t2k");
+
         // fire up JavaFX. This will instantiate a XPmanFX and call #start
         launch(args);
     }
@@ -129,8 +132,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     private void handleToolsEvent(ManagerEvent<Tool> event) {
-        if (event instanceof ManagerEvent.Loaded<Tool> loadedEvent) {
-            List<MenuItem> menuItems = loadedEvent.getItems().stream()
+        if (event.getType() == ManagerEvent.Type.LOADED) {
+            List<MenuItem> menuItems = event.getItems().stream()
                     .filter(InstalledTool.class::isInstance)
                     .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)

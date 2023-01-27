@@ -49,8 +49,8 @@ public class ToolsController {
     @FXML
     public void initialize() {
         xPlane.getToolsManager().registerListener(event -> {
-            if (event instanceof ManagerEvent.Loaded<Tool> e) {
-                setItems(e.getItems());
+            if (event.getType() == ManagerEvent.Type.LOADED) {
+                setItems(event.getItems());
             }
         });
         xPlane.getToolsManager().reload();
