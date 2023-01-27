@@ -61,6 +61,11 @@
                             <PropertyValueFactory property="latestVersion"/>
                         </cellValueFactory>
                     </TableColumn>
+                    <TableColumn prefWidth="105.0" text="X-Plane spec">
+                        <cellValueFactory>
+                            <SpelValueFactory expression="acfFile.fileSpecVersion"/>
+                        </cellValueFactory>
+                    </TableColumn>
                     <!--
                                         <TableColumn prefWidth="105.0" text="Notes">
                                             <cellValueFactory>
