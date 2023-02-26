@@ -10,6 +10,10 @@ public interface NavDataItem {
 
     String getName();
 
+    default String getDescription() {
+        return null;
+    }
+
     default List<? extends NavDataItem> getChildren() {
         return Collections.emptyList();
     }

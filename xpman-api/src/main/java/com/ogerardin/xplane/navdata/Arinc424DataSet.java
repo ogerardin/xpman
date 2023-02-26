@@ -9,8 +9,8 @@ import java.nio.file.Path;
  */
 public class Arinc424DataSet extends NavDataSet {
 
-    public Arinc424DataSet(String name, XPlane xPlane, Path folder, String filename) {
-        super(name, xPlane, folder, filename);
+    public Arinc424DataSet(String name, String description, XPlane xPlane, Path folder, String filename) {
+        super(name, description, xPlane, folder, filename);
     }
 
 }
