@@ -6,7 +6,8 @@ import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 
 /**
- * A cell value factory that returns the value of the item itself.
+ * A cell value factory for a {@link TableColumn} that returns the value of the unerlying item itself.
+ * Useful when the cell factory needs access to the whole item and not just a property.
  */
 public class IdentityCellValueFactory<S> implements Callback<TableColumn.CellDataFeatures<S, S>, ObservableValue<S>> {
 

@@ -1,6 +1,7 @@
 module xpman.fx {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.web;
     requires lombok;
     requires xpman.api;
     requires org.slf4j;

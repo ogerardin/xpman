@@ -19,13 +19,13 @@
     </appender>
 -->
 
+<!--    <logger name="com.ogerardin.xpman.tools" level="DEBUG" />-->
 <!--    <logger name="com.ogerardin.xplane.scenery" level="DEBUG" />-->
 <!--    <logger name="com.ogerardin.xplane.tools" level="DEBUG" />-->
-<!--    <logger name="com.ogerardin.xpman.tools" level="DEBUG" />-->
+    <logger name="com.ogerardin.xpman.util.SpelUtil" level="INFO" />
+    <logger name="com.ogerardin.xpman.util.jfx.menu" level="INFO" />
 
-<!--    <logger name="com.ogerardin.xpman.util.SpelUtil" level="DEBUG" />-->
-
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
 <!--        <appender-ref ref="FILE" />-->
     </root>

@@ -13,7 +13,6 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +27,6 @@ public class NavDataController {
 
     @NonNull
     private final XPlaneProperty xPlaneProperty;
-
-    @FXML
-    private TreeTableColumn<UiNavDataItem, Boolean> existsColumn;
 
     @FXML
     private TreeTableView<UiNavDataItem> treeTableView;
