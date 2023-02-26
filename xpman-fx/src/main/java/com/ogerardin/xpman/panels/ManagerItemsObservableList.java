@@ -85,6 +85,7 @@ public class ManagerItemsObservableList<T, U>
                     observableList.setAll(uiItems);
                 });
             }
+            default -> {}
         }
 
     }

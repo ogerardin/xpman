@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.ogerardin.xpman.panels.navdata.NavDataTableTreeItemCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.BooleanTreeCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.IdentityTreeCellValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
 <?import javafx.scene.layout.*?>
@@ -24,10 +26,13 @@
                 <columns>
                     <TreeTableColumn editable="false" prefWidth="400.0" sortable="false" text="Name">
                         <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="name" />
+                            <IdentityTreeCellValueFactory />
                         </cellValueFactory>
+                        <cellFactory>
+                            <NavDataTableTreeItemCellFactory />
+                        </cellFactory>
                     </TreeTableColumn>
-                    <TreeTableColumn fx:id="existsColumn" editable="false" prefWidth="75.0" sortable="false"
+                    <TreeTableColumn editable="false" prefWidth="75.0" sortable="false"
                                      text="Exists">
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="exists" />
