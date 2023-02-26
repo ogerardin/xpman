@@ -4,6 +4,7 @@ import com.ogerardin.xplane.aircrafts.AircraftManager;
 import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xplane.plugins.PluginManager;
 import com.ogerardin.xplane.scenery.SceneryManager;
+import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.tools.ToolsManager;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -129,6 +130,11 @@ public class XPlane {
         }
         /** Custom tools folder (not X-Plane standard) */
         public Path tools() { return resources().resolve("tools"); }
+        public Path handPlacedLocalizers() {
+            // the path for hand-placed localizers changed in X-Plane 12
+            Path dir = (getMajorVersion() == XPlaneMajorVersion.XP11) ? customScenery() : globalScenery();
+            return dir.resolve(SceneryPackage.EARTH_NAV_DATA);
+        }
     }
 }
 

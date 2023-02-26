@@ -21,6 +21,8 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 
     private final String name;
 
+    private final String description;
+
     @ToString.Exclude
     private final XPlane xPlane;
 
@@ -28,8 +30,9 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 
     private List<NavDataFile> files = new ArrayList<>();
 
-    protected NavDataSet(String name, XPlane xPlane, Path folder, String... fileNames) {
+    protected NavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
         this.name = name;
+        this.description = description;
         this.xPlane = xPlane;
         this.folder = folder;
         this.files = Arrays.stream(fileNames)

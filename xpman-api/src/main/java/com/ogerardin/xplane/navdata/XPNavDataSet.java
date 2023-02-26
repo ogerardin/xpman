@@ -18,11 +18,11 @@ public class XPNavDataSet extends NavDataSet {
             "earth_msa.dat"
     };
 
-    public XPNavDataSet(String name, XPlane xPlane, Path folder) {
-        this(name, xPlane, folder, DEFAULT_FILES);
+    public XPNavDataSet(String name, String description, XPlane xPlane, Path folder) {
+        this(name, description, xPlane, folder, DEFAULT_FILES);
     }
 
-    public XPNavDataSet(String name, XPlane xPlane, Path folder, String... fileNames) {
-        super(name, xPlane, folder, fileNames);
+    public XPNavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
+        super(name, description, xPlane, folder, fileNames);
     }
 }
