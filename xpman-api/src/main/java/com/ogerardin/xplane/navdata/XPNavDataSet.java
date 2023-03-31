@@ -16,7 +16,9 @@ public class XPNavDataSet extends NavDataSet {
             "earth_hold.dat",
             "earth_mora.dat",
             "earth_msa.dat"
+            //TODO consider CIFP/$ICAO.dat files
     };
+
 
     public XPNavDataSet(String name, String description, XPlane xPlane, Path folder) {
         this(name, description, xPlane, folder, DEFAULT_FILES);

@@ -28,6 +28,11 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 
     private final Path folder;
 
+    @Override
+    public Path getPath() {
+        return getFolder();
+    }
+
     private List<NavDataFile> files = new ArrayList<>();
 
     protected NavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
