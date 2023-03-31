@@ -28,7 +28,7 @@ public class JsonManifestLoader {
             .create();
 
     @SneakyThrows
-    Manifest loadManifest(Path jsonManifest) {
+    public Manifest loadManifest(Path jsonManifest) {
         try (BufferedReader reader = Files.newBufferedReader(jsonManifest)) {
             Manifest manifest = GSON.fromJson(reader, Manifest.class);
             return manifest;

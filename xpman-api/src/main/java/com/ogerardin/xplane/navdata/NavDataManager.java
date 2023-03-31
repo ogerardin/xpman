@@ -96,12 +96,12 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>earth_hold.dat</li>\n" +
                         "<li>earth_mora.dat</li>\n" +
                         "<li>earth_msa.dat</li>\n" +
-                        "    <li>CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)</li>\n" +
+                        "<li>CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)</li>\n" +
                         "</ul>\n" +
                         "<p>they are located in <strong>$X-Plane/Resources/default data/</strong>.<br />Starting with X-Plane 12, these files are also part of the default distribution:</p>\n" +
                         "<ul>\n" +
                         "<li>Resources/default data/airspaces/airspace.txt (starting with X-Plane 12)</li>\n" +
-                        "    <li>Resources/default scenery/1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)</li>\n" +
+                        "<li>Resources/default scenery/1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)</li>\n" +
                         "</ul>\n",
                 xPlane, xPlane.getPaths().defaultData());
     }
@@ -119,11 +119,14 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>earth_msa.dat (starting with X-Plane 11.50)</li>\n" +
                         "<li>CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)</li>\n" +
                         "<li>airspaces/airspace.txt (starting with X-Plane 12)</li>\n" +
-                        "    <li>1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)</li>\n" +
+                        "<li>1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)</li>\n" +
                         "</ul>\n" +
                         "<p>they must be located in <strong>$X-Plane/Custom Data/</strong></p>\n" +
                         "<p>These files completely replace the base layer of X-Plane. If these files are present, the X-Plane base layer is ignored. Note that because of the referential integrity, it is not possible to update just the earth_fix.dat and not the earth_awy.dat. Upon load, it is checked that all files are of the same cycle number. Mix-matching different cycles is not supported.</p>\n",
                 xPlane, xPlane.getPaths().customData());
+        //TODO consider additional files:
+        //airspaces/airspace.txt (starting with X-Plane 12)
+        //1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)
     }
 
     private NavDataSet faaUpdatedApproaches() {

@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.navdata;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +11,21 @@ public interface NavDataItem {
 
     String getName();
 
+    default Path getPath() {
+        return null;
+    }
+
     default String getDescription() {
+        return null;
+    }
+
+    default String getAiracCycle() {
+        return null;
+    }
+    default String getMetadata() {
+        return null;
+    }
+    default String getBuild() {
         return null;
     }
 
