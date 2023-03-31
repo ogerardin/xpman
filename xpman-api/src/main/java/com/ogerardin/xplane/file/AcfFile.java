@@ -30,6 +30,10 @@ public class AcfFile extends XPlaneFile<AcfFileData> {
         return super.getFile();
     }
 
+    public String getFileSpecVersion() {
+        return getData().getHeader().getSpecVersion();
+    }
+
 
 
 }

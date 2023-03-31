@@ -26,5 +26,8 @@ public class SceneryPacksIniFile extends XPlaneFile<SceneryPackIniData> {
     }
 
 
-
+    @Override
+    public String getFileSpecVersion() {
+        return getData().getHeader().getSpecVersion();
+    }
 }

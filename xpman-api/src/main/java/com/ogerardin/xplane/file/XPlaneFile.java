@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.file;
 
-import com.ogerardin.xplane.file.data.XPlaneFileData;
 import lombok.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Data
 @Slf4j
 @RequiredArgsConstructor
-public abstract class XPlaneFile<R extends XPlaneFileData> implements StringParser<R> {
+public abstract class XPlaneFile<R> implements StringParser<R> {
 
     @Getter
     @NonNull
@@ -33,9 +32,7 @@ public abstract class XPlaneFile<R extends XPlaneFileData> implements StringPars
     @ToString.Exclude
     private final R data = parse();
 
-    public String getFileSpecVersion() {
-        return getData().getHeader().getSpecVersion();
-    }
+    public abstract String getFileSpecVersion();
 
     @SneakyThrows
     private R parse()  {
