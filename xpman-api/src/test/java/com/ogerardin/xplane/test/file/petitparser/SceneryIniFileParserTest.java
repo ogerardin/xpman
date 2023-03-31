@@ -1,6 +1,7 @@
-package com.ogerardin.xplane.file.petitparser;
+package com.ogerardin.xplane.test.file.petitparser;
 
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
+import com.ogerardin.xplane.file.petitparser.SceneryPacksIniParser;
 import org.junit.jupiter.api.Test;
 import org.petitparser.parser.Parser;
 

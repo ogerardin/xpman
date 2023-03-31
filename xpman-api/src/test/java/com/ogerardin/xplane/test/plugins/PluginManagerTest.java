@@ -1,9 +1,10 @@
-package com.ogerardin.xplane.plugins;
+package com.ogerardin.xplane.test.plugins;
 
-import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
-import com.ogerardin.util.TimingExtension;
+import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.InvalidConfig;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.plugins.Plugin;
+import com.ogerardin.xplane.test.DisabledIfNoXPlaneRootFolder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

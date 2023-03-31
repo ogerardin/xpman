@@ -1,8 +1,9 @@
-package com.ogerardin.xplane.file.petitparser;
+package com.ogerardin.xplane.test.file.petitparser;
 
-import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
+import com.ogerardin.xplane.file.petitparser.ObjFileParser;
+import com.ogerardin.xplane.test.DisabledIfNoXPlaneRootFolder;
 import org.junit.jupiter.api.Test;
 import org.petitparser.parser.Parser;
 

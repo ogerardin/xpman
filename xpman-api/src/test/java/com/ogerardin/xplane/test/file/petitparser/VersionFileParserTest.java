@@ -1,6 +1,7 @@
-package com.ogerardin.xplane.file.petitparser;
+package com.ogerardin.xplane.test.file.petitparser;
 
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
+import com.ogerardin.xplane.file.petitparser.ServersFileParser;
 import org.junit.jupiter.api.Test;
 import org.petitparser.parser.Parser;
 

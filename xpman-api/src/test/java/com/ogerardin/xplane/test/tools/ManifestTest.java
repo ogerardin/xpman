@@ -1,5 +1,7 @@
-package com.ogerardin.xplane.tools;
+package com.ogerardin.xplane.test.tools;
 
+import com.ogerardin.xplane.tools.JsonManifestLoader;
+import com.ogerardin.xplane.tools.Manifest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
