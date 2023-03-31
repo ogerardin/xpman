@@ -2,7 +2,6 @@ package com.ogerardin.xplane.file.petitparser;
 
 import com.ogerardin.xplane.file.StringParser;
 import com.ogerardin.xplane.file.data.Header;
-import com.ogerardin.xplane.file.data.XPlaneFileData;
 import lombok.Getter;
 import org.petitparser.context.Result;
 import org.petitparser.parser.Parser;
@@ -18,7 +17,15 @@ import static org.petitparser.parser.primitive.CharacterParser.of;
 import static org.petitparser.parser.primitive.CharacterParser.range;
 import static org.petitparser.parser.primitive.StringParser.of;
 
-abstract class XPlaneFileParserBase<R extends XPlaneFileData> implements StringParser<R> {
+// NOTE ON STYLE: in order to keep the syntax closer to usual grammar conventions where token and
+// production names usually start with an upper case letter, methods that return a Parser will also
+// follow this convention and bear the name of the token or production they are intended to parse.
+
+/**
+ * Base class for all X-Plane file parsers.
+ * @param <R> type of the data associated with a successful parsing
+ */
+abstract class XPlaneFileParserBase<R> implements StringParser<R> {
 
     @Getter(lazy = true)
     private final Parser parser = buildParser();
@@ -27,7 +34,7 @@ abstract class XPlaneFileParserBase<R extends XPlaneFileData> implements StringP
         return XPlaneFile();
     }
 
-    public R parse(String contents) throws Exception {
+    public R parse(String contents) {
         final Parser parser = getParser();
         final Result result = parser.parse(contents);
         return result.get();
@@ -94,9 +101,9 @@ abstract class XPlaneFileParserBase<R extends XPlaneFileData> implements StringP
         return Spacechar().plus();
     }
 
-    Parser Version() {
-        return digit().plus().flatten();
-    }
+//    Parser Version() {
+//        return digit().plus().flatten();
+//    }
 
     Parser Letter() {
         return CharacterParser.range('a','z').or(range('A','Z'));

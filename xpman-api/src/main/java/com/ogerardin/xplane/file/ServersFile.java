@@ -10,4 +10,8 @@ public class ServersFile extends XPlaneFile<ServersFileData> {
         super(null, new ServersFileParser());
     }
 
+    @Override
+    public String getFileSpecVersion() {
+        return null;
+    }
 }

@@ -21,6 +21,9 @@ public class ObjFile extends XPlaneFile<ObjFileData> {
         return super.getFile();
     }
 
+    public String getFileSpecVersion() {
+        return getData().getHeader().getSpecVersion();
+    }
 
 
 }
