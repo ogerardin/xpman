@@ -9,6 +9,7 @@ import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
+import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -40,6 +41,8 @@ public class NavDataController {
     @FXML
     public void initialize() {
         treeTableView.placeholderProperty().setValue(PLACEHOLDER);
+
+        treeTableView.setRowFactory(new IntrospectingContextMenuTreeTableRowFactory<>(this));
 
         // we can't set the ManagerItemsObservableList directly as a model of the tree, so we just
         // create it, and we will listen to changes to build the tree model

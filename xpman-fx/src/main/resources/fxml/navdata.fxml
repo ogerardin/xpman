@@ -32,8 +32,7 @@
                             <NavDataTableTreeItemCellFactory />
                         </cellFactory>
                     </TreeTableColumn>
-                    <TreeTableColumn editable="false" prefWidth="75.0" sortable="false"
-                                     text="Exists">
+                    <TreeTableColumn prefWidth="75.0" text="Exists">
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="exists" />
                         </cellValueFactory>
@@ -41,19 +40,20 @@
                             <BooleanTreeCellFactory />
                         </cellFactory>
                     </TreeTableColumn>
-                    <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Format">
-<!--
+                    <TreeTableColumn prefWidth="75.0" text="AIRAC Cycle">
                         <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="format" />
+                            <TreeItemPropertyValueFactory property="airacCycle" />
                         </cellValueFactory>
--->
                     </TreeTableColumn>
-                    <TreeTableColumn prefWidth="75.0" text="Version">
-<!--
+                    <TreeTableColumn prefWidth="75.0" text="Metadata">
                         <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="version" />
+                            <TreeItemPropertyValueFactory property="metadata" />
                         </cellValueFactory>
--->
+                    </TreeTableColumn>
+                    <TreeTableColumn prefWidth="75.0" text="Build">
+                        <cellValueFactory>
+                            <TreeItemPropertyValueFactory property="build" />
+                        </cellValueFactory>
                     </TreeTableColumn>
                 </columns>
             </TreeTableView>
