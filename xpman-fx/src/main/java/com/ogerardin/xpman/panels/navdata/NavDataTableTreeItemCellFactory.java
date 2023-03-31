@@ -28,7 +28,7 @@ public class NavDataTableTreeItemCellFactory<S> implements TreeTableCellFactory<
                         WebEngine engine = webView.getEngine();
                         engine.loadContent(description);
                         Tooltip tooltip = new Tooltip();
-                        tooltip.setShowDelay(Duration.ZERO);
+                        tooltip.setShowDelay(new Duration(500.0));
                         tooltip.setShowDuration(Duration.INDEFINITE);
                         tooltip.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                         tooltip.setGraphic(webView);

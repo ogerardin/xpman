@@ -41,7 +41,7 @@ public class MethodMenuItem<T> extends MenuItem implements Refreshable {
     public void refresh() {
         if (enabledIfExpr != null) {
             Boolean enabled = (Boolean) SpelUtil.eval(enabledIfExpr, target);
-            setVisible(enabled);
+            setVisible((enabled != null) && enabled);
         }
 
     }
