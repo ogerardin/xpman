@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.inspection.impl;
+package com.ogerardin.xplane.test.impl;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneMajorVersion;
@@ -6,6 +6,7 @@ import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,7 @@
-package com.ogerardin.xplane.util;
+package com.ogerardin.xplane.test.util;
 
 import com.google.api.services.drive.model.File;
+import com.ogerardin.xplane.util.GoogleDriveClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;

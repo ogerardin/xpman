@@ -1,6 +1,6 @@
-package com.ogerardin.xplane.file.petitparser;
+package com.ogerardin.xplane.test.file.petitparser;
 
-import com.ogerardin.util.TimingExtension;
+import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.XPlane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.ExtendWith;

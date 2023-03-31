@@ -1,6 +1,7 @@
-package com.ogerardin.xplane.laminar;
+package com.ogerardin.xplane.test.laminar;
 
 import com.ogerardin.xplane.XPlaneMajorVersion;
+import com.ogerardin.xplane.laminar.UpdateInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

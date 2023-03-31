@@ -1,15 +1,18 @@
-package com.ogerardin.xplane.aircrafts;
+package com.ogerardin.xplane.test.aircrafts;
 
-import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
+import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.InvalidConfig;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.test.DisabledIfNoXPlaneRootFolder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
 @Slf4j
-//@ExtendWith(TimingExtension.class)
+@ExtendWith(TimingExtension.class)
 @DisabledIfNoXPlaneRootFolder
 class AircraftManagerTest {
 

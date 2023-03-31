@@ -1,9 +1,9 @@
-package com.ogerardin.xplane.file;
+package com.ogerardin.xplane.test.file;
 
-import com.ogerardin.util.DisabledIfNoXPlaneRootFolder;
-import com.ogerardin.util.TimingExtension;
+import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.XPlane;
-import org.hamcrest.MatcherAssert;
+import com.ogerardin.xplane.file.AcfFile;
+import com.ogerardin.xplane.test.DisabledIfNoXPlaneRootFolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
