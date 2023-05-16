@@ -72,9 +72,9 @@
         <dependency>
             <!-- required to read PE files (Windows executables) -->
             <!-- github dependency through jitpack.io -->
-            <groupId>com.github.kichik</groupId>
+            <groupId>com.kichik.pecoff4j</groupId>
             <artifactId>pecoff4j</artifactId>
-            <version>0.0.2.2</version>
+            <version>0.3.1</version>
         </dependency>
 
         <dependency>

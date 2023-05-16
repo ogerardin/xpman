@@ -1,21 +1,21 @@
 package com.ogerardin.xplane.util.platform;
 
+import com.kichik.pecoff4j.PE;
+import com.kichik.pecoff4j.ResourceDirectory;
+import com.kichik.pecoff4j.ResourceEntry;
+import com.kichik.pecoff4j.constant.ResourceType;
+import com.kichik.pecoff4j.io.PEParser;
+import com.kichik.pecoff4j.io.ResourceParser;
+import com.kichik.pecoff4j.resources.StringFileInfo;
+import com.kichik.pecoff4j.resources.StringPair;
+import com.kichik.pecoff4j.resources.StringTable;
+import com.kichik.pecoff4j.resources.VersionInfo;
+import com.kichik.pecoff4j.util.ResourceHelper;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.boris.pecoff4j.PE;
-import org.boris.pecoff4j.ResourceDirectory;
-import org.boris.pecoff4j.ResourceEntry;
-import org.boris.pecoff4j.constant.ResourceType;
-import org.boris.pecoff4j.io.PEParser;
-import org.boris.pecoff4j.io.ResourceParser;
-import org.boris.pecoff4j.resources.StringFileInfo;
-import org.boris.pecoff4j.resources.StringPair;
-import org.boris.pecoff4j.resources.StringTable;
-import org.boris.pecoff4j.resources.VersionInfo;
-import org.boris.pecoff4j.util.ResourceHelper;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -30,7 +30,7 @@ public class WindowsPlatform implements Platform {
     @SneakyThrows
     @Override
     public void reveal(@NonNull Path path) {
-        String explorerParam = "/select,\"" + path.toString() + "\"";
+        String explorerParam = "/select,\"" + path + "\"";
         CommandExecutor.exec("cmd", "/c", "explorer.exe " + explorerParam);
     }
 
@@ -42,19 +42,19 @@ public class WindowsPlatform implements Platform {
     @SneakyThrows
     @Override
     public void openUrl(@NonNull URL url) {
-        CommandExecutor.exec("cmd", "/c", String.format("start %s", url.toString()));
+        CommandExecutor.exec("cmd", "/c", String.format("start %s", url));
     }
 
     @SneakyThrows
     @Override
     public void openFile(@NonNull Path file) {
-        CommandExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file.toString()));
+        CommandExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file));
     }
 
     @SneakyThrows
     @Override
     public void startApp(@NonNull Path app) {
-        CommandExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app.toString()));
+        CommandExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app));
     }
 
     @Override
