@@ -44,7 +44,6 @@ public class IntrospectionHelper {
     }
 
     /**
-     * Returns a new {@link C} constructed by invoking a constructor on a subclass of C, with fallback to C itself.
      * For each known subclass X of C, an attempt is made to construct an instance of X by invoking a constructor
      * that accepts the specified params; if it succeeds then this instance is returned.
      * If all subclasses of C have been examined and no constructor succeeded, an attempt is made to construct an instance

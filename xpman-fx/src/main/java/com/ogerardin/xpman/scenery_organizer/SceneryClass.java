@@ -1,21 +1,11 @@
 package com.ogerardin.xpman.scenery_organizer;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.ogerardin.xplane.scenery.SceneryPackage;
 
-@Data
-@AllArgsConstructor
-public class SceneryClass {
+public interface SceneryClass {
 
-    private String name;
+    String getName();
 
-    private String regex;
+    boolean matches(SceneryPackage sceneryPackage);
 
-    public SceneryClass(String name) {
-        this(name, null);
-    }
-
-    public boolean matches(String sceneryName) {
-        return sceneryName.matches(regex);
-    }
 }

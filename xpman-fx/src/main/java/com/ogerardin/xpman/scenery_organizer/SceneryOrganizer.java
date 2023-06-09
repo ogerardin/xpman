@@ -10,59 +10,61 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SceneryOrganizer {
 
-    private static final SceneryClass OTHER_SCENERY_CLASS = new SceneryClass("Other");
-    private static final SceneryClass LIBRARY_SCENERY_CLASS = new SceneryClass("Library");
-
-    private final List<SceneryClass> orderedSceneryClasses;
+    /** User-defined scenery classes ordered as expected in scenery_packs.ini */
+    private final List<RegexSceneryClass> orderedSceneryClasses;
 
     public SceneryOrganizer() {
         this(defaultSceneryClasses());
     }
 
-    private static List<SceneryClass> defaultSceneryClasses() {
+    private static List<RegexSceneryClass> defaultSceneryClasses() {
         return Arrays.asList(
-                new SceneryClass("Airport", "^(?!Global).*[Aa]irport.*|(.*[^A-Z]|^)[A-Z]{4}[^A-Z].*|X-Plane Landmarks.*"),
-                new SceneryClass("Global Airports", "Global Airports"),
-                new SceneryClass("Overlay scenery", ".*overlay.*|.*world2xplane.*|.*trees.*|.*farms.*|.*osm2xp.*"),
-                new SceneryClass("Mesh scenery", "z\\+.*")
+                new RegexSceneryClass("Airport", "^(?!Global).*[Aa]irport.*|(.*[^A-Z]|^)[A-Z]{4}[^A-Z].*"),
+                new RegexSceneryClass("X-Plane Landmark", "X-Plane Landmarks.*"),
+                new RegexSceneryClass("Global Airports", "Global Airports"),
+                new RegexSceneryClass("Overlay scenery", ".*overlay.*|.*world2xplane.*|.*trees.*|.*farms.*|.*osm2xp.*"),
+                new RegexSceneryClass("Mesh scenery", "z\\+.*")
         );
     }
 
     /**
      * @return the {@link SceneryClass} for the specified scenery, determined as follows:
      * <ol>
-     *     <li>if the scenery is a library, then {@link #LIBRARY_SCENERY_CLASS}</li>
+     *     <li>if the scenery is a library, then {@link LibrarySceneryClass}</li>
      *     <li>otherwise the first item of {@link #orderedSceneryClasses} for which the scenery name matches
-     *     {@link SceneryClass#getRegex()} </li>
-     *     <li>in case no match was found, then {@link #OTHER_SCENERY_CLASS}</li>
+     *     {@link SceneryClass#matches} is true </li>
+     *     <li>in case no match was found, then {@link OtherSceneryClass}</li>
      * </ol>
      */
     public SceneryClass sceneryClass(SceneryPackage sceneryPackage) {
         if (sceneryPackage.isLibrary()) {
-            return LIBRARY_SCENERY_CLASS;
+            return LibrarySceneryClass.INSTANCE;
         }
-        final String sceneryName = sceneryPackage.getFolder().getFileName().toString();
         final Optional<SceneryClass> sceneryClass = getOrderedSceneryClasses().stream()
-                .filter(c -> c.matches(sceneryName))
-                .findFirst();
-        return sceneryClass.orElse(OTHER_SCENERY_CLASS);
+                .filter(c -> c.matches(sceneryPackage))
+                .findFirst()
+                .map(SceneryClass.class::cast);
+        return sceneryClass.orElse(OtherSceneryClass.INSTANCE);
     }
 
     /**
      * @return the rank of the scenery's class for sorting purposes.
-     * Special classes {@link #OTHER_SCENERY_CLASS} (not matched by any rule) and
-     * {@link #LIBRARY_SCENERY_CLASS} (detected) are assigned ranks 98 and 99.
      */
     public int sceneryClassRank(SceneryPackage sceneryPackage) {
         SceneryClass sceneryClass = sceneryClass(sceneryPackage);
-        if (sceneryClass == OTHER_SCENERY_CLASS) {
+
+        if (sceneryClass instanceof OtherSceneryClass) {
             return 98;
-        } else if (sceneryClass == LIBRARY_SCENERY_CLASS) {
+        } else if (sceneryClass instanceof LibrarySceneryClass) {
             return 99;
         }
         return getOrderedSceneryClasses().indexOf(sceneryClass);
     }
 
+    /**
+     * Returns a copy of the specified list of {@link SceneryPackage}s ordered according to the
+     * scenery class rank of its members, as defined by {@link #sceneryClassRank} 
+     */
     public List<SceneryPackage> apply(List<SceneryPackage> sceneryPackages) {
         // make a copy so we don't sort the original list before the user OKs it
         final ArrayList<SceneryPackage> packages = new ArrayList<>(sceneryPackages);
@@ -70,7 +72,7 @@ public class SceneryOrganizer {
         return packages;
     }
 
-    public void setOrderedSceneryClasses(List<SceneryClass> sceneryClasses) {
+    public void setOrderedSceneryClasses(List<RegexSceneryClass> sceneryClasses) {
         this.orderedSceneryClasses.clear();
         this.orderedSceneryClasses.addAll(sceneryClasses);
     }
