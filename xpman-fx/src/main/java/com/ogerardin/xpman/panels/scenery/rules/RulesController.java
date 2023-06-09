@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.scenery.rules;
 
-import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.ValidatingEditingCell;
 import javafx.beans.binding.Bindings;
@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 public class RulesController {
 
     @FXML
-    private TableView<SceneryClass> tableView;
+    private TableView<RegexSceneryClass> tableView;
     @FXML
-    private TableColumn<SceneryClass, Integer> priorityColumn;
+    private TableColumn<RegexSceneryClass, Integer> priorityColumn;
     @FXML
     private Button upButton;
     @FXML
@@ -27,13 +27,13 @@ public class RulesController {
 
     private SceneryOrganizer sceneryOrganizer;
     @FXML
-    private TableColumn<SceneryClass, String> regexColumn;
+    private TableColumn<RegexSceneryClass, String> regexColumn;
     @FXML
-    private TableColumn<SceneryClass, String> nameColumn;
+    private TableColumn<RegexSceneryClass, String> nameColumn;
     @FXML
     private Button deleteButton;
 
-    public void setItems(List<SceneryClass> items) {
+    public void setItems(List<RegexSceneryClass> items) {
         tableView.getItems().setAll(items);
     }
 
@@ -80,7 +80,7 @@ public class RulesController {
     @FXML
     private void add() {
         final int newPos = tableView.getItems().size();
-        tableView.getItems().add(newPos, new SceneryClass("New"));
+        tableView.getItems().add(newPos, new RegexSceneryClass("New"));
         tableView.getSelectionModel().select(newPos);
         tableView.scrollTo(newPos);
         tableView.layout();
@@ -122,7 +122,7 @@ public class RulesController {
         setItems(sceneryOrganizer.getOrderedSceneryClasses());
     }
 
-    public List<SceneryClass> getItems() {
+    public List<RegexSceneryClass> getItems() {
         return tableView.getItems();
     }
 

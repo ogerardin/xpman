@@ -11,7 +11,7 @@ import com.ogerardin.xpman.diag.DiagController;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.panels.scenery.wizard.OrganizeWizard;
-import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
@@ -57,7 +57,7 @@ public class SceneryController {
         // add context menu to table rows
         sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
 
-        // sort bt rank with nulls last (rank is null if scenery is disabled)
+        // sort by rank with nulls last (rank is null if scenery is disabled)
         rankColumn.setSortType(TableColumn.SortType.ASCENDING);
         rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
         sceneryTable.getSortOrder().setAll(Collections.singletonList(rankColumn));
@@ -84,7 +84,7 @@ public class SceneryController {
     }
 
     private SceneryOrganizer loadSceneryOrganizer(XPManPrefs config) {
-        final List<SceneryClass> sceneryClasses = config.getSceneryClasses();
+        final List<RegexSceneryClass> sceneryClasses = config.getSceneryClasses();
         if (sceneryClasses == null) {
             SceneryOrganizer sceneryOrganizer = new SceneryOrganizer();
             config.setSceneryClasses(sceneryOrganizer.getOrderedSceneryClasses());
