@@ -2,11 +2,10 @@ package com.ogerardin.xplane.file.petitparser;
 
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
+import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
 import lombok.extern.slf4j.Slf4j;
 import org.petitparser.parser.Parser;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.petitparser.parser.primitive.CharacterParser.noneOf;
@@ -34,31 +33,31 @@ public class SceneryPacksIniParser extends XPlaneFileParserBase<SceneryPackIniDa
      */
     Parser SceneryPacks() {
         return SceneryPack().star()
-                .map((List<Path> input) -> {
-                    final SceneryPackIniData.SceneryPackList paths = new SceneryPackIniData.SceneryPackList();
-                    paths.addAll(input);
-                    return paths;
+                .map((List<SceneryPackIniItem> input) -> {
+                    final SceneryPackIniData.SceneryPackList items = new SceneryPackIniData.SceneryPackList();
+                    items.addAll(input);
+                    return items;
                 })
                 ;
     }
 
     /**
      * Matches a line with a scenery reference.
-     * Upon successful match, pushes a {@link Path} instance
+     * Upon successful match, pushes a {@link SceneryPackIniItem} instance
      */
     Parser SceneryPack() {
         return of("SCENERY_PACK ")
-                .seq(FolderName())
+                .seq(FolderNameOrToken())
                 .seq(Newline())
-                .map((List<Object> input) -> Paths.get((String) input.get(1)))
+                .map((List<Object> input) -> SceneryPackIniItem.of((String) input.get(1)))
                 ;
     }
 
     /**
-     * Matches a scenery folder.
+     * Matches a scenery folder or token e.g. "*GLOBAL AIRPORTS*"
      * Upon successful match, pushes the value as a String.
      */
-    Parser FolderName() {
+    Parser FolderNameOrToken() {
         return noneOf("\r\n").plus().flatten();
     }
 

@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
- * An uninstalled tool (available for download/installation).
+ * A non installed tool (available for download/installation).
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)
