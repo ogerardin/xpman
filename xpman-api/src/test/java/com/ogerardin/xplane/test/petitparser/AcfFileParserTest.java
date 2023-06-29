@@ -1,9 +1,9 @@
-package com.ogerardin.xplane.test.file.petitparser;
+package com.ogerardin.xplane.test.petitparser;
 
+import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.petitparser.AcfFileParser;
-import com.ogerardin.xplane.test.DisabledIfNoXPlaneRootFolder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

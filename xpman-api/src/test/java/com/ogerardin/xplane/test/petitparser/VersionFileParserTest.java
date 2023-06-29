@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.test.file.petitparser;
+package com.ogerardin.xplane.test.petitparser;
 
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
 import com.ogerardin.xplane.file.petitparser.ServersFileParser;

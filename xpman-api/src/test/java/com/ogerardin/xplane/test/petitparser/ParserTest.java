@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.test.file.petitparser;
+package com.ogerardin.xplane.test.petitparser;
 
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.XPlane;

@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.test;
+package com.ogerardin.test.util;
 
 import com.ogerardin.xplane.XPlane;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
