@@ -1,9 +1,9 @@
 package com.ogerardin.xplane.test.file;
 
+import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.ObjFile;
-import com.ogerardin.xplane.test.DisabledIfNoXPlaneRootFolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

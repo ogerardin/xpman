@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.test;
+package com.ogerardin.test.util;
 
 
 import org.junit.jupiter.api.extension.ExtendWith;
