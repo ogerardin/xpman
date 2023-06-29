@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.file;
 
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
+import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData.SceneryPackList;
 import com.ogerardin.xplane.file.petitparser.SceneryPacksIniParser;
 import lombok.ToString;
 
@@ -16,8 +17,8 @@ public class SceneryPacksIniFile extends XPlaneFile<SceneryPackIniData> {
         super(file, new SceneryPacksIniParser());
     }
 
-    public SceneryPackIniData.SceneryPackList getSceneryPackList() {
-        return getData().getSceneryPackList();
+    public SceneryPackList getSceneryPackList() {
+        return getData().getItems();
     }
 
     @ToString.Include

@@ -5,6 +5,7 @@ import com.ogerardin.xplane.Manager;
 import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
+import com.ogerardin.xplane.file.data.scenery.PathSceneryPackIniItem;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
@@ -36,18 +37,20 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     // a comparator that compares SceneryPackages by rank with nulls last
     public static final Comparator<SceneryPackage> SCENERY_PACKAGE_COMPARATOR = Comparator.comparing(SceneryPackage::getRank, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    @NonNull
-    @Getter
+    @NonNull @Getter
     private final Path sceneryFolder;
 
-    @NonNull
-    @Getter
+    @NonNull @Getter
     private final Path disabledSceneryFolder;
+
+    @NonNull @Getter
+    private final Path globalSceneryFolder;
 
     public SceneryManager(@NonNull XPlane xPlane) {
         super(xPlane);
         this.sceneryFolder = xPlane.getPaths().customScenery();
         this.disabledSceneryFolder = xPlane.getPaths().disabledCustomScenery();
+        this.globalSceneryFolder = xPlane.getPaths().globalScenery();
     }
 
     /**
@@ -77,6 +80,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
 
         SceneryPacksIniFile sceneryPacksIniFile = getSceneryPacksIniFile();
         items = Stream.of(
+                getSceneryPackages(globalSceneryFolder, sceneryPacksIniFile),
                 getSceneryPackages(sceneryFolder, sceneryPacksIniFile),
                 getSceneryPackages(disabledSceneryFolder, null)
         ).flatMap(Collection::stream)
@@ -112,7 +116,9 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
         // get rank of scenery in scenery_packs.ini
         if (iniFile != null) {
             Path sceneryFolder = this.sceneryFolder.getParent().relativize(sceneryPackage.getFolder());
-            int index = iniFile.getSceneryPackList().indexOf(sceneryFolder);
+            PathSceneryPackIniItem item = new PathSceneryPackIniItem(sceneryFolder);
+            // Note: *GLOBAL_AIRPORTS* will never be matched as it is a TokenSceneryPackIniItem
+            int index = iniFile.getSceneryPackList().indexOf(item);
             if (index >= 0) {
                 sceneryPackage.setRank(index + 1);
             }
