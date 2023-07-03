@@ -120,7 +120,7 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     @AllArgsConstructor
     public enum Category {
         ULTRALIGHT("acf/_is_ultralight"),
-        EXPERIMENTZAL("acf/_is_experimental"),
+        EXPERIMENTAL("acf/_is_experimental"),
         GENERAL_AVIATION("acf/_is_general_aviation"),
         AIRLINER("acf/_is_airliner"),
         MILITARY("acf/_is_military"),
