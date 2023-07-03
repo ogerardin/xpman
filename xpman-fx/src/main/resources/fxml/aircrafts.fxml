@@ -16,7 +16,7 @@
                     <Button mnemonicParsing="false" text="Analyze"/>
                     <Button mnemonicParsing="false" text="Check for updates"/>
                     <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
-                    <ComboBox prefWidth="150.0" promptText="Filter"/>
+                    <ComboBox fx:id="filterCombo" prefWidth="200.0" promptText="Filter" onAction="#applyFilter"/>
                 </items>
             </ToolBar>
         </top>
