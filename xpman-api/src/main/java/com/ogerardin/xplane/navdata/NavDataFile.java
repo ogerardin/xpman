@@ -79,7 +79,7 @@ public class NavDataFile implements NavDataItem {
         try {
             return getDatFile().getData();
         } catch (Exception e) {
-            log.warn("Failed to parse {}: {}", getFullPath(), e.toString());
+            log.info("Failed to parse {}: {}", getFullPath(), e.toString());
             return null;
         }
     }
