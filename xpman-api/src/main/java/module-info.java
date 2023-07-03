@@ -11,7 +11,6 @@ module xpman.api {
     // filename-based automodules
     requires commons.lang;
     requires commons.configuration;
-    requires pecoff4j;
     requires petitparser.core;
     requires zip4j;
 
@@ -20,6 +19,7 @@ module xpman.api {
     requires com.google.api.services.drive;
     requires google.api.client;
     requires com.google.api.client.json.gson;
+    requires com.kichik.pecoff4j;
 
     exports com.ogerardin.xplane;
     exports com.ogerardin.xplane.util.platform;
