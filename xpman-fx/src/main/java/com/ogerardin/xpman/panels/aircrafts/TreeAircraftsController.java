@@ -76,14 +76,14 @@ public class TreeAircraftsController {
     private TreeItem<UiAircraft> treeItem(List<? extends Aircraft> aircrafts, XPlane xPlane) {
         TreeItem<UiAircraft> treeItem = new TreeItem<>();
         List<TreeItem<UiAircraft>> children = aircrafts.stream()
-                .map(aircraft -> treeItem(aircraft, xPlane))
+                .map(this::treeItem)
                 .toList();
         treeItem.getChildren().addAll(children);
         return treeItem;
     }
 
-    private TreeItem<UiAircraft> treeItem(Aircraft aircraft, XPlane xPlane) {
-        TreeItem<UiAircraft> treeItem = new TreeItem<>(new UiAircraft(aircraft, xPlane)) {
+    private TreeItem<UiAircraft> treeItem(Aircraft aircraft) {
+        TreeItem<UiAircraft> treeItem = new TreeItem<>(new UiAircraft(aircraft)) {
 
             private boolean loaded = false;
 
@@ -97,7 +97,7 @@ public class TreeAircraftsController {
                 if (!loaded) {
                     loaded = true;
                     List<TreeItem<UiAircraft>> liveries = aircraft.getLiveries().stream()
-                            .map(livery -> treeItem(xPlane, aircraft, livery))
+                            .map(livery -> treeItem(aircraft, livery))
                             .toList();
                     super.getChildren().addAll(liveries);
                 }
@@ -107,8 +107,8 @@ public class TreeAircraftsController {
         return treeItem;
     }
 
-    private TreeItem<UiAircraft> treeItem(XPlane xPlane, Aircraft aircraft, Livery livery) {
-        UiLivery value = new UiLivery(xPlane, aircraft, livery);
+    private TreeItem<UiAircraft> treeItem(Aircraft aircraft, Livery livery) {
+        UiLivery value = new UiLivery(aircraft, livery);
         return new TreeItem<>(value);
     }
 

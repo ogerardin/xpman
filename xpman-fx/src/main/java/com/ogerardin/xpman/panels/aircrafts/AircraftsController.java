@@ -53,7 +53,7 @@ public class AircraftsController extends Controller {
         uiItems = new ManagerItemsObservableList<>(
                 this.xPlaneProperty,
                 XPlane::getAircraftManager,
-                aircraft -> new UiAircraft(aircraft, xPlaneProperty.get())
+                UiAircraft::new
         );
         filteredUiItems = new FilteredList<>(uiItems);
         aircraftsTable.setItems(filteredUiItems);
@@ -88,6 +88,7 @@ public class AircraftsController extends Controller {
         wizard.showAndWait();
         uiItems.reload();
     }
+
 
     public void reload() {
         uiItems.reload();

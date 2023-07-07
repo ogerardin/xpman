@@ -29,7 +29,7 @@ public class TestObservableController {
         ManagerItemsObservableList<Aircraft, UiAircraft> aircrafts = new ManagerItemsObservableList<>(
                 TestObservable.xPlaneProperty,
                 XPlane::getAircraftManager,
-                aircraft -> new UiAircraft(aircraft, TestObservable.xPlaneProperty.get())
+                UiAircraft::new
         );
         aircraftsTable.setItems(aircrafts);
 

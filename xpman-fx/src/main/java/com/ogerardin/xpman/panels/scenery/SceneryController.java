@@ -1,14 +1,13 @@
 package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.config.XPManPrefs;
-import com.ogerardin.xpman.diag.DiagController;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.panels.scenery.wizard.OrganizeWizard;
 import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
@@ -18,20 +17,15 @@ import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import lombok.SneakyThrows;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class SceneryController {
+public class SceneryController extends Controller {
 
     private final XPlaneProperty xPlaneProperty;
     private final SceneryOrganizer sceneryOrganizer;
@@ -102,20 +96,6 @@ public class SceneryController {
         InstallWizard wizard = new InstallWizard(xPlane, InstallType.SCENERY);
         wizard.showAndWait();
         reload();
-    }
-
-    @SuppressWarnings("unused")
-    @SneakyThrows
-    public  void displayCheckResults(List<InspectionMessage> results) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/diag.fxml"));
-        Pane pane = loader.load();
-        DiagController controller = loader.getController();
-        controller.setItems(results);
-        Stage stage = new Stage();
-        stage.setTitle("Analysis results");
-        stage.setScene(new Scene(pane));
-        stage.initOwner(this.sceneryTable.getScene().getWindow());
-        stage.show();
     }
 
     @FXML
