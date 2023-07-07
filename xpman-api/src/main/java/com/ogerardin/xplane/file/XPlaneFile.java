@@ -19,8 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RequiredArgsConstructor
 public abstract class XPlaneFile<R> implements StringParser<R> {
 
+    // file may be null if loaded from a URL. Might change to URI.
     @Getter
-    @NonNull
     private final Path file;
 
     @NonNull

@@ -89,7 +89,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
 
     @SneakyThrows
     private Aircraft getAircraft(AcfFile acfFile) {
-        return IntrospectionHelper.getBestSubclassInstance(Aircraft.class, acfFile);
+        return IntrospectionHelper.getBestSubclassInstance(Aircraft.class, xPlane, acfFile);
     }
 
     @SneakyThrows

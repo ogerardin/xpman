@@ -2,6 +2,7 @@ package com.ogerardin.xplane.test.aircrafts;
 
 import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.test.util.TimingExtension;
+import com.ogerardin.xplane.InvalidConfig;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
@@ -19,11 +20,13 @@ import static org.hamcrest.Matchers.is;
 class AircraftTest {
 
     @Test
-    void testCanInstantiateAcfFile() {
-        Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing 737-800/b738.acf");
-
+    void testCanInstantiateAcfFile() throws InvalidConfig {
+        Path defaultXPRootFolder = XPlane.getDefaultXPRootFolder();
+        Path acfPath = defaultXPRootFolder.resolve("Aircraft/Laminar Research/Boeing 737-800/b738.acf");
         AcfFile acfFile = new AcfFile(acfPath);
-        Aircraft aircraft = new Aircraft(acfFile);
+
+        XPlane xPlane = new XPlane(defaultXPRootFolder);
+        Aircraft aircraft = new Aircraft(xPlane, acfFile);
         
         assertThat(aircraft.getStudio(), is("Laminar Research"));
         assertThat(aircraft.getName(), is("Boeing 737-800"));

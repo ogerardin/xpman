@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.aircrafts.custom;
 
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -26,8 +27,8 @@ public class Dmax3D_EF2000 extends Aircraft {
         return m.matches() ? m.group(1) + "." + m.group(2) : null;
     }
 
-    public Dmax3D_EF2000(AcfFile acfFile) throws InstantiationException {
-        super(acfFile, "Dmax3D Eurofighter Typhoon");
+    public Dmax3D_EF2000(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
+        super(xPlane, acfFile, "Dmax3D Eurofighter Typhoon");
         IntrospectionHelper.require(getStudio().equals("dmax3d.com") && getAcfName().equals("Eurofighter Typhoon"));
     }
 
