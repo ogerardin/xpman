@@ -4,12 +4,13 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 
-public class PluginsController {
+public class PluginsController extends Controller {
 
     private final XPlaneProperty xPlaneProperty;
 

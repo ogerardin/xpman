@@ -1,6 +1,5 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.aircrafts.Livery;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -20,8 +19,8 @@ public class UiLivery extends UiAircraft {
     @ToString.Include
     public final Livery livery;
 
-    public UiLivery(XPlane xPlane, Aircraft aircraft, Livery livery) {
-        super(aircraft, xPlane);
+    public UiLivery(Aircraft aircraft, Livery livery) {
+        super(aircraft);
         this.livery = livery;
     }
 
@@ -48,7 +47,7 @@ public class UiLivery extends UiAircraft {
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     @OnSuccess("reload()")
     public void moveToTrash() {
-        xPlane.getAircraftManager().moveLiveryToTrash(livery);
+        getXPlane().getAircraftManager().moveLiveryToTrash(livery);
     }
 
 

@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -12,24 +13,22 @@ import lombok.experimental.Delegate;
 import java.net.URL;
 import java.util.List;
 
-@SuppressWarnings("ClassCanBeRecord")
+@SuppressWarnings({"unused"})
 @Data
 public class UiScenery {
 
-    @Delegate
+    @Delegate(excludes = Inspectable.class)
     private final SceneryPackage sceneryPackage;
 
     private final XPlane xPlane;
 
     private final SceneryClass sceneryClass;
 
-    @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(sceneryPackage.getFolder());
     }
 
-    @SuppressWarnings("unused")
     @Label("'Enable Scenery Package'")
     @EnabledIf("! enabled")
     @OnSuccess("reload()")
@@ -38,7 +37,6 @@ public class UiScenery {
     }
 
     //TODO different warning when the package is a library because the library might be used by other scenery
-    @SuppressWarnings("unused")
     @Label("'Disable Scenery Package'")
     @EnabledIf("enabled")
     @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
@@ -61,16 +59,14 @@ public class UiScenery {
         xPlane.getSceneryManager().moveSceneryPackageToTrash(sceneryPackage);
     }
 
-    @SuppressWarnings("unused")
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
     }
 
-    @SuppressWarnings("unused")
-    @OnSuccess("displayCheckResults(#result)")
+    @OnSuccess("displayInspectionResults(#result)")
     public List<InspectionMessage> inspect() {
-        return xPlane.getSceneryManager().inspect(sceneryPackage);
+        return sceneryPackage.inspect();
     }
 
 

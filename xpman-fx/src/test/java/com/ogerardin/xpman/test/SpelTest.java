@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.test;
 
+import com.ogerardin.xplane.InvalidConfig;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
@@ -11,7 +12,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static com.ogerardin.xpman.util.SpelUtil.eval;
-import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -20,11 +20,13 @@ import static org.hamcrest.Matchers.is;
 class SpelTest {
 
     @Test
-    void testSpel() {
-        Path acfPath = XPlane.getDefaultXPRootFolder().resolve("Aircraft/Laminar Research/Boeing B737-800/b738.acf");
-
+    void testSpel() throws InvalidConfig {
+        Path defaultXPRootFolder = XPlane.getDefaultXPRootFolder();
+        Path acfPath = defaultXPRootFolder.resolve("Aircraft/Laminar Research/Boeing 737-800/b738.acf");
         AcfFile acfFile = new AcfFile(acfPath);
-        Aircraft aircraft = new Aircraft(acfFile);
+
+        XPlane xPlane = new XPlane(defaultXPRootFolder);
+        Aircraft aircraft = new Aircraft(xPlane, acfFile);
 //        aircraft.setEnabled(true);
 
         assertThat(eval("true", aircraft), is(TRUE));

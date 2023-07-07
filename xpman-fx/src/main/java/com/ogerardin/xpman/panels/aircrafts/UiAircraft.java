@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.aircrafts;
 
-import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.panels.aircrafts.details.AcfTreeController;
@@ -24,11 +24,9 @@ import java.util.List;
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 public class UiAircraft {
 
-    @Delegate
+    @Delegate(excludes = Inspectable.class)
     @ToString.Include
     protected final Aircraft aircraft;
-
-    protected final XPlane xPlane;
 
     @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
@@ -63,7 +61,7 @@ public class UiAircraft {
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     @OnSuccess("reload()")
     public void moveToTrash() {
-        xPlane.getAircraftManager().moveAircraftToTrash(aircraft);
+        getXPlane().getAircraftManager().moveAircraftToTrash(aircraft);
     }
 
     @SuppressWarnings("unused")
@@ -78,9 +76,9 @@ public class UiAircraft {
     }
 
     @SuppressWarnings("unused")
-    @OnSuccess("displayCheckResults(#result)")
+    @OnSuccess("displayInspectionResults(#result)")
     public List<InspectionMessage> inspect() {
-        return xPlane.getAircraftManager().inspect(aircraft);
+        return aircraft.inspect();
     }
 
     @SuppressWarnings("unused")
