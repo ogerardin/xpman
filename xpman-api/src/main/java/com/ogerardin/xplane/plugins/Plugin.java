@@ -1,27 +1,33 @@
 package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneObject;
+import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import com.ogerardin.xplane.inspection.InspectionsProvider;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-@Data
-@AllArgsConstructor
-public class Plugin implements InspectionsProvider<Plugin> {
-
-    private final XPlane xPlane;
+@Getter
+public class Plugin extends XPlaneObject implements Inspectable {
 
     private final Path xplFile;
 
     private final String name;
 
     private final String desc;
+
+    public Plugin(XPlane xPlane, Path xplFile, String name, String desc) {
+        super(xPlane);
+        this.xplFile = xplFile;
+        this.name = name;
+        this.desc = desc;
+    }
 
     @SuppressWarnings("unused")
     public Plugin(XPlane xPlane, Path xplFile) {
@@ -58,7 +64,8 @@ public class Plugin implements InspectionsProvider<Plugin> {
     }
 
     @Override
-    public Inspections<Plugin> getInspections(XPlane xPlane) {
-        return Inspections.of();
+    public List<InspectionMessage> inspect() {
+        Inspections<Plugin> inspections = Inspections.of();
+        return inspections.inspect(this);
     }
 }

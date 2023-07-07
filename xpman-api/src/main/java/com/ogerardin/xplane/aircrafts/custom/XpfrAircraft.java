@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.aircrafts.custom;
 
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -24,8 +25,8 @@ public class XpfrAircraft extends Aircraft {
     @Getter(lazy = true)
     private final String version = loadVersion();
 
-    public XpfrAircraft(AcfFile acfFile) throws InstantiationException {
-        super(acfFile);
+    public XpfrAircraft(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
+        super(xPlane, acfFile);
         // not all XPFR aircrafts have "XPFR" as studio :(
         //        IntrospectionHelper.require(getStudio().equals("XPFR"));
         IntrospectionHelper.require(getVersion() != null);

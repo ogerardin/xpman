@@ -6,7 +6,8 @@ import com.ogerardin.xplane.Versioned;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
-import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.Inspection;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.impl.RecommendedPluginsInspection;
 import com.ogerardin.xplane.plugins.custom.AviTab;
 import com.ogerardin.xplane.plugins.custom.TerrainRadar;
@@ -16,6 +17,7 @@ import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,8 +50,8 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         return channel.getLatestVersion();
     }
 
-    public ZiboMod738(AcfFile acfFile) throws InstantiationException {
-        super(acfFile);
+    public ZiboMod738(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
+        super(xPlane, acfFile);
         IntrospectionHelper.require(getNotes().startsWith("ZIBOmod"));
     }
 
@@ -95,9 +97,11 @@ public class ZiboMod738 extends Aircraft implements Versioned {
     }
 
     @Override
-    public Inspections<Aircraft> getInspections(XPlane xPlane) {
-        return super.getInspections(xPlane)
-                .append(new RecommendedPluginsInspection<>(xPlane, AviTab.class, TerrainRadar.class));
+    public List<InspectionMessage> inspect() {
+        Inspection<Aircraft> pluginsInspection = new RecommendedPluginsInspection<>(getXPlane(), AviTab.class, TerrainRadar.class);
+        return StreamEx.of(super.inspect())
+                .append(pluginsInspection.inspect(this))
+                .toList();
     }
 
 

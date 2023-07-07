@@ -1,9 +1,11 @@
 package com.ogerardin.xplane.aircrafts;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.file.AcfFile;
+import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import com.ogerardin.xplane.inspection.InspectionsProvider;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +18,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
-@Data
-@AllArgsConstructor
 @Slf4j
-public class Aircraft implements InspectionsProvider<Aircraft> {
+@Getter
+public class Aircraft extends XPlaneObject implements Inspectable {
 
     private final AcfFile acfFile;
 
@@ -30,8 +31,14 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     @ToString.Exclude
     private final List<Livery> liveries = loadLiveries();
 
-    public Aircraft(AcfFile acfFile) {
-        this(acfFile, (String) null);
+    public Aircraft(XPlane xPlane, AcfFile acfFile) {
+        this(xPlane, acfFile, null);
+    }
+
+    public Aircraft(XPlane xPlane, AcfFile acfFile, String name) {
+        super(xPlane);
+        this.acfFile = acfFile;
+        this.name = name;
     }
 
     private String getProperty(String name) {
@@ -174,10 +181,10 @@ public class Aircraft implements InspectionsProvider<Aircraft> {
     }
 
     @Override
-    public Inspections<Aircraft> getInspections(XPlane xPlane) {
-        return Inspections.of(
-                new AircraftSpecInspection(xPlane)
+    public List<InspectionMessage> inspect() {
+        Inspections<Aircraft> inspections = Inspections.of(
+                new AircraftSpecInspection()
         );
+        return inspections.inspect(this);
     }
-
 }

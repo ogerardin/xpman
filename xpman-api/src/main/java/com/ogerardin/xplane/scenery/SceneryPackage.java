@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.scenery;
 
-import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import com.ogerardin.xplane.inspection.InspectionsProvider;
 import com.ogerardin.xplane.inspection.impl.ReferencedTexturesInspection;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.*;
@@ -12,11 +12,12 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Data
 @Slf4j
-public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
+public class SceneryPackage implements Inspectable {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
 
@@ -75,7 +76,8 @@ public class SceneryPackage implements InspectionsProvider<SceneryPackage> {
     }
 
     @Override
-    public Inspections<SceneryPackage> getInspections(XPlane xPlane) {
-        return Inspections.of(new ReferencedTexturesInspection());
+    public List<InspectionMessage> inspect() {
+        Inspections<SceneryPackage> inspections = Inspections.of(new ReferencedTexturesInspection());
+        return inspections.inspect(this);
     }
 }

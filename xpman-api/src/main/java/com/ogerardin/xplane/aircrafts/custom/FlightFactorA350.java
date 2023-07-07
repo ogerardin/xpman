@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.aircrafts.custom;
 
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -20,8 +21,8 @@ public class FlightFactorA350 extends Aircraft {
     @Getter(lazy = true)
     private final String version = loadVersion();
 
-    public FlightFactorA350(AcfFile acfFile) throws InstantiationException {
-        super(acfFile, "Flight Factor Airbus A350 XWB Advanced");
+    public FlightFactorA350(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
+        super(xPlane, acfFile, "Flight Factor Airbus A350 XWB Advanced");
         IntrospectionHelper.require(
                 getAcfName().equals("Airbus a350 XP11")
                         && getStudio().equals("FlightFactor")

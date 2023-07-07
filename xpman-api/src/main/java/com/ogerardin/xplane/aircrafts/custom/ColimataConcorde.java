@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.aircrafts.custom;
 
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -18,8 +19,8 @@ public class ColimataConcorde extends Aircraft {
 
     //TODO manage customization (see CUSTOMIZE/description.txt)
 
-    public ColimataConcorde(AcfFile acfFile) throws InstantiationException {
-        super(acfFile, "Colimata Concorde FXP");
+    public ColimataConcorde(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
+        super(xPlane, acfFile, "Colimata Concorde FXP");
         IntrospectionHelper.require(getAcfName().equals("CONCORDE FXP"));
     }
 

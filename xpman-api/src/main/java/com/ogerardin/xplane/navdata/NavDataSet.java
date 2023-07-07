@@ -1,10 +1,11 @@
 package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneObject;
+import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import com.ogerardin.xplane.inspection.InspectionsProvider;
-import lombok.Data;
-import lombok.ToString;
+import lombok.Getter;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,15 +17,12 @@ import java.util.List;
 /**
  * A nav data folder containing a set of {@link NavDataFile}s
  */
-@Data
-public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, NavDataItem {
+@Getter
+public abstract class NavDataSet extends XPlaneObject implements Inspectable, NavDataItem {
 
     private final String name;
 
     private final String description;
-
-    @ToString.Exclude
-    private final XPlane xPlane;
 
     private final Path folder;
 
@@ -36,9 +34,9 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
     private List<NavDataFile> files = new ArrayList<>();
 
     protected NavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
+        super(xPlane);
         this.name = name;
         this.description = description;
-        this.xPlane = xPlane;
         this.folder = folder;
         this.files = Arrays.stream(fileNames)
 //                .map(folder::resolve)
@@ -49,9 +47,11 @@ public abstract class NavDataSet implements InspectionsProvider<NavDataSet>, Nav
 
 
     @Override
-    public Inspections<NavDataSet> getInspections(XPlane xPlane) {
-        return null;
+    public List<InspectionMessage> inspect() {
+        Inspections<NavDataSet> inspections = Inspections.of();
+        return inspections.inspect(this);
     }
+
 
     @Override
     public List<? extends NavDataItem> getChildren() {

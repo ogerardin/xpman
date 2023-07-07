@@ -23,15 +23,17 @@ class AircraftSpecInspectionTest {
     @SneakyThrows
     @Test
     void inspectNoMessage() {
-        AcfFile acfFile = mock();
-        when(acfFile.getFileSpecVersion()).thenReturn("1200");
-        Aircraft aircraft = mock();
-        when(aircraft.getAcfFile()).thenReturn(acfFile);
-
         XPlane xPlane = mock();
         when(xPlane.getMajorVersion()).thenReturn(XPlaneMajorVersion.XP12);
 
-        AircraftSpecInspection inspection = new AircraftSpecInspection(xPlane);
+        AcfFile acfFile = mock();
+        when(acfFile.getFileSpecVersion()).thenReturn("1200");
+
+        Aircraft aircraft = mock();
+        when(aircraft.getAcfFile()).thenReturn(acfFile);
+        when(aircraft.getXPlane()).thenReturn(xPlane);
+
+        AircraftSpecInspection inspection = new AircraftSpecInspection();
 
         List<InspectionMessage> messages = inspection.inspect(aircraft);
         assertThat(messages, hasSize(0));
@@ -39,15 +41,17 @@ class AircraftSpecInspectionTest {
     @SneakyThrows
     @Test
     void inspectOlder() {
-        AcfFile acfFile = mock();
-        when(acfFile.getFileSpecVersion()).thenReturn("1100");
-        Aircraft aircraft = mock();
-        when(aircraft.getAcfFile()).thenReturn(acfFile);
-
         XPlane xPlane = mock();
         when(xPlane.getMajorVersion()).thenReturn(XPlaneMajorVersion.XP12);
 
-        AircraftSpecInspection inspection = new AircraftSpecInspection(xPlane);
+        AcfFile acfFile = mock();
+        when(acfFile.getFileSpecVersion()).thenReturn("1100");
+
+        Aircraft aircraft = mock();
+        when(aircraft.getAcfFile()).thenReturn(acfFile);
+        when(aircraft.getXPlane()).thenReturn(xPlane);
+
+        AircraftSpecInspection inspection = new AircraftSpecInspection();
 
         List<InspectionMessage> messages = inspection.inspect(aircraft);
         assertThat(messages, hasSize(1));
@@ -58,15 +62,17 @@ class AircraftSpecInspectionTest {
     @SneakyThrows
     @Test
     void inspectNewer() {
-        AcfFile acfFile = mock();
-        when(acfFile.getFileSpecVersion()).thenReturn("1200");
-        Aircraft aircraft = mock();
-        when(aircraft.getAcfFile()).thenReturn(acfFile);
-
         XPlane xPlane = mock();
         when(xPlane.getMajorVersion()).thenReturn(XPlaneMajorVersion.XP11);
 
-        AircraftSpecInspection inspection = new AircraftSpecInspection(xPlane);
+        AcfFile acfFile = mock();
+        when(acfFile.getFileSpecVersion()).thenReturn("1200");
+
+        Aircraft aircraft = mock();
+        when(aircraft.getAcfFile()).thenReturn(acfFile);
+        when(aircraft.getXPlane()).thenReturn(xPlane);
+
+        AircraftSpecInspection inspection = new AircraftSpecInspection();
 
         List<InspectionMessage> messages = inspection.inspect(aircraft);
         assertThat(messages, hasSize(1));
