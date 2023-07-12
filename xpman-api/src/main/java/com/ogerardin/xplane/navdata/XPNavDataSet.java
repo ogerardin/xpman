@@ -1,12 +1,14 @@
 package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
+import lombok.ToString;
 
 import java.nio.file.Path;
 
 /**
  * A {@link NavDataSet} in the XPNAV1150/XPFIX1101/XPAWY1100/XPHOLD1140 formats
  */
+@ToString(callSuper = true, includeFieldNames = false)
 public class XPNavDataSet extends NavDataSet {
 
     protected static final String[] DEFAULT_FILES = {

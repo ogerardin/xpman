@@ -21,7 +21,6 @@ import java.util.Optional;
 public class NavDataFile implements NavDataItem {
 
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final NavDataSet navDataSet;
 
     private final Path file;
