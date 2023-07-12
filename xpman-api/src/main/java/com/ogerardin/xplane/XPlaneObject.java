@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 
 @Data
-public class XPlaneObject {
+public abstract class XPlaneObject {
 
     @ToString.Exclude
     private final XPlane xPlane;

@@ -5,7 +5,9 @@ import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,10 +20,13 @@ import java.util.List;
  * A nav data folder containing a set of {@link NavDataFile}s
  */
 @Getter
+@ToString
+@EqualsAndHashCode(callSuper = true)
 public abstract class NavDataSet extends XPlaneObject implements Inspectable, NavDataItem {
 
     private final String name;
 
+    @ToString.Exclude
     private final String description;
 
     private final Path folder;
@@ -31,6 +36,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         return getFolder();
     }
 
+    @EqualsAndHashCode.Exclude
     private List<NavDataFile> files = new ArrayList<>();
 
     protected NavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
