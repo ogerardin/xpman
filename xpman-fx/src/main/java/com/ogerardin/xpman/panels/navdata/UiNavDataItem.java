@@ -6,9 +6,11 @@ import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Delegate;
 
 @Data
+@ToString(includeFieldNames = false)
 @RequiredArgsConstructor
 public class UiNavDataItem {
 
