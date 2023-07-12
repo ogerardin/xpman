@@ -70,6 +70,7 @@ public class NavDataController {
                 .map(this::treeItem)
                 .toList();
         treeItem.getChildren().addAll(children);
+        treeItem.setExpanded(true);
         return treeItem;
     }
 
