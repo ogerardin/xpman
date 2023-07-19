@@ -42,7 +42,7 @@
                             <TreeItemPropertyValueFactory property="airacCycle" />
                         </cellValueFactory>
                     </TreeTableColumn>
-                    <TreeTableColumn prefWidth="75.0" text="Metadata">
+                    <TreeTableColumn prefWidth="100.0" text="Metadata">
                         <cellValueFactory>
                             <TreeItemPropertyValueFactory property="metadata" />
                         </cellValueFactory>
