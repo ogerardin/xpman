@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class InstalledTool extends Tool {
+public non-sealed class InstalledTool extends Tool {
 
     @NonNull
     private final Path app;
@@ -38,7 +38,7 @@ public class InstalledTool extends Tool {
 
     /** Constructs an installed tool with specified manifest */
     public InstalledTool(@NonNull Path app, @NonNull Manifest manifest) {
-        this(app, manifest.getName(), manifest);
+        this(app, manifest.name(), manifest);
     }
 
     public boolean isInstallable() {
@@ -58,8 +58,8 @@ public class InstalledTool extends Tool {
         if (manifest == null) {
             return null;
         }
-        return Optional.ofNullable(manifest.getPlatform().getVersion(app))
-                .orElse(manifest.getVersion());
+        return Optional.ofNullable(manifest.platform().getVersion(app))
+                .orElse(manifest.version());
     }
 
 

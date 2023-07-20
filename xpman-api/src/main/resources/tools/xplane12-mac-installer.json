@@ -1,5 +1,6 @@
 {
   "platform": "MAC",
+  "xplaneVersion": "12",
   "name": "X-Plane 12 installer",
   "description": "Laminar Research's installer/updater for X-Plane 12.",
   "url": "https://lookup.x-plane.com/_lookup_12_/download/X-Plane12InstallerMac.zip",

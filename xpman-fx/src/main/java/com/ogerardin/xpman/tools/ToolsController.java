@@ -78,10 +78,10 @@ public class ToolsController {
         }
         Manifest manifest = uiTool.getManifest();
         if (manifest != null) {
-            nodes.add(new Text("\n" + manifest.getDescription()));
-            if (manifest.getHomepage() != null) {
+            nodes.add(new Text("\n" + manifest.description()));
+            if (manifest.homepage() != null) {
                 Hyperlink hyperlink = new Hyperlink("Tool homepage");
-                hyperlink.setOnAction(event -> Platforms.getCurrent().openUrl(manifest.getHomepage()) );
+                hyperlink.setOnAction(event -> Platforms.getCurrent().openUrl(manifest.homepage()) );
                 nodes.add(hyperlink);
             }
         } else {

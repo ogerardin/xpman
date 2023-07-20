@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.tools;
 
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.platform.Platform;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,26 +10,21 @@ import java.nio.file.Path;
 import java.util.function.Predicate;
 
 /**
- * A {@link Manifest} is the description of a Tool, with recipes to check if it is installed, install it from
- * the Internet, uninstall it, etc.
+ * A {@link Manifest} is the description of a Tool, with recipes to check if it is installed, install it from the
+ * Internet, uninstall it, etc.
+ *
+ * @param platform target platform for this tool
+ * @param url URL to download the tool from
+ * @param installChecker predicate to check if a given file matches this tool
  */
-@Data
 @Slf4j
-public class Manifest {
-
-    @NonNull
-    private final String name;
-    private final URL homepage;
-    private final String version;
-    private final String description;
-    /** target platform for this tool */
-    @NonNull
-    private final Platform platform;
-    /** URL to download the tool from */
-    @NonNull
-    private final URL url;
-    /** predicate to check if a given file matches this tool */
-    @NonNull
-    private final Predicate<Path> installChecker;
-
+public record Manifest(
+        @NonNull String name,
+        URL homepage,
+        String version,
+        String description,
+        @NonNull Platform platform,
+        XPlaneMajorVersion xplaneVersion,
+        @NonNull URL url,
+        @NonNull Predicate<Path> installChecker) {
 }
