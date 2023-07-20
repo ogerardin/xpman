@@ -77,7 +77,12 @@ public class ToolsManager extends Manager<Tool> {
         // find available tools (=all manifests except already installed)
         List<InstallableTool> availableTools = getManifests().stream()
                 // current platform only
-                .filter(m -> m.getPlatform().isCurrent())
+                .filter(m -> m.platform().isCurrent())
+                // current X-Plane version only
+                .filter(m -> Optional.ofNullable(m.xplaneVersion())
+                        .map(v -> v == xPlane.getMajorVersion())
+                        .orElse(true)
+                )
                 // not already installed
                 .filter(m -> installedTools.stream().noneMatch(tool -> tool.getManifest() == m))
                 .map(InstallableTool::new)
@@ -93,7 +98,7 @@ public class ToolsManager extends Manager<Tool> {
     @SneakyThrows
     private InstalledTool getTool(Path path) {
         Optional<Manifest> maybeManifest = getManifests().stream()
-                .filter(manifest -> manifest.getInstallChecker().test(path))
+                .filter(manifest -> manifest.installChecker().test(path))
                 .findAny();
         return maybeManifest
                 .map(m -> new InstalledTool(path, m))
@@ -104,7 +109,7 @@ public class ToolsManager extends Manager<Tool> {
         if (!(tool instanceof InstallableTool installableTool)) {
             throw new IllegalArgumentException("Tool is not an InstallableTool");
         }
-        ToolUtils.install(xPlane, installableTool.getManifest().getUrl(), progressListener);
+        ToolUtils.install(xPlane, installableTool.getManifest().url(), progressListener);
 
         reload();
     }
