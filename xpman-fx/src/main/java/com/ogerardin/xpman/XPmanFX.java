@@ -55,6 +55,21 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
 
+    @Getter(lazy = true)
+    private final Stage toolsStage = createToolsStage();
+
+    @SneakyThrows
+    private Stage createToolsStage() {
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/tools/tools.fxml"));
+        loader.setControllerFactory(this::buildController);
+        Pane pane = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Tools Manager");
+        stage.setScene(new Scene(pane));
+//        stage.initOwner(primaryStage);
+        return stage;
+    }
+
     public XPlaneProperty xPlaneProperty() {
         return xPlaneProperty;
     }
@@ -240,14 +255,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @SneakyThrows
     @FXML
     public void manageTools() {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/tools/tools.fxml"));
-        loader.setControllerFactory(this::buildController);
-        Pane pane = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle("Tools Manager");
-        stage.setScene(new Scene(pane));
-        stage.initOwner(primaryStage);
-        stage.show();
+        getToolsStage().show();
     }
 
     private class RecentMenuItem extends MenuItem {
