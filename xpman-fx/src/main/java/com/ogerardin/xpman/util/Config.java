@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.util;
 
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -70,5 +71,13 @@ public class Config {
 
     public String getBuildNumber() {
         return gitProperties.getProperty("git.build.number");
+    }
+
+    public String getCpuType() {
+        return Platforms.getCurrent().getCpuType();
+    }
+
+    public int getCpuCount() {
+        return Platforms.getCurrent().getCpuCount();
     }
 }

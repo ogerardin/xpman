@@ -20,6 +20,8 @@ public class AboutController {
     private Text vm;
     @FXML
     private Text title;
+    @FXML
+    public Text cpu;
 
     @FXML
     void initialize() {
@@ -31,6 +33,7 @@ public class AboutController {
                 Optional.ofNullable(Config.getBranch()).orElse("N/A")));
         runtime.setText(MessageFormat.format("Runtime: {0} {1} {2}", Config.getRuntimeName(), Config.getJavaVersion(), Config.getOsArch()));
         vm.setText(MessageFormat.format("VM: {0} by {1}", Config.getVmName(), Config.getJavaVmVendor()));
+        cpu.setText(MessageFormat.format("CPU: {0} ({1,choice,1#1 core|1<{1,number,integer} cores})", Config.getCpuType(), Config.getCpuCount()));
     }
 
     @SneakyThrows
