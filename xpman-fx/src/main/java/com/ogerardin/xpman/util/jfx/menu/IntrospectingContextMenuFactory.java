@@ -13,6 +13,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Base class for factories that create {@link ContextMenu}s by introspecting an object.
+ * Warning: for efficiency reasons, the menu is cached and reused for each object; make sure that the #hashCode() and
+ * #equals() methods of the object are properly implemented.
+ * @param <T> type of the target object
+ */
 @Slf4j
 @Data
 public abstract class IntrospectingContextMenuFactory<T> {
