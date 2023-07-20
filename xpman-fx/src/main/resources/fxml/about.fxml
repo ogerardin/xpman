@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
+<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
     <graphic>
         <ImageView fitHeight="128.0" fitWidth="128.0">
             <Image url="@../img/icon.png" />
@@ -24,9 +24,10 @@
            <Text fx:id="build" layoutX="20.0" layoutY="49.0" text="Build ..." />
            <Text fx:id="runtime" layoutX="20.0" layoutY="78.0" text="Runtime: ..." />
            <Text fx:id="vm" layoutX="20.0" layoutY="95.0" text="VM: ..." />
-           <Hyperlink layoutX="16.0" layoutY="115.0" onAction="#openLink" text="github.com/ogerardin/xpman" />
-           <Text layoutX="20.0" layoutY="151.0" text="© 2022 by Olivier Gérardin" />
-           <ImageView layoutX="12.0" layoutY="155.0" onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
+           <Text fx:id="cpu" layoutX="20.0" layoutY="113.0" text="CPU: ..." />
+           <Hyperlink layoutX="16.0" layoutY="140.0" onAction="#openLink" text="github.com/ogerardin/xpman" />
+           <Text layoutX="19.0" layoutY="174.0" text="© 2023 by Olivier Gérardin" />
+           <ImageView layoutX="11.0" layoutY="178.0" onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
                <Image url="@../img/gplv3.png" />
            </ImageView>
        </AnchorPane>
