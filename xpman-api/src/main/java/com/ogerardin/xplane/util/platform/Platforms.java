@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 /**
  * Known platforms as an enum.
- * The actual implementation is delagated to keep this enum short and readable.
+ * The actual implementation is delegated to keep this enum short and readable.
  */
 @RequiredArgsConstructor
 public enum Platforms implements Platform {

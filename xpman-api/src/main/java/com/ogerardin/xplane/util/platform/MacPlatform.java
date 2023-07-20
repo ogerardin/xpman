@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.util.platform;
 
 import com.ogerardin.xplane.util.exec.CommandExecutor;
+import com.ogerardin.xplane.util.exec.ExecResults;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -65,6 +66,20 @@ public class MacPlatform implements Platform {
     @SneakyThrows
     public String getVersion(Path appPath) {
         return new AppBundle(appPath).version();
+    }
+
+    @SneakyThrows
+    @Override
+    public String getCpuType() {
+        ExecResults exec = CommandExecutor.exec("sysctl", "-n", "machdep.cpu.brand_string");
+        return exec.getOutputLines().get(0);
+    }
+
+    @SneakyThrows
+    @Override
+    public int getCpuCount() {
+        ExecResults exec = CommandExecutor.exec("sysctl", "-n", "hw.ncpu");
+        return Integer.parseInt(exec.getOutputLines().get(0));
     }
 
     /**

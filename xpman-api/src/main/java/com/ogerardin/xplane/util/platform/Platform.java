@@ -10,10 +10,15 @@ public interface Platform {
     /** The int value of {@link com.sun.jna.Platform} that matches this platform */
     int getOsType();
 
+    default String getCpuType() { return "unknown"; }
+
+    default int getCpuCount() { return 1; }
+
     default boolean isCurrent() {
         return getOsType() == com.sun.jna.Platform.getOSType();
     }
 
+    /** The platform-specific text corresponding to the action "reveal in Finder" or "show in Explorer" or equivalent */
     default String revealLabel() {
         return "Show in files";
     }
