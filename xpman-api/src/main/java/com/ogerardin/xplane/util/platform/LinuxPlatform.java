@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.util.platform;
 
 import com.ogerardin.xplane.util.exec.CommandExecutor;
+import com.ogerardin.xplane.util.exec.ExecResults;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -22,6 +23,20 @@ public class LinuxPlatform implements Platform {
         // https://askubuntu.com/a/1109917/325617
         String shellParam = String.format("gtk-launch \"$(xdg-mime query default inode/directory)\" '%s'", path.toString());
         CommandExecutor.exec("sh", "-c", shellParam);
+    }
+
+    @SneakyThrows
+    @Override
+    public String getCpuType() {
+        ExecResults exec = CommandExecutor.exec("uname", "-p");
+        return exec.getOutputLines().get(0);
+    }
+
+    @SneakyThrows
+    @Override
+    public int getCpuCount() {
+        ExecResults exec = CommandExecutor.exec("nproc", "--all");
+        return Integer.parseInt(exec.getOutputLines().get(0));
     }
 
     @Override

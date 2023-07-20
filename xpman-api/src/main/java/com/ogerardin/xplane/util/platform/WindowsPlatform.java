@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @Slf4j
 public class WindowsPlatform implements Platform {
@@ -32,6 +33,18 @@ public class WindowsPlatform implements Platform {
     public void reveal(@NonNull Path path) {
         String explorerParam = "/select,\"" + path + "\"";
         CommandExecutor.exec("cmd", "/c", "explorer.exe " + explorerParam);
+    }
+
+    @Override
+    public String getCpuType() {
+        return System.getenv("PROCESSOR_ARCHITECTURE");
+    }
+
+    @Override
+    public int getCpuCount() {
+        return Optional.ofNullable(System.getenv("NUMBER_OF_PROCESSORS"))
+                .map(Integer::parseInt)
+                .orElse(1);
     }
 
     @Override
