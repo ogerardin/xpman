@@ -2,6 +2,7 @@ package com.ogerardin.xplane.file;
 
 import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.petitparser.AcfFileParser;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -11,6 +12,7 @@ import java.util.Map;
  * Represents a parsed .acf file (aircraft description)
  */
 @ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = true)
 public class AcfFile extends XPlaneFile<AcfFileData> {
 
     public AcfFile(Path file) {

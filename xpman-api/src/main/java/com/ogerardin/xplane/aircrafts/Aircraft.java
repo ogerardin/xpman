@@ -20,8 +20,10 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Getter
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class Aircraft extends XPlaneObject implements Inspectable {
 
+    @EqualsAndHashCode.Include
     private final AcfFile acfFile;
 
     private final String name;

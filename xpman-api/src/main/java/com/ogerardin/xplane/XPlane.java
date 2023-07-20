@@ -17,8 +17,10 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class XPlane {
 
+    @EqualsAndHashCode.Include
     private final Path baseFolder;
 
     private final XPlaneVariant variant;

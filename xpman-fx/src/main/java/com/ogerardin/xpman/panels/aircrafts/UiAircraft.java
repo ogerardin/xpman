@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Delegate;
 
@@ -21,11 +22,13 @@ import java.nio.file.Path;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 public class UiAircraft {
 
     @Delegate(excludes = Inspectable.class)
     @ToString.Include
+    @EqualsAndHashCode.Include
     protected final Aircraft aircraft;
 
     @SuppressWarnings("unused")

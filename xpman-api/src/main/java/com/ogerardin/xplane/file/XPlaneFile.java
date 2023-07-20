@@ -17,10 +17,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Data
 @Slf4j
 @RequiredArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class XPlaneFile<R> implements StringParser<R> {
 
     // file may be null if loaded from a URL. Might change to URI.
     @Getter
+    @EqualsAndHashCode.Include
     private final Path file;
 
     @NonNull
