@@ -57,24 +57,26 @@ public class CommandExecutor {
             new OutputStreamWriter(process.getOutputStream()).write(stdin);
         }
 
-        List<String> outLines = startStreamGobbler(process.getInputStream(), outLineHandler);
-        List<String> errLines = startStreamGobbler(process.getErrorStream(), errLineHandler);
+        List<String> outLines = new ArrayList<>();
+        Thread outStreamGobbler = startStreamGobbler(process.getInputStream(), outLines, outLineHandler);
+        List<String> errLines = new ArrayList<>();
+        Thread errStreamGobbler = startStreamGobbler(process.getErrorStream(), outLines, errLineHandler);
 
         int exitValue = process.waitFor();
-
         log.debug("Process exited with value {}", exitValue);
+
+        outStreamGobbler.join();
+        errStreamGobbler.join();
 
         return new ExecResults(process, outLines, errLines);
     }
 
-    private List<String> startStreamGobbler(InputStream inputStream, Consumer<String> customHandler) {
-        List<String> outLines = new ArrayList<>();
+    private Thread startStreamGobbler(InputStream inputStream, List<String> outLines, Consumer<String> customHandler) {
         Consumer<String> handler = outLines::add;
         if (customHandler != null) {
             handler = handler.andThen(customHandler);
         }
-        new StreamGobbler(inputStream, handler);
-        return outLines;
+        return new StreamGobbler(inputStream, handler);
     }
 
     /**
