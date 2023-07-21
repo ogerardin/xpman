@@ -153,7 +153,7 @@ public class ToolUtils {
     }
 
     static Predicate<Path> hasName(String name) {
-        return path -> path.getFileName().toString().equals(name);
+        return path -> path.endsWith(name);
     }
 
     static void defaultUninstaller(InstalledTool tool, ProgressListener progressListener) {

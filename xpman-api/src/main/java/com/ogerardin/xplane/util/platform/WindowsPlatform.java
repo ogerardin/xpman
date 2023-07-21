@@ -18,7 +18,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ public class WindowsPlatform implements Platform {
 
     @Override
     public String getCpuType() {
-        return System.getenv("PROCESSOR_ARCHITECTURE");
+        return System.getenv("PROCESSOR_IDENTIFIER");
     }
 
     @Override
@@ -72,7 +71,7 @@ public class WindowsPlatform implements Platform {
 
     @Override
     public boolean isRunnable(@NonNull Path path) {
-        return Files.isExecutable(path);
+        return path.endsWith(".exe");
     }
 
     @Override
