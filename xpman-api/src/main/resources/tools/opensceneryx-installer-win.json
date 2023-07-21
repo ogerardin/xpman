@@ -1,0 +1,11 @@
+{
+  "platform": "WINDOWS",
+  "name": "OpenSceneryX installer",
+  "homepage": "https://www.opensceneryx.com",
+  "description": "OpenSceneryX is a collection of x-plane scenery objects, contributed by various members of the community free-of-charge. \nThe library has become a comprehensive set of high-quality scenery elements for use by any scenery author, reducing the time taken to build a custom scenery package and reducing the load on X-Plane. OpenSceneryX is built as a proper x-plane library, which means that authors don't copy objects out of the package into their sceneries, instead they reference the objects directly from the library. So, if several authors have used the same church from the library, that object only needs to be loaded once by x-plane.",
+  "version": "2.7.0",
+  "url": "https://downloads.opensceneryx.com/OpenSceneryX-Installer-Windows-2.7.0.zip",
+  "installChecker": {
+    "name": "OpenSceneryX Installer\\OpenSceneryX Installer.exe"
+  }
+}

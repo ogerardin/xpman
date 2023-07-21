@@ -65,14 +65,16 @@ public class ToolsManager extends Manager<Tool> {
         List<InstalledTool> installedTools = new ArrayList<>();
         try (Stream<Path> pathStream = Files.list(toolsFolder)) {
             installedTools.addAll(pathStream
-                    .filter(isRunnable)
+//                    .filter(isRunnable)
                     .map(this::getTool)
                     .toList());
-            log.debug("Found {} installed tools", installedTools.size());
+            log.debug("Found {} installed tool(s)", installedTools.size());
         }
         catch (Throwable t) {
             log.warn("Failed to load installed tools: {}", t.toString());
         }
+
+        //TODO installed tools should not be based on the tools folder but on the manifest
 
         // find available tools (=all manifests except already installed)
         List<InstallableTool> availableTools = getManifests().stream()
@@ -101,8 +103,8 @@ public class ToolsManager extends Manager<Tool> {
                 .filter(manifest -> manifest.installChecker().test(path))
                 .findAny();
         return maybeManifest
-                .map(m -> new InstalledTool(path, m))
-                .orElseGet(() -> new InstalledTool(path));
+                .map(m -> new InstalledTool(path, m)) // installed tool from existing manifest
+                .orElseGet(() -> new InstalledTool(path)); // installed tool with no manifest
     }
 
     public void installTool(Tool tool, ProgressListener progressListener) {
