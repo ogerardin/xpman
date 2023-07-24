@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
@@ -60,31 +62,31 @@ public class ToolsManager extends Manager<Tool> {
         log.info("Loading tools...");
         fireEvent(ManagerEvent.<Tool>builder().type(LOADING).source(this).build());
 
-        // find all installed tools (runnable files under the tools folder)
-        Predicate<Path> isRunnable = p -> Platforms.getCurrent().isRunnable(p);
-        List<InstalledTool> installedTools = new ArrayList<>();
-        try (Stream<Path> pathStream = Files.list(toolsFolder)) {
-            installedTools.addAll(pathStream
-//                    .filter(isRunnable)
-                    .map(this::getTool)
-                    .toList());
-            log.debug("Found {} installed tool(s)", installedTools.size());
-        }
-        catch (Throwable t) {
-            log.warn("Failed to load installed tools: {}", t.toString());
-        }
-
-        //TODO installed tools should not be based on the tools folder but on the manifest
-
-        // find available tools (=all manifests except already installed)
-        List<InstallableTool> availableTools = getManifests().stream()
-                // current platform only
+        // compute subset of manifests that are applicable to current platform and X-Plane version
+        List<Manifest> applicableManifests = getManifests().stream()
                 .filter(m -> m.platform().isCurrent())
                 // current X-Plane version only
                 .filter(m -> Optional.ofNullable(m.xplaneVersion())
                         .map(v -> v == xPlane.getMajorVersion())
                         .orElse(true)
                 )
+                .toList();
+
+        // find installed tools (=manifests with existing matching file)
+        List<InstalledTool> installedTools = applicableManifests.stream()
+                // file path exists
+                .filter(m -> Files.exists(toolsFolder.resolve(m.file())))
+                // additional checks
+                .filter(m -> Optional.ofNullable(m.installChecker())
+                        .map(checker -> checker.test(toolsFolder.resolve(m.file())))
+                        .orElse(true)
+                )
+                .map(manifest -> new InstalledTool(toolsFolder.resolve(manifest.file()), manifest))
+                .toList();
+        log.debug("Found {} installed tool(s)", installedTools.size());
+
+        // find available tools (=all manifests except already installed)
+        List<InstallableTool> availableTools = applicableManifests.stream()
                 // not already installed
                 .filter(m -> installedTools.stream().noneMatch(tool -> tool.getManifest() == m))
                 .map(InstallableTool::new)
@@ -95,16 +97,6 @@ public class ToolsManager extends Manager<Tool> {
 
         log.info("Loaded {} tools", items.size());
         fireEvent(ManagerEvent.<Tool>builder().type(LOADED).source(this).items(items).build());
-    }
-
-    @SneakyThrows
-    private InstalledTool getTool(Path path) {
-        Optional<Manifest> maybeManifest = getManifests().stream()
-                .filter(manifest -> manifest.installChecker().test(path))
-                .findAny();
-        return maybeManifest
-                .map(m -> new InstalledTool(path, m)) // installed tool from existing manifest
-                .orElseGet(() -> new InstalledTool(path)); // installed tool with no manifest
     }
 
     public void installTool(Tool tool, ProgressListener progressListener) {

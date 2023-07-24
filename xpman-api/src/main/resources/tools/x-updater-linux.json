@@ -1,0 +1,8 @@
+{
+  "platform": "LINUX",
+  "name": "Flight factor's X-Updater",
+  "homepage": "https://x-updater.com",
+  "description": "X-Updater is used for updating FlightFactor's products.",
+  "url": "https://x-updater.com/X-Updater-Client.jar",
+  "file": "X-Updater-Client.jar"
+}

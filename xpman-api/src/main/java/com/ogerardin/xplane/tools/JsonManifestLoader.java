@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.platform.Platform;
 import com.ogerardin.xplane.util.platform.Platforms;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,48 +23,24 @@ import java.util.function.Predicate;
 public class JsonManifestLoader {
 
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Platform.class, PlatformAdapter.INSTANCE)
+            .registerTypeAdapter(Path.class,
+                    (JsonDeserializer<Path>) (json, __, ___) -> Path.of(json.getAsString()))
+            .registerTypeAdapter(Platform.class,
+                    (JsonDeserializer<Platform>) (json, __, ___) -> Platforms.valueOf(json.getAsString()))
+            .registerTypeAdapter(XPlaneMajorVersion.class,
+                    (JsonDeserializer<XPlaneMajorVersion>) (json, __, ___) -> XPlaneMajorVersion.of(json.getAsString()))
             .registerTypeAdapter(Predicate.class, PredicateAdapter.INSTANCE)
-            .registerTypeAdapter(XPlaneMajorVersion.class, XPlaneMajorVersionAdapter.INSTANCE)
             .create();
 
-    @SneakyThrows
+//    @SneakyThrows
     public Manifest loadManifest(Path jsonManifest) {
         try (BufferedReader reader = Files.newBufferedReader(jsonManifest)) {
             Manifest manifest = GSON.fromJson(reader, Manifest.class);
             return manifest;
+        } catch (Exception e) {
+            log.error("Exception while loading manifest from " + jsonManifest, e);
+            throw new RuntimeException(e);
         }
-    }
-
-
-    /**
-     * Deserializer for {@link Platform}; expects a string that contains the name of one of the enum constants
-     * from {@link Platforms}
-     */
-    private enum PlatformAdapter implements JsonDeserializer<Platform> {
-        INSTANCE {
-            @Override
-            public Platform deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                String platformName = json.getAsString();
-                Platform platform = Platforms.valueOf(platformName);
-                return platform;
-            }
-        };
-    }
-
-    /**
-     * Deserializer for {@link XPlaneMajorVersion}; expects a string that contains one the major X-Plane version numbers
-     * known by {@link XPlaneMajorVersion}
-     */
-    public enum XPlaneMajorVersionAdapter implements JsonDeserializer<XPlaneMajorVersion> {
-        INSTANCE {
-            @Override
-            public XPlaneMajorVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                String versionString = json.getAsString();
-                XPlaneMajorVersion version = XPlaneMajorVersion.of(versionString);
-                return version;
-            }
-        };
     }
 
 
@@ -76,8 +51,7 @@ public class JsonManifestLoader {
      *     <li>{@link Path}: returns a {@literal Predicate<Path>} which matches a Path that meets <b>all</b> the conditions
      *     specified by the following JSON members:
      *     <ul>
-     *         <li>{@code name} (string): the file designated by this path has the specified name</li>
-     *         <li>{@code string} (string): the executable file designated by this path contains the specified string</li>
+     *         <li>{@code string} (string): the file file designated by this path contains the specified string</li>
      *     </ul>
      * </ul>
      *
@@ -104,12 +78,6 @@ public class JsonManifestLoader {
 
             JsonObject jsonObject = json.getAsJsonObject();
             Predicate<Path> predicate = path -> true;
-
-            predicate = Optional.ofNullable(jsonObject.get("name"))
-                    .map(JsonElement::getAsString)
-                    .map(ToolUtils::hasName)
-                    .map(predicate::and)
-                    .orElse(predicate);
 
             predicate = Optional.ofNullable(jsonObject.get("string"))
                     .map(JsonElement::getAsString)

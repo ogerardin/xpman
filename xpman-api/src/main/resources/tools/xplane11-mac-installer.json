@@ -4,7 +4,5 @@
   "name": "X-Plane 11 installer",
   "description": "Laminar Research's installer/updater for X-Plane 11.",
   "url": "https://www.x-plane.com/update/installers11/X-Plane11InstallerMac.zip",
-  "installChecker": {
-    "name": "X-Plane 11 Installer.app"
-  }
+  "file": "X-Plane 11 Installer.app"
 }

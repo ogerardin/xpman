@@ -4,7 +4,5 @@
   "homepage": "https://x-updater.com",
   "description": "X-Updater is used for updating FlightFactor's products.",
   "url": "https://x-updater.com/X-Updater-Installer.dmg",
-  "installChecker": {
-    "name": "x-updater-client.app"
-  }
+  "file": "x-updater-client.app"
 }
