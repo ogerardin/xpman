@@ -18,13 +18,14 @@ import java.util.function.Predicate;
  * @param installChecker predicate to check if a given file matches this tool
  */
 @Slf4j
-public record Manifest(
+public record  Manifest(
         @NonNull String name,
+        @NonNull Path file,
         URL homepage,
         String version,
         String description,
         @NonNull Platform platform,
         XPlaneMajorVersion xplaneVersion,
         @NonNull URL url,
-        @NonNull Predicate<Path> installChecker) {
+        Predicate<Path> installChecker) {
 }

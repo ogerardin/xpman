@@ -4,7 +4,5 @@
   "name": "X-Plane 12 installer",
   "description": "Laminar Research's installer/updater for X-Plane 12.",
   "url": "https://lookup.x-plane.com/_lookup_12_/download/X-Plane12InstallerMac.zip",
-  "installChecker": {
-    "name": "X-Plane 12 Installer.app"
-  }
+  "file": "X-Plane 12 Installer.app"
 }

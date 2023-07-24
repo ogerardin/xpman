@@ -4,9 +4,9 @@
   "homepage": "https://csl.x-air.ru/?lang_id=43",
   "version": "1.3.1",
   "description": "X-CSL is library of online traffic models for users of the X-Plane flight simulator who fly in IVAO network. \nThis version is for ALTITUDE Pilot Client version 1.9.20 or above only.",
-  "url": "https://csl.x-air.ru/download/src/409#x-csl-updater-altitude.dmg",
+  "url": "https://csl.x-air.ru/download/src/X-CSL-Updater.app",
+  "file": "X-CSL-Updater.app",
   "installChecker": {
-    "name": "X-CSL-Updater.app",
     "string": "1.3.1"
   }
 }
