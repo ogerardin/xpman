@@ -64,13 +64,19 @@ public class ToolsManager extends Manager<Tool> {
 
         // compute subset of manifests that are applicable to current platform and X-Plane version
         List<Manifest> applicableManifests = getManifests().stream()
-                .filter(m -> m.platform().isCurrent())
+                .flatMap(manifest -> manifest.unfold().stream())
+                // current platform only
+                .filter(m -> Optional.ofNullable(m.platform())
+                        .map(p -> p == Platforms.getCurrent())
+                        .orElse(true)
+                )
                 // current X-Plane version only
                 .filter(m -> Optional.ofNullable(m.xplaneVersion())
                         .map(v -> v == xPlane.getMajorVersion())
                         .orElse(true)
                 )
                 .toList();
+        log.debug("Found {} applicable manifests", applicableManifests.size());
 
         // find installed tools (=manifests with existing matching file)
         List<InstalledTool> installedTools = applicableManifests.stream()

@@ -1,0 +1,22 @@
+{
+  "name": "Flight factor's X-Updater",
+  "homepage": "https://x-updater.com",
+  "description": "X-Updater is used for updating FlightFactor's products.",
+  "items": [
+    {
+      "platform": "LINUX",
+      "url": "https://x-updater.com/X-Updater-Client.jar",
+      "file": "X-Updater-Client.jar"
+    },
+    {
+      "platform": "MAC",
+      "url": "https://x-updater.com/X-Updater-Installer.dmg",
+      "file": "x-updater-client.app"
+    },
+    {
+      "platform": "WINDOWS",
+      "url": "https://x-updater.com/x-updater-win.zip",
+      "file": "x-updater-client\\x-updater-client.exe"
+    }
+  ]
+}

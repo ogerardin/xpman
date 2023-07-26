@@ -1,8 +1,0 @@
-{
-  "platform": "WINDOWS",
-  "name": "Flight factor's X-Updater",
-  "homepage": "https://x-updater.com",
-  "description": "X-Updater is used for updating FlightFactor's products.",
-  "url": "https://x-updater.com/x-updater-win.zip",
-  "file": "x-updater-client\\x-updater-client.exe"
-}
