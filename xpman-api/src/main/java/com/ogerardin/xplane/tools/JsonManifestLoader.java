@@ -17,6 +17,17 @@ import java.util.function.Predicate;
 
 /**
  * Loads a {@link Manifest} from a JSON file.
+ * <p>Notes:
+ * <ul>
+ * <li>"platform" must be specified as the name of one of the enum values of {@link Platforms}</li>
+ * <li>"xplaneVersion" must be specified as the name of one of the enum values of {@link XPlaneMajorVersion}</li>
+ * <li> "installChecker" accepts the following JSON members to produce a {@code Predicate<Path>}:
+ *   <ul>
+ *   <li>"string": will check if the executable file contains the specified string</li>
+ *   </ul>
+ * </li>
+ * <li>"items" is a list of {@link Manifest}s that will be unfolded recursively</li>
+ * </ul>
  */
 @Slf4j
 @UtilityClass
