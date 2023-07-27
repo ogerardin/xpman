@@ -105,12 +105,14 @@ public class ToolsController {
 
     @FXML
     public void filterInstalled(ActionEvent event) {
-        filteredList.setPredicate(event.getSource() instanceof ToggleButton button && !button.isSelected() ? (uiTool -> true) : UiTool::isRunnable);
+        boolean selected = event.getSource() instanceof ToggleButton button && button.isSelected();
+        filteredList.setPredicate(selected ? UiTool::isInstalled : (uiTool -> true));
     }
 
     @FXML
     public void filterAvailable(ActionEvent event) {
-        filteredList.setPredicate(event.getSource() instanceof ToggleButton button && !button.isSelected() ? (uiTool -> true) : UiTool::isInstallable);
+        boolean selected = event.getSource() instanceof ToggleButton button && button.isSelected();
+        filteredList.setPredicate(selected ? UiTool::isInstallable : (uiTool -> true));
     }
 
     public void reload() {
