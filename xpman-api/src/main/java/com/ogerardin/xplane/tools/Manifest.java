@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 /**
  * A {@link Manifest} is the description of a {@link Tool}, including how to download and install it.
+ * @param id the tool identifier which is the name of the JSON file from which the manifest was loaded (without the
+ * ".json" extension)
  * @param platform target platform for the tool
  * @param xplaneVersion target X-Plane major version required by the tool
  * @param url URL where the tool can be downloaded. If the URL includes a fragment (part after #), it is interpreted
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @With
 public record Manifest(
+        String id,
         String name,
         Path file,
         URL homepage,

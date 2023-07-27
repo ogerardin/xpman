@@ -47,7 +47,9 @@ public class JsonManifestLoader {
     public Manifest loadManifest(Path jsonManifest) {
         try (BufferedReader reader = Files.newBufferedReader(jsonManifest)) {
             Manifest manifest = GSON.fromJson(reader, Manifest.class);
-            return manifest;
+            // manifest ID is the file name without the ".json" extension
+            String id = jsonManifest.getFileName().toString().replace(".json", "");
+            return manifest.withId(id);
         } catch (Exception e) {
             log.error("Exception while loading manifest from " + jsonManifest, e);
             throw new RuntimeException(e);

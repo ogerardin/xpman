@@ -24,12 +24,12 @@ import java.util.stream.Stream;
 import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
 
+@Getter
 @Slf4j
 @ToString
 public class ToolsManager extends Manager<Tool> {
 
     @NonNull
-    @Getter
     private final Path toolsFolder;
 
     @Getter(lazy = true)
@@ -141,4 +141,10 @@ public class ToolsManager extends Manager<Tool> {
         return manifests;
     }
 
+    public Tool getTool(String toolId) {
+        return getTools().stream()
+                .filter(tool -> tool.getManifest().id().equals(toolId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No tool with id " + toolId));
+    }
 }
