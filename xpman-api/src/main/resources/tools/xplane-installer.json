@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "xplaneVersion": "11",
+      "name": "X-Plane 11 installer",
+      "description": "Laminar Research's installer/updater for X-Plane 11.",
+      "items": [
+        {
+          "platform": "MAC",
+          "url": "https://www.x-plane.com/update/installers11/X-Plane11InstallerMac.zip",
+          "file": "X-Plane 11 Installer.app"
+        }
+      ]
+    },
+    {
+      "xplaneVersion": "12",
+      "name": "X-Plane 12 installer",
+      "description": "Laminar Research's installer/updater for X-Plane 12.",
+      "items": [
+        {
+          "platform": "MAC",
+          "url": "https://lookup.x-plane.com/_lookup_12_/download/X-Plane12InstallerMac.zip",
+          "file": "X-Plane 12 Installer.app"
+        }
+      ]
+    }
+  ]
+}
