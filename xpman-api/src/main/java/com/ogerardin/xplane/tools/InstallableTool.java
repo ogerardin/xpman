@@ -14,14 +14,17 @@ public non-sealed class InstallableTool extends Tool {
         super(manifest.name(), manifest);
     }
 
+    @Override
     public boolean isInstallable() {
         return true;
     }
 
+    @Override
     public boolean isInstalled() {
         return false;
     }
 
+    @Override
     public boolean isRunnable() {
         return false;
     }

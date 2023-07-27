@@ -20,10 +20,13 @@ public abstract sealed class Tool permits InstallableTool, InstalledTool {
 
     private final Manifest manifest;
 
+    @SuppressWarnings("unused")
     public abstract boolean isInstallable();
 
+    @SuppressWarnings("unused")
     public abstract boolean isInstalled();
 
+    @SuppressWarnings("unused")
     public abstract boolean isRunnable();
 
     public abstract String getVersion();

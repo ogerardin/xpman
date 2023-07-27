@@ -41,14 +41,17 @@ public non-sealed class InstalledTool extends Tool {
         this(app, manifest.name(), manifest);
     }
 
+    @Override
     public boolean isInstallable() {
         return false;
     }
 
+    @Override
     public boolean isInstalled() {
         return true;
     }
 
+    @Override
     public boolean isRunnable() {
         return true;
     }
