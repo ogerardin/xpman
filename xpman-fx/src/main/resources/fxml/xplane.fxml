@@ -5,9 +5,9 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextFlow?>
 <?import org.controlsfx.control.SegmentedBar?>
-<?import org.controlsfx.glyphfont.Glyph?>
-<AnchorPane prefHeight="341.0" prefWidth="522.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.xplane.XPlaneController">
+<AnchorPane prefHeight="341.0" prefWidth="522.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.xplane.XPlaneController">
     <BorderPane AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <center>
             <GridPane prefHeight="239.0" prefWidth="352.0" BorderPane.alignment="CENTER">
@@ -34,30 +34,21 @@
                     </GridPane.margin>
                 </Label>
                 <Hyperlink fx:id="folder" onAction="#showFolder" text="..." GridPane.columnIndex="1" />
-
-                <Label fx:id="version" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label text="Version:" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets right="10.0" />
                     </GridPane.margin>
                 </Label>
+
+                <Label fx:id="version" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextFlow fx:id="releaseUpdateTextFlow" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <TextFlow fx:id="betaUpdateTextFlow" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="Log file:" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                     <GridPane.margin>
                         <Insets right="10.0" />
                     </GridPane.margin>
                 </Label>
                 <Hyperlink fx:id="log" onAction="#showLog" text="..." GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
-                <Label fx:id="releaseUpdate" text="..." visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                    <graphic>
-                        <Glyph fontFamily="FontAwesome" icon="EXCLAMATION_TRIANGLE" style="-fx-text-fill: orange;" />
-                    </graphic>
-                </Label>
-                <Label fx:id="betaUpdate" text="..." visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                    <graphic>
-                        <Glyph fontFamily="FontAwesome" icon="EXCLAMATION_TRIANGLE" style="-fx-text-fill: orange;" />
-                    </graphic>
-                </Label>
                 <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" prefHeight="26.0" prefWidth="143.0" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <SegmentedBar fx:id="breakdown" orientation="HORIZONTAL" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8">
                 </SegmentedBar>
@@ -65,9 +56,7 @@
         </center>
         <left>
             <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="TOP_CENTER">
-                <image>
-                    <Image url="@../img/x-plane.png" />
-                </image>
+                <Image url="@../img/x-plane.png" />
             </ImageView>
         </left>
     </BorderPane>

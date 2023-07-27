@@ -13,7 +13,7 @@ import javafx.scene.layout.Border;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-/** Specialiozed {@link TreeTableCellFactory} for {@link UiNavDataItem}.
+/** Specialized {@link TreeTableCellFactory} for {@link UiNavDataItem}.
  * Items that have a description are displayed with an info icon that opens a popup with the description.
  */
 @Slf4j
@@ -74,6 +74,7 @@ public class NavDataTableTreeItemCellFactory<S> implements TreeTableCellFactory<
         WebViewStage stage = getDescriptionStage();
         stage.setTitle(name);
         stage.loadContent(description);
+        stage.setAlwaysOnTop(true);
         stage.show();
     }
 }

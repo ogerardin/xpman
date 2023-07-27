@@ -2,6 +2,8 @@ package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.laminar.UpdateInformation;
+import com.ogerardin.xplane.tools.Tool;
+import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -12,15 +14,21 @@ import com.ogerardin.xpman.panels.xplane.breakdown.SegmentType;
 import com.ogerardin.xpman.panels.xplane.breakdown.SegmentView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.text.TextFlow;
 import lombok.SneakyThrows;
 import org.controlsfx.control.SegmentedBar;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controller for the first tab pane, which contains a summary of X-Plane installation.
@@ -38,11 +46,15 @@ public class XPlaneController {
     @FXML
     private Hyperlink log;
     @FXML
-    private Label releaseUpdate;
+    private TextFlow releaseUpdateTextFlow;
     @FXML
-    private Label betaUpdate;
+    private TextFlow betaUpdateTextFlow;
     @FXML
     private SegmentedBar<Segment> breakdown;
+
+    private static final Glyph WARNING_GLYPH = new Glyph("FontAwesome", FontAwesome.Glyph.EXCLAMATION_TRIANGLE) {{
+        setStyle("-fx-text-fill: orange;");
+    }};
 
     public XPlaneController(XPmanFX mainController) {
         mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> {
@@ -63,23 +75,37 @@ public class XPlaneController {
             return;
         }
         UpdateInformation updateInformation = new UpdateInformation(xPlane.getMajorVersion());
-
         String latestFinal = updateInformation.getLatestFinal();
-        boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
         String latestBeta = updateInformation.getLatestBeta();
+        boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
         boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
 
         Platform.runLater(() -> {
             if (hasReleaseUpdate) {
-                releaseUpdate.setText("Release version " + latestFinal + " is available. Run the X-Plane Installer to update.");
+                releaseUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Release", latestFinal, xPlane));
             }
-            releaseUpdate.setVisible(hasReleaseUpdate);
+            releaseUpdateTextFlow.setVisible(hasReleaseUpdate);
 
             if (hasBetaUpdate) {
-                betaUpdate.setText("Beta version " + latestBeta + " is available. Run the X-Plane Installer to update.");
+                betaUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Beta", latestBeta, xPlane));
             }
-            betaUpdate.setVisible(hasBetaUpdate);
+            betaUpdateTextFlow.setVisible(hasBetaUpdate);
         });
+    }
+
+    private static List<Node> buildUpdateMessage(String versionType, String version, XPlane xPlane) {
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(WARNING_GLYPH);
+        nodes.add(new Label(" " + versionType + " " + version + " is available. Run the"));
+        nodes.add(new Hyperlink("X-Plane Installer") {{
+            setOnAction(event -> {
+                ToolsManager toolsManager = xPlane.getToolsManager();
+                Tool xPlaneInstaller = toolsManager.getTool("xplane-installer");
+                toolsManager.launchTool(xPlaneInstaller);
+            });
+        }});
+        nodes.add(new Label("to update."));
+        return nodes;
     }
 
     private void updateDisplay(XPlane xPlane) {
