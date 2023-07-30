@@ -16,8 +16,9 @@ public abstract class Controller {
             .map(URL::toExternalForm)
             .map(Image::new)
             .map(ImageView::new)
-            .get();
+            .orElseThrow(() -> new RuntimeException("Could not load image"));
 
+    @SuppressWarnings("unused")
     @SneakyThrows
     public void displayInspectionResults(List<InspectionMessage> messages) {
         DiagUtil.displayInspectionMessages(messages);

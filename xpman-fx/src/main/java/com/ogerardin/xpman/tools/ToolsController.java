@@ -1,9 +1,10 @@
 package com.ogerardin.xpman.tools;
 
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.tools.Manifest;
 import com.ogerardin.xplane.tools.Tool;
+import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
@@ -48,12 +49,13 @@ public class ToolsController {
 
     @FXML
     public void initialize() {
-        xPlane.getToolsManager().registerListener(event -> {
+        ToolsManager toolsManager = xPlane.getToolsManager();
+        toolsManager.registerListener(event -> {
             if (event.getType() == ManagerEvent.Type.LOADED) {
                 setItems(event.getItems());
             }
         });
-        xPlane.getToolsManager().reload();
+        toolsManager.reload();
 
         tableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> Platform.runLater( () -> displayDetail(newValue))

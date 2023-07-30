@@ -1,8 +1,8 @@
 package com.ogerardin.xpman;
 
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
+import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.tools.InstalledTool;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.tools.ToolsManager;

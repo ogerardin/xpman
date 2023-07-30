@@ -1,4 +1,4 @@
-package com.ogerardin.xplane;
+package com.ogerardin.xplane.manager;
 
 import lombok.*;
 

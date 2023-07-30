@@ -45,10 +45,6 @@ public class GenericInstaller {
     }
 
     public List<InspectionMessage> inspect() {
-        return inspectArchive();
-    }
-
-    private List<InspectionMessage> inspectArchive() {
         Inspections<InstallableArchive> archiveInspections = Inspections.of(
                 new CheckIsValidArchive(),
                 new CheckIsInstallable(installType)

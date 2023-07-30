@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.util.SpelUtil;
 import javafx.beans.NamedArg;

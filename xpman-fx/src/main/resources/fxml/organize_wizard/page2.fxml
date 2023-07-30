@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.ogerardin.xpman.util.jfx.cell_factory.LineNumberCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.wizard.ValidatingWizardPane?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import com.ogerardin.xpman.util.jfx.LineNumberCellFactory?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <ValidatingWizardPane prefHeight="359.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.scenery.wizard.Page2Controller">
     <headerText>Please review the resulting scenery_pack.ini and press 'Next' to apply.</headerText>
     <content>

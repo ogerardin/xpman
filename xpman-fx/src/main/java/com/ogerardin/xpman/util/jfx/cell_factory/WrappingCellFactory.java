@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;

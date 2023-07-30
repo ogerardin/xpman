@@ -13,6 +13,7 @@ import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFac
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import lombok.NonNull;
@@ -28,6 +29,9 @@ public class NavDataController {
 
     @NonNull
     private final XPlaneProperty xPlaneProperty;
+
+    @FXML
+    private ToolBar toolbar;
 
     @FXML
     private TreeTableView<UiNavDataItem> treeTableView;

@@ -2,7 +2,7 @@ package com.ogerardin.xpman.diag;
 
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.util.Maps;
-import com.ogerardin.xpman.util.jfx.TableCellFactory;
+import com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;

@@ -41,4 +41,8 @@ module xpman.fx {
     exports com.ogerardin.xpman.util;
     exports com.ogerardin.xpman.util.jfx;
     exports com.ogerardin.xpman.panels;
+    exports com.ogerardin.xpman.util.jfx.cell_factory;
+    opens com.ogerardin.xpman.util.jfx.cell_factory to com.google.gson, javafx.base, javafx.fxml;
+    exports com.ogerardin.xpman.util.jfx.row_factory;
+    opens com.ogerardin.xpman.util.jfx.row_factory to com.google.gson, javafx.base, javafx.fxml;
 }

@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.jfx.row_factory;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableRow;

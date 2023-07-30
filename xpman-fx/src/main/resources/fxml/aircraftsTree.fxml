@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.util.jfx.*?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
@@ -11,13 +11,11 @@
                 AnchorPane.topAnchor="0.0">
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                <items>
-                    <Button mnemonicParsing="false" text="Reload" onAction="#reload"/>
-                    <Button mnemonicParsing="false" text="Analyze"/>
-                    <Button mnemonicParsing="false" text="Check for updates"/>
-                    <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
-                    <ComboBox prefWidth="150.0" promptText="Filter"/>
-                </items>
+                <Button mnemonicParsing="false" text="Reload" onAction="#reload"/>
+                <Button mnemonicParsing="false" text="Analyze"/>
+                <Button mnemonicParsing="false" text="Check for updates"/>
+                <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
+                <ComboBox prefWidth="150.0" promptText="Filter"/>
             </ToolBar>
         </top>
         <center>

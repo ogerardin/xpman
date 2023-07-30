@@ -1,6 +1,7 @@
 package com.ogerardin.xplane;
 
 import com.ogerardin.xplane.aircrafts.AircraftManager;
+import com.ogerardin.xplane.exception.InvalidConfig;
 import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xplane.plugins.PluginManager;
 import com.ogerardin.xplane.scenery.SceneryManager;
