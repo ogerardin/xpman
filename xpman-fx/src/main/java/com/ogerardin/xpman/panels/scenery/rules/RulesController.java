@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.scenery.rules;
 
 import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
-import com.ogerardin.xpman.util.jfx.ValidatingEditingCell;
+import com.ogerardin.xpman.util.jfx.cell_factory.ValidatingEditingCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.fxml.FXML;

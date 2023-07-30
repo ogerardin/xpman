@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -56,7 +56,7 @@ public abstract class PathImageCell<S> {
         cell.setGraphic(imageView);
     }
 
-    public static class TableCellFactory<S> extends PathImageCell<S> implements com.ogerardin.xpman.util.jfx.TableCellFactory<S, Path> {
+    public static class TableCellFactory<S> extends PathImageCell<S> implements com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory<S, Path> {
         @Override
         public TableCell<S, Path> call(TableColumn<S, Path> param) {
             return new TableCell<>() {
@@ -68,7 +68,7 @@ public abstract class PathImageCell<S> {
         }
     }
 
-    public static class TreeTableCellFactory<S> extends PathImageCell<S> implements com.ogerardin.xpman.util.jfx.TreeTableCellFactory<S, Path> {
+    public static class TreeTableCellFactory<S> extends PathImageCell<S> implements com.ogerardin.xpman.util.jfx.cell_factory.TreeTableCellFactory<S, Path> {
         @Override
         public TreeTableCell<S, Path> call(TreeTableColumn<S, Path> param) {
             return new TreeTableCell<>() {

@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.util.jfx;
+package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;

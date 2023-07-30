@@ -2,9 +2,9 @@ package com.ogerardin.xplane.test.aircrafts;
 
 import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.test.util.TimingExtension;
-import com.ogerardin.xplane.InvalidConfig;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.exception.InvalidConfig;
 import com.ogerardin.xplane.file.AcfFile;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;

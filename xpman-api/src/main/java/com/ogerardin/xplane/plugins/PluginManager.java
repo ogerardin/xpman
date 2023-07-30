@@ -1,8 +1,8 @@
 package com.ogerardin.xplane.plugins;
 
-import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.manager.Manager;
+import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
 @Slf4j
 @ToString

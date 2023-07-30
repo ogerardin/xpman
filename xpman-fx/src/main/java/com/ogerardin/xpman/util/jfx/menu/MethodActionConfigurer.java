@@ -10,6 +10,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Window;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -20,7 +21,7 @@ import java.util.function.Supplier;
 public class MethodActionConfigurer<T, R> {
 
     private final Supplier<Window> windowSupplier;
-    private final Method method;
+    private final @NonNull Method method;
     private final Object evalContextRoot;
     private final T target;
     private final Object[] paramValues;

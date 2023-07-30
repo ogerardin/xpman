@@ -1,9 +1,9 @@
 package com.ogerardin.xplane.tools;
 
-import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.manager.Manager;
+import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
@@ -21,8 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
 @Getter
 @Slf4j

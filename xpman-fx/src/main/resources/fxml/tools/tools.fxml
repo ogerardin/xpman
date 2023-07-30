@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.util.jfx.IdentityCellValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.IdentityCellValueFactory?>
 <?import com.ogerardin.xpman.util.jfx.menu.ActionsCellFactory?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>

@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.navdata;
 
-import com.ogerardin.xpman.util.jfx.TreeTableCellFactory;
 import com.ogerardin.xpman.util.jfx.WebViewStage;
+import com.ogerardin.xpman.util.jfx.cell_factory.TreeTableCellFactory;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeTableCell;

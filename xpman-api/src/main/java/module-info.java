@@ -26,7 +26,7 @@ module xpman.api {
     exports com.ogerardin.xplane.inspection;
     exports com.ogerardin.xplane.util;
     exports com.ogerardin.xplane.install;
-    exports com.ogerardin.xplane.events;
+    exports com.ogerardin.xplane.util.events;
     exports com.ogerardin.xplane.aircrafts;
     exports com.ogerardin.xplane.file;
     exports com.ogerardin.xplane.scenery;
@@ -34,8 +34,6 @@ module xpman.api {
     exports com.ogerardin.xplane.laminar;
     exports com.ogerardin.xplane.navdata;
     exports com.ogerardin.xplane.tools;
-
-    opens com.ogerardin.xplane.tools to com.google.gson;
     exports com.ogerardin.xplane.install.inspections;
     exports com.ogerardin.xplane.file.data.acf;
     exports com.ogerardin.xplane.file.petitparser;
@@ -44,5 +42,8 @@ module xpman.api {
     exports com.ogerardin.xplane.file.data.servers;
     exports com.ogerardin.xplane.inspection.impl;
     exports com.ogerardin.xplane.file.data.dat;
+    exports com.ogerardin.xplane.manager;
 
+    opens com.ogerardin.xplane.tools to com.google.gson;
+    exports com.ogerardin.xplane.exception;
 }

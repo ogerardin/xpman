@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.events;
+package com.ogerardin.xplane.util.events;
 
 import java.util.HashSet;
 import java.util.Set;

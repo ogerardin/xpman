@@ -1,7 +1,8 @@
-package com.ogerardin.xplane;
+package com.ogerardin.xplane.manager;
 
-import com.ogerardin.xplane.events.EventDispatcher;
-import com.ogerardin.xplane.events.EventSource;
+import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.util.events.EventDispatcher;
+import com.ogerardin.xplane.util.events.EventSource;
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Delegate;

@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.util.jfx.menu;
 
-import com.ogerardin.xpman.util.jfx.TableCellFactory;
+import com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.TableCell;

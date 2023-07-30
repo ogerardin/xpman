@@ -1,9 +1,9 @@
 package com.ogerardin.xpman.panels;
 
-import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.events.EventListener;
+import com.ogerardin.xplane.manager.Manager;
+import com.ogerardin.xplane.manager.ManagerEvent;
+import com.ogerardin.xplane.util.events.EventListener;
 import com.ogerardin.xpman.XPlaneProperty;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;

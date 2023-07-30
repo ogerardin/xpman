@@ -1,12 +1,12 @@
 package com.ogerardin.xplane.aircrafts;
 
-import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.manager.Manager;
+import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
 @Slf4j
 @ToString

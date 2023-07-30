@@ -1,10 +1,10 @@
 package com.ogerardin.xpman.util.jfx.menu;
 
-import com.ogerardin.xpman.util.jfx.TreeTableRowFactory;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
+import com.ogerardin.xpman.util.jfx.row_factory.TreeTableRowFactory;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;

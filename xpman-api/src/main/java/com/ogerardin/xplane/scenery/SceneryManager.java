@@ -1,14 +1,14 @@
 package com.ogerardin.xplane.scenery;
 
-import com.ogerardin.xplane.IllegalOperation;
-import com.ogerardin.xplane.Manager;
-import com.ogerardin.xplane.ManagerEvent;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.exception.IllegalOperation;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.file.data.scenery.PathSceneryPackIniItem;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.install.InstallableArchive;
 import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.manager.Manager;
+import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Getter;
@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADED;
-import static com.ogerardin.xplane.ManagerEvent.Type.LOADING;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
+import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
 @Slf4j
 @ToString
