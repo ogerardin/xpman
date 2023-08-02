@@ -9,6 +9,10 @@ import lombok.experimental.Delegate;
 
 import java.util.List;
 
+/**
+ * Base class for managers that handle a list of X-Plane items, such as aircraft, scenery packages, ...
+ * @param <T> the type of items handled by this manager
+ */
 @Data
 public abstract class Manager<T> implements EventSource<ManagerEvent<T>> {
 
