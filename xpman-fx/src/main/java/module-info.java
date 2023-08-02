@@ -13,6 +13,16 @@ module xpman.fx {
     requires com.sun.jna;
     requires com.sun.jna.platform;
 
+    exports com.ogerardin.xpman.panels.aircrafts;
+    exports com.ogerardin.xpman.tools;
+    exports com.ogerardin.xpman.util.jfx.console;
+    exports com.ogerardin.xpman;
+    exports com.ogerardin.xpman.util;
+    exports com.ogerardin.xpman.util.jfx;
+    exports com.ogerardin.xpman.panels;
+    exports com.ogerardin.xpman.util.jfx.cell_factory;
+    exports com.ogerardin.xpman.util.jfx.row_factory;
+
     opens com.ogerardin.xpman to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.config to com.google.gson;
     opens com.ogerardin.xpman.diag to javafx.base, javafx.fxml;
@@ -33,16 +43,7 @@ module xpman.fx {
     opens com.ogerardin.xpman.util.jfx.menu to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.util.jfx.menu.annotation to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.util.jfx.wizard to javafx.base, javafx.fxml;
-
-    exports com.ogerardin.xpman.panels.aircrafts;
-    exports com.ogerardin.xpman.tools;
-    exports com.ogerardin.xpman.util.jfx.console;
-    exports com.ogerardin.xpman;
-    exports com.ogerardin.xpman.util;
-    exports com.ogerardin.xpman.util.jfx;
-    exports com.ogerardin.xpman.panels;
-    exports com.ogerardin.xpman.util.jfx.cell_factory;
     opens com.ogerardin.xpman.util.jfx.cell_factory to com.google.gson, javafx.base, javafx.fxml;
-    exports com.ogerardin.xpman.util.jfx.row_factory;
     opens com.ogerardin.xpman.util.jfx.row_factory to com.google.gson, javafx.base, javafx.fxml;
+    opens com.ogerardin.xpman.panels.xplane.breakdown to javafx.base, javafx.fxml;
 }

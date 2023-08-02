@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import org.controlsfx.control.SegmentedBar?>
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ogerardin.xpman.panels.xplane.breakdown.UsageBreakdownController">
+
+    <SegmentedBar fx:id="breakdown" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="500.0">
+    </SegmentedBar>
+
+</AnchorPane>
