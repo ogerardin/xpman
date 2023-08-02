@@ -32,6 +32,7 @@ public class ToolsController {
 
     private final XPlane xPlane;
 
+    //TODO use a WebView instead of a TextFlow
     @FXML
     private TextFlow detail;
 

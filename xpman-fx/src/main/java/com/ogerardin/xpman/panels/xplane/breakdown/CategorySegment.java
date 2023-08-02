@@ -4,13 +4,16 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.controlsfx.control.SegmentedBar;
+import org.controlsfx.control.SegmentedBar.Segment;
 
+/**
+ * A specialized {@link Segment} that represents a {@link UsageCategory}.
+ */
 @Getter
 @Slf4j
-public class Segment extends SegmentedBar.Segment {
+class CategorySegment extends Segment {
 
-    private final SegmentType type;
+    private final UsageCategory category;
 
     private final BooleanProperty computing = new SimpleBooleanProperty(false);
     public final BooleanProperty computingProperty() {
@@ -18,18 +21,18 @@ public class Segment extends SegmentedBar.Segment {
     }
 
     {
-        // reset the computing to false whenever the value is changed
+        // reset the computing property to false whenever the value is changed
         valueProperty().addListener((observable, oldValue, newValue) -> computing.setValue(false));
     }
 
-    public Segment(SegmentType type, double value) {
+    public CategorySegment(UsageCategory category, double value) {
         super(value);
-        this.type = type;
-        setText(type.getText());
+        this.category = category;
+        setText(category.getText());
     }
 
-    public Segment(SegmentType type) {
-        this(type, 0);
+    public CategorySegment(UsageCategory category) {
+        this(category, 0);
     }
 
 

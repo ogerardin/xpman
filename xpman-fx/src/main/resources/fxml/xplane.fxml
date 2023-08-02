@@ -6,7 +6,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.TextFlow?>
-<?import org.controlsfx.control.SegmentedBar?>
 <AnchorPane prefHeight="341.0" prefWidth="522.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.xplane.XPlaneController">
     <BorderPane AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <center>
@@ -50,8 +49,10 @@
                 </Label>
                 <Hyperlink fx:id="log" onAction="#showLog" text="..." GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" prefHeight="26.0" prefWidth="143.0" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                <SegmentedBar fx:id="breakdown" orientation="HORIZONTAL" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8">
-                </SegmentedBar>
+
+                <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"  GridPane.columnSpan="2" GridPane.rowIndex="8">
+                    <fx:include source="breakdown.fxml" />
+                </Pane>
             </GridPane>
         </center>
         <left>
