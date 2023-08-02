@@ -23,6 +23,11 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A set of utility methods mainly related to installing or uninstalling tools.
+ * TODO: currently tool installation is handled differently from other types of installations (aircraft, scenery)
+ *  see package {@link com.ogerardin.xplane.install}; this should be unified.
+ */
 @UtilityClass
 @Slf4j
 public class ToolUtils {
@@ -142,7 +147,7 @@ public class ToolUtils {
     static Predicate<Path> hasString(String s) {
         return path -> {
             try {
-                //TODO make it work for non-Mac platforms
+                //FIXME make it work for non-Mac platforms
                 Path executable = new MacPlatform.AppBundle(path).executable();
                 return CommandExecutor.exec("fgrep", s, executable.toString()).getExitValue() == 0;
             } catch (IOException | InterruptedException | ConfigurationException e) {
