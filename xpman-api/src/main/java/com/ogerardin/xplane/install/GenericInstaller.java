@@ -3,7 +3,7 @@ package com.ogerardin.xplane.install;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Inspections;
-import com.ogerardin.xplane.install.inspections.CheckIsInstallable;
+import com.ogerardin.xplane.install.inspections.CheckInstallType;
 import com.ogerardin.xplane.install.inspections.CheckIsValidArchive;
 import lombok.Getter;
 import lombok.NonNull;
@@ -47,13 +47,15 @@ public class GenericInstaller {
     public List<InspectionMessage> inspect() {
         Inspections<InstallableArchive> archiveInspections = Inspections.of(
                 new CheckIsValidArchive(),
-                new CheckIsInstallable(installType)
+                new CheckInstallType(installType)
         );
         return archiveInspections.inspect(installableArchive);
     }
 
     @SneakyThrows
     public void install(ProgressListener progressListener) {
+        // assumes that inspect() has been called and returned no error, which means
+        // that there is one and only one candidate type
         InstallType installType = getCandidateTypes().iterator().next();
         InstallTarget target = installType.target(xPlane);
         target.install(installableArchive, progressListener);

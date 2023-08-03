@@ -12,8 +12,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This inspection will check the following and produce corresponding {@link InspectionMessage}s:
+ * <ul>
+ *     <li>that the archive is identified as a source for one and only one type of installation (aircraft, scenery, ...))</li>
+ *     <li>if {@link #requiredInstallType} has been set, that the actual type of installation matches</li>
+ * </ul>
+ * Additional type-specific inspections will be performed based on {@link InstallType#additionalInspections()} and
+ * the resulting messages will be appended to the list of messages.
+ */
 @Data
-public class CheckIsInstallable implements Inspection<InstallableArchive> {
+public class CheckInstallType implements Inspection<InstallableArchive> {
 
     private final InstallType requiredInstallType;
 
