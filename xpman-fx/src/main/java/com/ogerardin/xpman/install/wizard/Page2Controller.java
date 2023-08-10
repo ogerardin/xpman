@@ -1,7 +1,9 @@
 package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.install.ArchiveInstallSource;
 import com.ogerardin.xplane.install.GenericInstaller;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import com.ogerardin.xpman.util.jfx.wizard.Validating;
@@ -20,7 +22,6 @@ import org.controlsfx.dialog.WizardPane;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Wizard page 2 controller: performs inspections on the archive and displays result.
@@ -57,15 +58,19 @@ public class Page2Controller implements Validating, PageListener {
         String sourcePath = (String) wizard.getSettings().get("sourcePathField");
         Path source = Paths.get(sourcePath);
 
-        GenericInstaller installer = new GenericInstaller(wizard.getXPlane(), source, wizard.getInstallType());
+        // instanciate a GenericInstaller for the file selected in the previous page
+        GenericInstaller installer = new GenericInstaller(
+                wizard.getXPlane(),
+                ArchiveInstallSource.ofZip(source),
+                wizard.getInstallType());
         wizard.setInstaller(installer);
 
         // perform inspection and display results
-        List<InspectionMessage> messages = installer.inspect();
-        tableView.setItems(FXCollections.observableList(messages));
+        InspectionResult result = installer.inspect();
+        tableView.setItems(FXCollections.observableList(result.getMessages()));
 
         // validate page (and enable 'Next' button) only if there is no message with severity ERROR
-        invalidProperty.set(messages.stream().anyMatch(InspectionMessage::isError));
+        invalidProperty.set(result.stream().anyMatch(InspectionMessage::isError));
     }
 
 }

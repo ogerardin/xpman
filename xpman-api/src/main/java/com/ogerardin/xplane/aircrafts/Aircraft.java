@@ -4,8 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ public class Aircraft extends XPlaneObject implements Inspectable {
     private final String name;
 
     @Getter(lazy = true)
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private final List<Livery> liveries = loadLiveries();
 
@@ -183,10 +181,7 @@ public class Aircraft extends XPlaneObject implements Inspectable {
     }
 
     @Override
-    public List<InspectionMessage> inspect() {
-        Inspections<Aircraft> inspections = Inspections.of(
-                new AircraftSpecInspection()
-        );
-        return inspections.inspect(this);
+    public InspectionResult inspect() {
+        return AircraftSpecInspection.INSTANCE.inspect(this);
     }
 }

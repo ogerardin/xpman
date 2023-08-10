@@ -9,6 +9,5 @@ public class AsyncHelper {
 
     public void runAsync(Runnable task) {
         Executors.newSingleThreadExecutor().submit(task);
-
     }
 }

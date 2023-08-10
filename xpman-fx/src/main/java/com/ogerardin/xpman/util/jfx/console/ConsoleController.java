@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.util.jfx.console;
 
-import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;

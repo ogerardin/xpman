@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.panels.aircrafts.details.AcfTreeController;
 import com.ogerardin.xpman.util.jfx.menu.annotation.*;
@@ -19,7 +19,6 @@ import lombok.experimental.Delegate;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -80,7 +79,7 @@ public class UiAircraft {
 
     @SuppressWarnings("unused")
     @OnSuccess("displayInspectionResults(#result)")
-    public List<InspectionMessage> inspect() {
+    public InspectionResult inspect() {
         return aircraft.inspect();
     }
 

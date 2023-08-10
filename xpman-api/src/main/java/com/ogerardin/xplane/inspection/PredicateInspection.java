@@ -1,9 +1,8 @@
 package com.ogerardin.xplane.inspection;
 
 import lombok.Data;
+import lombok.NonNull;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -19,10 +18,10 @@ public class PredicateInspection<T> implements Inspection<T> {
     private final Supplier<InspectionMessage> messageSupplier;
 
     @Override
-    public List<InspectionMessage> inspect(T target) {
+    public InspectionResult inspect(@NonNull T target) {
         if (! check.test(target)) {
-            return Collections.singletonList(messageSupplier.get());
+            return InspectionResult.of(messageSupplier.get());
         }
-        return Collections.emptyList();
+        return InspectionResult.empty();
     }
 }

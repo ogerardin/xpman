@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.panels.plugins;
 
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
-import java.util.List;
 
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 @Data
@@ -32,7 +31,7 @@ public class UiPlugin {
     }
 
     @OnSuccess("displayInspectionResults(#result)")
-    public List<InspectionMessage> inspect() {
+    public InspectionResult inspect() {
         return plugin.inspect();
     }
 

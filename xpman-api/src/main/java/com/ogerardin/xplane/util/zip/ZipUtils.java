@@ -1,6 +1,6 @@
-package com.ogerardin.xplane.util;
+package com.ogerardin.xplane.util.zip;
 
-import com.ogerardin.xplane.install.ProgressListener;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
@@ -36,6 +36,7 @@ public class ZipUtils {
                 progressListener.progress(percentDone / 100.0, "Extracting " + fileName);
 
                 try {
+                    //noinspection BusyWait
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {}
             }

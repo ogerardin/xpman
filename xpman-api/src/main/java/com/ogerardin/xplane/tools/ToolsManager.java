@@ -1,11 +1,11 @@
 package com.ogerardin.xplane.tools;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;

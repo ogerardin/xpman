@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class InspectionMessage {
+    // TODO drop builder and make it a record?
 
     @Builder.Default
     private final Severity severity = Severity.INFO;

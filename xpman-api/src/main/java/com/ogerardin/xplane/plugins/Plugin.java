@@ -3,14 +3,12 @@ package com.ogerardin.xplane.plugins;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import lombok.Getter;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -64,8 +62,8 @@ public class Plugin extends XPlaneObject implements Inspectable {
     }
 
     @Override
-    public List<InspectionMessage> inspect() {
-        Inspections<Plugin> inspections = Inspections.of();
-        return inspections.inspect(this);
+    public InspectionResult inspect() {
+        //TODO what to do with plugins?
+        return InspectionResult.empty();
     }
 }

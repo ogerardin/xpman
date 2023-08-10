@@ -6,8 +6,7 @@ import com.ogerardin.xplane.Versioned;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
-import com.ogerardin.xplane.inspection.Inspection;
-import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.RecommendedPluginsInspection;
 import com.ogerardin.xplane.plugins.custom.AviTab;
 import com.ogerardin.xplane.plugins.custom.TerrainRadar;
@@ -17,7 +16,6 @@ import com.ogerardin.xplane.util.Maps;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import one.util.streamex.StreamEx;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,6 +34,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 @Slf4j
 public class ZiboMod738 extends Aircraft implements Versioned {
+
+    public static final RecommendedPluginsInspection RECOMMENDED_PLUGINS_INSPECTION
+            = new RecommendedPluginsInspection(AviTab.class, TerrainRadar.class);
 
     private final PublicationChannel channel = new GoogleDriveChannel();
 
@@ -97,11 +98,10 @@ public class ZiboMod738 extends Aircraft implements Versioned {
     }
 
     @Override
-    public List<InspectionMessage> inspect() {
-        Inspection<Aircraft> pluginsInspection = new RecommendedPluginsInspection<>(getXPlane(), AviTab.class, TerrainRadar.class);
-        return StreamEx.of(super.inspect())
-                .append(pluginsInspection.inspect(this))
-                .toList();
+    public InspectionResult inspect() {
+        return super.inspect()
+                .append(RECOMMENDED_PLUGINS_INSPECTION.inspect(getXPlane()));
+
     }
 
 

@@ -1,14 +1,10 @@
 package com.ogerardin.xpman.panels.scenery.wizard;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.GenericInstaller;
-import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 public class OrganizeWizard extends Wizard {
 

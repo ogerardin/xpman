@@ -3,8 +3,7 @@ package com.ogerardin.xplane.navdata;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -53,9 +52,9 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
 
 
     @Override
-    public List<InspectionMessage> inspect() {
-        Inspections<NavDataSet> inspections = Inspections.of();
-        return inspections.inspect(this);
+    public InspectionResult inspect() {
+        //TODO: check that all files exist
+        return InspectionResult.empty();
     }
 
 

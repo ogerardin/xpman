@@ -3,7 +3,7 @@ package com.ogerardin.xplane.install.inspections;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.PredicateInspection;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.install.InstallableArchive;
+import com.ogerardin.xplane.util.zip.Archive;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +12,7 @@ import java.nio.file.Path;
  * A {@link PredicateInspection} that produces a warning if the source zip would overwrite existing file(s)
  * if extracted into the target folder.
  */
-public class CheckDoesNotOverwriteFiles extends PredicateInspection<InstallableArchive> {
+public class CheckDoesNotOverwriteFiles extends PredicateInspection<Archive> {
 
     public CheckDoesNotOverwriteFiles(Path targetFolder) {
         super(

@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.inspection;
 
-import java.util.List;
+import lombok.NonNull;
 
 /**
  * An object that produces a list of {@link InspectionMessage}s when applied to a target
@@ -9,5 +9,21 @@ import java.util.List;
 @FunctionalInterface
 public interface Inspection<T> {
 
-    List<InspectionMessage> inspect(T target);
+    InspectionResult inspect(@NonNull T target);
+
+    static <X> Inspection<X> empty() {
+        return target -> InspectionResult.empty();
+    }
+
+    default Inspection<T> and(Inspection<T> other) {
+        return target -> {
+            var result = this.inspect(target);
+            return result.isNotAbort() ? result.append(other.inspect(target)) : result;
+        };
+    }
+
+    default Inspectable inspectable(T target) {
+        return () -> this.inspect(target);
+    }
+
 }

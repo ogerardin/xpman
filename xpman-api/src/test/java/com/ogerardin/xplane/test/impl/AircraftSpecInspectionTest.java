@@ -5,12 +5,11 @@ import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.aircrafts.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -33,10 +32,10 @@ class AircraftSpecInspectionTest {
         when(aircraft.getAcfFile()).thenReturn(acfFile);
         when(aircraft.getXPlane()).thenReturn(xPlane);
 
-        AircraftSpecInspection inspection = new AircraftSpecInspection();
+        AircraftSpecInspection inspection = AircraftSpecInspection.INSTANCE;
 
-        List<InspectionMessage> messages = inspection.inspect(aircraft);
-        assertThat(messages, hasSize(0));
+        InspectionResult inspectionResult = inspection.inspect(aircraft);
+        assertThat(inspectionResult.getMessages(), hasSize(0));
     }
     @SneakyThrows
     @Test
@@ -51,11 +50,11 @@ class AircraftSpecInspectionTest {
         when(aircraft.getAcfFile()).thenReturn(acfFile);
         when(aircraft.getXPlane()).thenReturn(xPlane);
 
-        AircraftSpecInspection inspection = new AircraftSpecInspection();
+        AircraftSpecInspection inspection = AircraftSpecInspection.INSTANCE;
 
-        List<InspectionMessage> messages = inspection.inspect(aircraft);
-        assertThat(messages, hasSize(1));
-        InspectionMessage message = messages.get(0);
+        InspectionResult inspectionResult = inspection.inspect(aircraft);
+        assertThat(inspectionResult.getMessages(), hasSize(1));
+        InspectionMessage message = inspectionResult.get(0);
         assertThat(message.getSeverity(), is(Severity.WARN));
     }
 
@@ -72,11 +71,11 @@ class AircraftSpecInspectionTest {
         when(aircraft.getAcfFile()).thenReturn(acfFile);
         when(aircraft.getXPlane()).thenReturn(xPlane);
 
-        AircraftSpecInspection inspection = new AircraftSpecInspection();
+        AircraftSpecInspection inspection = AircraftSpecInspection.INSTANCE;
 
-        List<InspectionMessage> messages = inspection.inspect(aircraft);
-        assertThat(messages, hasSize(1));
-        InspectionMessage message = messages.get(0);
+        var result = inspection.inspect(aircraft);
+        assertThat(result.getMessages(), hasSize(1));
+        InspectionMessage message = result.get(0);
         assertThat(message.getSeverity(), is(Severity.ERROR));
     }
 }
