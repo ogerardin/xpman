@@ -44,7 +44,7 @@ jobs:
 
   build-mac:
     macos:
-      xcode: 13.3.0
+      xcode: 14.3.1
     resource_class: macos.x86.medium.gen2
     environment:
       HOMEBREW_NO_INSTALL_CLEANUP: 1
@@ -186,4 +186,3 @@ workflows:
             - build-linux
             - build-mac
             - build-windows
-
