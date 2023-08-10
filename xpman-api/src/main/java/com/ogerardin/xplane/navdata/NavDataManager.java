@@ -2,11 +2,11 @@ package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
-import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
+import com.ogerardin.xplane.util.progress.ProgressListener;
+import com.ogerardin.xplane.util.zip.Archive;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -191,8 +191,8 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     @Override
-    public void install(InstallableArchive archive, ProgressListener progressListener) throws IOException {
-        archive.installTo(xPlane.getPaths().customData(), progressListener);
+    public void install(Archive archive, ProgressListener progressListener) throws IOException {
+        archive.extract(xPlane.getPaths().customData(), progressListener);
         reload();
     }
 }

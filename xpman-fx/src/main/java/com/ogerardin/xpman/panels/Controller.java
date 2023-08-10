@@ -1,13 +1,12 @@
 package com.ogerardin.xpman.panels;
 
-import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xpman.diag.DiagUtil;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import lombok.SneakyThrows;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 
 public abstract class Controller {
@@ -20,7 +19,7 @@ public abstract class Controller {
 
     @SuppressWarnings("unused")
     @SneakyThrows
-    public void displayInspectionResults(List<InspectionMessage> messages) {
-        DiagUtil.displayInspectionMessages(messages);
+    public void displayInspectionResults(InspectionResult result) {
+        DiagUtil.displayInspectionMessages(result.getMessages());
     }
 }

@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
@@ -11,12 +12,15 @@ import com.ogerardin.xplane.util.platform.LinuxPlatform;
 import com.ogerardin.xplane.util.platform.MacPlatform;
 import com.ogerardin.xplane.util.platform.Platform;
 import com.ogerardin.xplane.util.platform.WindowsPlatform;
+import com.ogerardin.xplane.util.progress.ProgressListener;
+import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +32,7 @@ import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
 @Slf4j
 @ToString
-public class PluginManager extends Manager<Plugin> {
+public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
     @NonNull
     @Getter
@@ -96,4 +100,8 @@ public class PluginManager extends Manager<Plugin> {
         }
     }
 
+    @Override
+    public void install(Archive archive, ProgressListener progressListener) throws IOException {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

@@ -5,12 +5,12 @@ import com.ogerardin.xplane.exception.IllegalOperation;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.file.data.scenery.PathSceneryPackIniItem;
 import com.ogerardin.xplane.install.InstallTarget;
-import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.IntrospectionHelper;
+import com.ogerardin.xplane.util.progress.ProgressListener;
+import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -167,8 +167,8 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     }
 
     @Override
-    public void install(InstallableArchive archive, ProgressListener progressListener) throws IOException {
-        archive.installTo(getSceneryFolder(), progressListener);
+    public void install(Archive archive, ProgressListener progressListener) throws IOException {
+        archive.extract(getSceneryFolder(), progressListener);
         reload();
     }
 

@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
-import java.util.List;
 
 @SuppressWarnings({"unused"})
 @Data
@@ -65,7 +64,7 @@ public class UiScenery {
     }
 
     @OnSuccess("displayInspectionResults(#result)")
-    public List<InspectionMessage> inspect() {
+    public InspectionResult inspect() {
         return sceneryPackage.inspect();
     }
 

@@ -1,8 +1,11 @@
 package com.ogerardin.xplane.install;
 
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 
-// TODO make InstallableZip implement this interface and move install logic to a ZipInstaller
 public interface InstallSource extends Inspectable {
+
+    void install(XPlane xPlane, ProgressListener progressListener);
 
 }

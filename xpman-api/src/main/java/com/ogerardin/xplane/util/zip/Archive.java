@@ -1,10 +1,12 @@
-package com.ogerardin.xplane.install;
+package com.ogerardin.xplane.util.zip;
+
+import com.ogerardin.xplane.util.progress.ProgressListener;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-public interface InstallableArchive {
+public interface Archive {
 
     boolean isValidArchive();
 
@@ -12,8 +14,7 @@ public interface InstallableArchive {
 
     int entryCount();
 
-    void installTo(Path targetFolder, ProgressListener progressListener) throws IOException;
-
     String getAsText(Path path) throws IOException;
 
+    void extract(Path folder, ProgressListener progressListener) throws IOException;
 }

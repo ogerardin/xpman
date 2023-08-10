@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.install;
+package com.ogerardin.xplane.util.progress;
 
 /**
  * Translates the progress of a sub-task into progress of a parent task. Sub-task progress 0.0 is translated as

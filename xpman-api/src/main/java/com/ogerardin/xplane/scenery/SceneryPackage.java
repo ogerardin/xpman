@@ -1,8 +1,7 @@
 package com.ogerardin.xplane.scenery;
 
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.Inspections;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.ReferencedTexturesInspection;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.*;
@@ -12,7 +11,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -76,8 +74,7 @@ public class SceneryPackage implements Inspectable {
     }
 
     @Override
-    public List<InspectionMessage> inspect() {
-        Inspections<SceneryPackage> inspections = Inspections.of(new ReferencedTexturesInspection());
-        return inspections.inspect(this);
+    public InspectionResult inspect() {
+        return ReferencedTexturesInspection.INSTANCE.inspect(this);
     }
 }

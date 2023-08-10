@@ -3,13 +3,13 @@ package com.ogerardin.xplane.aircrafts;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.install.InstallTarget;
-import com.ogerardin.xplane.install.InstallableArchive;
-import com.ogerardin.xplane.install.ProgressListener;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
+import com.ogerardin.xplane.util.progress.ProgressListener;
+import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -102,8 +102,8 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     }
 
     @Override
-    public void install(InstallableArchive archive, ProgressListener progressListener) throws IOException {
-        archive.installTo(getAircraftFolder(), progressListener);
+    public void install(Archive archive, ProgressListener progressListener) throws IOException {
+        archive.extract(getAircraftFolder(), progressListener);
         reload();
     }
 

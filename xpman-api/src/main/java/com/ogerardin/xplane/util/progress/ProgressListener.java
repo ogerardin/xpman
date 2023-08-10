@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.install;
+package com.ogerardin.xplane.util.progress;
 
 /**
  * Allows a task to report its progress through the following indications:

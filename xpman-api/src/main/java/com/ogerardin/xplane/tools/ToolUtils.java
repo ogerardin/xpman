@@ -1,12 +1,12 @@
 package com.ogerardin.xplane.tools;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.InstallableZip;
-import com.ogerardin.xplane.install.ProgressListener;
-import com.ogerardin.xplane.install.SubProgressListener;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
 import com.ogerardin.xplane.util.platform.MacPlatform;
+import com.ogerardin.xplane.util.progress.ProgressListener;
+import com.ogerardin.xplane.util.progress.SubProgressListener;
+import com.ogerardin.xplane.util.zip.ZipArchive;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -124,9 +124,9 @@ public class ToolUtils {
             // TODO handle cases where the ZIP doesn't contain a single executable
             progressListener.progress(0.50, "Extracting zip");
             progressListener.output("Extracting " + tempFile);
-            InstallableZip installableZip = new InstallableZip(tempFile);
+            ZipArchive zipArchive = new ZipArchive(tempFile);
             SubProgressListener subProgressListener = new SubProgressListener(progressListener, .51, 1.00);
-            installableZip.installTo(xPlane.getPaths().tools(), subProgressListener);
+            zipArchive.extract(xPlane.getPaths().tools(), subProgressListener);
 
         }
         catch (Exception e) {

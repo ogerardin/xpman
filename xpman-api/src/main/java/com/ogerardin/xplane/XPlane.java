@@ -36,27 +36,22 @@ public class XPlane {
 
     @Getter(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final AircraftManager aircraftManager = new AircraftManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final SceneryManager sceneryManager = new SceneryManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final PluginManager pluginManager = new PluginManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final NavDataManager navDataManager = new NavDataManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final ToolsManager toolsManager = new ToolsManager(this);
 
     public XPlane(Path baseFolder) throws InvalidConfig {

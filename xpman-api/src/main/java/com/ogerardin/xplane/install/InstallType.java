@@ -2,25 +2,24 @@ package com.ogerardin.xplane.install;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspection;
-import com.ogerardin.xplane.inspection.Inspections;
 import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
 import com.ogerardin.xplane.install.inspections.custom.NavigraphCycleVersion;
 import com.ogerardin.xplane.scenery.SceneryPackage;
+import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
 import org.apache.commons.lang.WordUtils;
 
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
- * Represents a type of installation that can be performed with an {@link InstallableArchive}.
+ * Represents a type of installation that can be performed with an {@link Archive}.
  */
-public enum InstallType {
+public enum InstallType implements Predicate<Archive> {
     AIRCRAFT {
         @Override
-        boolean isMarker(Path path) {
-            return path.getFileName().toString().endsWith(".acf");
+        public boolean test(Archive archive) {
+            return archive.getPaths().stream()
+                    .anyMatch(path -> path.getFileName().toString().endsWith(".acf"));
         }
 
         @Override
@@ -29,18 +28,17 @@ public enum InstallType {
         }
 
         @Override
-        public Inspection<InstallableArchive> additionalInspections() {
-            return Inspections.of(
-                    new CheckHasSingleRootFolder()
-            );
+        public Inspection<Archive> additionalInspections() {
+            return CheckHasSingleRootFolder.INSTANCE;
         }
     },
 
     SCENERY {
         @Override
-        boolean isMarker(Path path) {
-            return path.getFileName().toString().equals(SceneryPackage.EARTH_NAV_DATA)
-                    && path.getNameCount() == 2;
+        public boolean test(Archive archive) {
+            return archive.getPaths().stream()
+                    .anyMatch(path -> path.getFileName().toString().equals(SceneryPackage.EARTH_NAV_DATA)
+                            && path.getNameCount() == 2);
         }
 
         @Override
@@ -49,19 +47,18 @@ public enum InstallType {
         }
 
         @Override
-        public Inspection<InstallableArchive> additionalInspections() {
-            return Inspections.of(
-                    new CheckHasSingleRootFolder()
-            );
+        public Inspection<Archive> additionalInspections() {
+            return CheckHasSingleRootFolder.INSTANCE;
         }
     },
 
     NAVDATA {
         @Override
-        boolean isMarker(Path path) {
-            return path.endsWith("earth_nav.dat")
-                    || path.endsWith("earth_awy.dat")
-                    || path.endsWith("earth_fix.dat");
+        public boolean test(Archive archive) {
+            return archive.getPaths().stream()
+                    .anyMatch(path -> path.endsWith("earth_nav.dat")
+                            || path.endsWith("earth_awy.dat")
+                            || path.endsWith("earth_fix.dat"));
         }
 
         @Override
@@ -70,43 +67,33 @@ public enum InstallType {
         }
 
         @Override
-        public Inspection<InstallableArchive> additionalInspections() {
-            return Inspections.of(
-                    new NavigraphCycleVersion()
-            );
+        public Inspection<Archive> additionalInspections() {
+            return NavigraphCycleVersion.INSTANCE;
+        }
+    },
+
+    PLUGIN {
+        @Override
+        public boolean test(Archive archive) {
+            return archive.getPaths().stream()
+                    .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"));
         }
 
+        @Override
+        InstallTarget target(@NonNull XPlane xPlane) {
+            return xPlane.getPluginManager();
+        }
     };
+
 
     @Override
     public String toString() {
         return WordUtils.capitalizeFully(name());
     }
 
-    public static Set<InstallType> candidateTypes(InstallableArchive zip) {
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
-        Map<InstallType, List<Path>> pathListBySuffix = zip.getPaths().stream()
-                .filter(path -> getInstallTypeMarker(path).isPresent())
-                .collect(Collectors.groupingBy(path -> getInstallTypeMarker(path).get()));
-
-        return pathListBySuffix.keySet();
+    public Inspection<Archive> additionalInspections() {
+        return Inspection.empty();
     }
-
-    private static Optional<InstallType> getInstallTypeMarker(Path path) {
-        return Arrays.stream(InstallType.values())
-                .filter(installType -> installType.isMarker(path))
-                .findAny();
-    }
-
-    public Inspection<InstallableArchive> additionalInspections() {
-        return Inspections.empty();
-    }
-
-    /**
-     * Returns true if the specified Path, when found in an {@link InstallableArchive}, identifies the archive
-     * as an installer for this type
-     */
-    abstract boolean isMarker(Path path);
 
     /**
      * Returns the {@link InstallTarget} for this type, e.g. for an aircraft the target will be the

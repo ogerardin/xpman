@@ -1,8 +1,15 @@
 package com.ogerardin.xplane.inspection;
 
-import java.util.List;
-
+@FunctionalInterface
 public interface Inspectable {
 
-    List<InspectionMessage> inspect();
+    InspectionResult inspect();
+
+    default Inspectable and(Inspectable other) {
+        return () -> {
+            var result = Inspectable.this.inspect();
+            return result.isNotAbort() ? result.append(other.inspect()) : result;
+        };
+    }
+
 }

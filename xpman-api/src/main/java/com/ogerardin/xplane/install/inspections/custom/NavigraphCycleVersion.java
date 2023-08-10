@@ -2,29 +2,29 @@ package com.ogerardin.xplane.install.inspections.custom;
 
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.install.InstallableArchive;
-import lombok.Data;
+import com.ogerardin.xplane.util.zip.Archive;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 
-@Data
-public class NavigraphCycleVersion implements Inspection<InstallableArchive> {
+public enum NavigraphCycleVersion implements Inspection<Archive> {
+
+    INSTANCE;
 
     @SneakyThrows
     @Override
-    public List<InspectionMessage> inspect(InstallableArchive zip) {
+    public InspectionResult inspect(@NonNull Archive zip) {
         try {
             String text = zip.getAsText(Paths.get("cycle_info.txt"));
-            return Collections.singletonList(InspectionMessage.builder()
+            return InspectionResult.of(InspectionMessage.builder()
                     .severity(Severity.INFO).message(text)
                     .build());
         } catch (FileNotFoundException ignored) {
-            return Collections.emptyList();
+            return InspectionResult.empty();
         }
     }
 }

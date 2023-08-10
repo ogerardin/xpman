@@ -1,6 +1,6 @@
-package com.ogerardin.xplane.install;
+package com.ogerardin.xplane.util.zip;
 
-import com.ogerardin.xplane.util.ZipUtils;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -12,7 +12,8 @@ import java.util.List;
 
 @Slf4j
 @Data
-public class InstallableZip implements InstallableArchive {
+public class ZipArchive implements Archive {
+    //TODO merge ZipUtils into this class
 
     public final Path zipFile;
 
@@ -42,13 +43,12 @@ public class InstallableZip implements InstallableArchive {
     }
 
     @Override
-    public void installTo(Path targetFolder, ProgressListener progressListener) throws IOException {
-        log.info("Installing {} to {}", getZipFile(), targetFolder);
-        ZipUtils.unzip(this.zipFile, targetFolder, progressListener);
+    public String getAsText(Path path) throws IOException {
+        return ZipUtils.getAsText(this.zipFile, path);
     }
 
     @Override
-    public String getAsText(Path path) throws IOException {
-        return ZipUtils.getAsText(this.zipFile, path);
+    public void extract(Path folder, ProgressListener progressListener) throws IOException {
+        ZipUtils.unzip(this.zipFile, folder, progressListener);
     }
 }
