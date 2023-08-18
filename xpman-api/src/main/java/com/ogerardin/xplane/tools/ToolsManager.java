@@ -105,7 +105,7 @@ public class ToolsManager extends Manager<Tool> {
         fireEvent(ManagerEvent.<Tool>builder().type(LOADED).source(this).items(items).build());
     }
 
-    public void installTool(Tool tool, ProgressListener progressListener) {
+    public void install(Tool tool, ProgressListener progressListener) {
         if (!(tool instanceof InstallableTool installableTool)) {
             throw new IllegalArgumentException("Tool is not an InstallableTool");
         }
@@ -115,7 +115,7 @@ public class ToolsManager extends Manager<Tool> {
     }
 
     @SneakyThrows
-    public void uninstallTool(Tool tool, ProgressListener consoleController) {
+    public void uninstall(Tool tool, ProgressListener consoleController) {
         if (!(tool instanceof InstalledTool installedTool)) {
             throw new IllegalArgumentException("Tool is not an InstalledTool");
         }
@@ -123,7 +123,7 @@ public class ToolsManager extends Manager<Tool> {
         reload();
     }
 
-    public void launchTool(Tool tool) {
+    public void launch(Tool tool) {
         if (!(tool instanceof InstalledTool installedTool)) {
             throw new IllegalArgumentException("Tool is not an InstalledTool");
         }
