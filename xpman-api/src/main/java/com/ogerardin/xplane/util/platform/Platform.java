@@ -5,6 +5,9 @@ import lombok.NonNull;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * Common interface for platform-specific operations
+ */
 public interface Platform {
 
     /** The int value of {@link com.sun.jna.Platform} that matches this platform */
@@ -36,6 +39,10 @@ public interface Platform {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Start an application from the specified path.
+     * The nature of the path may vary depending on the platform (binary executable file, app bundle, etc.)
+     */
     default void startApp(@NonNull Path app) {
         throw new UnsupportedOperationException();
     }

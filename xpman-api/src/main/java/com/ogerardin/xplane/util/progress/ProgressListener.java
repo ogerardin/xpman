@@ -3,7 +3,7 @@ package com.ogerardin.xplane.util.progress;
 /**
  * Allows a task to report its progress through the following indications:
  * <ul>
- *     <li>A percentage of completion</li>
+ *     <li>A percentage of completion as a double value between 0.0 (0%) and 1.0 (100%)</li>
  *     <li>A current activity message</li>
  *     <li>A cumulative text output (similar to a console)</li>
  * </ul>

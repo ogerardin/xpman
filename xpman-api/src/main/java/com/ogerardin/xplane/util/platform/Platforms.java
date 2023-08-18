@@ -28,7 +28,7 @@ public enum Platforms implements Platform {
         return getPlatform(osType);
     }
 
-    public static Platform getPlatform(int osType) {
+    static Platform getPlatform(int osType) {
         return Arrays.stream(values())
                 .filter(p -> p.getOsType() == osType)
                 .findAny()

@@ -45,6 +45,9 @@ public class MacPlatform implements Platform {
         CommandExecutor.exec("open", url.toString());
     }
 
+    /**
+     * Start an application from the specified path.
+     */
     @Override
     @SneakyThrows
     public void startApp(@NonNull Path app) {
