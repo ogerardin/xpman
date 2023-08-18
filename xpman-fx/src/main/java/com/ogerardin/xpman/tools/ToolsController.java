@@ -5,28 +5,25 @@ import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.tools.Manifest;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.tools.ToolsManager;
-import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.util.jfx.console.ConsoleController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import lombok.NonNull;
-import lombok.SneakyThrows;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ToolsController {
 
@@ -51,11 +48,10 @@ public class ToolsController {
     @FXML
     public void initialize() {
         ToolsManager toolsManager = xPlane.getToolsManager();
-        toolsManager.registerListener(event -> {
-            if (event.getType() == ManagerEvent.Type.LOADED) {
-                setItems(event.getItems());
-            }
-        });
+        toolsManager.registerListener(event -> Optional.of(event)
+                .filter(ManagerEvent.Type.LOADING)
+                .ifPresent(e -> setItems(e.getItems()))
+        );
         toolsManager.reload();
 
         tableView.getSelectionModel().selectedItemProperty().addListener(
@@ -95,7 +91,7 @@ public class ToolsController {
 
     private void setItems(List<Tool> tools) {
         List<UiTool> uiTools = tools.stream()
-                .map(tool -> new UiTool(tool, this))
+                .map(tool -> new UiTool(tool, xPlane))
                 .toList();
         ObservableList<UiTool> observableUiTools = FXCollections.observableList(uiTools);
         // create new FilteredList with same predicate as previous one (to retain current filter)
@@ -122,29 +118,5 @@ public class ToolsController {
         xPlane.getToolsManager().reload();
     }
 
-    @SneakyThrows
-    public void installTool(Tool tool) {
-        ConsoleController consoleController = displayConsole("Installing " + tool.getName());
-        AsyncHelper.runAsync(() -> xPlane.getToolsManager().installTool(tool, consoleController));
-    }
-
-    @SneakyThrows
-    public void uninstallTool(Tool tool) {
-        ConsoleController consoleController = displayConsole("Uninstalling " + tool.getName());
-        AsyncHelper.runAsync(() -> xPlane.getToolsManager().uninstallTool(tool, consoleController));
-    }
-
-    public void runTool(Tool tool) {
-        xPlane.getToolsManager().launchTool(tool);
-    }
-
-    public static ConsoleController displayConsole(@NonNull String title) throws IOException {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        FXMLLoader loader = new FXMLLoader(ConsoleController.class.getResource("/fxml/console.fxml"));
-        dialog.setDialogPane(loader.load());
-        dialog.setTitle(title);
-        dialog.show();
-        return loader.getController();
-    }
 
 }

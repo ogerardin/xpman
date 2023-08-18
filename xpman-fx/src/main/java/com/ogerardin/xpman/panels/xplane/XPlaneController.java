@@ -83,7 +83,7 @@ public class XPlaneController {
             setOnAction(event -> {
                 ToolsManager toolsManager = xPlane.getToolsManager();
                 Tool xPlaneInstaller = toolsManager.getTool("xplane-installer");
-                toolsManager.launchTool(xPlaneInstaller);
+                toolsManager.launch(xPlaneInstaller);
             });
         }});
         nodes.add(new Label("to update."));
