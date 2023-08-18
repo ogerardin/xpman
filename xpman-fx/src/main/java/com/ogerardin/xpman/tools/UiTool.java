@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.tools;
 
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import lombok.Data;
@@ -12,21 +13,21 @@ public class UiTool {
     @Delegate
     private final Tool tool;
 
-    private final ToolsController controller;
+    private final XPlane xPlane;
 
     @EnabledIf("installable")
     public void install() {
-        controller.installTool(tool);
+        ToolUtil.installTool(xPlane, tool);
     }
 
     @EnabledIf("installed")
     public void uninstall() {
-        controller.uninstallTool(tool);
+        ToolUtil.uninstallTool(xPlane, tool);
     }
 
     @EnabledIf("runnable")
     public void run() {
-        controller.runTool(tool);
+        ToolUtil.runTool(xPlane, tool);
     }
 
 

@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 @Slf4j
 public class ConsoleController implements ProgressListener {
 
@@ -42,12 +44,8 @@ public class ConsoleController implements ProgressListener {
     @Override
     public void progress(Double percent, String message) {
         Platform.runLater(() -> {
-            if (percent != null) {
-                progressBar.setProgress(percent);
-            }
-            if (message != null) {
-                messageLabel.setText(message);
-            }
+            Optional.ofNullable(percent).ifPresent(progressBar::setProgress);
+            Optional.ofNullable(message).ifPresent(messageLabel::setText);
         });
     }
 
