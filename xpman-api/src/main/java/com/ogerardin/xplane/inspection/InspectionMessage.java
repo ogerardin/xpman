@@ -22,11 +22,13 @@ public class InspectionMessage {
 
     private final String message;
 
+    private final String details;
+
     @Singular
     private final List<Fix> fixes;
 
     /** When true, indicates that the following inspections should be skipped when this inspection
-     * is performed as part of {@link Inspections#inspect} */
+     * is performed as part of a sequence of inspections */
     @Builder.Default
     private final boolean abort = false;
 

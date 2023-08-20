@@ -33,4 +33,5 @@ public non-sealed class InstallableTool extends Tool {
     public String getVersion() {
         return getManifest().version();
     }
+
 }

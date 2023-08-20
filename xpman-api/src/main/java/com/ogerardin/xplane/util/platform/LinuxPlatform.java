@@ -21,7 +21,7 @@ public class LinuxPlatform implements Platform {
     @Override
     public void reveal(@NonNull Path path) {
         // https://askubuntu.com/a/1109917/325617
-        String shellParam = String.format("gtk-launch \"$(xdg-mime query default inode/directory)\" '%s'", path.toString());
+        String shellParam = String.format("gtk-launch \"$(xdg-mime query default inode/directory)\" '%s'", path);
         CommandExecutor.exec("sh", "-c", shellParam);
     }
 
@@ -29,14 +29,14 @@ public class LinuxPlatform implements Platform {
     @Override
     public String getCpuType() {
         ExecResults exec = CommandExecutor.exec("uname", "-p");
-        return exec.getOutputLines().get(0);
+        return exec.outputLines().get(0);
     }
 
     @SneakyThrows
     @Override
     public int getCpuCount() {
         ExecResults exec = CommandExecutor.exec("nproc", "--all");
-        return Integer.parseInt(exec.getOutputLines().get(0));
+        return Integer.parseInt(exec.outputLines().get(0));
     }
 
     @Override

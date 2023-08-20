@@ -2,7 +2,7 @@ package com.ogerardin.xplane.scenery;
 
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.impl.ReferencedTexturesInspection;
+import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import java.util.Map;
 public class SceneryPackage implements Inspectable {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
+    public static final String OBJECTS = "Objects";
 
     @NonNull
     @Setter(AccessLevel.PACKAGE)
@@ -25,6 +26,9 @@ public class SceneryPackage implements Inspectable {
 
     @Getter(lazy = true)
     private final int tileCount = countTiles();
+
+    @Getter(lazy = true)
+    private final int objCount = countObj();
 
     private boolean enabled = false;
 
@@ -34,7 +38,12 @@ public class SceneryPackage implements Inspectable {
     /** The number of geo-tiles (*.dsf files) contained in the sceery */
     @SneakyThrows
     private int countTiles() {
-        return FileUtils.findFiles(getEarthNavDataFolder(), path -> path.getFileName().toString().endsWith(".dsf")).size();
+        return FileUtils.countFilesBySuffix(getEarthNavDataFolder(), ".dsf");
+    }
+
+    @SneakyThrows
+    private int countObj() {
+        return FileUtils.countFilesBySuffix(folder, ".obj");
     }
 
     public String getName() {
@@ -49,6 +58,10 @@ public class SceneryPackage implements Inspectable {
 
     public Path getEarthNavDataFolder() {
         return folder.resolve(EARTH_NAV_DATA);
+    }
+
+    public Path getObjectsFolder() {
+        return folder.resolve(OBJECTS);
     }
 
     /** Whether the scenery is a library (containes a file library.txt) */
@@ -75,6 +88,6 @@ public class SceneryPackage implements Inspectable {
 
     @Override
     public InspectionResult inspect() {
-        return ReferencedTexturesInspection.INSTANCE.inspect(this);
+        return MissingReferencedTexturesInspection.INSTANCE.inspect(this);
     }
 }

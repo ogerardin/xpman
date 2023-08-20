@@ -53,8 +53,7 @@ public record Manifest(
         }
         return items.stream()
                 .flatMap(item -> item.unfold().stream())
-                .map(item -> Records.coalesce(this, item))
-                .map(item -> item.withItems(null))
+                .map(item -> Records.coalesce(this, item).withItems(null))
                 .collect(Collectors.toList());
     }
 }

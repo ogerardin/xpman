@@ -4,11 +4,13 @@ import com.ogerardin.xplane.XPlane;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,5 +99,13 @@ public class IntrospectionHelper {
         if (! valid) {
             throw new InstantiationException();
         }
+    }
+
+    /**
+     * Invokes the specified method on the specified object without declaring any checked exception.
+     */
+    @SneakyThrows
+    public static Object invokeSneaky(Object target, Method method)  {
+        return method.invoke(target);
     }
 }

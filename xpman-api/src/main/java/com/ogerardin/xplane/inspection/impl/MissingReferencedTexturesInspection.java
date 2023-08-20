@@ -17,14 +17,18 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This {@link Inspection} will check that all textures referenced in all .obj files of the examined scenery actually
+ * exist.
+ */
 @Slf4j
-public enum ReferencedTexturesInspection implements Inspection<SceneryPackage> {
+public enum MissingReferencedTexturesInspection implements Inspection<SceneryPackage> {
 
     INSTANCE;
 
     @SneakyThrows
     @Override
-    public InspectionResult inspect(@NonNull SceneryPackage target) {
+    public @NonNull InspectionResult inspect(@NonNull SceneryPackage target) {
         final List<Path> objFiles = FileUtils.findFiles(target.getFolder(), path -> path.getFileName().toString().endsWith(".obj"));
         List<InspectionMessage> messages = new ArrayList<>();
         for (Path file : objFiles) {
@@ -36,8 +40,9 @@ public enum ReferencedTexturesInspection implements Inspection<SceneryPackage> {
                     .filter(texture -> ! Files.exists(file.resolveSibling(texture.getReference())))
                     .map(texture -> InspectionMessage.builder()
                             .severity(Severity.ERROR)
-                            .object(file.toString())
+                            .object(file.getFileName().toString())
                             .message("Missing texture: " + texture.getReference())
+                            .details("Texture " + texture.getReference() + " is referenced in " + file + ", but the file does not exist")
                             .build())
                     .toList();
             messages.addAll(inspectionMessages);
