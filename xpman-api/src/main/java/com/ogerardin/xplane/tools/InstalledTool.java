@@ -41,6 +41,15 @@ public non-sealed class InstalledTool extends Tool {
         this(app, manifest.name(), manifest);
     }
 
+    /**
+     * Returns an {@link InstalledTool} instance for the specified {@link InstallableTool}, assuming it is installed in
+     * the specified folder.
+     */
+    public static InstalledTool ofInstallable(InstallableTool installableTool, Path toolsFolder) {
+        Path path = toolsFolder.resolve(installableTool.getManifest().file());
+        return new InstalledTool(path, installableTool.getManifest());
+    }
+
     @Override
     public boolean isInstallable() {
         return false;

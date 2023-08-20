@@ -34,7 +34,7 @@ public class FileUtils {
         return files;
     }
 
-    public static long getFolderSize(Path path) throws IOException {
+    public long getFolderSize(Path path) throws IOException {
         if (! Files.isDirectory(path)) {
             throw new IllegalArgumentException(path + " is not a directory");
         }
@@ -44,5 +44,9 @@ public class FileUtils {
                     .mapToLong(p -> p.toFile().length())
                     .sum();
         }
+    }
+
+    public int countFilesBySuffix(Path startFolder, String suffix) throws IOException {
+        return findFiles(startFolder, path -> path.getFileName().toString().endsWith(suffix)).size();
     }
 }

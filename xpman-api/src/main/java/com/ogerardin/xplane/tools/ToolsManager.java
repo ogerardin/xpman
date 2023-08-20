@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -105,29 +106,31 @@ public class ToolsManager extends Manager<Tool> {
         fireEvent(ManagerEvent.<Tool>builder().type(LOADED).source(this).items(items).build());
     }
 
-    public void install(Tool tool, ProgressListener progressListener) {
-        if (!(tool instanceof InstallableTool installableTool)) {
-            throw new IllegalArgumentException("Tool is not an InstallableTool");
+    /**
+     * Install the specified tool and upon success returns a corresponding {@link InstalledTool}
+     */
+    public InstalledTool install(InstallableTool tool, ProgressListener progressListener) {
+        Manifest manifest = tool.getManifest();
+        try {
+            ToolUtils.install(manifest.url(), toolsFolder, progressListener);
+            // trigger asynchronous reload
+            reload();
+            // The reload process will load the newly installed tool at some point in the future,
+            // but in case the caller wants to use it right away we return a corresponding InstalledTool instance immediately.
+            return InstalledTool.ofInstallable(tool, toolsFolder);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        ToolUtils.install(xPlane, installableTool.getManifest().url(), progressListener);
-
-        reload();
     }
 
     @SneakyThrows
-    public void uninstall(Tool tool, ProgressListener consoleController) {
-        if (!(tool instanceof InstalledTool installedTool)) {
-            throw new IllegalArgumentException("Tool is not an InstalledTool");
-        }
-        ToolUtils.defaultUninstaller(installedTool, consoleController);
+    public void uninstall(InstalledTool tool, ProgressListener consoleController) {
+        ToolUtils.defaultUninstaller(tool, consoleController);
         reload();
     }
 
-    public void launch(Tool tool) {
-        if (!(tool instanceof InstalledTool installedTool)) {
-            throw new IllegalArgumentException("Tool is not an InstalledTool");
-        }
-        Platforms.getCurrent().startApp(installedTool.getApp());
+    public void launch(InstalledTool tool) {
+        Platforms.getCurrent().startApp(tool.getApp());
     }
 
     @SneakyThrows

@@ -7,6 +7,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.invokeSneaky;
+
 @UtilityClass
 public class Records {
 
@@ -25,12 +27,12 @@ public class Records {
         RecordComponent[] recordComponents = recordClass.getRecordComponents();
         Object[] values = new Object[recordComponents.length];
 
-        for (R r : records) {
+        for (R record : records) {
             // overwrite the value of each component with the current record's value unless it is null
             for (int i = 0; i < recordComponents.length; i++) {
                 RecordComponent recordComponent = recordComponents[i];
                 Method accessor = recordComponent.getAccessor();
-                Object value = invokeSneaky(r, accessor);
+                Object value = invokeSneaky(record, accessor);
                 if (value != null) {
                     values[i] = value;
                 }
@@ -43,11 +45,6 @@ public class Records {
         constructor.setAccessible(true);
         R clone = constructor.newInstance(values);
         return clone;
-    }
-
-    @SneakyThrows
-    private static Object invokeSneaky(Object r, Method accessor)  {
-        return accessor.invoke(r);
     }
 
 }
