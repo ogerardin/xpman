@@ -15,7 +15,7 @@ import java.util.List;
 public class DiagUtil {
     @SneakyThrows
     public void displayInspectionMessages(List<InspectionMessage> messages, Window owner) {
-        FXMLLoader loader = new FXMLLoader(DiagUtil.class.getResource("/fxml/diag.fxml"));
+        FXMLLoader loader = new FXMLLoader(DiagUtil.class.getResource("/fxml/inspectionResults.fxml"));
         Pane pane = loader.load();
         DiagController controller = loader.getController();
         controller.setItems(messages);

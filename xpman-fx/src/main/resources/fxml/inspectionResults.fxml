@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.ogerardin.xpman.diag.SeverityIconCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.ToolTipCellFactory?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -10,20 +12,26 @@
                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                AnchorPane.topAnchor="0.0">
       <columns>
-          <TableColumn prefWidth="108.0" text="Severity">
+          <TableColumn prefWidth="50.0" text="Severity">
               <cellValueFactory>
                   <PropertyValueFactory property="severity"/>
               </cellValueFactory>
+              <cellFactory>
+                  <SeverityIconCellFactory showText="true" />
+              </cellFactory>
           </TableColumn>
-          <TableColumn prefWidth="150.0" text="Source">
+          <TableColumn prefWidth="100.0" text="Object">
               <cellValueFactory>
-                  <PropertyValueFactory property="source"/>
+                  <PropertyValueFactory property="object"/>
               </cellValueFactory>
           </TableColumn>
           <TableColumn prefWidth="370.0" text="Message">
               <cellValueFactory>
                   <PropertyValueFactory property="message"/>
               </cellValueFactory>
+              <cellFactory>
+                  <ToolTipCellFactory property="details"/>
+              </cellFactory>
           </TableColumn>
       </columns>
     </TableView>

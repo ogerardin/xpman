@@ -4,7 +4,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 
 /**
- * Factory for a {@code TreeTableCell<?, Boolean>} that renders its Boolean content as "Yes"/(empty)
+ * Factory for a {@code TreeTableCell<S, Boolean>} that renders its Boolean content as "Yes"/(empty)
  */
 public class BooleanTreeCellFactory<S> implements TreeTableCellFactory<S, Boolean> {
 

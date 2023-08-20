@@ -17,7 +17,7 @@
                         <PropertyValueFactory property="severity" />
                     </cellValueFactory>
                     <cellFactory>
-                        <SeverityIconCellFactory />
+                        <SeverityIconCellFactory showText="false"/>
                     </cellFactory>
                 </TableColumn>
                 <TableColumn prefWidth="400.0" text="Message">

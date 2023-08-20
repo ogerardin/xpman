@@ -20,6 +20,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ToolsController {
     public void initialize() {
         ToolsManager toolsManager = xPlane.getToolsManager();
         toolsManager.registerListener(event -> Optional.of(event)
-                .filter(ManagerEvent.Type.LOADING)
+                .filter(ManagerEvent.Type.LOADED)
                 .ifPresent(e -> setItems(e.getItems()))
         );
         toolsManager.reload();
@@ -89,7 +90,7 @@ public class ToolsController {
         detail.getChildren().setAll(nodes);
     }
 
-    private void setItems(List<Tool> tools) {
+    private void setItems(@NonNull List<Tool> tools) {
         List<UiTool> uiTools = tools.stream()
                 .map(tool -> new UiTool(tool, xPlane))
                 .toList();

@@ -3,6 +3,7 @@ package com.ogerardin.xpman.diag;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory;
+import javafx.beans.NamedArg;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
@@ -12,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 
 /**
- * Factory for a {@code TableCell<?, Severity>} where the Severity is represented by an icon.
+ * Factory for a {@code TableCell<?, Severity>} where the {@link Severity} is represented by an icon.
  */
 @Slf4j
 public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity> {
@@ -27,6 +28,12 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
             Severity.INFO, ICON_INFO
     );
 
+    private final boolean showText;
+
+    public SeverityIconCellFactory(@NamedArg("showText") boolean showText) {
+        this.showText = showText;
+    }
+
     @Override
     public TableCell<T, Severity> call(TableColumn<T, Severity> param) {
         return new SeverityIconTableCell<>();
@@ -37,7 +44,7 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
     }
 
 
-    private static class SeverityIconTableCell<S> extends TableCell<S, Severity> {
+    private class SeverityIconTableCell<S> extends TableCell<S, Severity> {
 
         private final ImageView imageView = new ImageView();
 
@@ -52,9 +59,13 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
             super.updateItem(item, empty);
             if (empty || item == null) {
                 imageView.setImage(null);
+                setText(null);
             } else {
                 Image icon = getSeverityIcon(item);
                 imageView.setImage(icon);
+                if (showText) {
+                    setText(item.toString());
+                }
             }
         }
 
