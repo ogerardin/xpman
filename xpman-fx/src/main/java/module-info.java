@@ -12,6 +12,7 @@ module xpman.fx {
     requires ch.qos.logback.classic;
     requires com.sun.jna;
     requires com.sun.jna.platform;
+    requires java.desktop;
 
     exports com.ogerardin.xpman.panels.aircrafts;
     exports com.ogerardin.xpman.tools;

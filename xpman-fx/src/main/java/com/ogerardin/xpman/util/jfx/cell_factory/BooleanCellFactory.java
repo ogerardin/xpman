@@ -4,7 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 
 /**
- * Factory for a {@code TableCell<?, String>} that renders its Boolean content as "Yes"/(empty)
+ * Factory for a {@code TableCell<S, Boolean>} that renders its Boolean content as "Yes"/(empty)
  */
 public class BooleanCellFactory<S> implements TableCellFactory<S, Boolean> {
     

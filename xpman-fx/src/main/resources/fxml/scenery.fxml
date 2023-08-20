@@ -82,6 +82,11 @@
                             <PropertyValueFactory property="tileCount" />
                         </cellValueFactory>
                     </TableColumn>
+                    <TableColumn editable="false" prefWidth="70.0" text="Obj count" style="-fx-alignment: CENTER-RIGHT;">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="objCount" />
+                        </cellValueFactory>
+                    </TableColumn>
                     <TableColumn editable="false" prefWidth="140.0" text="Class">
                         <cellValueFactory>
                             <SpelValueFactory expression="sceneryClass.name" />
