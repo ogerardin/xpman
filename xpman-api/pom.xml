@@ -24,7 +24,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <google-http-client.version>1.43.1</google-http-client.version>
+        <google-http-client.version>1.43.3</google-http-client.version>
     </properties>
 
     <dependencies>
@@ -71,7 +71,7 @@
 
         <dependency>
             <!-- required to read PE files (Windows executables) -->
-            <!-- github dependency through jitpack.io -->
+            <!-- GitHub dependency through jitpack.io -->
             <groupId>com.kichik.pecoff4j</groupId>
             <artifactId>pecoff4j</artifactId>
             <version>0.3.2</version>
