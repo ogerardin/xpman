@@ -109,7 +109,7 @@ public class ToolsManager extends Manager<Tool> {
     /**
      * Install the specified tool and upon success returns a corresponding {@link InstalledTool}
      */
-    public InstalledTool install(InstallableTool tool, ProgressListener progressListener) {
+    public InstalledTool install(InstallableTool tool, ProgressListener progressListener) throws ToolsException {
         Manifest manifest = tool.getManifest();
         try {
             ToolUtils.install(manifest.url(), toolsFolder, progressListener);
@@ -119,12 +119,12 @@ public class ToolsManager extends Manager<Tool> {
             // but in case the caller wants to use it right away we return a corresponding InstalledTool instance immediately.
             return InstalledTool.ofInstallable(tool, toolsFolder);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new ToolsException(e);
         }
     }
 
     @SneakyThrows
-    public void uninstall(InstalledTool tool, ProgressListener consoleController) {
+    public void uninstall(InstalledTool tool, ProgressListener consoleController) throws ToolsException {
         ToolUtils.defaultUninstaller(tool, consoleController);
         reload();
     }
