@@ -1,10 +1,7 @@
 package com.ogerardin.xpman.tools;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.tools.InstallableTool;
-import com.ogerardin.xplane.tools.InstalledTool;
-import com.ogerardin.xplane.tools.Tool;
-import com.ogerardin.xplane.tools.ToolsManager;
+import com.ogerardin.xplane.tools.*;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xpman.util.jfx.console.ConsoleController;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +17,7 @@ import java.io.IOException;
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
 @UtilityClass
-public class ToolUtil {
+public class UiToolUtil {
 
     @SneakyThrows
     public void installTool(XPlane xPlane, InstallableTool tool) {
@@ -30,19 +27,34 @@ public class ToolUtil {
     @SneakyThrows
     public void installTool(XPlane xPlane, InstallableTool tool, boolean runAfterInstall) {
         ConsoleController consoleController = displayConsole("Installing " + tool.getName());
-        AsyncHelper.runAsync(() -> {
-            ToolsManager toolsManager = xPlane.getToolsManager();
+        ToolsManager toolsManager = xPlane.getToolsManager();
+        AsyncHelper.runAsync(() -> installWithConsole(consoleController, toolsManager, tool, runAfterInstall));
+    }
+
+    private static void installWithConsole(ConsoleController consoleController, ToolsManager toolsManager, InstallableTool tool, boolean runAfterInstall) {
+        try {
             InstalledTool installedTool = toolsManager.install(tool, consoleController);
             if (runAfterInstall) {
                 toolsManager.launch(installedTool);
             }
-        });
+        } catch (ToolsException e) {
+            new Alert(Alert.AlertType.ERROR, "Error installing " + tool.getName() + ": " + e).showAndWait();
+        }
     }
 
     @SneakyThrows
     public void uninstallTool(XPlane xPlane, InstalledTool tool) {
         ConsoleController consoleController = displayConsole("Uninstalling " + tool.getName());
-        AsyncHelper.runAsync(() -> xPlane.getToolsManager().uninstall(tool, consoleController));
+        ToolsManager toolsManager = xPlane.getToolsManager();
+        AsyncHelper.runAsync(() -> uninstallWithConsole(consoleController, toolsManager, tool));
+    }
+
+    private static void uninstallWithConsole(ConsoleController consoleController, ToolsManager toolsManager, InstalledTool tool) {
+        try {
+            toolsManager.uninstall(tool, consoleController);
+        } catch (ToolsException e) {
+            new Alert(Alert.AlertType.ERROR, "Error uninstalling " + tool.getName() + ": " + e).showAndWait();
+        }
     }
 
     /**

@@ -19,17 +19,17 @@ public class UiTool {
 
     @EnabledIf("installable")
     public void install() {
-        ToolUtil.installTool(xPlane, (InstallableTool) tool);
+        UiToolUtil.installTool(xPlane, (InstallableTool) tool);
     }
 
     @EnabledIf("installed")
     public void uninstall() {
-        ToolUtil.uninstallTool(xPlane, (InstalledTool) tool);
+        UiToolUtil.uninstallTool(xPlane, (InstalledTool) tool);
     }
 
     @EnabledIf("runnable")
     public void run() {
-        ToolUtil.runTool(xPlane, tool);
+        UiToolUtil.runTool(xPlane, tool);
     }
 
 
