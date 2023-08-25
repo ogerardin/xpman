@@ -17,6 +17,23 @@ import java.util.function.Predicate;
 
 /**
  * Loads a {@link Manifest} from a JSON file.
+ * General structure of the JSON file is as follows:
+ * <pre>
+ *  {
+ *   "name": "...",
+ *   "homepage": "...",
+ *   "description": "...",
+ *   "version": "...",
+ *   "platform": "...",
+ *   "xplaneVersion": "...",
+ *   "installChecker": {
+ *      "string": "..."
+ *   }
+ *   "items": [
+ *      ...
+ *   ]
+ * }
+ * </pre>
  * <p>Notes:
  * <ul>
  * <li>"platform" must be specified as the name of one of the enum values of {@link Platforms}</li>
@@ -26,7 +43,8 @@ import java.util.function.Predicate;
  *   <li>"string": will check if the executable file contains the specified string</li>
  *   </ul>
  * </li>
- * <li>"items" is a list of {@link Manifest}s that will be unfolded recursively</li>
+ * <li>"items" is a list of sub-manifests that will be unfolded recursively, using the parent manifest as default
+ * values. This is useful to produce variants without duplicating manifests</li>
  * </ul>
  */
 @Slf4j
