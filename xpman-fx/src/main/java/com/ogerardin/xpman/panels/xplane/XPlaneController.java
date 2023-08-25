@@ -7,7 +7,7 @@ import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
-import com.ogerardin.xpman.tools.ToolUtil;
+import com.ogerardin.xpman.tools.UiToolUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -84,7 +84,7 @@ public class XPlaneController {
             setOnAction(event -> {
                 ToolsManager toolsManager = xPlane.getToolsManager();
                 Tool xPlaneInstaller = toolsManager.getTool("xplane-installer");
-                ToolUtil.runTool(xPlane, xPlaneInstaller);
+                UiToolUtil.runTool(xPlane, xPlaneInstaller);
             });
         }});
         nodes.add(new Label("to update."));
