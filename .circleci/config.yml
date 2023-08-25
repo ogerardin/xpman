@@ -45,7 +45,9 @@ jobs:
   build-mac:
     macos:
       xcode: 14.3.1
-    resource_class: macos.m1.medium.gen1
+    resource_class: macos.x86.medium.gen2
+    # will need to update to macos.m1.medium.gen1 when it is available in the free plan (should be december 2023)
+    # macos.x86.medium.gen2 should be available until January 31, 2024
     environment:
       HOMEBREW_NO_INSTALL_CLEANUP: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
