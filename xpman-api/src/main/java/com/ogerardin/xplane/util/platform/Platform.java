@@ -27,32 +27,20 @@ public interface Platform {
     }
 
     /** Reveal in Finder / show in Explorer or equivalent */
-    default void reveal(@NonNull Path path) {
-        throw new UnsupportedOperationException();
-    }
+    void reveal(@NonNull Path path);
 
-    default void openFile(@NonNull Path path) {
-        throw new UnsupportedOperationException();
-    }
+    void openFile(@NonNull Path path);
 
-    default void openUrl(@NonNull URL url) {
-        throw new UnsupportedOperationException();
-    }
+    void openUrl(@NonNull URL url);
 
     /**
      * Start an application from the specified path.
      * The nature of the path may vary depending on the platform (binary executable file, app bundle, etc.)
      */
-    default void startApp(@NonNull Path app) {
-        throw new UnsupportedOperationException();
-    }
+    void startApp(@NonNull Path app);
 
     /** Is the specified path an existing runnable for this platform? */
-    default boolean isRunnable(@NonNull Path path)  {
-        return false;
-    }
+    boolean isRunnable(@NonNull Path path);
 
-    default String getVersion(Path app) {
-        return null;
-    }
+    String getVersion(Path app);
 }
