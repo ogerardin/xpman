@@ -6,11 +6,8 @@ import com.ogerardin.xplane.file.data.servers.ServersFileData;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
-
-import static java.nio.charset.StandardCharsets.US_ASCII;
 
 @Data
 @Slf4j
@@ -30,13 +27,8 @@ public class UpdateInformation {
             return null;
         }
         final URL url = new URL(serverListUrl);
-        try (InputStream inputStream = url.openStream()) {
-            final byte[] bytes = inputStream.readAllBytes();
-            String contents = new String(bytes, US_ASCII);
-            ServersFile serversFile = new ServersFile();
-            return serversFile.parse(contents);
-        }
-
+        ServersFile serversFile = new ServersFile(url);
+        return serversFile.getData();
     }
 
     public String getLatestBeta() {
