@@ -27,11 +27,11 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
+                    <version>3.11.0</version>
                     <configuration>
                         <annotationProcessorPaths>
                             <path>
@@ -45,7 +45,7 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
-                    <version>2.22.2</version>
+                    <version>3.1.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.ow2.asm</groupId>
@@ -56,12 +56,12 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>io.github.git-commit-id</groupId>
                     <artifactId>git-commit-id-maven-plugin</artifactId>
-                    <version>5.0.0</version>
+                    <version>6.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
