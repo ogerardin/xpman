@@ -3,10 +3,12 @@ package com.ogerardin.xplane.file;
 import lombok.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
-import java.nio.file.Files;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -20,14 +22,21 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class XPlaneFile<R> implements StringParser<R> {
 
-    // file may be null if loaded from a URL. Might change to URI.
     @Getter
     @EqualsAndHashCode.Include
-    private final Path file;
+    private final URI uri;
 
     @NonNull
     @Delegate //delegate the parse() method implementation to the actual parser
     private final StringParser<R> parser;
+
+    public XPlaneFile(@NonNull Path file, StringParser<R> parser) {
+        this(file.toUri(), parser);
+    }
+
+    public XPlaneFile(@NonNull URL url, StringParser<R> parser) throws URISyntaxException {
+        this(url.toURI(), parser);
+    }
 
     /** Result of the parsing */
     @Getter(lazy = true) //defer parsing until getData() is called
@@ -37,12 +46,20 @@ public abstract class XPlaneFile<R> implements StringParser<R> {
     public abstract String getFileSpecVersion();
 
     @SneakyThrows
+    private String getContentsAsString() {
+        return IOUtils.toString(uri, UTF_8);
+    }
+
+    @SneakyThrows
     private R parse()  {
-        Objects.requireNonNull(file);
-        log.debug("Parsing file {}", file);
-        byte[] bytes = Files.readAllBytes(file);
-        String fileContents = new String(bytes, UTF_8);
+        log.debug("Reading {}", uri);
+        String fileContents = getContentsAsString();
+        log.debug("Parsing {}", uri);
         return parse(fileContents);
     }
 
+    /** Returns the file correponding to the URI, assuming the URI matches a file system provider */
+    public Path getFile() {
+        return Path.of(uri);
+    }
 }

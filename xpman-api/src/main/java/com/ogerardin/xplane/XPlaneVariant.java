@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Represents a platform-specific variant of X-Plane.
+ */
 @Getter
 @RequiredArgsConstructor
 public enum XPlaneVariant {

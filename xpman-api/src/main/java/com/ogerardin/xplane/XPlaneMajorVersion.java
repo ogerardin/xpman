@@ -27,6 +27,7 @@ public enum XPlaneMajorVersion {
         }
     }
 
+    /** Returns the 4-digit spec string for this version, e.g. "1100" for X-Plane 11. */
     public String specString() {
         return String.format("%02d00", major);
     }
