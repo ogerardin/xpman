@@ -32,7 +32,7 @@ public class IntrospectingContextMenuTableRowFactory<T>
     public TableRow<T> call(TableView<T> treeTableView) {
         TableRow<T> row = new TableRow<>();
 
-        row.itemProperty().addListener((observable, oldItem, newItem) -> {
+        row.itemProperty().addListener((__, ___, newItem) -> {
             if (newItem == null) {
                 row.setContextMenu(null);
                 return;

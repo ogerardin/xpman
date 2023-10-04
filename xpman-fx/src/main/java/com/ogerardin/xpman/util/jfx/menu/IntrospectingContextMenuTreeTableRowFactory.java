@@ -31,7 +31,7 @@ public class IntrospectingContextMenuTreeTableRowFactory<T> extends Introspectin
     public TreeTableRow<T> call(TreeTableView<T> treeTableView) {
         TreeTableRow<T> row = new TreeTableRow<>();
 
-        row.itemProperty().addListener((observable, oldItem, newItem) -> {
+        row.itemProperty().addListener((__, ___, newItem) -> {
             if (newItem == null) {
                 row.setContextMenu(null);
                 return;

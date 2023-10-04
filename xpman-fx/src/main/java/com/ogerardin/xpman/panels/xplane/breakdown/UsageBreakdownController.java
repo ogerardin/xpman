@@ -27,7 +27,7 @@ public class UsageBreakdownController {
     @FXML private SegmentedBar<CategorySegment> breakdown;
 
     public UsageBreakdownController(XPmanFX mainController) {
-        mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> updateDisplay(xPlane));
+        mainController.xPlaneProperty().addListener((__, ___, xPlane) -> updateDisplay(xPlane));
     }
 
     private void updateDisplay(XPlane xPlane) {
