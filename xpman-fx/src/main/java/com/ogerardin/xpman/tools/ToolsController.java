@@ -56,7 +56,7 @@ public class ToolsController {
         toolsManager.reload();
 
         tableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> Platform.runLater( () -> displayDetail(newValue))
+                (__, ___, newValue) -> Platform.runLater( () -> displayDetail(newValue))
         );
 
         // initially display installed tools only (simulate click on "Installed" button)

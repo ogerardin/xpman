@@ -22,7 +22,7 @@ class CategorySegment extends Segment {
 
     {
         // reset the computing property to false whenever the value is changed
-        valueProperty().addListener((observable, oldValue, newValue) -> computing.setValue(false));
+        valueProperty().addListener((__, ___, ____) -> computing.setValue(false));
     }
 
     public CategorySegment(UsageCategory category, double value) {

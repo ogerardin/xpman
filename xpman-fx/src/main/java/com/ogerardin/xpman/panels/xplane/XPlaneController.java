@@ -42,7 +42,7 @@ public class XPlaneController {
     private TextFlow betaUpdateTextFlow;
 
     public XPlaneController(XPmanFX mainController) {
-        mainController.xPlaneProperty().addListener((observable, oldValue, xPlane) -> {
+        mainController.xPlaneProperty().addListener((__, ___, xPlane) -> {
             this.xPlane = xPlane;
             updateDisplay(xPlane);
             AsyncHelper.runAsync(() -> checkUpdates(xPlane));

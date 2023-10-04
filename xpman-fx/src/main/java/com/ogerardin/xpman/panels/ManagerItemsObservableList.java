@@ -51,7 +51,7 @@ public class ManagerItemsObservableList<T, U>
     public ManagerItemsObservableList(XPlaneProperty xPlaneProperty, Function<XPlane, Manager<T>> managerGetter, Function<T, U> mapper) {
         this.managerGetter = managerGetter;
         this.mapper = mapper;
-        xPlaneProperty.addListener((observable, oldValue, newValue) -> reload(newValue));
+        xPlaneProperty.addListener((__, ___, newValue) -> reload(newValue));
         reload(xPlaneProperty.get());
     }
 

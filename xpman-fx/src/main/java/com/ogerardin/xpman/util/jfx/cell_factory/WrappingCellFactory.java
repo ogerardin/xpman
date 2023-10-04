@@ -26,7 +26,7 @@ public class WrappingCellFactory<S> implements TableCellFactory<S, String> {
                     Label l = new Label(item);
                     l.setWrapText(true);
                     VBox box = new VBox(l);
-                    l.heightProperty().addListener((observable, oldValue, newValue) -> {
+                    l.heightProperty().addListener((__, ___, newValue) -> {
                         box.setPrefHeight(newValue.doubleValue() + 7);
                         Platform.runLater(() -> this.getTableRow().requestLayout());
                     });
