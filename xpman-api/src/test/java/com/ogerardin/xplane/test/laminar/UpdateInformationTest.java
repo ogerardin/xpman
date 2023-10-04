@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.test.laminar;
 
 import com.ogerardin.xplane.XPlaneMajorVersion;
+import com.ogerardin.xplane.XPlaneReleaseInfo;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -18,11 +19,11 @@ class UpdateInformationTest {
             UpdateInformation updateInformation = new UpdateInformation(majorVersion);
             log.info("major version: {}", majorVersion);
 
-            String latestBeta = updateInformation.getLatestBeta();
+            XPlaneReleaseInfo latestBeta = updateInformation.getLatestBeta();
             log.info("latest beta: {}", latestBeta);
             assertNotNull(latestBeta);
 
-            String latestRelease = updateInformation.getLatestFinal();
+            XPlaneReleaseInfo latestRelease = updateInformation.getLatestFinal();
             log.info("latest release: {}", latestRelease);
             assertNotNull(latestRelease);
         }
