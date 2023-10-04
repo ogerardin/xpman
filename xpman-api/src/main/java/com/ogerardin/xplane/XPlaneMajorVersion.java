@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @Getter
@@ -14,7 +15,7 @@ public enum XPlaneMajorVersion {
     XP11(11,
             version -> version.startsWith("11"),
             "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt",
-            version -> String.format("https://www.x-plane.com/kb/x-plane-11-00-release-notes/#%s", version.replace(".", ""))
+            version -> String.format("https://www.x-plane.com/kb/x-plane-11-%s-release-notes", minor(version))
     ),
 
     XP12(12,
@@ -24,6 +25,10 @@ public enum XPlaneMajorVersion {
     ),
 
     OTHER(0, version -> true, null, null);
+
+    private static String minor(String version) {
+        return Pattern.compile("^(\\d+)\\.(\\d+)(.*)").matcher(version).group(2);
+    }
 
     private final int major;
     private final Predicate<String> matcher;
