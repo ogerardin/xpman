@@ -1,17 +1,19 @@
 package com.ogerardin.xplane.laminar;
 
 import com.ogerardin.xplane.XPlaneMajorVersion;
+import com.ogerardin.xplane.XPlaneReleaseInfo;
 import com.ogerardin.xplane.file.ServersFile;
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
-import java.util.Optional;
 
 @Data
 @Slf4j
 public class UpdateInformation {
+
+    private final static XPlaneReleaseInfo NO_VERSION = new XPlaneReleaseInfo("n/a", null);
 
     @NonNull
     private final XPlaneMajorVersion majorVersion;
@@ -31,12 +33,26 @@ public class UpdateInformation {
         return serversFile.getData();
     }
 
-    public String getLatestBeta() {
-        return Optional.ofNullable(getData()).map(ServersFileData::getBetaVersion).orElse("n/a");
+    public XPlaneReleaseInfo getLatestBeta() {
+        ServersFileData value = getData();
+        if (value != null) {
+            String betaVersion = value.getBetaVersion();
+            if (betaVersion != null) {
+                return new XPlaneReleaseInfo(betaVersion, majorVersion.getReleaseNotesUrlBuilder().apply(betaVersion));
+            }
+        }
+        return NO_VERSION;
     }
 
-    public String getLatestFinal() {
-        return Optional.ofNullable(getData()).map(ServersFileData::getFinalVersion).orElse("n/a");
+    public XPlaneReleaseInfo getLatestFinal() {
+        ServersFileData value = getData();
+        if (value != null) {
+            String finalVersion = value.getFinalVersion();
+            if (finalVersion != null) {
+                return new XPlaneReleaseInfo(finalVersion, majorVersion.getReleaseNotesUrlBuilder().apply(finalVersion));
+            }
+        }
+        return NO_VERSION;
     }
 
 

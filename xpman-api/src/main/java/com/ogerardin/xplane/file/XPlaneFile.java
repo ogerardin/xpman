@@ -47,6 +47,7 @@ public abstract class XPlaneFile<R> implements StringParser<R> {
 
     @SneakyThrows
     private String getContentsAsString() {
+        // assuming UTF_8 encoding
         return IOUtils.toString(uri, UTF_8);
     }
 
@@ -58,7 +59,7 @@ public abstract class XPlaneFile<R> implements StringParser<R> {
         return parse(fileContents);
     }
 
-    /** Returns the file correponding to the URI, assuming the URI matches a file system provider */
+    /** Returns the file corresponding to the URI, assuming the URI matches a file system provider */
     public Path getFile() {
         return Path.of(uri);
     }

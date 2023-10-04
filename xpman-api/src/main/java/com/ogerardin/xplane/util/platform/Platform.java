@@ -1,12 +1,13 @@
 package com.ogerardin.xplane.util.platform;
 
 import lombok.NonNull;
+import lombok.SneakyThrows;
 
 import java.net.URL;
 import java.nio.file.Path;
 
 /**
- * Common interface for platform-specific operations
+ * Common interface for operations that have a platform-specific implementation.
  */
 public interface Platform {
 
@@ -32,6 +33,11 @@ public interface Platform {
     void openFile(@NonNull Path path);
 
     void openUrl(@NonNull URL url);
+
+    @SneakyThrows
+    default void openUrl(@NonNull String url) {
+        openUrl(new URL(url));
+    }
 
     /**
      * Start an application from the specified path.
