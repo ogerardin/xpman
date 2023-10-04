@@ -30,7 +30,7 @@ public class MethodHyperlink<T> extends Hyperlink implements Refreshable {
 
         MethodAction<T, ?> action = configurer.getMethodAction();
 
-        setOnAction(event -> action.run());
+        setOnAction(__ -> action.run());
     }
 
 

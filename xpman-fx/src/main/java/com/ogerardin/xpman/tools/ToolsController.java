@@ -81,7 +81,7 @@ public class ToolsController {
             nodes.add(new Text("\n" + manifest.description()));
             if (manifest.homepage() != null) {
                 Hyperlink hyperlink = new Hyperlink("Tool homepage");
-                hyperlink.setOnAction(event -> Platforms.getCurrent().openUrl(manifest.homepage()) );
+                hyperlink.setOnAction(__ -> Platforms.getCurrent().openUrl(manifest.homepage()) );
                 nodes.add(hyperlink);
             }
         } else {

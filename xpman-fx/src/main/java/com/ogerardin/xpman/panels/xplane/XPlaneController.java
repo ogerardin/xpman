@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.xplane;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneReleaseInfo;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.tools.ToolsManager;
@@ -54,26 +55,30 @@ public class XPlaneController {
         if (currentVersion == null) {
             return;
         }
-        UpdateInformation updateInformation = new UpdateInformation(xPlane.getMajorVersion());
-        String latestFinal = updateInformation.getLatestFinal();
-        String latestBeta = updateInformation.getLatestBeta();
+        UpdateInformation updateInformation = xPlane.getMajorVersion().getUpdateInformation();
+        XPlaneReleaseInfo latestFinalReleaseInfo = updateInformation.getLatestFinal();
+        XPlaneReleaseInfo latestBetaReleaseInfo = updateInformation.getLatestBeta();
+        String latestFinal = latestFinalReleaseInfo.version();
+        String latestBeta = latestBetaReleaseInfo.version();
+
         boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
         boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
 
         Platform.runLater(() -> {
             if (hasReleaseUpdate) {
-                releaseUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Release", latestFinal, xPlane));
+                releaseUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Release", latestFinalReleaseInfo, xPlane));
             }
             releaseUpdateTextFlow.setVisible(hasReleaseUpdate);
 
             if (hasBetaUpdate) {
-                betaUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Beta", latestBeta, xPlane));
+                betaUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Beta", latestBetaReleaseInfo, xPlane));
             }
             betaUpdateTextFlow.setVisible(hasBetaUpdate);
         });
     }
 
-    private static List<Node> buildUpdateMessage(String versionType, String version, XPlane xPlane) {
+    private static List<Node> buildUpdateMessage(String versionType, XPlaneReleaseInfo versionInfo, XPlane xPlane) {
+        String version = versionInfo.version();
         List<Node> nodes = new ArrayList<>();
         Glyph warningGlyph = new Glyph("FontAwesome", FontAwesome.Glyph.EXCLAMATION_TRIANGLE) {{
             setStyle("-fx-text-fill: orange;");
@@ -81,13 +86,19 @@ public class XPlaneController {
         nodes.add(warningGlyph);
         nodes.add(new Label(" " + versionType + " " + version + " is available. Run the"));
         nodes.add(new Hyperlink("X-Plane Installer") {{
-            setOnAction(event -> {
+            setOnAction(__ -> {
                 ToolsManager toolsManager = xPlane.getToolsManager();
                 Tool xPlaneInstaller = toolsManager.getTool("xplane-installer");
                 UiToolUtil.runTool(xPlane, xPlaneInstaller);
             });
         }});
         nodes.add(new Label("to update."));
+        if (versionInfo.releaseNotesUrl() != null) {
+            nodes.add(new Label(" Read the"));
+            nodes.add(new Hyperlink("Release notes") {{
+                setOnAction(__ -> Platforms.getCurrent().openUrl(versionInfo.releaseNotesUrl()));
+            }});
+        }
         return nodes;
     }
 
