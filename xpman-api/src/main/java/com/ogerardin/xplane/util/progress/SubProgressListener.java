@@ -8,20 +8,20 @@ package com.ogerardin.xplane.util.progress;
 public record SubProgressListener(ProgressListener parent, Double start, Double end) implements ProgressListener {
 
     @Override
-    public void progress(Double percent, String message) {
-        parent.progress(mapValue(percent), message);
+    public void progress(Double ratio, String message) {
+        parent.progress(mapValue(ratio), message);
     }
 
-    private Double mapValue(Double percent) {
-        if (percent == null || percent < 0.0) {
-            return percent;
+    private Double mapValue(Double ratio) {
+        if (ratio == null || ratio < 0.0) {
+            return ratio;
         }
-        return start + (end - start) * percent;
+        return start + (end - start) * ratio;
     }
 
     @Override
-    public void progress(Double percent) {
-        parent.progress(mapValue(percent));
+    public void progress(Double ratio) {
+        parent.progress(mapValue(ratio));
     }
 
     @Override
