@@ -42,9 +42,9 @@ public class ConsoleController implements ProgressListener {
 
 
     @Override
-    public void progress(Double percent, String message) {
+    public void progress(Double ratio, String message) {
         Platform.runLater(() -> {
-            Optional.ofNullable(percent).ifPresent(progressBar::setProgress);
+            Optional.ofNullable(ratio).ifPresent(progressBar::setProgress);
             Optional.ofNullable(message).ifPresent(messageLabel::setText);
         });
     }
