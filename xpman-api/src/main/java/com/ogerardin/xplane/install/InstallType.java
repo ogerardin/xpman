@@ -15,7 +15,9 @@ import java.util.function.Predicate;
  * Represents a type of installation that can be performed with an {@link Archive}.
  */
 public enum InstallType implements Predicate<Archive> {
+
     AIRCRAFT {
+        // archive is recognized as an aircraft source if it containes at least one .acf file
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
@@ -34,6 +36,7 @@ public enum InstallType implements Predicate<Archive> {
     },
 
     SCENERY {
+        // archive is recognized as a scenery source if it contains at least one folder "Earth nav data"
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
@@ -53,6 +56,7 @@ public enum InstallType implements Predicate<Archive> {
     },
 
     NAVDATA {
+        // archive is recognized as a nav data source if it containes at least one file "earth_xxx.dat"
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
@@ -73,6 +77,8 @@ public enum InstallType implements Predicate<Archive> {
     },
 
     PLUGIN {
+        // archive is recognized as a plugin source if it containes at least one .xpl file
+        // FIXME this test is not correct as some aircraft archives also include plugins...
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
