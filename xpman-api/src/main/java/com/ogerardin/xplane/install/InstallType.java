@@ -77,12 +77,14 @@ public enum InstallType implements Predicate<Archive> {
     },
 
     PLUGIN {
-        // archive is recognized as a plugin source if it containes at least one .xpl file
-        // FIXME this test is not correct as some aircraft archives also include plugins...
+        // archive is recognized as a plugin source if it contains at least one .xpl file
+        // and no .acf file
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
-                    .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"));
+                    .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"))
+                    && archive.getPaths().stream()
+                    .noneMatch(path -> path.getFileName().toString().endsWith(".acf"));
         }
 
         @Override
