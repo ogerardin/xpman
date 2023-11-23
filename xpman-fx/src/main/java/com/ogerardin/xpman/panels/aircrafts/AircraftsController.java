@@ -2,7 +2,9 @@ package com.ogerardin.xpman.panels.aircrafts;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircrafts.AircraftManager;
 import com.ogerardin.xplane.install.InstallType;
+import com.ogerardin.xplane.util.Streams;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -11,6 +13,7 @@ import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.Filter;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -21,7 +24,10 @@ import javafx.scene.control.ToolBar;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @Slf4j
 public class AircraftsController extends Controller {
@@ -48,8 +54,15 @@ public class AircraftsController extends Controller {
 
     @FXML
     public void initialize() {
-        initFilters(filterCombo);
+        // bind filter combo items to XPlane
+        filterCombo.itemsProperty().bind(
+            Bindings.createObjectBinding(
+                () -> FXCollections.observableList(buildFilters(xPlaneProperty.get())),
+                xPlaneProperty
+            )
+        );
 
+        // build observable list of UiAircraft
         uiItems = new ManagerItemsObservableList<>(
                 this.xPlaneProperty,
                 XPlane::getAircraftManager,
@@ -72,14 +85,41 @@ public class AircraftsController extends Controller {
         );
     }
 
-    private void initFilters(ComboBox<Filter<Aircraft>> filterCombo) {
-        filterCombo.getItems().add(Filter.all());
-        filterCombo.getItems().addAll(
-                Arrays.stream(Aircraft.Category.values())
-                        .map(category -> new Filter<Aircraft>("Category: " + category,
-                                aircraft -> aircraft.getCategory() == category))
-                        .toList()
-        );
+    /**
+     * Returns a list of aircraft filters to display in the filter combo
+     */
+    private static List<Filter<Aircraft>> buildFilters(XPlane xPlane) {
+        if (xPlane == null) {
+            return Collections.emptyList();
+        }
+        return Streams.concat(
+                    Stream.of(Filter.all()),
+                    getCategoryFilters().stream(),
+                    getStudioFilters(xPlane).stream(),
+                    Stream.of(new Filter<Aircraft>("Studio ≠ Laminar Research",
+                            aircraft -> !aircraft.getStudio().equals("Laminar Research")))
+                ).toList();
+    }
+
+    /**
+     * Returns a list of aircraft filters by studio
+     */
+    private static List<Filter<Aircraft>> getStudioFilters(XPlane xPlane) {
+        AircraftManager aircraftManager = xPlane.getAircraftManager();
+        return aircraftManager.getStudios().stream()
+                .map(studio -> new Filter<Aircraft>("Studio: " + studio,
+                        aircraft -> aircraft.getStudio().equals(studio)))
+                .toList();
+    }
+
+    /**
+     * Returns a list of aircraft filters by category
+     */
+    private static List<Filter<Aircraft>> getCategoryFilters() {
+        return Arrays.stream(Aircraft.Category.values())
+                .map(category -> new Filter<Aircraft>("Category: " + category,
+                        aircraft -> aircraft.getCategory() == category))
+                .toList();
     }
 
     public void install() {

@@ -113,4 +113,11 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
 
     }
+
+    /**
+     * Returns the list of all distinct studios from all available aircraft
+     */
+    public List<String> getStudios() {
+        return getAircrafts().stream().map(Aircraft::getStudio).distinct().toList();
+    }
 }
