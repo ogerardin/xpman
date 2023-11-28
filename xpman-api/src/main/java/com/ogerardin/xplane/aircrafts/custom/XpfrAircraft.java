@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,16 +21,15 @@ import java.util.stream.Stream;
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 
-    private final Pattern FILE_PATTERN = Pattern.compile(".+-(([A-Z\\-]+)\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
+    private final Pattern FILE_PATTERN = Pattern.compile(".+-(([A-Z0-9\\-]+)\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
 
     @Getter(lazy = true)
     private final String version = loadVersion();
 
     public XpfrAircraft(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile);
-        // not all XPFR aircrafts have "XPFR" as studio :(
-        //        IntrospectionHelper.require(getStudio().equals("XPFR"));
-        IntrospectionHelper.require(getVersion() != null);
+        // not all XPFR aircraft have "XPFR" as studio :(
+        IntrospectionHelper.require(getStudio().equals("XPFR") || getVersion() != null);
     }
 
     @SneakyThrows
@@ -39,8 +39,8 @@ public class XpfrAircraft extends Aircraft {
             return pathStream
                     .map(path -> FILE_PATTERN.matcher(path.getFileName().toString()))
                     .filter(Matcher::matches)
-                    .findAny()
                     .map(matcher -> matcher.group(1))
+                    .max(Comparator.naturalOrder())
                     .orElse(null);
         }
     }
