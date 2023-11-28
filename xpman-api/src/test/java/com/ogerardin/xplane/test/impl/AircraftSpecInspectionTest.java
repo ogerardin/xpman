@@ -2,7 +2,7 @@ package com.ogerardin.xplane.test.impl;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneMajorVersion;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;

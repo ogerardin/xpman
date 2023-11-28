@@ -1,8 +1,8 @@
-package com.ogerardin.xpman.panels.aircrafts;
+package com.ogerardin.xpman.panels.aircraft;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
-import com.ogerardin.xplane.aircrafts.AircraftManager;
+import com.ogerardin.xplane.aircraft.Aircraft;
+import com.ogerardin.xplane.aircraft.AircraftManager;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.util.Streams;
 import com.ogerardin.xpman.XPlaneProperty;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class AircraftsController extends Controller {
 
-    private static final Label PLACEHOLDER = new Label("No aircrafts to show");
+    private static final Label PLACEHOLDER = new Label("No aircraft to show");
 
     private final XPlaneProperty xPlaneProperty;
 

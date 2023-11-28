@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.aircrafts;
+package com.ogerardin.xplane.aircraft;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.AcfFile;
@@ -64,10 +64,10 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     private void loadAircrafts() {
         Instant t0 = Instant.now();
 
-        log.info("Loading aircrafts...");
+        log.info("Loading aircraft...");
         fireEvent(ManagerEvent.<Aircraft>builder().source(this).type(LOADING).build());
 
-        // find all .acf files under the Aircrafts folder
+        // find all .acf files under the Aircraft folder
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
         log.debug("Found {} acf files", acfFiles.size());
@@ -83,7 +83,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         Instant t1 = Instant.now();
         long duration = Duration.between(t0, t1).toMillis();
 
-        log.info("Loaded {} aircrafts in {} ms", items.size(), duration);
+        log.info("Loaded {} aircraft in {} ms", items.size(), duration);
         fireEvent(ManagerEvent.<Aircraft>builder().type(LOADED).source(this).items(items).build());
     }
 

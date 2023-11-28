@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.aircrafts;
+package com.ogerardin.xplane.aircraft;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;

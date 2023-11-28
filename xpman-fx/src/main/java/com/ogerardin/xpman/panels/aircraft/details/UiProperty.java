@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.panels.aircrafts.details;
+package com.ogerardin.xpman.panels.aircraft.details;
 
 import lombok.Data;
 import lombok.experimental.Delegate;

@@ -1,10 +1,10 @@
-package com.ogerardin.xplane.aircrafts.custom;
+package com.ogerardin.xplane.aircraft.custom;
 
 import com.google.api.services.drive.model.File;
 import com.ogerardin.xplane.PublicationChannel;
 import com.ogerardin.xplane.Versioned;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.RecommendedPluginsInspection;

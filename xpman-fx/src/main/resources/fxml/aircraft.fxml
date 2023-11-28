@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.ogerardin.xpman.panels.aircrafts.AircraftsController">
+            fx:controller="com.ogerardin.xpman.panels.aircraft.AircraftsController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                 AnchorPane.topAnchor="0.0">
         <top>
@@ -64,34 +64,38 @@
                             <SpelValueFactory expression="acfFile.fileSpecVersion"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <!--
-                                        <TableColumn prefWidth="105.0" text="Notes">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="notes" />
-                                            </cellValueFactory>
-                                        </TableColumn>
-                                        <TableColumn prefWidth="105.0" text="Description">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="description" />
-                                            </cellValueFactory>
-                                        </TableColumn>
-                                        <TableColumn prefWidth="105.0" text="Callsign">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="callsign" />
-                                            </cellValueFactory>
-                                        </TableColumn>
-                                        <TableColumn prefWidth="105.0" text="ICAO code">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="icaoCode" />
-                                            </cellValueFactory>
-                                        </TableColumn>
-                                        <TableColumn prefWidth="105.0" text="Tail number">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="tailNumber" />
-                                            </cellValueFactory>
-                                        </TableColumn>
-                    -->
-
+<!--
+                    <TableColumn prefWidth="105.0" text="Class">
+                        <cellValueFactory>
+                            <SpelValueFactory expression="aircraft.class.simpleName"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Notes">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="notes" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Description">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="description" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Callsign">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="callsign" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="ICAO code">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="icaoCode" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn prefWidth="105.0" text="Tail number">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="tailNumber" />
+                        </cellValueFactory>
+                    </TableColumn>
+-->
                 </columns>
             </TableView>
         </center>

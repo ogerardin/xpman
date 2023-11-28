@@ -38,8 +38,8 @@
                     <Tab text="X-Plane">
                         <fx:include source="xplane.fxml" />
                     </Tab>
-                    <Tab text="Aircrafts">
-                        <fx:include source="aircrafts.fxml" />
+                    <Tab text="Aircraft">
+                        <fx:include source="aircraft.fxml" />
                     </Tab>
                     <Tab text="Scenery">
                         <fx:include source="scenery.fxml" />

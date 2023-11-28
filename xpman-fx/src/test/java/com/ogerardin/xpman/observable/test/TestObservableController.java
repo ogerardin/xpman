@@ -1,9 +1,9 @@
 package com.ogerardin.xpman.observable.test;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
-import com.ogerardin.xpman.panels.aircrafts.UiAircraft;
+import com.ogerardin.xpman.panels.aircraft.UiAircraft;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -24,7 +24,7 @@ public class TestObservableController {
     @FXML
     public void initialize() {
 
-        final Label PLACEHOLDER = new Label("No aircrafts to show");
+        final Label PLACEHOLDER = new Label("No aircraft to show");
 
         ManagerItemsObservableList<Aircraft, UiAircraft> aircrafts = new ManagerItemsObservableList<>(
                 TestObservable.xPlaneProperty,

@@ -1,9 +1,9 @@
-package com.ogerardin.xplane.test.aircrafts;
+package com.ogerardin.xplane.test.aircraft;
 
 import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.exception.InvalidConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class AircraftManagerTest {
         XPlane xplane = new XPlane(XPlane.getDefaultXPRootFolder());
 
         List<Aircraft> aircrafts = xplane.getAircraftManager().getAircrafts();
-        log.info("Found {} aircrafts", aircrafts.size());
+        log.info("Found {} aircraft", aircrafts.size());
         aircrafts.forEach(aircraft -> log.info("*** {} ({})", aircraft.getName(), aircraft.getClass().getName()));
 
     }

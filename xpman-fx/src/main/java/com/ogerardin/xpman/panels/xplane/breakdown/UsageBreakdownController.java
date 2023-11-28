@@ -58,7 +58,7 @@ public class UsageBreakdownController {
         setSegment(OTHER, size);
 
         //TODO can this be done in parallel?
-        computeSegment(AIRCRAFTS, xPlane.getAircraftManager().getAircraftFolder());
+        computeSegment(AIRCRAFT, xPlane.getAircraftManager().getAircraftFolder());
         computeSegment(GLOBAL_SCENERY, xPlane.getPaths().globalScenery());
         computeSegment(CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder());
         computeSegment(CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder());

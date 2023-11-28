@@ -14,7 +14,7 @@ module xpman.fx {
     requires com.sun.jna.platform;
     requires java.desktop;
 
-    exports com.ogerardin.xpman.panels.aircrafts;
+    exports com.ogerardin.xpman.panels.aircraft;
     exports com.ogerardin.xpman.tools;
     exports com.ogerardin.xpman.util.jfx.console;
     exports com.ogerardin.xpman;
@@ -29,8 +29,8 @@ module xpman.fx {
     opens com.ogerardin.xpman.diag to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.install.wizard to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
-    opens com.ogerardin.xpman.panels.aircrafts to javafx.base, javafx.fxml, spring.expression;
-    opens com.ogerardin.xpman.panels.aircrafts.details to javafx.base, javafx.fxml, spring.expression;
+    opens com.ogerardin.xpman.panels.aircraft to javafx.base, javafx.fxml, spring.expression;
+    opens com.ogerardin.xpman.panels.aircraft.details to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.navdata to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.plugins to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.scenery to javafx.base, javafx.fxml, spring.expression;

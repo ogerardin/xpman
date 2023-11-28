@@ -1,7 +1,7 @@
-package com.ogerardin.xplane.aircrafts.custom;
+package com.ogerardin.xplane.aircraft.custom;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
