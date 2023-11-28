@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 enum UsageCategory {
-    AIRCRAFTS("Aircrafts", "purple"),
+    AIRCRAFT("Aircraft", "purple"),
     GLOBAL_SCENERY("Global scenery", "cadetblue"),
     CUSTOM_SCENERY("Custom scenery", "lightcoral"),
     CUSTOM_SCENERY_DISABLED("Disabled scenery", "orange"),

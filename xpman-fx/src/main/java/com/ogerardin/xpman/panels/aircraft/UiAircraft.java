@@ -1,10 +1,10 @@
-package com.ogerardin.xpman.panels.aircrafts;
+package com.ogerardin.xpman.panels.aircraft;
 
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.util.platform.Platforms;
-import com.ogerardin.xpman.panels.aircrafts.details.AcfTreeController;
+import com.ogerardin.xpman.panels.aircraft.details.AcfTreeController;
 import com.ogerardin.xpman.util.jfx.menu.annotation.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -49,7 +49,7 @@ public class UiAircraft {
 //    @EnabledIf("enabled")
 //    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
 //            "+ '> will be moved to <' + xPlane.baseFolder.relativize(xPlane.aircraftManager.disabledAircraftFolder) " +
-//            "+ '>\nThis will impact other aircrafts contained in the same folder (if there are).'" +
+//            "+ '>\nThis will impact other aircraft contained in the same folder (if there are).'" +
 //            "+ '\n\nPress OK to continue.'")
 //    @OnSuccess("tableView.refresh()")
 //    public void disable() {
@@ -59,7 +59,7 @@ public class UiAircraft {
     @SuppressWarnings("unused")
     @Label("'Move aircraft to Trash'")
     @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '\" will be moved to the trash. '" +
-            "+ 'This will impact all aircrafts contained in the same folder.'" +
+            "+ 'This will impact all aircraft contained in the same folder.'" +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     @OnSuccess("reload()")
     public void moveToTrash() {

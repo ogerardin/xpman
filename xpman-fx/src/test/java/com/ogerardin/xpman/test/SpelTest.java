@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.test;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.exception.InvalidConfig;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.Maps;

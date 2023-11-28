@@ -1,8 +1,8 @@
-package com.ogerardin.xpman.panels.aircrafts;
+package com.ogerardin.xpman.panels.aircraft;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
-import com.ogerardin.xplane.aircrafts.Livery;
+import com.ogerardin.xplane.aircraft.Aircraft;
+import com.ogerardin.xplane.aircraft.Livery;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 @Slf4j
 public class TreeAircraftsController {
 
-    private static final Label PLACEHOLDER = new Label("No aircrafts to show");
+    private static final Label PLACEHOLDER = new Label("No aircraft to show");
 
     private final XPlaneProperty xPlaneProperty;
 

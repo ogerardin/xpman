@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.inspection.impl;
 
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;

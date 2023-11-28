@@ -15,7 +15,7 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 
 
 ## Goals 
-- Manage X-Plane aircrafts, scenery, plugins and extensions
+- Manage X-Plane aircraft, scenery, plugins and extensions
 - Work on all platforms supported by X-Plane (Windows, Mac, Linux)  
 - Offer idiomatic installation (e.g. setup.exe on Windows) and close-to-native look and feel
 

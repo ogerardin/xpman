@@ -27,7 +27,7 @@ module xpman.api {
     exports com.ogerardin.xplane.util;
     exports com.ogerardin.xplane.install;
     exports com.ogerardin.xplane.util.events;
-    exports com.ogerardin.xplane.aircrafts;
+    exports com.ogerardin.xplane.aircraft;
     exports com.ogerardin.xplane.file;
     exports com.ogerardin.xplane.scenery;
     exports com.ogerardin.xplane.plugins;

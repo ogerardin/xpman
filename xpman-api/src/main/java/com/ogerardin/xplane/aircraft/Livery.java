@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.aircrafts;
+package com.ogerardin.xplane.aircraft;
 
 import lombok.Data;
 import org.apache.commons.io.FilenameUtils;

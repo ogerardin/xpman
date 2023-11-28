@@ -1,9 +1,9 @@
-package com.ogerardin.xplane.test.aircrafts;
+package com.ogerardin.xplane.test.aircraft;
 
 import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.exception.InvalidConfig;
 import com.ogerardin.xplane.file.AcfFile;
 import org.hamcrest.Matchers;

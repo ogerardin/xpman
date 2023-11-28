@@ -54,7 +54,7 @@ public class IntrospectionHelper {
      * This is useful for example to obtain an instance of a specialized subclass of Aircraft.
      * The idea is that constructors of an Aircraft subclass will fail if the class does not match the actual aircraft
      * file, thus prompting this method to return a default Aircraft instance. On the contrary
-     * if a subclass (such as {@link com.ogerardin.xplane.aircrafts.custom.ZiboMod738}) recognizes an aircraft file, its constructor
+     * if a subclass (such as {@link com.ogerardin.xplane.aircraft.custom.ZiboMod738}) recognizes an aircraft file, its constructor
      * will succeed prompting this method to return the specialized instance.
      * The method {@link #require} may be used in the constructor to throw a {@link InstantiationException} if a
      * condition is not met.

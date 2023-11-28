@@ -1,4 +1,4 @@
-package com.ogerardin.xpman.panels.aircrafts.details;
+package com.ogerardin.xpman.panels.aircraft.details;
 
 import java.util.Collections;
 import java.util.List;

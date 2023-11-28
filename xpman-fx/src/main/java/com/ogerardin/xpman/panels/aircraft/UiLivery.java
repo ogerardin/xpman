@@ -1,7 +1,7 @@
-package com.ogerardin.xpman.panels.aircrafts;
+package com.ogerardin.xpman.panels.aircraft;
 
-import com.ogerardin.xplane.aircrafts.Aircraft;
-import com.ogerardin.xplane.aircrafts.Livery;
+import com.ogerardin.xplane.aircraft.Aircraft;
+import com.ogerardin.xplane.aircraft.Livery;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
@@ -43,7 +43,7 @@ public class UiLivery extends UiAircraft {
     @SuppressWarnings("unused")
     @Label("'Move livery to Trash'")
     @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.liveriesFolder.resolve(livery.path)) + '\" will be moved to the trash. '" +
-            "+ 'This will impact all aircrafts contained in the same aircraft folder.'" +
+            "+ 'This will impact all aircraft contained in the same aircraft folder.'" +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     @OnSuccess("reload()")
     public void moveToTrash() {

@@ -1,6 +1,6 @@
-package com.ogerardin.xpman.panels.aircrafts.details;
+package com.ogerardin.xpman.panels.aircraft.details;
 
-import com.ogerardin.xplane.aircrafts.Aircraft;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xpman.util.jfx.panels.TreeTableViewLoadTask;
 import javafx.fxml.FXML;

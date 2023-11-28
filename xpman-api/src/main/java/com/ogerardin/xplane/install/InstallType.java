@@ -105,7 +105,7 @@ public enum InstallType implements Predicate<Archive> {
 
     /**
      * Returns the {@link InstallTarget} for this type, e.g. for an aircraft the target will be the
-     * {@link com.ogerardin.xplane.aircrafts.AircraftManager}.
+     * {@link com.ogerardin.xplane.aircraft.AircraftManager}.
      */
     abstract InstallTarget target(@NonNull XPlane xPlane);
 }
