@@ -51,13 +51,13 @@
                 <Button fx:id="startXPlaneButton" disable="true" mnemonicParsing="false" onAction="#startXPlane" prefHeight="26.0" prefWidth="143.0" text="Start X-Plane" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"  GridPane.columnSpan="2" GridPane.rowIndex="8">
-                    <fx:include source="breakdown.fxml" />
+                    <fx:include source="../breakdown.fxml" />
                 </Pane>
             </GridPane>
         </center>
         <left>
             <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="TOP_CENTER">
-                <Image url="@../img/x-plane.png" />
+                <Image url="@../../img/x-plane.png" />
             </ImageView>
         </left>
     </BorderPane>

@@ -36,19 +36,19 @@
             <center>
                 <TabPane prefHeight="371.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <Tab text="X-Plane">
-                        <fx:include source="xplane.fxml" />
+                        <fx:include source="panels/xplane.fxml" />
                     </Tab>
                     <Tab text="Aircraft">
-                        <fx:include source="aircraft.fxml" />
+                        <fx:include source="panels/aircraft.fxml" />
                     </Tab>
                     <Tab text="Scenery">
-                        <fx:include source="scenery.fxml" />
+                        <fx:include source="panels/scenery.fxml" />
                     </Tab>
                     <Tab text="Nav data">
-                        <fx:include source="navdata.fxml" />
+                        <fx:include source="panels/navdata.fxml" />
                     </Tab>
                     <Tab text="Plugins">
-                        <fx:include source="plugins.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <fx:include source="panels/plugins.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                     </Tab>
                 </TabPane>
             </center>

@@ -4,64 +4,62 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.ogerardin.xpman.panels.aircraft.AircraftsController">
-    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                AnchorPane.topAnchor="0.0">
+<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.aircraft.AircraftsController">
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                <Button mnemonicParsing="false" text="Reload" onAction="#reload"/>
-                <Button mnemonicParsing="false" text="Analyze"/>
-                <Button mnemonicParsing="false" text="Check for updates"/>
-                <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
-                <ComboBox fx:id="filterCombo" prefWidth="200.0" promptText="Filter" onAction="#applyFilter"/>
+                <Button mnemonicParsing="false" onAction="#reload" text="Reload" />
+<!--                <Button mnemonicParsing="false" text="Analyze"/>-->
+<!--                <Button mnemonicParsing="false" text="Check for updates"/>-->
+                <Button mnemonicParsing="false" onAction="#install" text="Install..." />
+                <Label text="Filter" />
+                <ComboBox fx:id="filterCombo" onAction="#applyFilter" prefWidth="200.0" promptText="Filter" />
             </ToolBar>
         </top>
         <center>
             <TableView fx:id="aircraftsTable" prefHeight="400.0" prefWidth="600.0">
                 <columns>
-                    <TableColumn editable="false" prefWidth="174.0" text="Thumbnail" sortable="false">
+                    <TableColumn editable="false" prefWidth="174.0" sortable="false" text="Thumbnail">
                         <cellValueFactory>
-                            <PropertyValueFactory property="thumb"/>
+                            <PropertyValueFactory property="thumb" />
                         </cellValueFactory>
                         <cellFactory>
-                            <PathImageCell.TableCellFactory/>
+                            <PathImageCell.TableCellFactory />
                         </cellFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="200.0" text="Name">
                         <cellValueFactory>
-                            <PropertyValueFactory property="name"/>
+                            <PropertyValueFactory property="name" />
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="200.0" text="Studio/Author">
                         <cellValueFactory>
-                            <SpelValueFactory expression="(studio?:'-') + '&#10;' + (author?:'-')"/>
+                            <SpelValueFactory expression="(studio?:'-') + '&#10;' + (author?:'-')" />
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="150.0" text="Manufacturer">
                         <cellValueFactory>
-                            <PropertyValueFactory property="manufacturer"/>
+                            <PropertyValueFactory property="manufacturer" />
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="105.0" text="Category">
                         <cellValueFactory>
-                            <PropertyValueFactory property="category"/>
+                            <PropertyValueFactory property="category" />
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn prefWidth="105.0" text="Version">
                         <cellValueFactory>
-                            <PropertyValueFactory property="version"/>
+                            <PropertyValueFactory property="version" />
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn prefWidth="105.0" text="Latest Version">
                         <cellValueFactory>
-                            <PropertyValueFactory property="latestVersion"/>
+                            <PropertyValueFactory property="latestVersion" />
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn prefWidth="105.0" text="X-Plane spec">
                         <cellValueFactory>
-                            <SpelValueFactory expression="acfFile.fileSpecVersion"/>
+                            <SpelValueFactory expression="acfFile.fileSpecVersion" />
                         </cellValueFactory>
                     </TableColumn>
 <!--
