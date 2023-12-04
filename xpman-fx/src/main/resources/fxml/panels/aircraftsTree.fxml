@@ -12,9 +12,10 @@
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <Button mnemonicParsing="false" text="Reload" onAction="#reload"/>
-                <Button mnemonicParsing="false" text="Analyze"/>
-                <Button mnemonicParsing="false" text="Check for updates"/>
+<!--                <Button mnemonicParsing="false" text="Analyze"/>-->
+<!--                <Button mnemonicParsing="false" text="Check for updates"/>-->
                 <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
+                <Label text="Filter" />
                 <ComboBox prefWidth="150.0" promptText="Filter"/>
             </ToolBar>
         </top>
