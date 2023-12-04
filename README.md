@@ -23,12 +23,12 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 Currently in development stages. Some things work, some don't... 
 Check [feature status](https://github.com/ogerardin/xpman/blob/main/features.md).
 
-USE AT YOUR OWN RISK! At this point I can't guarantee that it won't erase the whole X-Plane directory or set fire to your house.
+USE AT YOUR OWN RISK! You have a backup, right? Right?
 
 # Installing X-Plane Manager
 Download the package appropriate for your platform from [GitHub releases](https://github.com/ogerardin/xpman/releases) and install
 it.
-All packages are bundled with a JRE so you don't have to worry about installing Java.
+All packages are bundled with a Java runtime so you don't have to worry about installing Java.
 
 ## Windows
 When running the EXE or MSI, SmartScreen might display a dialog saying "Windows protected your PC".
