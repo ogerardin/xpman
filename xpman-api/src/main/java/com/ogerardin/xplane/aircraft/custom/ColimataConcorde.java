@@ -48,7 +48,7 @@ public class ColimataConcorde extends Aircraft {
         try (Stream<Path> pathStream = Files.list(getAcfFile().getFile().getParent().resolve("MANUALS"))) {
             pathStream
                     .filter(path -> path.getFileName().toString().endsWith(".pdf"))
-                    .forEach(path -> manualsMap.put("Manual: " + path.getFileName().toString(), path));
+                    .forEach(path -> manualsMap.put(path.getFileName().toString(), path));
         }
         return manualsMap;
     }

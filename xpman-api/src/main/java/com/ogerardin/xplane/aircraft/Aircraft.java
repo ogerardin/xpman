@@ -41,6 +41,11 @@ public class Aircraft extends XPlaneObject implements Inspectable {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     private String getProperty(String name) {
         return (acfFile != null) ? acfFile.getProperty(name) : null;
     }
@@ -175,7 +180,7 @@ public class Aircraft extends XPlaneObject implements Inspectable {
         try (Stream<Path> pathStream = Files.list(getAcfFile().getFile().getParent())) {
             pathStream
                     .filter(path -> path.getFileName().toString().toLowerCase().contains("manual"))
-                    .forEach(path -> map.put("Manual: " + path.getFileName(), path));
+                    .forEach(path -> map.put(path.getFileName().toString(), path));
         }
         return map;
     }

@@ -59,11 +59,11 @@ public class UiAircraft {
     @SuppressWarnings("unused")
     @Label("'Move aircraft to Trash'")
     @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '\" will be moved to the trash. '" +
-            "+ 'This will impact all aircraft contained in the same folder.'" +
+            "+ 'This will impact the following aircraft: ' + xPlane.aircraftManager.getAircraftByFolder(aircraft.acfFile.file.parent) " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     @OnSuccess("reload()")
     public void moveToTrash() {
-        getXPlane().getAircraftManager().moveAircraftToTrash(aircraft);
+        getXPlane().getAircraftManager().moveAircraftFolderToTrash(aircraft);
     }
 
     @SuppressWarnings("unused")
