@@ -7,6 +7,7 @@
 | Aircraft | change aircraft category                                                   |                                                           |
 | Aircraft | get aircraft version                                                       | Done for default+some studios                             |
 | Aircraft | install aircraft from zip                                                  | Done                                                      |
+| Aircraft | fly aircraft directly                                                      |                                                           |
 | Aircraft | recognise specific aircraft -> requirements, check update, home page, etc. | Done, need to add more aircraft                           |
 | Aircraft | Manage Ivap planes (CSL)                                                   | Replaced by external tool "X-CSL updater for IvAp client" |
 | Aircraft | Automatically install IvAp                                                 | Will be an external tool                                  |
