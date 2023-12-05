@@ -8,6 +8,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +65,7 @@ public class AcfTreeController {
         UiProperty value = new UiProperty(propertyTreeItem);
         TreeItem<UiProperty> treeItem = new TreeItem<>(value);
         List<TreeItem<UiProperty>> children = propertyTreeItem.getChildren().stream()
+                .sorted(Comparator.comparing(PropertyTreeItem::getName))
                 .map(AcfTreeController::treeItem)
                 .toList();
         treeItem.getChildren().addAll(children);
