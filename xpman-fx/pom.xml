@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>6.0.11</version>
+            <version>6.1.1</version>
             <!--Excluding spring-jcl as it conflicts with commons-logging,
                 see https://github.com/spring-projects/spring-framework/issues/21146-->
             <exclusions>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.1.2</version>
+            <version>11.2.0</version>
         </dependency>
 
         <dependency>
