@@ -13,6 +13,7 @@ module xpman.fx {
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires java.desktop;
+    requires nsmenufx;
 
     exports com.ogerardin.xpman.panels.aircraft;
     exports com.ogerardin.xpman.tools;
