@@ -4,10 +4,14 @@ import com.google.gson.*;
 import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.platform.Platform;
 import com.ogerardin.xplane.util.platform.Platforms;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -61,16 +65,24 @@ public class JsonManifestLoader {
             .registerTypeAdapter(Predicate.class, PredicateAdapter.INSTANCE)
             .create();
 
-//    @SneakyThrows
+    /**
+     * Load a  {@link Manifest} from a JSON file.
+     */
+    @SneakyThrows
     public Manifest loadManifest(Path jsonManifest) {
-        try (BufferedReader reader = Files.newBufferedReader(jsonManifest)) {
+        return loadManifest(Files.newInputStream(jsonManifest), jsonManifest.getFileName().toString());
+    }
+
+    /**
+     * Load a {@link Manifest} from an {@link InputStream}
+     * @param path original path (for logging only)
+     */
+    public static Manifest loadManifest(InputStream is, String path) throws IOException {
+        // manifest ID is the file name without the ".json" extension
+        String id = path.replace(".json", "");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             Manifest manifest = GSON.fromJson(reader, Manifest.class);
-            // manifest ID is the file name without the ".json" extension
-            String id = jsonManifest.getFileName().toString().replace(".json", "");
             return manifest.withId(id);
-        } catch (Exception e) {
-            log.error("Exception while loading manifest from " + jsonManifest, e);
-            throw new RuntimeException(e);
         }
     }
 
