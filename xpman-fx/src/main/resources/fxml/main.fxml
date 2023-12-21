@@ -16,7 +16,7 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem id="quit" mnemonicParsing="false" onAction="#quit" text="Quit">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" code="Q" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                    <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                 </accelerator>
             </MenuItem>
         </Menu>
