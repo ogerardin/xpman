@@ -153,7 +153,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)
                     .collect(Collectors.toList());
-            toolsMenu.getItems().setAll(menuItems);
+            Platform.runLater(() -> toolsMenu.getItems().setAll(menuItems));
         }
     }
 
