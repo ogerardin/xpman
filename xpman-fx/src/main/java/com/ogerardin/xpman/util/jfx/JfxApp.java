@@ -1,10 +1,11 @@
 package com.ogerardin.xpman.util.jfx;
 
+import com.ogerardin.xplane.util.platform.Platforms;
 import de.jangassen.MenuToolkit;
+import de.jangassen.model.AppearanceMode;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuBar;
@@ -36,27 +37,28 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
         log.debug("Setting up stage");
         setupStage(primaryStage);
 
-        //FIXME native mac menu exhibits some problems...
-//        if (Platforms.getCurrent() == Platforms.MAC) {
-//            setMacNativeMenu(primaryStage);
-//        }
+        // if we're on a Mac, use native Mac application menu
+        if (Platforms.getCurrent() == Platforms.MAC) {
+            setMacNativeMenu(primaryStage);
+        }
 
         primaryStage.show();
         log.debug("Ready!");
     }
 
     /**
-     * If the primary stage's scene is a Pane and it has a MenuBar, move it to the Mac's native menu bar
+     * Use the specified Stage's MenuBar as the native Mac application menu.
      */
-    private static void setMacNativeMenu(Stage primaryStage) {
+    private static void setMacNativeMenu(Stage stage) {
         MenuToolkit tk = MenuToolkit.toolkit();
-        if (primaryStage.getScene().getRoot() instanceof Pane root) {
-            for (Node child : root.getChildren()) {
-                if (child instanceof MenuBar menuBar) {
-                    tk.setMenuBar(root, menuBar);
-                    break;
-                }
-            }
+        tk.setAppearanceMode(AppearanceMode.AUTO);
+        // If the primary stage's scene is a Pane and it has a MenuBar, move it to the Mac's native menu bar
+        if (stage.getScene().getRoot() instanceof Pane root) {
+            root.getChildren().stream()
+                    .filter(child -> child instanceof MenuBar)
+                    .map(MenuBar.class::cast)
+                    .findFirst()
+                    .ifPresent(menuBar -> tk.setMenuBar(root, menuBar));
         }
     }
 
