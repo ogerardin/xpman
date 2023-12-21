@@ -1,6 +1,5 @@
 package com.ogerardin.xpman.util.jfx;
 
-import com.ogerardin.xplane.util.platform.Platforms;
 import de.jangassen.MenuToolkit;
 import de.jangassen.model.AppearanceMode;
 import javafx.application.Application;
@@ -38,9 +37,9 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
         setupStage(primaryStage);
 
         // if we're on a Mac, use native Mac application menu
-        if (Platforms.getCurrent() == Platforms.MAC) {
-            setMacNativeMenu(primaryStage);
-        }
+//        if (Platforms.getCurrent() == Platforms.MAC) {
+//            setMacNativeMenu(primaryStage);
+//        }
 
         primaryStage.show();
         log.debug("Ready!");
@@ -50,6 +49,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
      * Use the specified Stage's MenuBar as the native Mac application menu.
      */
     private static void setMacNativeMenu(Stage stage) {
+        //FIXME the "File" menu is renamed "java".
         MenuToolkit tk = MenuToolkit.toolkit();
         tk.setAppearanceMode(AppearanceMode.AUTO);
         // If the primary stage's scene is a Pane and it has a MenuBar, move it to the Mac's native menu bar

@@ -6,6 +6,9 @@ import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.util.progress.ProgressListener;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.Resource;
+import io.github.classgraph.ScanResult;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -13,9 +16,9 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -133,15 +136,26 @@ public class ToolsManager extends Manager<Tool> {
         Platforms.getCurrent().startApp(tool.getApp());
     }
 
+    private static Manifest loadFromResource(Resource resource) {
+        try (InputStream is = resource.open()) {
+            return JsonManifestLoader.loadManifest(is, resource.getPath());
+        } catch (IOException e) {
+            log.warn("Failed to loadFromResource manifest from {}", resource.getPath());
+            return null;
+        }
+    }
+
     @SneakyThrows
     private List<Manifest> loadManifests() {
-        //noinspection ConstantConditions
-        Path toolsDir = Paths.get(getClass().getResource("/tools").toURI());
-        List<Manifest> manifests = Files.list(toolsDir)
-                .map(JsonManifestLoader::loadManifest)
-                .filter(Objects::nonNull)
-                .toList();
-        return manifests;
+        // we can't assume /tools is a directory and iterate on files because that won't work
+        // from a jar file, so we use ClassGraph to find matching resources
+        try (ScanResult scanResult = new ClassGraph().acceptPathsNonRecursive("/tools").scan()) {
+            List<Manifest> manifests = scanResult.getResourcesWithExtension("json").stream()
+                    .map(ToolsManager::loadFromResource)
+                    .filter(Objects::nonNull)
+                    .toList();
+            return manifests;
+        }
     }
 
     public Tool getTool(String toolId) {
