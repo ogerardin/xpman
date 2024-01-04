@@ -18,7 +18,7 @@
 | Plugins  | recognise specific plugin -> requirements, check update, home page, etc.   |                                                           |
 | Nav data | list recognized navdata sets                                               | Done                                                      |
 | Nav data | automatically update navdata set                                           |                                                           |
-| Scenery  | auto-order scenery_pack.ini                                                | Done, to be tested                                        |
+| Scenery  | auto-order scenery_pack.ini                                                | In progress (need update for X-Plane 12)                  |
 | Scenery  | install scenery from zip                                                   | Done                                                      |
 | Scenery  | generate flight plan for FMS / ATC                                         |                                                           |
 | Tools    | install generic tool from manifest                                         | Done                                                      |

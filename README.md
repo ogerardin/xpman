@@ -9,13 +9,13 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
 
 # X-Plane Manager
-X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's wonderful flight simulator X-Plane.
+X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's flight simulator [X-Plane](https://www.x-plane.com/).
 
 Such tools exist but they are not cross-platform, have limited functionality, are difficult to use or are payware.
 
 
 ## Goals 
-- Manage X-Plane aircraft, scenery, plugins and extensions
+- Manage X-Plane aircraft and liveries, scenery packages, nav data, plugins and extensions
 - Work on all platforms supported by X-Plane (Windows, Mac, Linux)  
 - Offer idiomatic installation (e.g. setup.exe on Windows) and close-to-native look and feel
 
@@ -23,7 +23,7 @@ Such tools exist but they are not cross-platform, have limited functionality, ar
 Currently in development stages. Some things work, some don't... 
 Check [feature status](https://github.com/ogerardin/xpman/blob/main/features.md).
 
-USE AT YOUR OWN RISK! You have a backup, right? Right?
+You know the drill: USE AT YOUR OWN RISK.
 
 # Installing X-Plane Manager
 Download the package appropriate for your platform from [GitHub releases](https://github.com/ogerardin/xpman/releases) and install
@@ -36,7 +36,7 @@ To run the installer you have to click on "More info" then "Run anyway". X-Plane
 doesn't contain any malware, it's 100% open source and all the code used to build and package it
 is public and auditable.
 
-## Development
+# Development
 X-Plane Manager is a Standalone JavaFX application. The "main" branch is now using Java 17. 
 
 It is split in 3 modules:
