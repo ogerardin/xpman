@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
+/**
+ * Tnformation regarding the latest final and beta versions of a specific X-Plane major version.
+ */
 @Data
 @Slf4j
 public class UpdateInformation {
@@ -23,6 +26,7 @@ public class UpdateInformation {
 
     @SneakyThrows
     private ServersFileData loadData() {
+        // retrieve the URL of the file containing the update information
         String serverListUrl = majorVersion.getServerListUrl();
         if (serverListUrl == null) {
             log.error("Server list URL is unknown for version '{}'", majorVersion.name());
@@ -54,6 +58,5 @@ public class UpdateInformation {
         }
         return NO_VERSION;
     }
-
 
 }

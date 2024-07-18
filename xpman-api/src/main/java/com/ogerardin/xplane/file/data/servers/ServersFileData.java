@@ -24,14 +24,6 @@ public class ServersFileData extends XPlaneFileData {
         super(header);
     }
 
-    public void setBetaVersion(String version) {
-        versionByType.put(Version.TYPE_BETA, version);
-    }
-
-    public void setFinalVersion(String version) {
-        versionByType.put(Version.TYPE_FINAL, version);
-    }
-
     public String getBetaVersion() {
         return versionByType.get(Version.TYPE_BETA);
     }

@@ -55,7 +55,7 @@ import java.util.function.Predicate;
 @UtilityClass
 public class JsonManifestLoader {
 
-    public static final Gson GSON = new GsonBuilder()
+    private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Path.class,
                     (JsonDeserializer<Path>) (json, __, ___) -> Path.of(json.getAsString()))
             .registerTypeAdapter(Platform.class,
@@ -75,11 +75,11 @@ public class JsonManifestLoader {
 
     /**
      * Load a {@link Manifest} from an {@link InputStream}
-     * @param path original path (for logging only)
+     * @param path original path
      */
     public static Manifest loadManifest(InputStream is, String path) throws IOException {
         // manifest ID is the file name without the ".json" extension
-        String id = path.replace(".json", "");
+        String id = Path.of(path).getFileName().toString().replace(".json", "");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             Manifest manifest = GSON.fromJson(reader, Manifest.class);
             return manifest.withId(id);
