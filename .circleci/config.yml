@@ -111,6 +111,9 @@ jobs:
           command: |
             scoop bucket add java
             scoop bucket add extras
+            scoop bucket add versions
+            # Workaround to avoid errors installing inno-setup, see https://github.com/ScoopInstaller/Extras/issues/13444
+            scoop install versions/innounp-unicode
             scoop install openjdk17
             scoop install maven
             scoop install imagemagick
