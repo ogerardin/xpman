@@ -117,7 +117,7 @@ public class XPlane {
         public Path globalScenery() {
             return getBaseFolder().resolve("Global Scenery");
         }
-        /** Global airports (X-Plane 12) */
+        /** Global airports */
         public Path globalAirports() {
             // the path for global airports changed in X-Plane 12
             Path dir = (getMajorVersion() == XPlaneMajorVersion.XP11) ? customScenery() : globalScenery();

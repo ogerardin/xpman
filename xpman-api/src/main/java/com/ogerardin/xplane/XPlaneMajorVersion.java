@@ -9,6 +9,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+/**
+ * Represents a major version of X-Plane such as 11, 12 and the associated specifics.
+ */
 @AllArgsConstructor
 @Getter
 public enum XPlaneMajorVersion {
@@ -21,25 +24,32 @@ public enum XPlaneMajorVersion {
     XP12(12,
             version -> version.startsWith("12"),
             "https://lookup.x-plane.com/_lookup_12_/server_list_12.txt",
-            version -> String.format("https://www.x-plane.com/kb/x-plane-12-00-release-notes/#%s", version.replace(".", ""))
-    ),
+            version -> String.format("https://www.x-plane.com/kb/x-plane-%s-release-notes/#%s",
+                    version.replace(".", "-"),
+                    version.replace(".", ""))
+    );
 
-    OTHER(0, version -> true, null, null);
+
+    public static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)(.*)");
 
     private static String minor(String version) {
-        return Pattern.compile("^(\\d+)\\.(\\d+)(.*)").matcher(version).group(2);
+        return VERSION_PATTERN.matcher(version).group(2);
     }
 
+    /** The major integer version */
     private final int major;
+    /** A predicate that recognizes that a version string matches this major */
     private final Predicate<String> matcher;
+    /** The URL of the server list file for this major version */
     private final String serverListUrl;
+    /** A function that takes a full version string and produces the URL for the release notes of this version */
     private final Function<String, String> releaseNotesUrlBuilder;
 
     public static XPlaneMajorVersion of(String version) {
         return Arrays.stream(values())
                 .filter(v -> v.matcher.test(version))
                 .findFirst()
-                .orElse(OTHER);
+                .orElseThrow();
     }
 
     /** Returns the 4-digit spec string for this version, e.g. "1100" for X-Plane 11. */

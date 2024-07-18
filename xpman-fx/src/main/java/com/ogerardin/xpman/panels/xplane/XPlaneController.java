@@ -21,6 +21,8 @@ import org.controlsfx.glyphfont.Glyph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Controller for the first tab pane, which contains a summary of X-Plane installation.
@@ -61,8 +63,8 @@ public class XPlaneController {
         String latestFinal = latestFinalReleaseInfo.version();
         String latestBeta = latestBetaReleaseInfo.version();
 
-        boolean hasReleaseUpdate = latestFinal.compareToIgnoreCase(currentVersion) > 0;
-        boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && latestBeta.compareToIgnoreCase(currentVersion) > 0;
+        boolean hasReleaseUpdate = compareVersions(latestFinal, currentVersion) > 0;
+        boolean hasBetaUpdate = ! latestBeta.equals(latestFinal) && compareVersions(latestBeta, currentVersion) > 0;
 
         Platform.runLater(() -> {
             if (hasReleaseUpdate) {
@@ -75,6 +77,25 @@ public class XPlaneController {
             }
             betaUpdateTextFlow.setVisible(hasBetaUpdate);
         });
+    }
+
+    /**
+     * @return a negative integer, zero, or a positive integer as v1 is greater than, equal to, or less than v0.
+     */
+    private static int compareVersions(String v0, String v1) {
+        return normalizeVersion(v0).compareToIgnoreCase(normalizeVersion(v1));
+    }
+
+    /**
+     * Normalizes old-style versions like "12.04r3" to "12.0.4r3" for comparison
+     */
+    private static String normalizeVersion(String version) {
+        Pattern pattern = Pattern.compile("(\\d\\d)\\.0((\\d)(.*))$");
+        Matcher matcher = pattern.matcher(version);
+        if (matcher.matches()) {
+            return "%s.0.%s".formatted(matcher.group(1), matcher.group(2));
+        }
+        return version;
     }
 
     private static List<Node> buildUpdateMessage(String versionType, XPlaneReleaseInfo versionInfo, XPlane xPlane) {

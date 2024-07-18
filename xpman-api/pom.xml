@@ -24,7 +24,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <google-http-client.version>1.43.3</google-http-client.version>
+        <google-http-client.version>1.44.1</google-http-client.version>
     </properties>
 
     <dependencies>
@@ -45,12 +45,12 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.157</version>
+            <version>4.8.165</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>2.15.1</version>
         </dependency>
 
         <dependency>
@@ -74,14 +74,14 @@
             <!-- GitHub dependency through jitpack.io -->
             <groupId>com.kichik.pecoff4j</groupId>
             <artifactId>pecoff4j</artifactId>
-            <version>0.3.2</version>
+            <version>0.4.0</version>
         </dependency>
 
 
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
-            <version>5.12.1</version>
+            <version>5.14.0</version>
         </dependency>
 <!--
         <dependency>
@@ -95,19 +95,19 @@
         <dependency>
             <groupId>com.github.petitparser</groupId>
             <artifactId>petitparser-core</artifactId>
-            <version>2.3.1</version>
+            <version>2.4.0</version>
         </dependency>
 
         <dependency>
             <groupId>one.util</groupId>
             <artifactId>streamex</artifactId>
-            <version>0.8.1</version>
+            <version>0.8.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.15.4</version>
+            <version>1.17.2</version>
         </dependency>
 
         <dependency>
@@ -122,19 +122,19 @@
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
-            <version>v3-rev20231120-2.0.0</version>
+            <version>v3-rev20240123-2.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
-            <version>2.11.4</version>
+            <version>2.11.5</version>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.2.0</version>
+            <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
 

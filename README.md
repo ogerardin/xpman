@@ -9,9 +9,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
 
 # X-Plane Manager
-X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's flight simulator [X-Plane](https://www.x-plane.com/).
+X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's flight simulator [X-Plane](https://www.x-plane.com/) (version 11 and later).
 
-Such tools exist but they are not cross-platform, have limited functionality, are difficult to use or are payware.
+Similar tools exist but they are not cross-platform, have limited functionality, are difficult to use or are payware.
 
 
 ## Goals 
