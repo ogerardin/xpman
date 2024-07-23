@@ -118,7 +118,7 @@ jobs:
             scoop install maven
             scoop install imagemagick
             scoop install inno-setup
-            scoop install wixtoolset
+            scoop install wixtoolset3
       - run:
           name: Generate cache seed
           shell: cmd.exe
