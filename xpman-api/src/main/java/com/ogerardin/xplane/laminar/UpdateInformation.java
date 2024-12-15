@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 
 /**
- * Tnformation regarding the latest final and beta versions of a specific X-Plane major version.
+ * Information regarding the latest final and beta versions of a specific X-Plane major version.
  */
 @Data
 @Slf4j
