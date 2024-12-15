@@ -114,10 +114,10 @@ public class XPlaneController {
             });
         }});
         nodes.add(new Label("to update."));
-        if (versionInfo.releaseNotesUrl() != null) {
+        if (versionInfo.releaseNotesUrl().isPresent()) {
             nodes.add(new Label(" Read the"));
             nodes.add(new Hyperlink("Release notes") {{
-                setOnAction(__ -> Platforms.getCurrent().openUrl(versionInfo.releaseNotesUrl()));
+                setOnAction(__ -> Platforms.getCurrent().openUrl(versionInfo.releaseNotesUrl().get()));
             }});
         }
         return nodes;
