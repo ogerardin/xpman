@@ -1,4 +1,6 @@
 package com.ogerardin.xplane;
 
-public record XPlaneReleaseInfo(String version, String releaseNotesUrl) {
+import java.util.Optional;
+
+public record XPlaneReleaseInfo(String version, Optional<String> releaseNotesUrl) {
 }

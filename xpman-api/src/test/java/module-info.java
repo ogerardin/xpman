@@ -11,6 +11,7 @@ module xpman.api.test {
 
     exports com.ogerardin.test.util;
 
+    opens com.ogerardin.xplane.test to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.file to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.petitparser to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.impl to org.junit.platform.commons;
