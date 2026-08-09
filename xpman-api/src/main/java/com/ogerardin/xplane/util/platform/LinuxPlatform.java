@@ -11,10 +11,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Getter
 @Slf4j
 public class LinuxPlatform implements Platform {
 
-    @Getter
     public final int osType = com.sun.jna.Platform.LINUX;
 
     @SneakyThrows
@@ -70,7 +70,7 @@ public class LinuxPlatform implements Platform {
     @Override
     @SneakyThrows
     public String getVersion(Path exePath) {
-        // there seem to be no symbol in the ELF symbol table pointing to the version string :(
+        // there seems to be no symbol in the ELF symbol table pointing to the version string :(
 /*
         ElfFile elfFile = ElfFile.from(Files.newInputStream(exePath));
         ElfSymbol symbol = elfFile.getELFSymbol("version_info");

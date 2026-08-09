@@ -6,9 +6,9 @@ import lombok.NonNull;
 import java.net.URL;
 import java.nio.file.Path;
 
+@Getter
 public class UnknownPlatform implements Platform {
 
-    @Getter
     public final int osType = com.sun.jna.Platform.UNSPECIFIED;
 
     @Override
