@@ -4,6 +4,7 @@ import com.kichik.pecoff4j.PE;
 import com.kichik.pecoff4j.ResourceDirectory;
 import com.kichik.pecoff4j.ResourceEntry;
 import com.kichik.pecoff4j.constant.ResourceType;
+import com.kichik.pecoff4j.io.DataReader;
 import com.kichik.pecoff4j.io.PEParser;
 import com.kichik.pecoff4j.io.ResourceParser;
 import com.kichik.pecoff4j.resources.StringFileInfo;
@@ -21,10 +22,10 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Optional;
 
+@Getter
 @Slf4j
 public class WindowsPlatform implements Platform {
 
-    @Getter
     public final int osType = com.sun.jna.Platform.WINDOWS;
 
     @SneakyThrows
@@ -83,7 +84,7 @@ public class WindowsPlatform implements Platform {
         ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.VERSION_INFO);
         for (ResourceEntry resourceEntry : entries) {
             byte[] data = resourceEntry.getData();
-            VersionInfo version = ResourceParser.readVersionInfo(data);
+            VersionInfo version = VersionInfo.read(new DataReader(data));
             StringFileInfo strings = version.getStringFileInfo();
             StringTable table = strings.getTable(0);
             for (int j = 0; j < table.getCount(); j++) {

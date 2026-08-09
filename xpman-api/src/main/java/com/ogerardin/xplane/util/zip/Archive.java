@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * A generic container for files.
+ */
 public interface Archive {
 
     boolean isValidArchive();

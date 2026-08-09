@@ -48,5 +48,8 @@ public interface Platform {
     /** Is the specified path an existing runnable for this platform? */
     boolean isRunnable(@NonNull Path path);
 
+    /**
+     * Returns the version of the application at the specified path.
+     */
     String getVersion(Path app);
 }

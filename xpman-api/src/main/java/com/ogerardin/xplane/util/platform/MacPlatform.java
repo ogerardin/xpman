@@ -15,10 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+@Getter
 @Slf4j
 public class MacPlatform implements Platform {
 
-    @Getter
     public final int osType = com.sun.jna.Platform.MAC;
 
     @SneakyThrows
