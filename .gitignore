@@ -2,3 +2,5 @@
 target/
 *.iml
 *.log
+.DS_Store
+.playwright-mcp/
