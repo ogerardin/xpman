@@ -3,7 +3,7 @@
 set -e
 
 readonly TARGET_JAR="target/xpman-fx-dist-*-repackaged.jar"
-readonly TARGET_VER=17
+readonly TARGET_VER=25
 
 #Directory to extract the jar
 readonly TMP_DIR="target/unzip"
