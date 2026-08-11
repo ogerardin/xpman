@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 @Slf4j
 @Data
@@ -71,29 +69,6 @@ public class XPlane {
 
     public Path getXPlaneExecutable() {
         return getVariant().getAppPath(baseFolder);
-    }
-
-    @Getter(lazy = true)
-    private static final Path defaultXPRootFolder = computeDefaultXPRootFolder();
-
-    /**
-     * This is intended for tests, to test against a real X-Plane installation if one can be found.
-     */
-    @SneakyThrows
-    private static Path computeDefaultXPRootFolder() {
-        Path userHome = Paths.get(System.getProperty("user.home"));
-        Path xplaneRoot = Stream.of(
-                userHome.resolve("Applications").resolve("X-Plane 12"),
-                userHome.resolve("Desktop").resolve("X-Plane 12"),
-                userHome.resolve("Applications").resolve("X-Plane 11"),
-                userHome.resolve("Desktop").resolve("X-Plane 11")
-        )
-                .filter(Files::isDirectory)
-                .findFirst()
-                .orElseThrow(() -> new InvalidConfig("Failed to find an X-Plane root folder"));
-
-        log.info("\n\nUsing X-Plane root folder '{}'\n", xplaneRoot);
-        return xplaneRoot;
     }
 
     public Path getLogPath() {

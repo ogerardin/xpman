@@ -18,8 +18,12 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -95,5 +99,17 @@ public class WindowsPlatform implements Platform {
             }
         }
         return "unknown";
+    }
+
+    @Override
+    public List<Path> getCandidateInstallBaseFolders(Path userHome) {
+        List<Path> bases = new ArrayList<>();
+        for (File root : File.listRoots()) {
+            bases.add(root.toPath());
+        }
+        bases.add(Paths.get("C:\\Program Files"));
+        bases.add(Paths.get("C:\\Program Files (x86)"));
+        bases.add(Paths.get("C:\\Program Files (x86)\\Steam\\steamapps\\common"));
+        return bases;
     }
 }

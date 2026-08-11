@@ -10,9 +10,13 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.plist.XMLPropertyListConfiguration;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Getter
@@ -69,6 +73,25 @@ public class MacPlatform implements Platform {
     @SneakyThrows
     public String getVersion(Path appPath) {
         return new AppBundle(appPath).version();
+    }
+
+    @Override
+    public List<Path> getCandidateInstallBaseFolders(Path userHome) {
+        List<Path> bases = new ArrayList<>();
+        bases.add(Paths.get("/Applications"));
+        bases.add(userHome.resolve("Applications"));
+        bases.add(userHome.resolve("Desktop"));
+        bases.add(userHome);
+        Path volumes = Paths.get("/Volumes");
+        if (Files.isDirectory(volumes)) {
+            try (Stream<Path> s = Files.list(volumes)) {
+                s.forEach(bases::add);
+            } catch (IOException e) {
+                log.warn("Failed to list /Volumes", e);
+            }
+        }
+        bases.add(userHome.resolve("Library/Application Support/Steam/steamapps/common"));
+        return bases;
     }
 
     @SneakyThrows

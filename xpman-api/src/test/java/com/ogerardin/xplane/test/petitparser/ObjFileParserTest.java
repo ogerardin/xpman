@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.test.petitparser;
 
-import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
+import com.ogerardin.test.util.EnableOnSceneryPresent;
 import com.ogerardin.xplane.file.data.obj.ObjFileData;
 import com.ogerardin.xplane.file.data.obj.ObjTexture;
 import com.ogerardin.xplane.file.petitparser.ObjFileParser;
@@ -12,10 +12,10 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-@DisabledIfNoXPlaneRootFolder
 class ObjFileParserTest extends ParserTest<ObjFileData> {
 
     @Test
+    @EnableOnSceneryPresent("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj")
     void testCanParseObj1() throws IOException {
         String fileContents = getXPlaneFileContents("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/EDDF_ASR_North01.obj");
         Parser parser = new ObjFileParser().getParser();
@@ -25,6 +25,7 @@ class ObjFileParserTest extends ParserTest<ObjFileData> {
     }
 
     @Test
+    @EnableOnSceneryPresent("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj")
     void testCanParseObj2() throws IOException {
         String fileContents = getXPlaneFileContents("Custom Scenery/Aerosoft - EDDF Frankfurt/Objects/Airport/v01partI12.obj");
         Parser parser = new ObjFileParser().getParser();

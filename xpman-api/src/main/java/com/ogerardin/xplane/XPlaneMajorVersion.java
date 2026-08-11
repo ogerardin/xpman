@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public enum XPlaneMajorVersion {
     XP11(11,
             version -> version.startsWith("11"),
-            "http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt",
+            "https://lookup.x-plane.com/_lookup_11_/server_list_11.txt",
             XPlaneMajorVersion::xp11ReleaseNotes
     ),
 

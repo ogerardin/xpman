@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.observable.test;
 
+import com.ogerardin.test.util.XPlaneTestUtil;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xpman.XPlaneProperty;
 import javafx.application.Application;
@@ -18,7 +19,7 @@ public class TestObservable extends Application {
 
     @SneakyThrows
     public static void main(String[] args) {
-        xPlaneProperty.set(new XPlane(XPlane.getDefaultXPRootFolder()));
+        xPlaneProperty.set(new XPlane(XPlaneTestUtil.getDefaultXPRootFolder()));
         launch(args);
     }
 

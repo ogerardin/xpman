@@ -6,7 +6,7 @@ import com.ogerardin.xplane.file.petitparser.ServersFileParser;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-/** Represents a "current versions" file as returned by e.g.  <a href="http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt">http://lookup-a.x-plane.com/_lookup_11_/server_list_11.txt</a> */
+/** Represents a "current versions" file as returned by e.g.  <a href="https://lookup.x-plane.com/_lookup_11_/server_list_11.txt">https://lookup.x-plane.com/_lookup_11_/server_list_11.txt</a> */
 public class ServersFile extends XPlaneFile<ServersFileData> {
 
     public ServersFile(URL url) throws URISyntaxException {
