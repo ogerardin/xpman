@@ -126,6 +126,8 @@ jobs:
       - run:
           name: Build
           timeout: 25m
+          environment:
+            MAVEN_OPTS: -Dstdout.encoding=UTF-8
           command: |
             mvn -v
             mvn -B -DskipTests clean package

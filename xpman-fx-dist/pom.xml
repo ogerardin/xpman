@@ -21,7 +21,7 @@
         <app.mainClass>com.ogerardin.xpman.XPmanFX</app.mainClass>
         <app.runnableJar>${project.build.finalName}-repackaged.jar</app.runnableJar>
         <app.runnableMainClass>org.springframework.boot.loader.JarLauncher</app.runnableMainClass>
-        <app.copyright>(c) Olivier Gérardin 2022</app.copyright>
+        <app.copyright>(c) Olivier Gérardin 2022-2026</app.copyright>
         <app.vendor>Olivier Gérardin</app.vendor>
         <app.name>X-Plane Manager</app.name>
         <app.shortName>xpman</app.shortName>
