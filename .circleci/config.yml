@@ -58,12 +58,6 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: 1
     steps:
       - run:
-          name: Fix "Finder got an error - AppleEvent timed out. (-1712)"
-          command: |
-            epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
-            tcc_service_appleevents="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.finder\",0,$epochdate);"
-            sudo sqlite3 "/Users/distiller/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_appleevents"
-      - run:
           name: Install Java 25 and Maven
           command: |
             brew update
@@ -78,6 +72,7 @@ jobs:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
           name: Build
+          timeout: 25m
           command: |
             /usr/libexec/java_home -V
             export JAVA_HOME=`/usr/libexec/java_home -v 25`
@@ -90,10 +85,10 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir -p workspace/artifacts            
-            cp xpman-fx-dist/target/*.pkg workspace/artifacts
-            cp xpman-fx-dist/target/*.dmg workspace/artifacts
-            for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/mac/"); done
+            mkdir -p workspace/artifacts
+            for f in xpman-fx-dist/target/*.pkg xpman-fx-dist/target/*.dmg xpman-fx-dist/target/*-repackaged.jar; do
+              [ -e "$f" ] && cp "$f" "workspace/artifacts/$(basename "$f" | sed "s/-fx-dist//" | sed "s/repackaged/mac/")"
+            done
             ls -l workspace/artifacts
 #      - store_artifacts:
 #          path: workspace/artifacts
