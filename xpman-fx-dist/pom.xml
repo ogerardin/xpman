@@ -28,6 +28,8 @@
         <app.description>Configuration Manager for Laminar Research X-Plane</app.description>
         <!--Default when not available from git-commit-id-maven-plugin-->
         <git.build.number>0</git.build.number>
+        <!-- jpackage requires a dotted numeric version (1-3 integers, no -SNAPSHOT suffix) -->
+        <jpackage.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</jpackage.version>
     </properties>
 
     <dependencies>
@@ -64,10 +66,16 @@
                     <artifactId>launch4j-maven-plugin</artifactId>
                     <version>1.7.25</version>
                 </plugin>
+<plugin>
+                    <groupId>org.panteleyev</groupId>
+                    <artifactId>jpackage-maven-plugin</artifactId>
+                    <version>1.8.0</version>
+                </plugin>
+                <!-- TODO: remove once Windows and Linux profiles are migrated to jpackage -->
                 <plugin>
                     <groupId>io.github.fvarrui</groupId>
                     <artifactId>javapackager</artifactId>
-                    <version>1.7.2</version>
+                    <version>1.7.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -153,14 +161,14 @@
     <profiles>
 
         <!-- This profile generates a macOS app with bundled JRE, a pkg installer and a dmg image
-            for drag-and-drop installation -->
+            for drag-and-drop installation using jpackage -->
         <profile>
             <activation>
                 <os>
                     <family>mac</family>
                 </os>
             </activation>
-            <id>fvarrui-javapackager-mac</id>
+            <id>jpackage-mac</id>
             <build>
                 <plugins>
                     <!--Convert PNG icon (extracted from xpman-fx) to .icns format
@@ -190,37 +198,108 @@
                         </executions>
                     </plugin>
 
+                    <!-- jpackage: generates .app, .dmg, and .pkg -->
+
+                    <!-- Prepare jpackage input directory with just the repackaged JAR -->
                     <plugin>
-                        <groupId>io.github.fvarrui</groupId>
-                        <artifactId>javapackager</artifactId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
-                                <id>package-for-mac</id>
+                                <id>copy-jpackage-input</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>package</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <description>${app.description}</description>
-                                    <displayName>${app.name}</displayName>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <include>${app.runnableJar}</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <executions>
+                            <!-- Build the application image (.app) first -->
+                            <execution>
+                                <id>jpackage-app-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>APP_IMAGE</type>
                                     <name>${app.name}</name>
-                                    <organizationName>${app.copyright}</organizationName>
-                                    <licenseFile>../LICENSE</licenseFile>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <input>${project.build.directory}/jpackage-input</input>
+                                    <mainJar>${app.runnableJar}</mainJar>
                                     <mainClass>${app.runnableMainClass}</mainClass>
-                                    <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
-                                    <copyDependencies>false</copyDependencies>
-                                    <additionalResources>
-                                        <additionalResource>${project.basedir}/${app.name}.l4j.ini</additionalResource>
-                                    </additionalResources>
-<!--                                    <jrePath>${java.home}</jrePath>-->
-                                    <bundleJre>true</bundleJre>
-                                    <customizedJre>false</customizedJre>
-                                    <generateInstaller>true</generateInstaller>
-                                    <macConfig>
-                                        <icnsFile>${project.build.directory}/img/icon.icns</icnsFile>
-                                        <generateDmg>true</generateDmg>
-                                        <generatePkg>true</generatePkg>
-                                    </macConfig>
+                                    <icon>${project.build.directory}/img/icon.icns</icon>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <javaOptions>
+                                        <javaOption>--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls</javaOption>
+                                    </javaOptions>
+                                    <macAppCategory>utilities</macAppCategory>
+                                    <macPackageIdentifier>com.ogerardin.xpman</macPackageIdentifier>
+                                    <macPackageName>XPman</macPackageName>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                            <!-- Build DMG from the app image -->
+                            <execution>
+                                <id>jpackage-dmg</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>DMG</type>
+                                    <name>${app.name}</name>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
+                                    <appImage>${project.build.directory}/${app.name}.app</appImage>
+                                    <resourceDir>${project.basedir}/assets/mac/jpackage</resourceDir>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                            <!-- Build PKG from the app image -->
+                            <execution>
+                                <id>jpackage-pkg</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>PKG</type>
+                                    <name>${app.name}</name>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
+                                    <appImage>${project.build.directory}/${app.name}.app</appImage>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <verbose>true</verbose>
                                 </configuration>
                             </execution>
                         </executions>
