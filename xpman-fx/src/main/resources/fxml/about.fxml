@@ -26,7 +26,7 @@
            <Text fx:id="vm" layoutX="20.0" layoutY="95.0" text="VM: ..." />
            <Text fx:id="cpu" layoutX="20.0" layoutY="113.0" text="CPU: ..." />
            <Hyperlink layoutX="16.0" layoutY="140.0" onAction="#openLink" text="github.com/ogerardin/xpman" />
-           <Text layoutX="19.0" layoutY="174.0" text="© 2023 by Olivier Gérardin" />
+           <Text layoutX="19.0" layoutY="174.0" text="© 2022-2026 by Olivier Gérardin" />
            <ImageView layoutX="11.0" layoutY="178.0" onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
                <Image url="@../img/gplv3.png" />
            </ImageView>
