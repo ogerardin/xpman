@@ -116,12 +116,7 @@ jobs:
             scoop bucket add extras
             scoop bucket add versions
             # Workaround to avoid errors installing inno-setup, see https://github.com/ScoopInstaller/Extras/issues/13444
-            scoop install versions/innounp-unicode
-            scoop install openjdk25
-            scoop install maven
-            scoop install imagemagick
-            scoop install inno-setup
-            scoop install wixtoolset3
+            scoop install versions/innounp-unicode openjdk25 maven imagemagick inno-setup wixtoolset3
       - run:
           name: Generate cache seed
           shell: cmd.exe
@@ -130,6 +125,7 @@ jobs:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
           name: Build
+          timeout: 25m
           command: |
             mvn -v
             mvn -B -DskipTests clean package
