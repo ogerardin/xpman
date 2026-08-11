@@ -180,8 +180,11 @@ jobs:
 workflows:
   default:
     jobs:
-      # Mac and Windows builds disabled until fully migrated to jpackage
       - build-linux
+      - build-mac
+      - build-windows
       - publish-github-release:
           requires:
             - build-linux
+            - build-mac
+            - build-windows

@@ -71,12 +71,6 @@
                     <artifactId>jpackage-maven-plugin</artifactId>
                     <version>1.8.0</version>
                 </plugin>
-                <!-- TODO: remove once Windows and Linux profiles are migrated to jpackage -->
-                <plugin>
-                    <groupId>io.github.fvarrui</groupId>
-                    <artifactId>javapackager</artifactId>
-                    <version>1.7.6</version>
-                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
@@ -308,14 +302,14 @@
             </build>
         </profile>
 
-        <!-- This profile generates a Windows installer and a MSI file. Requires Inno-setup and Wix toolset. -->
+        <!-- This profile generates a Windows installer (exe), MSI, and app image using jpackage -->
         <profile>
             <activation>
                 <os>
                     <family>windows</family>
                 </os>
             </activation>
-            <id>fvarrui-javapackager-win</id>
+            <id>jpackage-win</id>
             <build>
                 <plugins>
                     <!--Convert PNG icon (extracted from xpman-fx) to .ico format
@@ -344,67 +338,114 @@
                         </executions>
                     </plugin>
 
+                    <!-- Prepare jpackage input directory with just the repackaged JAR -->
                     <plugin>
-                        <groupId>com.github.ekryd.echo-maven-plugin</groupId>
-                        <artifactId>echo-maven-plugin</artifactId>
-                        <version>2.1.0</version>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
+                                <id>copy-jpackage-input</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>echo</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <!--suppress MavenModelInspection -->
-                                    <message>Windows version will be: ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${git.build.number}</message>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <include>${app.runnableJar}</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
 
+                    <!-- jpackage: generates app image, exe (Inno Setup), and msi (WiX) -->
                     <plugin>
-                        <groupId>io.github.fvarrui</groupId>
-                        <artifactId>javapackager</artifactId>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
                         <executions>
+                            <!-- Build the application image -->
                             <execution>
-                                <id>package-for-windows</id>
+                                <id>jpackage-app-image</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>package</goal>
+                                    <goal>jpackage</goal>
                                 </goals>
                                 <configuration>
-                                    <description>${app.description}</description>
-                                    <displayName>${app.name}</displayName>
+                                    <type>APP_IMAGE</type>
                                     <name>${app.name}</name>
-                                    <organizationName>${app.copyright}</organizationName>
-                                    <licenseFile>../LICENSE</licenseFile>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <input>${project.build.directory}/jpackage-input</input>
+                                    <mainJar>${app.runnableJar}</mainJar>
                                     <mainClass>${app.runnableMainClass}</mainClass>
-                                    <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
-                                    <copyDependencies>false</copyDependencies>
-                                    <additionalResources>
-                                        <additionalResource>${project.basedir}/${app.name}.l4j.ini</additionalResource>
-                                    </additionalResources>
-                                    <bundleJre>true</bundleJre>
-<!--                                    <jrePath>${java.home}</jrePath>-->
-                                    <customizedJre>false</customizedJre>
-                                    <generateInstaller>true</generateInstaller>
-                                    <winConfig>
-                                        <icoFile>${project.build.directory}/img/icon.ico</icoFile>
-                                        <generateSetup>true</generateSetup>
-                                        <generateMsi>true</generateMsi>
-                                        <generateMsm>false</generateMsm>
-                                        <!--suppress MavenModelInspection -->
-                                        <fileVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${git.build.number}</fileVersion>
-                                        <txtFileVersion>${project.version}</txtFileVersion>
-                                        <fileDescription>${app.description}</fileDescription>
-                                        <copyright>${app.copyright}</copyright>
-                                        <!--suppress MavenModelInspection -->
-                                        <productVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${git.build.number}</productVersion>
-                                        <txtProductVersion>${project.version}</txtProductVersion>
-                                        <productName>${app.name}</productName>
-                                        <internalName>xpman</internalName>
-                                        <originalFilename>${app.name}.exe</originalFilename>
-                                    </winConfig>
+                                    <icon>${project.build.directory}/img/icon.ico</icon>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <javaOptions>
+                                        <javaOption>--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls</javaOption>
+                                    </javaOptions>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                            <!-- Build EXE installer using Inno Setup -->
+                            <execution>
+                                <id>jpackage-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>EXE</type>
+                                    <name>${app.name}</name>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
+                                    <appImage>${project.build.directory}/${app.name}</appImage>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <winDirChooser>true</winDirChooser>
+                                    <winMenu>true</winMenu>
+                                    <winMenuGroup>X-Plane Manager</winMenuGroup>
+                                    <winShortcut>true</winShortcut>
+                                    <winShortcutPrompt>true</winShortcutPrompt>
+                                    <winUpgradeUuid>40f06d94-b1e3-4b20-b127-ad46b892f076</winUpgradeUuid>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                            <!-- Build MSI installer using WiX Toolset -->
+                            <execution>
+                                <id>jpackage-msi</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>MSI</type>
+                                    <name>${app.name}</name>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
+                                    <appImage>${project.build.directory}/${app.name}</appImage>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <winDirChooser>true</winDirChooser>
+                                    <winMenu>true</winMenu>
+                                    <winMenuGroup>X-Plane Manager</winMenuGroup>
+                                    <winShortcut>true</winShortcut>
+                                    <winUpgradeUuid>40f06d94-b1e3-4b20-b127-ad46b892f076</winUpgradeUuid>
+                                    <verbose>true</verbose>
                                 </configuration>
                             </execution>
                         </executions>
