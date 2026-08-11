@@ -16,7 +16,7 @@ mvn test -pl xpman-api
 mvn test -pl xpman-api -Dtest=ParserTest
 ```
 
-- Many xpman-api tests require `XPMAN_XPLANE_ROOT` env var pointing to an X-Plane installation. Tests annotated with `@DisabledIfNoXPlaneRootFolder` skip when it's unset.
+- Many xpman-api tests access a real X-Plane installation discovered via auto-detection of common install locations (or optionally `XPMAN_XPLANE_ROOT` env var). Tests use `@EnableOnLocalXPlane` / `@EnableOnLocalXPlane11` / `@EnableOnLocalXPlane12` / `@EnableOnAircraftPresent` / `@EnableOnSceneryPresent` to skip when requirements aren't met.
 - There is **no lint** or **typecheck** step beyond the compiler. The project previously had SonarCloud/Codacy but SonarCloud has been removed.
 
 ## Architecture
@@ -43,7 +43,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - **Inspection framework**: `Inspection<T>` is a functional interface composed via `.and()`. Domain objects implement `Inspectable`.
 - **InstallSource/InstallTarget**: Strategy pattern for archive-based installation with auto-detection of archive content type.
 - **Custom event system**: Lightweight `EventDispatcher<E>` with `EventListener<E>` — no framework.
-- **Sealed classes**: `Tool` uses `permits InstallableTool, InstalledTool`.
+- **Platform polymorphism**: The `Platform` interface is extended with default methods for platform-specific behavior (e.g. `getCandidateInstallBaseFolders`); each `MacPlatform`/`WindowsPlatform`/`LinuxPlatform` overrides as needed. Always prefer adding a method to the `Platform` interface over `if/else` on platform type.
 
 ## JPMS Notes
 
@@ -60,5 +60,5 @@ mvn test -pl xpman-api -Dtest=ParserTest
 
 - **JUnit Jupiter 5** + **Hamcrest** + **Mockito** (xpman-api only).
 - `TimingExtension` logs test method execution times.
-- Tests that need a real X-Plane install use `DisabledIfNoXPlaneRootFolder` to skip automatically when `XPMAN_XPLANE_ROOT` is not set.
+- Tests that need a real X-Plane install use `@EnableOnLocalXPlane*` annotations (in `com.ogerardin.test.util`) to skip automatically when no matching X-Plane installation is found; `@EnableOnAircraftPresent` and `@EnableOnSceneryPresent` additionally gate on specific add-on files.
 - Test resources include sample X-Plane files (ACF, OBJ, scenery_packs.ini, server lists) in `xpman-api/src/test/resources/`.

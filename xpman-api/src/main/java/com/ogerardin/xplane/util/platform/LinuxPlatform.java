@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Slf4j
@@ -84,5 +87,15 @@ public class LinuxPlatform implements Platform {
         }
 */
         return null;
+    }
+
+    @Override
+    public List<Path> getCandidateInstallBaseFolders(Path userHome) {
+        List<Path> bases = new ArrayList<>();
+        bases.add(userHome);
+        bases.add(Paths.get("/opt"));
+        bases.add(userHome.resolve(".steam/steam/steamapps/common"));
+        bases.add(userHome.resolve(".local/share/Steam/steamapps/common"));
+        return bases;
     }
 }

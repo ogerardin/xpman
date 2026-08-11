@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.test.file;
 
-import com.ogerardin.xplane.XPlane;
+import com.ogerardin.test.util.XPlaneTestUtil;
 import com.ogerardin.xplane.file.DatFile;
 import com.ogerardin.xplane.file.data.dat.DatHeader;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class DatFileTest {
 
     @Test
     void testCanInstantiateDatFile() {
-        Path objPath = XPlane.getDefaultXPRootFolder().resolve("Resources/default data/earth_fix.dat");
+        Path objPath = XPlaneTestUtil.getDefaultXPRootFolder().resolve("Resources/default data/earth_fix.dat");
 
         DatFile objFile = new DatFile(objPath);
         DatHeader header = objFile.getData().getHeader();

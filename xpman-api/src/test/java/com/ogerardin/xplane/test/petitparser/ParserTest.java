@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.test.petitparser;
 
 import com.ogerardin.test.util.TimingExtension;
-import com.ogerardin.xplane.XPlane;
+import com.ogerardin.test.util.XPlaneTestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.petitparser.context.Result;
@@ -49,7 +49,7 @@ public class ParserTest<T> {
     }
 
     protected String getXPlaneFileContents(String other) throws IOException {
-        Path acfFile = XPlane.getDefaultXPRootFolder().resolve(other);
+        Path acfFile = XPlaneTestUtil.getDefaultXPRootFolder().resolve(other);
         return getFileContentsAsString(acfFile);
     }
 }

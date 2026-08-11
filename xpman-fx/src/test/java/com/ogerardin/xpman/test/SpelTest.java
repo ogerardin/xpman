@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.test;
 
+import com.ogerardin.test.util.XPlaneTestUtil;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.exception.InvalidConfig;
@@ -21,7 +22,7 @@ class SpelTest {
 
     @Test
     void testSpel() throws InvalidConfig {
-        Path defaultXPRootFolder = XPlane.getDefaultXPRootFolder();
+        Path defaultXPRootFolder = XPlaneTestUtil.getDefaultXPRootFolder();
         Path acfPath = defaultXPRootFolder.resolve("Aircraft/Laminar Research/Boeing 737-800/b738.acf");
         AcfFile acfFile = new AcfFile(acfPath);
 

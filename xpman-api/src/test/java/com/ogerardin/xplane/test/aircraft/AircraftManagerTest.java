@@ -1,7 +1,8 @@
 package com.ogerardin.xplane.test.aircraft;
 
-import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
+import com.ogerardin.test.util.EnableOnLocalXPlane;
 import com.ogerardin.test.util.TimingExtension;
+import com.ogerardin.test.util.XPlaneTestUtil;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.exception.InvalidConfig;
@@ -13,13 +14,13 @@ import java.util.List;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
-@DisabledIfNoXPlaneRootFolder
+@EnableOnLocalXPlane
 class AircraftManagerTest {
 
     @Test
     void testLoadAircrafts() throws InvalidConfig {
 
-        XPlane xplane = new XPlane(XPlane.getDefaultXPRootFolder());
+        XPlane xplane = new XPlane(XPlaneTestUtil.getDefaultXPRootFolder());
 
         List<Aircraft> aircrafts = xplane.getAircraftManager().getAircrafts();
         log.info("Found {} aircraft", aircrafts.size());

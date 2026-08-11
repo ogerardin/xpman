@@ -1,7 +1,8 @@
 package com.ogerardin.xplane.test.aircraft;
 
-import com.ogerardin.test.util.DisabledIfNoXPlaneRootFolder;
+import com.ogerardin.test.util.EnableOnLocalXPlane12;
 import com.ogerardin.test.util.TimingExtension;
+import com.ogerardin.test.util.XPlaneTestUtil;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.exception.InvalidConfig;
@@ -16,12 +17,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith(TimingExtension.class)
-@DisabledIfNoXPlaneRootFolder
+@EnableOnLocalXPlane12
 class AircraftTest {
 
     @Test
     void testCanInstantiateAcfFile() throws InvalidConfig {
-        Path defaultXPRootFolder = XPlane.getDefaultXPRootFolder();
+        Path defaultXPRootFolder = XPlaneTestUtil.getDefaultXPRootFolder();
         Path acfPath = defaultXPRootFolder.resolve("Aircraft/Laminar Research/Boeing 737-800/b738.acf");
         AcfFile acfFile = new AcfFile(acfPath);
 

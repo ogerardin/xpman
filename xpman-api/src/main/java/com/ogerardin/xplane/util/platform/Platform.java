@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Common interface for operations that have a platform-specific implementation.
@@ -52,4 +54,12 @@ public interface Platform {
      * Returns the version of the application at the specified path.
      */
     String getVersion(Path app);
+
+    default List<Path> getCandidateInstallBaseFolders(Path userHome) {
+        return List.of(
+                userHome.resolve("Applications"),
+                userHome.resolve("Desktop"),
+                userHome
+        );
+    }
 }

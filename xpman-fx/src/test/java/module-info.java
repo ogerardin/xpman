@@ -12,6 +12,7 @@ module xpman.fx.test {
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires xpman.fx;
+    requires xpman.api.test;
     requires org.junit.jupiter.api;
     requires org.hamcrest;
 

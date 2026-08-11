@@ -4,6 +4,7 @@ import com.google.api.services.drive.model.File;
 import com.ogerardin.xplane.PublicationChannel;
 import com.ogerardin.xplane.Versioned;
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.InspectionResult;
@@ -38,7 +39,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
     public static final RecommendedPluginsInspection RECOMMENDED_PLUGINS_INSPECTION
             = new RecommendedPluginsInspection(AviTab.class, TerrainRadar.class);
 
-    private final PublicationChannel channel = new GoogleDriveChannel();
+    private final PublicationChannel channel = new GoogleDriveChannel(getXPlane().getMajorVersion());
 
     @Getter(lazy = true)
     private final String version = loadVersion();
@@ -110,9 +111,15 @@ public class ZiboMod738 extends Aircraft implements Versioned {
      * to extract the latest version.
      * Note: there is also a torrents versrion; https://drive.google.com/drive/folders/12ggG4G1c0h_EIDgIaQAmU9bnuUWSOLrc
      */
-    static class GoogleDriveChannel implements PublicationChannel {
+    public static class GoogleDriveChannel implements PublicationChannel {
         /** The Google Drive folder ID of the folder containing published updates */
         private static final String ZIBO_FOLDER_ID = "1RHz4PQqWNGGpVG9GaHr84kuGs8LM2xyK";
+
+        private final XPlaneMajorVersion majorVersion;
+
+        public GoogleDriveChannel(XPlaneMajorVersion majorVersion) {
+            this.majorVersion = majorVersion;
+        }
 
         @Override
         public String getName() {
@@ -122,13 +129,39 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         public String getLatestVersion() throws Exception {
             // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
             // Patches are published as incremental files B738X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
+            // Since the Drive folder was reorganized into XP11/XP12 subfolders, release files live inside the
+            // subfolder named "XP<major>"; we fall back to the root listing for the legacy flat layout.
 
             // obtain list of files on the Google Drive
             GoogleDriveClient client = new GoogleDriveClient();
             List<File> files = client.getFiles(ZIBO_FOLDER_ID);
 
-            // try to find file matching full version pattern and extract version
-            Pattern versionPattern = Pattern.compile("B737-800X_([\\d_]+)_full.zip");
+            // descend into the version-specific subfolder if present (new layout)
+            String subfolderName = "XP" + majorVersion.getMajor();
+            Optional<File> subfolder = files.stream()
+                    .filter(f -> subfolderName.equals(f.getName()))
+                    .findAny();
+            if (subfolder.isPresent()) {
+                files = client.getFiles(subfolder.get().getId());
+            }
+
+            return extractLatestVersion(files);
+        }
+
+        /**
+         * Pure extraction of the latest Zibo mod version string from a list of Google Drive files.
+         * <p>
+         * Handles both the legacy flat naming (e.g. {@code B737-800X_3_42_full.zip} / {@code B738X_3_42_10.zip})
+         * and the reorganized per-sim naming (e.g. {@code B737-800X_XP12_4_05_full.zip} /
+         * {@code B738X_XP12_4_05_35.zip}), where the {@code XPnn_} prefix is optional.
+         *
+         * @param files the release files (full archive + incremental patches)
+         * @return the latest version string (e.g. {@code "4.05.35"}) with underscores replaced by dots and
+         *         the highest patch number appended, or {@code null} if no full archive is present
+         */
+        public static String extractLatestVersion(List<File> files) {
+            // full version pattern: B737-800X_[XP\d+_]<version>_full.zip
+            Pattern versionPattern = Pattern.compile("B737-800X_(?:XP\\d+_)?([a-zA-Z0-9_]+)_full\\.zip");
             Optional<String> maybeVersion = files.stream()
                     .map(File::getName)
                     .map(versionPattern::matcher)
@@ -140,19 +173,19 @@ public class ZiboMod738 extends Aircraft implements Versioned {
                 return null;
             }
 
-            // try to find patches for this version, keep the max
+            // patch pattern: B738X_[XP\d+_]<version>_<patch>.zip — keep the highest patch number
             String version = maybeVersion.get();
-            Pattern PatchPattern = Pattern.compile("B738X_" + version + "_(\\d+).zip");
+            Pattern patchPattern = Pattern.compile("B738X_(?:XP\\d+_)?([a-zA-Z0-9_]+)_(\\d+)\\.zip");
             OptionalInt maybePatch = files.stream()
                     .map(File::getName)
-                    .map(PatchPattern::matcher)
+                    .map(patchPattern::matcher)
                     .filter(Matcher::matches)
-                    .map(matcher -> matcher.group(1))
-                    .mapToInt(Integer::valueOf)
+                    .filter(m -> version.equals(m.group(1)))
+                    .mapToInt(m -> Integer.parseInt(m.group(2)))
                     .max();
 
-            version = version.replace("_", ".");
-            return maybePatch.isPresent() ? String.format("%s.%d", version, maybePatch.getAsInt()) : version;
+            String dotted = version.replace("_", ".");
+            return maybePatch.isPresent() ? String.format("%s.%d", dotted, maybePatch.getAsInt()) : dotted;
         }
 
         @SneakyThrows

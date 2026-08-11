@@ -1,6 +1,5 @@
 package com.ogerardin.test.util;
 
-
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
@@ -10,6 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(DisableIfNoXplaneFolderCondition.class)
-public @interface DisabledIfNoXPlaneRootFolder {
+@ExtendWith(FilePresentCondition.class)
+public @interface EnableOnSceneryPresent {
+    String value();
 }
