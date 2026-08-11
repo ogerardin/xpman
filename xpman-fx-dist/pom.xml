@@ -413,71 +413,122 @@
             </build>
         </profile>
 
-        <!-- This profile generates a Linux launcher with bundled JRE, a deb package and a rpm package. -->
+        <!-- This profile generates a Linux app with bundled JRE, a deb package and a rpm package using jpackage -->
         <profile>
             <activation>
                 <os>
                     <family>linux</family>
                 </os>
             </activation>
-            <id>fvarrui-javapackager-linux</id>
+            <id>jpackage-linux</id>
             <build>
                 <plugins>
-                    <!-- rpm doesn't allow '-' in the version so we replace it with '_' -->
+                    <!-- Prepare jpackage input directory with just the repackaged JAR -->
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
-                                <id>sanitize-version</id>
+                                <id>copy-jpackage-input</id>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>regex-property</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <name>sanitizedVersion</name>
-                                    <value>${project.version}</value>
-                                    <regex>-</regex>
-                                    <replacement>_</replacement>
-                                    <failIfNoMatch>false</failIfNoMatch>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <include>${app.runnableJar}</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
 
+                    <!-- jpackage: generates .app image, .deb, and .rpm -->
                     <plugin>
-                        <groupId>io.github.fvarrui</groupId>
-                        <artifactId>javapackager</artifactId>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
                         <executions>
+                            <!-- Build the application image -->
                             <execution>
-                                <id>package-for-linux</id>
+                                <id>jpackage-app-image</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>package</goal>
+                                    <goal>jpackage</goal>
                                 </goals>
                                 <configuration>
-                                    <description>${app.description}</description>
-                                    <displayName>${app.name}</displayName>
+                                    <type>APP_IMAGE</type>
                                     <name>${app.shortName}</name>
-                                    <organizationName>${app.copyright}</organizationName>
-                                    <licenseFile>../LICENSE</licenseFile>
-                                    <!--suppress MavenModelInspection -->
-                                    <version>${sanitizedVersion}</version>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <input>${project.build.directory}/jpackage-input</input>
+                                    <mainJar>${app.runnableJar}</mainJar>
                                     <mainClass>${app.runnableMainClass}</mainClass>
-                                    <runnableJar>${project.build.directory}/${app.runnableJar}</runnableJar>
-                                    <copyDependencies>false</copyDependencies>
-                                    <additionalResources>
-                                        <additionalResource>${project.basedir}/${app.shortName}.l4j.ini</additionalResource>
-                                    </additionalResources>
-                                    <bundleJre>true</bundleJre>
-<!--                                    <jrePath>${java.home}</jrePath>-->
-                                    <customizedJre>false</customizedJre>
-                                    <generateInstaller>true</generateInstaller>
-                                    <linuxConfig>
-                                        <pngFile>${project.build.directory}/img/icon.png</pngFile>
-                                        <generateDeb>true</generateDeb>
-                                        <generateRpm>true</generateRpm>
-                                        <generateAppImage>false</generateAppImage>
-                                    </linuxConfig>
+                                    <icon>${project.build.directory}/img/icon.png</icon>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <javaOptions>
+                                        <javaOption>--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls</javaOption>
+                                    </javaOptions>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                            <!-- Build DEB from the app image -->
+                            <execution>
+                                <id>jpackage-deb</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>DEB</type>
+                                    <name>${app.shortName}</name>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
+                                    <appImage>${project.build.directory}/${app.shortName}</appImage>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <linuxPackageName>${app.shortName}</linuxPackageName>
+                                    <linuxShortcut>true</linuxShortcut>
+                                    <linuxMenuGroup>Games</linuxMenuGroup>
+                                    <linuxAppCategory>Games</linuxAppCategory>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                            <!-- Build RPM from the app image -->
+                            <execution>
+                                <id>jpackage-rpm</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>RPM</type>
+                                    <name>${app.shortName}</name>
+                                    <appVersion>${jpackage.version}</appVersion>
+                                    <vendor>${app.vendor}</vendor>
+                                    <description>${app.description}</description>
+                                    <copyright>${app.copyright}</copyright>
+                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
+                                    <appImage>${project.build.directory}/${app.shortName}</appImage>
+                                    <destination>${project.build.directory}</destination>
+                                    <removeDestination>false</removeDestination>
+                                    <linuxPackageName>${app.shortName}</linuxPackageName>
+                                    <linuxShortcut>true</linuxShortcut>
+                                    <linuxMenuGroup>Games</linuxMenuGroup>
+                                    <linuxAppCategory>Games</linuxAppCategory>
+                                    <linuxRpmLicenseType>GPLv3</linuxRpmLicenseType>
+                                    <verbose>true</verbose>
                                 </configuration>
                             </execution>
                         </executions>
