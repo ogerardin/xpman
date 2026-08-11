@@ -12,10 +12,10 @@ jobs:
     resource_class: medium
     steps:
       - run:
-          name: Install build tools (git, maven, full JDK with jmods)
+          name: Install build tools (git, maven, full JDK with jmods, rpm and fakeroot for jpackage)
           command: |
             apt-get update
-            apt-get install -y git maven openjdk-25-jdk-headless
+            apt-get install -y git maven openjdk-25-jdk-headless rpm fakeroot
       - checkout
       - run:
           name: Generate cache seed
@@ -180,9 +180,8 @@ jobs:
 workflows:
   default:
     jobs:
-      # Windows and Linux builds disabled on migrate-jpackage branch
-      # until they are migrated from javapackager to jpackage
-      - build-mac
+      # Mac and Windows builds disabled until fully migrated to jpackage
+      - build-linux
       - publish-github-release:
           requires:
-            - build-mac
+            - build-linux
