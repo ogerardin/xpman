@@ -1,0 +1,107 @@
+-- credits: https://github.com/create-dmg/create-dmg
+-- Override of the javapackager DMG customization template.
+--
+-- On headless/CI environments (e.g. CircleCI macOS VMs) Finder often cannot service
+-- container-window manipulation AppleEvents: they hang until the AppleEvent timeout
+-- expires and raise -1712, which makes javapackager fail the DMG step (it then
+-- produces no DMG at all). Simple events (like `get name`) do work.
+--
+-- This variant therefore:
+--   * wraps the whole customization in `with timeout of 60 seconds`, and
+--   * on ANY error (including a -1712 timeout), logs the failure and bails out
+--     cleanly so the DMG is still produced (plain, without background image / icon
+--     layout) instead of aborting the whole DMG generation.
+-- The timeout is kept short (60s) on purpose: a hanging Finder must fail fast so the
+-- enclosing Maven build step (10 min limit on CircleCI) cannot time out.
+--
+-- Error handling structure (important):
+--   The `try` wraps the ENTIRE `tell application "Finder"` block. A -1712 timeout is
+--   "sticky": even when caught, the pending reply poisons the still-active `tell`
+--   scope, so the tell-block teardown (or any further command in that scope, such as
+--   the error handler's own `log`) re-raises -1712 and kills osascript anyway. By
+--   catching OUTSIDE the tell blocks the error unwinds the whole tell stack (nothing
+--   is left to re-raise), and the handler runs in a scope with no Finder connection.
+--   The handler must not itself issue any AppleEvent to Finder; the final `log` is
+--   also placed at top level, outside any `tell` context.
+-- The .DS_STORE wait loop is bounded so a Finder that never writes the file cannot
+-- hang the build either.
+on run (volumeName)
+	set finalMessage to ""
+	try
+		tell application "Finder"
+			tell disk (volumeName as string)
+				open
+
+				with timeout of 60 seconds
+					set theXOrigin to ${info.macConfig.windowX}
+					set theYOrigin to ${info.macConfig.windowY}
+					set theWidth to ${info.macConfig.windowWidth}
+					set theHeight to ${info.macConfig.windowHeight}
+
+					set theBottomRightX to (theXOrigin + theWidth)
+					set theBottomRightY to (theYOrigin + theHeight)
+					set dsStore to "\"/Volumes/" & volumeName & "/.DS_STORE\""
+
+					tell container window
+						set current view to icon view
+						set toolbar visible to false
+						set statusbar visible to false
+						set the bounds to {theXOrigin, theYOrigin, theBottomRightX, theBottomRightY}
+						set position of every item to {theBottomRightX + 100, 100}
+					end tell
+
+					set opts to the icon view options of container window
+					tell opts
+						set icon size to ${info.macConfig.iconSize}
+						set text size to ${info.macConfig.textSize}
+						set arrangement to not arranged
+					end tell
+					set background picture of opts to file ".background:background.png"
+
+					-- Positioning
+					set position of item "${info.appFile.name}" to {${info.macConfig.iconX}, ${info.macConfig.iconY}}
+
+					-- Hiding
+					set the extension hidden of item "${info.appFile.name}" to true
+
+					-- Application
+					set position of item "Applications" to {${info.macConfig.appsLinkIconX}, ${info.macConfig.appsLinkIconY}}
+
+					close
+					open
+					-- Force saving of the size
+					delay 1
+
+					tell container window
+						set statusbar visible to false
+						set the bounds to {theXOrigin, theYOrigin, theBottomRightX - 10, theBottomRightY - 10}
+					end tell
+
+					delay 1
+
+					tell container window
+						set statusbar visible to false
+						set the bounds to {theXOrigin, theYOrigin, theBottomRightX, theBottomRightY}
+					end tell
+
+					--give the finder some time to write the .DS_Store file
+					delay 3
+
+					set waitTime to 0
+					set ejectMe to false
+					repeat while ejectMe is false and waitTime < 120
+						delay 1
+						set waitTime to waitTime + 1
+						if (do shell script "[ -f " & dsStore & " ]; echo $?") = "0" then set ejectMe to true
+					end repeat
+					if waitTime = 120 then set finalMessage to "Timed out waiting for .DS_STORE; continuing anyway."
+					if finalMessage = "" then set finalMessage to "waited " & waitTime & " seconds for .DS_STORE to be created."
+				end timeout
+			end tell
+		end tell
+		set finalMessage to "customization done"
+	on error errMsg number errNum
+		set finalMessage to "DMG customization skipped: Finder error " & errNum & ": " & errMsg
+	end try
+	log finalMessage
+end run
