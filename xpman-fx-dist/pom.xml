@@ -397,6 +397,7 @@
                                         <pngFile>${project.build.directory}/img/icon.png</pngFile>
                                         <generateDeb>true</generateDeb>
                                         <generateRpm>true</generateRpm>
+                                        <generateAppImage>false</generateAppImage>
                                     </linuxConfig>
                                 </configuration>
                             </execution>
