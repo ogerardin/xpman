@@ -1,0 +1,78 @@
+# AppVeyor CI (backup to CircleCI)
+# Builds XPman (Java 25) into native installers via jpackage on Linux, macOS and Windows.
+
+image:
+  - Visual Studio 2022
+  - Ubuntu
+  - macos-sonoma
+
+for:
+-
+  matrix:
+    only:
+      - image: macos-sonoma
+  init:
+  - sh: |
+      brew install maven
+      brew install openjdk@25
+      sudo ln -sfn "$(brew --prefix openjdk@25)/libexec/openjdk.jdk" /Library/Java/JavaVirtualMachines/openjdk-25.jdk
+  environment:
+    HOMEBREW_NO_INSTALL_CLEANUP: 1
+    HOMEBREW_NO_AUTO_UPDATE: 1
+  cache: $HOME/.m2
+  build_script:
+  - sh: |
+      /usr/libexec/java_home -V
+      export JAVA_HOME=`/usr/libexec/java_home -v 25`
+      # Grant java the right to send Apple Events to Finder, used by the custom
+      # jpackage DMG layout script. Tolerant: on newer macOS this may fail, the
+      # DMG is then still produced without the custom layout.
+      JavaPath=$(which java)
+      sudo sqlite3 "$HOME/Library/Application Support/com.apple.TCC/TCC.db" "insert into access (service, client, client_type, allowed, prompt_count, indirect_object_identifier_type, indirect_object_identifier) values ('kTCCServiceAppleEvents', '$JavaPath', 1, 1, 1, 0, 'com.apple.finder')" || true
+      mvn -v
+      mvn -B -DskipTests clean package
+  artifacts:
+    - path: xpman-fx-dist/target/*.dmg
+    - path: xpman-fx-dist/target/*.pkg
+    - path: xpman-fx-dist/target/*-repackaged.jar
+
+-
+  matrix:
+    only:
+      - image: Ubuntu
+  stack: jdk 25
+  init:
+  - sh: |
+      sudo apt-get update
+      sudo apt-get install -y maven rpm fakeroot
+  cache: $HOME/.m2
+  build_script:
+  - sh: |
+      export JAVA_HOME=${JAVA_HOME_25_X64}
+      export PATH=${JAVA_HOME_25_X64}/bin:$PATH
+      mvn -v
+      mvn -B -DskipTests clean package
+  artifacts:
+    - path: xpman-fx-dist/target/*.deb
+    - path: xpman-fx-dist/target/*.rpm
+    - path: xpman-fx-dist/target/*-repackaged.jar
+
+-
+  matrix:
+    only:
+      - image: Visual Studio 2022
+  cache:
+    - "%USERPROFILE%\\.m2"
+  init:
+  - cmd: choco install -y imagemagick.app
+  build_script:
+  - cmd: |
+      set JAVA_HOME=C:\Progra~1\Java\jdk25
+      path C:\Program Files\Java\jdk25\bin;%PATH%
+      java -version
+      mvn -v
+      mvn -B -DskipTests clean package
+  artifacts:
+    - path: xpman-fx-dist\target\*.exe
+    - path: xpman-fx-dist\target\*.msi
+    - path: xpman-fx-dist\target\*-repackaged.jar
