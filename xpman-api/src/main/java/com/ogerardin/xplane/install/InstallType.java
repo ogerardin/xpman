@@ -7,7 +7,7 @@ import com.ogerardin.xplane.install.inspections.custom.NavigraphCycleVersion;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 
 import java.util.function.Predicate;
 

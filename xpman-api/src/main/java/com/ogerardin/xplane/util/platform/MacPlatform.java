@@ -6,9 +6,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.plist.XMLPropertyListConfiguration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.io.FileHandler;
+import org.apache.commons.configuration2.plist.XMLPropertyListConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -140,8 +141,9 @@ public class MacPlatform implements Platform {
 
         public XMLPropertyListConfiguration plist() throws ConfigurationException {
             Path plistFile = contentsDir().resolve("info.plist");
-            return new XMLPropertyListConfiguration(plistFile.toFile());
-
+            XMLPropertyListConfiguration config = new XMLPropertyListConfiguration();
+            new FileHandler(config).load(plistFile.toFile());
+            return config;
         }
 
         public static boolean isAppBundle(Path app) {

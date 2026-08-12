@@ -3,7 +3,7 @@ package com.ogerardin.xpman.util.jfx.menu;
 import com.ogerardin.xpman.util.SpelUtil;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

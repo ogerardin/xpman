@@ -9,7 +9,7 @@ import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 
 import java.net.URL;
 import java.nio.file.Files;

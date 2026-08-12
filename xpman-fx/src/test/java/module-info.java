@@ -7,7 +7,7 @@ module xpman.fx.test {
     requires com.google.gson;
     requires org.controlsfx.controls;
     requires spring.expression;
-    requires commons.lang;
+    requires org.apache.commons.lang3;
     requires ch.qos.logback.classic;
     requires com.sun.jna;
     requires com.sun.jna.platform;
@@ -19,5 +19,5 @@ module xpman.fx.test {
     exports com.ogerardin.xpman.observable.test;
     opens com.ogerardin.xpman.observable.test to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.test to org.junit.platform.commons;
-    opens com.ogerardin.xpman.util.test to org.junit.platform.commons;
+    opens com.ogerardin.xpman.util.test to org.junit.platform.commons, xpman.fx, com.google.gson;
 }
