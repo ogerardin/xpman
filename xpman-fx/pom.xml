@@ -17,6 +17,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>25.0.4</javafx.version>
+        <!-- Parent pom sets dependency-check.skip=true to skip the aggregator; this module has
+            dependencies worth scanning, so re-enable. -->
+        <dependency-check.skip>false</dependency-check.skip>
     </properties>
 
     <dependencies>

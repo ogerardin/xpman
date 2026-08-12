@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!-- XPman is a Java manager application for X-Plane, not the Laminar Research X-Plane flight
+        simulator itself. dependency-check matches our own artifacts (packages com.ogerardin.xplane,
+        artifactIds xpman-api/xpman-fx, version 1.0-SNAPSHOT) to the X-Plane CPE
+        (cpe:/a:x-plane:x-plane), producing false positives such as CVE-2019-19605 and CVE-2019-19606,
+        which target the native X-Plane executable. -->
+    <suppress>
+        <notes>False positives: project's own jars falsely matched to the Laminar Research X-Plane flight simulator CPE.</notes>
+        <cpe>cpe:/a:x-plane:x-plane</cpe>
+    </suppress>
+
+</suppressions>
