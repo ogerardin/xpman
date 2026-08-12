@@ -4,7 +4,7 @@
 
 ![GitHub top language](https://img.shields.io/github/languages/top/ogerardin/xpman)
 ![GPL-3.0](https://img.shields.io/github/license/ogerardin/xpman)
-[![Build Status](https://circleci.com/gh/ogerardin/xpman/tree/java11.svg?style=shield)](https://app.circleci.com/pipelines/github/ogerardin/xpman?branch=java11)
+[![Build Status](https://circleci.com/gh/ogerardin/xpman/tree/main.svg?style=shield)](https://app.circleci.com/pipelines/github/ogerardin/xpman?branch=main)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/fd86ae4c0e164762babd6bf8059c02e7)](https://www.codacy.com/gh/ogerardin/xpman/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ogerardin/xpman&amp;utm_campaign=Badge_Grade)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
 
@@ -37,7 +37,8 @@ doesn't contain any malware, it's 100% open source and all the code used to buil
 is public and auditable.
 
 # Development
-X-Plane Manager is a Standalone JavaFX application. The "main" branch is now using Java 17. 
+X-Plane Manager is a Standalone JavaFX application built with **Java 25** and **JavaFX 25**. 
+Platform installers (.dmg/.pkg on macOS, .exe/.msi on Windows, .deb/.rpm on Linux) are produced via **jpackage**, each bundled with a platform-specific JRE. 
 
 It is split in 3 modules:
 - xpman-api is a pure Java API to interact with X-Plane's installation.

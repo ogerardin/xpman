@@ -27,11 +27,11 @@ mvn test -pl xpman-api -Dtest=ParserTest
 |---|---|---|
 | `xpman-api` | `xpman.api` | Pure Java API — domain model, file parsers, inspection framework, install logic |
 | `xpman-fx` | `xpman.fx` | JavaFX desktop UI — FXML views, controllers, wizards, custom cell factories |
-| `xpman-fx-dist` | *(none)* | Distribution packaging — repackaged uber-jar → platform installers (.dmg, .exe, .deb, .rpm) |
+| `xpman-fx-dist` | *(none)* | Distribution packaging — repackaged uber-jar → platform installers (.dmg/.pkg, .exe/.msi, .deb/.rpm) via **jpackage** |
 
-- **Java 17** source/target.
-- **JPMS** is enforced — both xpman-api and xpman-fx have `module-info.java`. No automatic modules.
-- **No Spring DI container.** `XPlane(folder)` is the root object that manually constructs all managers. `spring-expression` exists only for SpEL evaluation in cell factories. The Spring Boot Maven plugin is used only for repackaging into an uber-jar (`JarLauncher`), NOT for a Spring app.
+- **Java 25** source/target (`maven.compiler.release=25`); requires JDK 25 to build.
+- **JPMS** is enforced — both xpman-api and xpman-fx have `module-info.java`. Most dependencies are explicit JPMS modules; **`commons-configuration`, `commons-lang`, `petitparser-core`, and `zip4j` are filename-based automatic modules** (declared under `// filename-based automodules` in `xpman-api/module-info.java`).
+- **No Spring DI container.** `XPlane(folder)` is the root object that manually constructs all managers. `spring-expression` (currently 7.0.8) is used only for SpEL evaluation in cell factories — it is the only SpEL consumer. The Spring Boot Maven plugin is used only for repackaging into an uber-jar (`JarLauncher`), NOT for a Spring app.
 - **Lombok** is heavily used: `@Data`, `@Slf4j`, `@Getter(lazy=true)`, `@SneakyThrows`, `@Delegate`, `@Builder`, `@UtilityClass`.
 - **Gson** for JSON (not Jackson). User config persisted to `~/XPManPrefs.json`.
 - **FXML** for all UI views — controllers follow naming convention matching the FXML file. Resource root is `xpman-fx/src/main/resources/fxml/`.
@@ -48,7 +48,8 @@ mvn test -pl xpman-api -Dtest=ParserTest
 ## JPMS Notes
 
 - `xpman-fx` opens packages to `javafx.base`, `javafx.fxml`, `spring.expression`, and `com.google.gson` for reflection access.
-- Runtime `--add-opens` needed: see `xpman-fx-dist/xpman.l4j.ini` for ControlsFX compatibility.
+- `com.ogerardin.xpman.scenery_organizer` is opened **unqualified** (to all modules, including the unnamed module) so SpEL's `ReflectivePropertyAccessor` can `setAccessible` on `LibrarySceneryClass` when running under IntelliJ's classpath layout (where Spring jars land in the unnamed module). A qualified `opens ... to spring.expression` is insufficient there.
+- The runtime `--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls` (ControlsFX compatibility) is passed via the jpackage `<javaOptions>` in `xpman-fx-dist/pom.xml` (per-OS profile). The legacy `xpman.l4j.ini` was removed with the launch4j migration.
 
 ## CI & Dependencies
 
