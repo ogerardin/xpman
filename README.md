@@ -21,7 +21,7 @@ Similar tools exist but they are not cross-platform, have limited functionality,
 
 ## Status
 Currently in development stages. Some things work, some don't... 
-Check [feature status](https://github.com/ogerardin/xpman/blob/main/features.md).
+Check [feature status](docs/features.md).
 
 You know the drill: USE AT YOUR OWN RISK.
 
