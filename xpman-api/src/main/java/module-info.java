@@ -9,10 +9,12 @@ module xpman.api {
     requires org.apache.commons.io;
 
     // filename-based automodules
-    requires commons.lang;
-    requires commons.configuration;
     requires petitparser.core;
     requires zip4j;
+
+    requires org.apache.commons.lang3;
+    requires org.apache.commons.configuration2;
+    requires org.apache.commons.text;
 
     requires com.google.gson;
     requires com.google.api.client;

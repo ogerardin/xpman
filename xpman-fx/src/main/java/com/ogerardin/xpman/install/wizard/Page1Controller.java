@@ -6,7 +6,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import lombok.experimental.Delegate;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.decoration.Decoration;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
