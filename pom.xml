@@ -13,6 +13,10 @@
         <maven.compiler.release>25</maven.compiler.release>
         <logback.version>1.5.38</logback.version>
         <lombok.version>1.18.46</lombok.version>
+        <dependency-check.version>13.0.0</dependency-check.version>
+        <!-- The parent module is a plain pom aggregator with no dependencies of its own:
+            nothing meaningful to scan, so skip dependency-check here. -->
+        <dependency-check.skip>true</dependency-check.skip>
     </properties>
 
     <modules>
@@ -173,5 +177,74 @@
         </dependencies>
     </dependencyManagement>
 
+    <profiles>
+        <!-- Checks dependencies for known vulnerabilities using the OWASP dependency-check plugin.
+            Run with: mvn -Pvulnerability-check verify
+            failBuildOnCVSS is 11 (never fail) by default: findings are reviewed manually from the generated reports. -->
+        <profile>
+            <id>vulnerability-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>read-nvd-key</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <quiet>true</quiet>
+                                    <files>
+                                        <file>${maven.multiModuleProjectDirectory}/.owasp/nvd-api-key.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>read-oss-index-credentials</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <quiet>true</quiet>
+                                    <files>
+                                        <file>${maven.multiModuleProjectDirectory}/.owasp/oss-index.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${dependency-check.version}</version>
+                        <configuration>
+                            <failBuildOnCVSS>11</failBuildOnCVSS>
+                            <skipTestScope>true</skipTestScope>
+                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                            <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                            <ossIndexUsername>${oss.index.username}</ossIndexUsername>
+                            <ossIndexPassword>${oss.index.password}</ossIndexPassword>
+                            <ossIndexWarnOnlyOnRemoteErrors>true</ossIndexWarnOnlyOnRemoteErrors>
+                            <suppressionFiles>
+                                <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppressions.xml</suppressionFile>
+                            </suppressionFiles>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

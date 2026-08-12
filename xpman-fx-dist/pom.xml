@@ -30,6 +30,9 @@
         <git.build.number>0</git.build.number>
         <!-- jpackage requires a dotted numeric version (1-3 integers, no -SNAPSHOT suffix) -->
         <jpackage.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</jpackage.version>
+        <!-- xpman-fx-dist adds no third-party dependencies of its own (only xpman-fx), so its
+            dependency-check scan would be a strict subset of xpman-fx's: skip it here. -->
+        <dependency-check.skip>true</dependency-check.skip>
     </properties>
 
     <dependencies>
