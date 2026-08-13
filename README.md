@@ -6,8 +6,8 @@
 ![GPL-3.0](https://img.shields.io/github/license/ogerardin/xpman)
 [![Build Status](https://circleci.com/gh/ogerardin/xpman/tree/main.svg?style=shield)](https://app.circleci.com/pipelines/github/ogerardin/xpman?branch=main)
 [![Build status](https://ci.appveyor.com/api/projects/ogerardin/xpman/branch/main?svg=true)](https://ci.appveyor.com/project/ogerardin/xpman/branch/main)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/fd86ae4c0e164762babd6bf8059c02e7)](https://www.codacy.com/gh/ogerardin/xpman/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ogerardin/xpman&amp;utm_campaign=Badge_Grade)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5844bbd3cdb4db2c2f7b/maintainability)](https://codeclimate.com/github/ogerardin/xpman/maintainability)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/fd86ae4c0e164762babd6bf8059c02e7)](https://app.codacy.com/gh/ogerardin/xpman/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Maintainability](https://qlty.sh/gh/ogerardin/projects/xpman/maintainability.svg)](https://qlty.sh/gh/ogerardin/projects/xpman)
 
 # X-Plane Manager
 X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's flight simulator [X-Plane](https://www.x-plane.com/) (version 11 and later).
