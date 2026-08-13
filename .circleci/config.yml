@@ -184,11 +184,23 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-linux
-      - build-mac
-      - build-windows
+      - build-linux:
+          filters:
+            branches:
+              only: main
+      - build-mac:
+          filters:
+            branches:
+              only: main
+      - build-windows:
+          filters:
+            branches:
+              only: main
       - publish-github-release:
           requires:
             - build-linux
             - build-mac
             - build-windows
+          filters:
+            branches:
+              only: main
