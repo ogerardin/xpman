@@ -1,21 +1,19 @@
 # AppVeyor CI (backup to CircleCI)
-# Builds XPman (Java 25) into native installers via jpackage on Linux, macOS and Windows.
+# Builds XPman (Java 25) into native installers: jpackage .deb/.rpm on Linux,
+# jpackage .exe/.msi on Windows, jpackage .app/.pkg + dmgbuild .dmg on macOS.
 
 branches:
   only:
     - main
 
 image:
-  # TEMPORARILY DISABLED (mac DMG work in progress) - re-enable from git history.
-  # - Visual Studio 2022
-  # - Ubuntu
+  - Visual Studio 2022
+  - Ubuntu
   - macos-sonoma
 
-# Build mode defaults to "MSBuild" unless a top-level build_script is present, and
-# `for:` matrix blocks are NOT applied when the image matrix has a single job (see
-# AppVeyor support topic #23426), so the macOS build steps live here at the top
-# level. The Linux/Windows for: blocks below override these settings once those
-# images are re-enabled.
+# Build mode defaults to "MSBuild" unless a top-level build_script is present.
+# The macOS build steps live here at the top level; the Linux/Windows for:
+# blocks below override these settings for their images.
 cache:
   - $HOME/.m2
   - $HOME/temurin25
@@ -43,29 +41,19 @@ build_script:
     fi
     export JAVA_HOME="$JDK_DIR/Contents/Home"
     export PATH="$JAVA_HOME/bin:$MAVEN_DIR/bin:$PATH"
-    # Grant osascript and java the right to send Apple Events to Finder, used by
-    # the custom jpackage DMG layout script. Tolerant: on headless CI the Finder
-    # interaction may still time out, the DMG is then still produced without the
-    # custom layout. Uses the TCC 'access' schema of macOS 11+ (auth_value, not the
-    # legacy 'allowed' column) and restarts tccd so the grant is picked up.
-    JavaPath=$(which java)
-    TCC_DB="$HOME/Library/Application Support/com.apple.TCC/TCC.db"
-    sudo sqlite3 "$TCC_DB" <<SQL || true
-    INSERT INTO access(service,client,client_type,auth_value,auth_reason,auth_version,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified)
-    VALUES
-      ('kTCCServiceAppleEvents','/usr/bin/osascript',1,2,4,1,NULL,NULL,0,'com.apple.finder',NULL,0,CAST(strftime('%s','now') AS INTEGER)),
-      ('kTCCServiceAppleEvents','$JavaPath',1,2,4,1,NULL,NULL,0,'com.apple.finder',NULL,0,CAST(strftime('%s','now') AS INTEGER));
-    SQL
-    sudo pkill -9 tccd || true
     mvn -v
     mvn -B -DskipTests clean package
 
-artifacts:
-  - path: xpman-fx-dist/target/*.dmg
-  - path: xpman-fx-dist/target/*.pkg
-  - path: xpman-fx-dist/target/*-repackaged.jar
-
 for:
+-
+  matrix:
+    only:
+      - image: macos-sonoma
+  artifacts:
+    - path: xpman-fx-dist/target/*.dmg
+    - path: xpman-fx-dist/target/*.pkg
+    - path: xpman-fx-dist/target/*-repackaged.jar
+
 -
   matrix:
     only:
@@ -119,7 +107,10 @@ for:
         $env:JAVA_HOME = $jdk.FullName
         $env:Path = "$env:JAVA_HOME\bin;$imHome;$env:Path"
         mvn -v
-        mvn -B -DskipTests clean package 2>&1
+        # Run via cmd so the 2>&1 stream merge happens there: Maven on JDK 25
+        # prints a sun.misc.Unsafe deprecation warning to stderr, and PowerShell
+        # wraps redirected stderr in ErrorRecord/NativeCommandError noise.
+        cmd /c "mvn -B -DskipTests clean package 2>&1"
         Write-Host "Maven exit code: $LASTEXITCODE"
         if ($LASTEXITCODE -ne 0) { throw "Maven build failed with exit code $LASTEXITCODE" }
       } catch {
