@@ -54,6 +54,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 ## CI & Dependencies
 
 - **CircleCI** builds on Linux, macOS, and Windows (see `.circleci/config.yml`).
+- **AppVeyor** is a backup CI, currently green, and builds on Linux, macOS, and Windows (see `.appveyor.yml`). Note the Windows quirks it works around: the VS 2022 image's default `java` on PATH is 1.8 (JAVA_HOME is pinned to the pre-installed JDK 25 dir), and ImageMagick is installed via `choco ... --ignore-dependencies` (its `kb2999226` dependency lookup is flaky and unnecessary on Server 2022).
 - **Dependabot** manages version bumps (labels: `dependencies`, `java`).
 - pecoff4j dependency comes from **Jitpack** repository (needed for reading Windows PE executables on non-Windows platforms).
 
