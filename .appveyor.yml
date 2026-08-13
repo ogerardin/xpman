@@ -6,53 +6,66 @@ branches:
     - main
 
 image:
-  - Visual Studio 2022
-  - Ubuntu
+  # TEMPORARILY DISABLED (mac DMG work in progress) - re-enable from git history.
+  # - Visual Studio 2022
+  # - Ubuntu
   - macos-sonoma
 
-for:
--
-  matrix:
-    only:
-      - image: macos-sonoma
-  cache:
-    - $HOME/.m2
-    - $HOME/temurin25
-    - $HOME/maven
-  build_script:
-  - sh: |
-      # The image ships an old Homebrew (openjdk 21, no openjdk@25) and `brew update`
-      # fails (git prompts for GitHub credentials), so fetch Temurin JDK 25 directly.
-      export JDK_DIR="$HOME/temurin25"
-      if [ ! -d "$JDK_DIR" ]; then
-        echo "Downloading Temurin JDK 25..."
-        curl -fL -o /tmp/jdk25.tar.gz "https://api.adoptium.net/v3/binary/latest/25/ga/mac/x64/jdk/hotspot/normal/eclipse"
-        mkdir -p "$JDK_DIR"
-        tar -xzf /tmp/jdk25.tar.gz -C "$JDK_DIR" --strip-components=1
-      fi
-      # No Homebrew on this image (it updates unrelated formulae and spews
-      # warnings), so fetch a pinned Maven binary directly as well.
-      export MAVEN_DIR="$HOME/maven"
-      if [ ! -x "$MAVEN_DIR/bin/mvn" ]; then
-        echo "Downloading Maven 3.9.11..."
-        curl -fL -o /tmp/maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz"
-        mkdir -p "$MAVEN_DIR"
-        tar -xzf /tmp/maven.tar.gz -C "$MAVEN_DIR" --strip-components=1
-      fi
-      export JAVA_HOME="$JDK_DIR/Contents/Home"
-      export PATH="$JAVA_HOME/bin:$MAVEN_DIR/bin:$PATH"
-      # Grant java the right to send Apple Events to Finder, used by the custom
-      # jpackage DMG layout script. Tolerant: on newer macOS this may fail, the
-      # DMG is then still produced without the custom layout.
-      JavaPath=$(which java)
-      sudo sqlite3 "$HOME/Library/Application Support/com.apple.TCC/TCC.db" "insert into access (service, client, client_type, allowed, prompt_count, indirect_object_identifier_type, indirect_object_identifier) values ('kTCCServiceAppleEvents', '$JavaPath', 1, 1, 1, 0, 'com.apple.finder')" || true
-      mvn -v
-      mvn -B -DskipTests clean package
-  artifacts:
-    - path: xpman-fx-dist/target/*.dmg
-    - path: xpman-fx-dist/target/*.pkg
-    - path: xpman-fx-dist/target/*-repackaged.jar
+# Build mode defaults to "MSBuild" unless a top-level build_script is present, and
+# `for:` matrix blocks are NOT applied when the image matrix has a single job (see
+# AppVeyor support topic #23426), so the macOS build steps live here at the top
+# level. The Linux/Windows for: blocks below override these settings once those
+# images are re-enabled.
+cache:
+  - $HOME/.m2
+  - $HOME/temurin25
+  - $HOME/maven
 
+build_script:
+- sh: |
+    # The image ships an old Homebrew (openjdk 21, no openjdk@25) and `brew update`
+    # fails (git prompts for GitHub credentials), so fetch Temurin JDK 25 directly.
+    export JDK_DIR="$HOME/temurin25"
+    if [ ! -d "$JDK_DIR" ]; then
+      echo "Downloading Temurin JDK 25..."
+      curl -fL -o /tmp/jdk25.tar.gz "https://api.adoptium.net/v3/binary/latest/25/ga/mac/x64/jdk/hotspot/normal/eclipse"
+      mkdir -p "$JDK_DIR"
+      tar -xzf /tmp/jdk25.tar.gz -C "$JDK_DIR" --strip-components=1
+    fi
+    # No Homebrew on this image (it updates unrelated formulae and spews
+    # warnings), so fetch a pinned Maven binary directly as well.
+    export MAVEN_DIR="$HOME/maven"
+    if [ ! -x "$MAVEN_DIR/bin/mvn" ]; then
+      echo "Downloading Maven 3.9.11..."
+      curl -fL -o /tmp/maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz"
+      mkdir -p "$MAVEN_DIR"
+      tar -xzf /tmp/maven.tar.gz -C "$MAVEN_DIR" --strip-components=1
+    fi
+    export JAVA_HOME="$JDK_DIR/Contents/Home"
+    export PATH="$JAVA_HOME/bin:$MAVEN_DIR/bin:$PATH"
+    # Grant osascript and java the right to send Apple Events to Finder, used by
+    # the custom jpackage DMG layout script. Tolerant: on headless CI the Finder
+    # interaction may still time out, the DMG is then still produced without the
+    # custom layout. Uses the TCC 'access' schema of macOS 11+ (auth_value, not the
+    # legacy 'allowed' column) and restarts tccd so the grant is picked up.
+    JavaPath=$(which java)
+    TCC_DB="$HOME/Library/Application Support/com.apple.TCC/TCC.db"
+    sudo sqlite3 "$TCC_DB" <<SQL || true
+    INSERT INTO access(service,client,client_type,auth_value,auth_reason,auth_version,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified)
+    VALUES
+      ('kTCCServiceAppleEvents','/usr/bin/osascript',1,2,4,1,NULL,NULL,0,'com.apple.finder',NULL,0,CAST(strftime('%s','now') AS INTEGER)),
+      ('kTCCServiceAppleEvents','$JavaPath',1,2,4,1,NULL,NULL,0,'com.apple.finder',NULL,0,CAST(strftime('%s','now') AS INTEGER));
+    SQL
+    sudo pkill -9 tccd || true
+    mvn -v
+    mvn -B -DskipTests clean package
+
+artifacts:
+  - path: xpman-fx-dist/target/*.dmg
+  - path: xpman-fx-dist/target/*.pkg
+  - path: xpman-fx-dist/target/*-repackaged.jar
+
+for:
 -
   matrix:
     only:

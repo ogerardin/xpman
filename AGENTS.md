@@ -27,7 +27,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 |---|---|---|
 | `xpman-api` | `xpman.api` | Pure Java API — domain model, file parsers, inspection framework, install logic |
 | `xpman-fx` | `xpman.fx` | JavaFX desktop UI — FXML views, controllers, wizards, custom cell factories |
-| `xpman-fx-dist` | *(none)* | Distribution packaging — repackaged uber-jar → platform installers (.dmg/.pkg, .exe/.msi, .deb/.rpm) via **jpackage** |
+| `xpman-fx-dist` | *(none)* | Distribution packaging — repackaged uber-jar → platform installers (.dmg/.pkg, .exe/.msi, .deb/.rpm) via **jpackage**; the macOS DMG is built with **dmgbuild** |
 
 - **Java 25** source/target (`maven.compiler.release=25`); requires JDK 25 to build.
 - **JPMS** is enforced — both xpman-api and xpman-fx have `module-info.java`. Most dependencies are explicit JPMS modules; **`commons-configuration`, `commons-lang`, `petitparser-core`, and `zip4j` are filename-based automatic modules** (declared under `// filename-based automodules` in `xpman-api/module-info.java`).
@@ -50,6 +50,14 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - `xpman-fx` opens packages to `javafx.base`, `javafx.fxml`, `spring.expression`, and `com.google.gson` for reflection access.
 - `com.ogerardin.xpman.scenery_organizer` is opened **unqualified** (to all modules, including the unnamed module) so SpEL's `ReflectivePropertyAccessor` can `setAccessible` on `LibrarySceneryClass` when running under IntelliJ's classpath layout (where Spring jars land in the unnamed module). A qualified `opens ... to spring.expression` is insufficient there.
 - The runtime `--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls` (ControlsFX compatibility) is passed via the jpackage `<javaOptions>` in `xpman-fx-dist/pom.xml` (per-OS profile). The legacy `xpman.l4j.ini` was removed with the launch4j migration.
+
+## macOS DMG (dmgbuild)
+
+- The macOS DMG is built with **dmgbuild** (a Python tool), **not** jpackage: the mac profile's `dmgbuild` exec-maven-plugin (phase `package`) runs `xpman-fx-dist/assets/mac/dmgbuild/build-dmg.sh` from the `.app` image produced by jpackage. The build is **strict** — if dmgbuild fails, the Maven build fails.
+- `build-dmg.sh` creates a Python venv at `xpman-fx-dist/target/.dmgbuild-venv` (PEP 668 blocks system pip) and installs dmgbuild there on first run; it finds Homebrew Pythons (`python3.14`…`python3.10`) or `/usr/local/bin/python3.{13,12}`.
+- DMG appearance is defined by `assets/mac/dmgbuild/settings.py` and reproduced **pixel-perfect** from the old jpackage DMG (window rect, icon grid positions, icon/text size, background, volume icon). `background.tiff` and `VolumeIcon.icns` are committed byte-identical artifacts.
+- `settings.py` is `exec`'d by dmgbuild with the options dict as its namespace: `defines` (from `-D key=value` on the CLI) is available, but **`__file__` is NOT** — always use `defines["SCRIPT_DIR"]` for paths, and `build-dmg.sh` must pass `-D SCRIPT_DIR="${SCRIPT_DIR}"`.
+- Do **not** add an `@2x` background sibling next to `background.tiff` — dmgbuild would invoke `tiffutil` and produce a different file than the committed one.
 
 ## CI & Dependencies
 
