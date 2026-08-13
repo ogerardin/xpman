@@ -61,8 +61,9 @@ mvn test -pl xpman-api -Dtest=ParserTest
 
 ## CI & Dependencies
 
-- **CircleCI** builds on Linux, macOS, and Windows (see `.circleci/config.yml`).
-- **AppVeyor** is a backup CI, currently green, and builds on Linux, macOS, and Windows (see `.appveyor.yml`). Note the Windows quirks it works around: the VS 2022 image's default `java` on PATH is 1.8 (JAVA_HOME is pinned to the pre-installed JDK 25 dir), and ImageMagick is installed via `choco ... --ignore-dependencies` (its `kb2999226` dependency lookup is flaky and unnecessary on Server 2022).
+- **CircleCI** builds on Linux, macOS, and Windows **on `main` only** (branch-filtered in `.circleci/config.yml`); feature branches and PRs never trigger it. Its `publish-github-release` job therefore only publishes from `main`.
+- **GitHub Actions** is an additional CI (see `.github/workflows/build.yml`) building the same 3 OSes on `push` to `main` and on `pull_request`, producing artifacts (`.deb/.rpm`, `.exe/.msi`, `.pkg/.dmg` + repackaged jars) but **no release**. It is the pre-merge CI for feature branches/PRs. Runner toolchains (Maven, JDK 25, ImageMagick, Inno Setup, WiX, Python) are pre-installed on the images; JDK 25 is wired via runner env vars (`JAVA_HOME_25_X64` / `JAVA_HOME_25_arm64`) written to `GITHUB_ENV`/`GITHUB_PATH` (the `env` context does not expose them). **Temporary test-lane convention:** a test branch can be temporarily added to `on.push.branches` (e.g. `feat/github-actions`) to run GHA on it in isolation — remember to remove it before merging. Never use `[skip ci]`/`[ci skip]` markers: they skip **all** three CIs.
+- **AppVeyor** is a backup CI, currently green, and builds on Linux, macOS, and Windows **on `main` only** (see `.appveyor.yml`). Note the Windows quirks it works around: the VS 2022 image's default `java` on PATH is 1.8 (JAVA_HOME is pinned to the pre-installed JDK 25 dir), and ImageMagick is installed via `choco ... --ignore-dependencies` (its `kb2999226` dependency lookup is flaky and unnecessary on Server 2022).
 - **Dependabot** manages version bumps (labels: `dependencies`, `java`).
 - pecoff4j dependency comes from **Jitpack** repository (needed for reading Windows PE executables on non-Windows platforms).
 

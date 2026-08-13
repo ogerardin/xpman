@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feat/github-actions]
+  pull_request:
+
+jobs:
+  linux:
+    name: Linux (x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jpackage tools (deb/rpm)
+        run: sudo apt-get update && sudo apt-get install -y rpm fakeroot
+
+      - name: Configure JDK 25
+        run: |
+          echo "JAVA_HOME=${JAVA_HOME_25_X64}" >> "$GITHUB_ENV"
+          echo "${JAVA_HOME_25_X64}/bin" >> "$GITHUB_PATH"
+
+      - name: Cache Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      - name: Build
+        run: |
+          mvn -v
+          mvn -B -DskipTests clean package
+
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir -p dist/artifacts
+          cp xpman-fx-dist/target/*.deb dist/artifacts/
+          cp xpman-fx-dist/target/*.rpm dist/artifacts/
+          for f in xpman-fx-dist/target/*-repackaged.jar; do
+            cp "$f" "dist/artifacts/$(basename "$f" | sed -e "s/-fx-dist//" -e "s/repackaged/linux/")"
+          done
+          ls -l dist/artifacts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/artifacts
+          if-no-files-found: error
+
+  windows:
+    name: Windows (x64)
+    runs-on: windows-2025
+    timeout-minutes: 120
+    env:
+      MAVEN_OPTS: -Dstdout.encoding=UTF-8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure JDK 25
+        shell: pwsh
+        run: |
+          "JAVA_HOME=$env:JAVA_HOME_25_X64" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "$env:JAVA_HOME_25_X64\bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+      - name: Ensure WIX env var (jpackage MSI)
+        shell: pwsh
+        run: |
+          if (-not $env:WIX) {
+            $wix = Get-ChildItem "C:\Program Files (x86)\WiX Toolset*" -Directory -ErrorAction SilentlyContinue |
+              Sort-Object Name -Descending | Select-Object -First 1
+            if ($wix) { "WIX=$($wix.FullName)" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV }
+          }
+
+      - name: Cache Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      - name: Build
+        shell: pwsh
+        run: |
+          mvn -v
+          mvn -B -DskipTests clean package
+
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir -p dist/artifacts
+          cp xpman-fx-dist/target/*.exe dist/artifacts/
+          cp xpman-fx-dist/target/*.msi dist/artifacts/
+          for f in xpman-fx-dist/target/*-repackaged.jar; do
+            cp "$f" "dist/artifacts/$(basename "$f" | sed -e "s/-fx-dist//" -e "s/repackaged/windows/")"
+          done
+          ls -l dist/artifacts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/artifacts
+          if-no-files-found: error
+
+  mac:
+    name: macOS (ARM64)
+    runs-on: macos-26
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure JDK 25
+        run: |
+          echo "JAVA_HOME=${JAVA_HOME_25_arm64:?JDK 25 (arm64) not found on this runner}" >> "$GITHUB_ENV"
+          echo "${JAVA_HOME_25_arm64}/bin" >> "$GITHUB_PATH"
+
+      - name: Cache Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      - name: Build (incl. DMG via dmgbuild)
+        run: |
+          mvn -v
+          mvn -B -DskipTests clean package
+
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir -p dist/artifacts
+          for f in xpman-fx-dist/target/*.pkg xpman-fx-dist/target/*.dmg xpman-fx-dist/target/*-repackaged.jar; do
+            [ -e "$f" ] || continue
+            cp "$f" "dist/artifacts/$(basename "$f" | sed -e "s/-fx-dist//" -e "s/repackaged/mac/")"
+          done
+          ls -l dist/artifacts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac
+          path: dist/artifacts
+          if-no-files-found: error
