@@ -150,34 +150,7 @@
             <id>jpackage-mac</id>
             <build>
                 <plugins>
-                    <!--Convert PNG icon (extracted from xpman-fx) to .icns format
-                        Uses sips which is a macOS native command-->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>convert-icon-to-icns</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>sips</executable>
-                                    <arguments>
-                                        <argument>-s</argument>
-                                        <argument>format</argument>
-                                        <argument>icns</argument>
-                                        <argument>${project.build.directory}/img/icon.png</argument>
-                                        <argument>--out</argument>
-                                        <argument>${project.build.directory}/img/icon.icns</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- jpackage: generates .app, .dmg, and .pkg -->
+                    <!-- jpackage: generates .app and .pkg -->
 
                     <!-- Prepare jpackage input directory with just the repackaged JAR -->
                     <plugin>
@@ -238,28 +211,6 @@
                                     <verbose>true</verbose>
                                 </configuration>
                             </execution>
-                            <!-- Build DMG from the app image -->
-                            <execution>
-                                <id>jpackage-dmg</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jpackage</goal>
-                                </goals>
-                                <configuration>
-                                    <type>DMG</type>
-                                    <name>${app.name}</name>
-                                    <appVersion>${jpackage.version}</appVersion>
-                                    <vendor>${app.vendor}</vendor>
-                                    <description>${app.description}</description>
-                                    <copyright>${app.copyright}</copyright>
-                                    <licenseFile>${project.basedir}/../LICENSE</licenseFile>
-                                    <appImage>${project.build.directory}/${app.name}.app</appImage>
-                                    <resourceDir>${project.basedir}/assets/mac/jpackage</resourceDir>
-                                    <destination>${project.build.directory}</destination>
-                                    <removeDestination>false</removeDestination>
-                                    <verbose>true</verbose>
-                                </configuration>
-                            </execution>
                             <!-- Build PKG from the app image -->
                             <execution>
                                 <id>jpackage-pkg</id>
@@ -279,6 +230,51 @@
                                     <destination>${project.build.directory}</destination>
                                     <removeDestination>false</removeDestination>
                                     <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Convert PNG icon (extracted from xpman-fx) to .icns format
+                        Uses sips which is a macOS native command; then build the polished DMG
+                        from the app image with dmgbuild (replaces jpackage's plain DMG).
+                        Declared AFTER jpackage-maven-plugin so this package-phase execution
+                        runs after the .app image has been generated. -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>convert-icon-to-icns</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>sips</executable>
+                                    <arguments>
+                                        <argument>-s</argument>
+                                        <argument>format</argument>
+                                        <argument>icns</argument>
+                                        <argument>${project.build.directory}/img/icon.png</argument>
+                                        <argument>--out</argument>
+                                        <argument>${project.build.directory}/img/icon.icns</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>dmgbuild</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/assets/mac/dmgbuild/build-dmg.sh</argument>
+                                        <argument>${app.name}</argument>
+                                        <argument>${jpackage.version}</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

@@ -182,11 +182,13 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-linux
+      # TEMPORARILY DISABLED (mac DMG work in progress) - re-enable from git history.
+      # Note: publish-github-release requires all three builds, so it is disabled too.
+      # - build-linux
       - build-mac
-      - build-windows
-      - publish-github-release:
-          requires:
-            - build-linux
-            - build-mac
-            - build-windows
+      # - build-windows
+      # - publish-github-release:
+      #     requires:
+      #       - build-linux
+      #       - build-mac
+      #       - build-windows
