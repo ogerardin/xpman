@@ -10,10 +10,6 @@ image:
   - Visual Studio 2022
   - Ubuntu
   - macos-sonoma
-
-# Build mode defaults to "MSBuild" unless a top-level build_script is present.
-# The macOS build steps live here at the top level; the Linux/Windows for:
-# blocks below override these settings for their images.
 cache:
   - $HOME/.m2
   - $HOME/temurin25
