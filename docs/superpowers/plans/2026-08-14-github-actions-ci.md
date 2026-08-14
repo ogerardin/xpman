@@ -12,10 +12,12 @@ Add **GitHub Actions** as a third CI pipeline for XPman, running **alongside** t
 
 Artifacts only — **no release publishing** on GHA (CircleCI keeps its `publish-github-release` job).
 
+> **Amended (same day, confirmed with user):** release publishing **moved to GHA**. On every `main` push the new `release` job (after `linux`/`windows`/`mac`) downloads the artifacts and runs `gh release create "$VERSION" artifacts/* --target "$GITHUB_SHA" --title "$VERSION ($DATE)" --generate-notes`, delete-then-recreate (tag = `$VERSION`, same semantics as the old `ghr -delete`). Version via `mvn help:evaluate` on the runner's default JDK (no JDK 25 needed in the release job). CircleCI's `publish-github-release` job is **kept but disabled by default** via a `publish-release` pipeline parameter (boolean, default `false`, checked in an expression-based `filters` on the workflow entry) — it only runs when a pipeline is explicitly triggered with `{"parameters": {"publish-release": true}}`. The release-model decision (create-if-missing vs tag-based vs delete-then-recreate) is deferred.
+
 ## Decisions (confirmed with user)
 
 1. GHA is an **additional** CI, not a replacement — CircleCI and AppVeyor stay.
-2. **No release publishing** from GHA — default read-only token is enough; no release job.
+2. ~~**No release publishing** from GHA — default read-only token is enough; no release job.~~ **Amended:** GHA is the release publisher (every `main` push, delete-then-recreate, `--generate-notes`); the `release` job needs `permissions: contents: write` + `GH_TOKEN: github.token`. CircleCI keeps its release job but disabled via `pipeline.parameters.publish-release` (default `false`).
 3. Triggers: `push` to `main` + `pull_request`. During testing only, `feat/github-actions` is temporarily added to `push.branches` as a test lane.
 4. CircleCI is restricted to **`main` only** so feature branches never trigger it (removes the need for `[skip ci]`-style markers). This is a permanent behavior change:
    - CircleCI no longer builds feature branches or PRs — GHA becomes the pre-merge CI.

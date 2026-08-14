@@ -2,6 +2,14 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+# Release publishing has moved to GitHub Actions (see .github/workflows/build.yml).
+# This job is kept but disabled by default: it only runs when a pipeline is
+# triggered with the "publish-release" parameter set to true (API or web app).
+parameters:
+  publish-release:
+    type: boolean
+    default: false
+
 orbs:
   win: circleci/windows@2.4.0
 
@@ -201,6 +209,5 @@ workflows:
             - build-linux
             - build-mac
             - build-windows
-          filters:
-            branches:
-              only: main
+          filters: |
+            pipeline.git.branch == "main" and pipeline.parameters.publish-release
