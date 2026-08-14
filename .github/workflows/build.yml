@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install jpackage tools (deb/rpm)
         run: sudo apt-get update && sudo apt-get install -y rpm fakeroot
@@ -22,7 +22,7 @@ jobs:
           echo "${JAVA_HOME_25_X64}/bin" >> "$GITHUB_PATH"
 
       - name: Cache Maven repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2
           key: maven-${{ hashFiles('**/pom.xml') }}
@@ -45,7 +45,7 @@ jobs:
           ls -l dist/artifacts
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: linux
           path: dist/artifacts
@@ -58,7 +58,7 @@ jobs:
     env:
       MAVEN_OPTS: -Dstdout.encoding=UTF-8
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure JDK 25
         shell: pwsh
@@ -76,7 +76,7 @@ jobs:
           }
 
       - name: Cache Maven repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2
           key: maven-${{ hashFiles('**/pom.xml') }}
@@ -100,7 +100,7 @@ jobs:
           ls -l dist/artifacts
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: windows
           path: dist/artifacts
@@ -111,7 +111,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure JDK 25
         run: |
@@ -119,7 +119,7 @@ jobs:
           echo "${JAVA_HOME_25_arm64}/bin" >> "$GITHUB_PATH"
 
       - name: Cache Maven repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2
           key: maven-${{ hashFiles('**/pom.xml') }}
@@ -141,7 +141,7 @@ jobs:
           ls -l dist/artifacts
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mac
           path: dist/artifacts
@@ -155,10 +155,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
           merge-multiple: true
