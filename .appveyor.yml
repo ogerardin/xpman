@@ -40,8 +40,9 @@ build_script:
     fi
     export JAVA_HOME="$JDK_DIR/Contents/Home"
     export PATH="$JAVA_HOME/bin:$MAVEN_DIR/bin:$PATH"
+    export REVISION=$(bash scripts/ci-version.sh "${APPVEYOR_REPO_TAG_NAME:-}" | sed -n 's/^REVISION=//p')
     mvn -v
-    mvn -B -DskipTests clean package
+    mvn -B -DskipTests clean package -Drevision="$REVISION" -Pinstallers
 
 for:
 -
@@ -67,8 +68,9 @@ for:
   - sh: |
       export JAVA_HOME=${JAVA_HOME_25_X64}
       export PATH=${JAVA_HOME_25_X64}/bin:$PATH
+      export REVISION=$(bash scripts/ci-version.sh "${APPVEYOR_REPO_TAG_NAME:-}" | sed -n 's/^REVISION=//p')
       mvn -v
-      mvn -B -DskipTests clean package
+      mvn -B -DskipTests clean package -Drevision="$REVISION" -Pinstallers
   artifacts:
     - path: xpman-fx-dist/target/*.deb
     - path: xpman-fx-dist/target/*.rpm
@@ -105,11 +107,12 @@ for:
         if (-not $jdk) { throw "JDK 25 not found under C:\Program Files\Java" }
         $env:JAVA_HOME = $jdk.FullName
         $env:Path = "$env:JAVA_HOME\bin;$imHome;$env:Path"
+        $env:REVISION = (& "C:\Program Files\Git\bin\bash.exe" -c 'bash scripts/ci-version.sh "${APPVEYOR_REPO_TAG_NAME:-}"' | Select-String '^REVISION=').Line.Split('=', 2)[1]
         mvn -v
         # Run via cmd so the 2>&1 stream merge happens there: Maven on JDK 25
         # prints a sun.misc.Unsafe deprecation warning to stderr, and PowerShell
         # wraps redirected stderr in ErrorRecord/NativeCommandError noise.
-        cmd /c "mvn -B -DskipTests clean package 2>&1"
+        cmd /c "mvn -B -DskipTests clean package -Drevision=%REVISION% -Pinstallers 2>&1"
         Write-Host "Maven exit code: $LASTEXITCODE"
         if ($LASTEXITCODE -ne 0) { throw "Maven build failed with exit code $LASTEXITCODE" }
       } catch {

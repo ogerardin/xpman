@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.ogerardin.xplane</groupId>
         <artifactId>xpman</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>xpman-fx-dist</artifactId>
@@ -33,13 +33,17 @@
         <!-- xpman-fx-dist adds no third-party dependencies of its own (only xpman-fx), so its
             dependency-check scan would be a strict subset of xpman-fx's: skip it here. -->
         <dependency-check.skip>true</dependency-check.skip>
+        <!-- Installer generation (jpackage/.app/.pkg/.dmg/.exe/.msi/.deb/.rpm) is skipped by default
+            for local builds; the "installers" profile (or -Dbuild.installers=true) sets this to false.
+            The OS profiles still auto-activate on the build host, but their plugin executions honor this flag. -->
+        <installers.skip>true</installers.skip>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.ogerardin.xplane</groupId>
             <artifactId>xpman-fx</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
@@ -87,7 +91,7 @@
                                 <artifactItem>
                                     <groupId>com.ogerardin.xplane</groupId>
                                     <artifactId>xpman-fx</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
+                                    <version>${revision}</version>
                                     <type>jar</type>
                                     <includes>img/icon.png</includes>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
@@ -156,6 +160,9 @@
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>3.3.1</version>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>copy-jpackage-input</id>
@@ -181,6 +188,9 @@
                     <plugin>
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <!-- Build the application image (.app) first -->
                             <execution>
@@ -243,6 +253,9 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>convert-icon-to-icns</id>
@@ -298,6 +311,9 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>convert-icon-to-ico</id>
@@ -323,6 +339,9 @@
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>3.3.1</version>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>copy-jpackage-input</id>
@@ -349,6 +368,9 @@
                     <plugin>
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <!-- Build the application image -->
                             <execution>
@@ -449,6 +471,9 @@
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>3.3.1</version>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>copy-jpackage-input</id>
@@ -475,6 +500,9 @@
                     <plugin>
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>${installers.skip}</skip>
+                        </configuration>
                         <executions>
                             <!-- Build the application image -->
                             <execution>
@@ -557,6 +585,22 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Force-enables installer generation. The OS profiles above still auto-activate on the build host,
+            but their installer plugin executions honor installers.skip (default true, set in <properties>);
+            this profile flips it to false. Activated explicitly with -Pinstallers (or -Dbuild.installers=true),
+            e.g. by CI or when a local installer build is wanted. -->
+        <profile>
+            <id>installers</id>
+            <activation>
+                <property>
+                    <name>build.installers</name>
+                </property>
+            </activation>
+            <properties>
+                <installers.skip>false</installers.skip>
+            </properties>
         </profile>
 
     </profiles>

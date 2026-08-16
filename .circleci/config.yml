@@ -31,12 +31,18 @@ jobs:
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
+          name: Compute version
+          command: |
+            source scripts/ci-version.sh "${CIRCLE_TAG:-}"
+            echo "export REVISION=${REVISION}" >> "${BASH_ENV}"
+            echo "export IS_SNAPSHOT=${IS_SNAPSHOT}" >> "${BASH_ENV}"
+      - run:
           name: Build
           environment:
             JAVA_HOME: /usr/lib/jvm/java-25-openjdk-amd64
           command: |
             mvn -v
-            mvn -B -DskipTests clean package
+            mvn -B -DskipTests clean package -Drevision="${REVISION}" -Pinstallers
       - save_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
@@ -44,10 +50,14 @@ jobs:
       - run:
           name: Prepare artifacts
           command: |
-            mkdir -p workspace/artifacts            
-            cp xpman-fx-dist/target/*.deb workspace/artifacts
-            cp xpman-fx-dist/target/*.rpm workspace/artifacts
-            for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/linux/"); done
+            mkdir -p workspace/artifacts
+            SNAP=""
+            [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
+            for f in xpman-fx-dist/target/*.deb xpman-fx-dist/target/*.rpm; do
+              base=$(basename "$f")
+              cp "$f" "workspace/artifacts/${base%.*}${SNAP}.${base##*.}"
+            done
+            for f in xpman-fx-dist/target/*-repackaged.jar; do cp "$f" "workspace/artifacts/$(basename "$f" | sed "s/-fx-dist//" | sed "s/repackaged/linux/")"; done
             ls -l workspace/artifacts
 #      - store_artifacts:
 #          path: workspace/artifacts
@@ -81,13 +91,19 @@ jobs:
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
+          name: Compute version
+          command: |
+            source scripts/ci-version.sh "${CIRCLE_TAG:-}"
+            echo "export REVISION=${REVISION}" >> "${BASH_ENV}"
+            echo "export IS_SNAPSHOT=${IS_SNAPSHOT}" >> "${BASH_ENV}"
+      - run:
           name: Build
           timeout: 25m
           command: |
             /usr/libexec/java_home -V
             export JAVA_HOME=`/usr/libexec/java_home -v 25`
             mvn -v
-            mvn -B -DskipTests clean package
+            mvn -B -DskipTests clean package -Drevision="${REVISION}" -Pinstallers
       - save_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
@@ -96,7 +112,14 @@ jobs:
           name: Prepare artifacts
           command: |
             mkdir -p workspace/artifacts
-            for f in xpman-fx-dist/target/*.pkg xpman-fx-dist/target/*.dmg xpman-fx-dist/target/*-repackaged.jar; do
+            SNAP=""
+            [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
+            for f in xpman-fx-dist/target/*.pkg xpman-fx-dist/target/*.dmg; do
+              [ -e "$f" ] || continue
+              base=$(basename "$f")
+              cp "$f" "workspace/artifacts/${base%.*}${SNAP}.${base##*.}"
+            done
+            for f in xpman-fx-dist/target/*-repackaged.jar; do
               [ -e "$f" ] && cp "$f" "workspace/artifacts/$(basename "$f" | sed "s/-fx-dist//" | sed "s/repackaged/mac/")"
             done
             ls -l workspace/artifacts
@@ -134,13 +157,21 @@ jobs:
       - restore_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
       - run:
+          name: Compute version
+          shell: bash.exe
+          command: |
+            source scripts/ci-version.sh "${CIRCLE_TAG:-}"
+            echo "export REVISION=${REVISION}" >> "${BASH_ENV}"
+            echo "export IS_SNAPSHOT=${IS_SNAPSHOT}" >> "${BASH_ENV}"
+      - run:
           name: Build
           timeout: 25m
+          shell: bash.exe
           environment:
             MAVEN_OPTS: -Dstdout.encoding=UTF-8
           command: |
             mvn -v
-            mvn -B -DskipTests clean package
+            mvn -B -DskipTests clean package -Drevision="${REVISION}" -Pinstallers
       - save_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
@@ -150,9 +181,13 @@ jobs:
           shell: bash.exe
           command: |
             mkdir -p workspace/artifacts
-            cp xpman-fx-dist/target/*.exe workspace/artifacts
-            cp xpman-fx-dist/target/*.msi workspace/artifacts
-            for f in xpman-fx-dist/target/*-repackaged.jar; do cp $f workspace/artifacts/$(basename $f | sed "s/-fx-dist//" | sed "s/repackaged/windows/"); done
+            SNAP=""
+            [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
+            for f in xpman-fx-dist/target/*.exe xpman-fx-dist/target/*.msi; do
+              base=$(basename "$f")
+              cp "$f" "workspace/artifacts/${base%.*}${SNAP}.${base##*.}"
+            done
+            for f in xpman-fx-dist/target/*-repackaged.jar; do cp "$f" "workspace/artifacts/$(basename "$f" | sed "s/-fx-dist//" | sed "s/repackaged/windows/")"; done
             ls -l workspace/artifacts
 #      - store_artifacts:
 #          path: workspace\artifacts
@@ -179,14 +214,17 @@ jobs:
           name: Publish Release on GitHub
           command: |
             ls -lR workspace
-            VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            source scripts/ci-version.sh "${CIRCLE_TAG:-}"
             DATE=$(date +%Y-%m-%d)
+            PRERELEASE_FLAG=""
+            [ "${IS_SNAPSHOT:-0}" = "1" ] && PRERELEASE_FLAG="-prerelease"
             ghr -u ${CIRCLE_PROJECT_USERNAME} \
               -r ${CIRCLE_PROJECT_REPONAME} \
               -c ${CIRCLE_SHA1} \
-              -n "$VERSION ($DATE)" \
+              -n "$REVISION ($DATE)" \
               -delete \
-              "${VERSION}" \
+              ${PRERELEASE_FLAG} \
+              "${REVISION}" \
               workspace/artifacts/
 
 workflows:
