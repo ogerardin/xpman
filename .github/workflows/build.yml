@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ['[0-9]+.[0-9]+.[0-9]+']
   pull_request:
 
 jobs:
@@ -12,6 +13,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Install jpackage tools (deb/rpm)
         run: sudo apt-get update && sudo apt-get install -y rpm fakeroot
@@ -28,17 +31,28 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: maven-
 
+      - name: Compute version
+        shell: bash
+        run: |
+          source scripts/ci-version.sh "${GITHUB_REF_NAME:-}"
+          echo "REVISION=${REVISION}" >> "$GITHUB_ENV"
+          echo "IS_SNAPSHOT=${IS_SNAPSHOT}" >> "$GITHUB_ENV"
+
       - name: Build
         run: |
           mvn -v
-          mvn -B -DskipTests clean package
+          mvn -B -DskipTests clean package -Drevision="$REVISION" -Pinstallers
 
       - name: Prepare artifacts
         shell: bash
         run: |
           mkdir -p dist/artifacts
-          cp xpman-fx-dist/target/*.deb dist/artifacts/
-          cp xpman-fx-dist/target/*.rpm dist/artifacts/
+          SNAP=""
+          [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
+          for f in xpman-fx-dist/target/*.deb xpman-fx-dist/target/*.rpm; do
+            base=$(basename "$f")
+            cp "$f" "dist/artifacts/${base%.*}${SNAP}.${base##*.}"
+          done
           for f in xpman-fx-dist/target/*-repackaged.jar; do
             cp "$f" "dist/artifacts/$(basename "$f" | sed -e "s/-fx-dist//" -e "s/repackaged/linux/")"
           done
@@ -59,6 +73,8 @@ jobs:
       MAVEN_OPTS: -Dstdout.encoding=UTF-8
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Configure JDK 25
         shell: pwsh
@@ -82,18 +98,29 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: maven-
 
+      - name: Compute version
+        shell: bash
+        run: |
+          source scripts/ci-version.sh "${GITHUB_REF_NAME:-}"
+          echo "REVISION=${REVISION}" >> "$GITHUB_ENV"
+          echo "IS_SNAPSHOT=${IS_SNAPSHOT}" >> "$GITHUB_ENV"
+
       - name: Build
         shell: pwsh
         run: |
           mvn -v
-          mvn -B -DskipTests clean package
+          mvn -B -DskipTests clean package -Drevision="$env:REVISION" -Pinstallers
 
       - name: Prepare artifacts
         shell: bash
         run: |
           mkdir -p dist/artifacts
-          cp xpman-fx-dist/target/*.exe dist/artifacts/
-          cp xpman-fx-dist/target/*.msi dist/artifacts/
+          SNAP=""
+          [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
+          for f in xpman-fx-dist/target/*.exe xpman-fx-dist/target/*.msi; do
+            base=$(basename "$f")
+            cp "$f" "dist/artifacts/${base%.*}${SNAP}.${base##*.}"
+          done
           for f in xpman-fx-dist/target/*-repackaged.jar; do
             cp "$f" "dist/artifacts/$(basename "$f" | sed -e "s/-fx-dist//" -e "s/repackaged/windows/")"
           done
@@ -112,6 +139,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Configure JDK 25
         run: |
@@ -125,16 +154,30 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: maven-
 
+      - name: Compute version
+        shell: bash
+        run: |
+          source scripts/ci-version.sh "${GITHUB_REF_NAME:-}"
+          echo "REVISION=${REVISION}" >> "$GITHUB_ENV"
+          echo "IS_SNAPSHOT=${IS_SNAPSHOT}" >> "$GITHUB_ENV"
+
       - name: Build (incl. DMG via dmgbuild)
         run: |
           mvn -v
-          mvn -B -DskipTests clean package
+          mvn -B -DskipTests clean package -Drevision="$REVISION" -Pinstallers
 
       - name: Prepare artifacts
         shell: bash
         run: |
           mkdir -p dist/artifacts
-          for f in xpman-fx-dist/target/*.pkg xpman-fx-dist/target/*.dmg xpman-fx-dist/target/*-repackaged.jar; do
+          SNAP=""
+          [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
+          for f in xpman-fx-dist/target/*.pkg xpman-fx-dist/target/*.dmg; do
+            [ -e "$f" ] || continue
+            base=$(basename "$f")
+            cp "$f" "dist/artifacts/${base%.*}${SNAP}.${base##*.}"
+          done
+          for f in xpman-fx-dist/target/*-repackaged.jar; do
             [ -e "$f" ] || continue
             cp "$f" "dist/artifacts/$(basename "$f" | sed -e "s/-fx-dist//" -e "s/repackaged/mac/")"
           done
@@ -151,11 +194,13 @@ jobs:
     name: Publish GitHub Release
     runs-on: ubuntu-24.04
     needs: [linux, windows, mac]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Download artifacts
         uses: actions/download-artifact@v7
@@ -165,7 +210,9 @@ jobs:
 
       - name: Determine version
         run: |
-          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_ENV"
+          source scripts/ci-version.sh "${GITHUB_REF_NAME:-}"
+          echo "VERSION=${REVISION}" >> "$GITHUB_ENV"
+          echo "IS_SNAPSHOT=${IS_SNAPSHOT}" >> "$GITHUB_ENV"
           echo "DATE=$(date +%Y-%m-%d)" >> "$GITHUB_ENV"
 
       - name: Publish release
@@ -173,7 +220,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete "$VERSION" --yes --cleanup-tag 2>/dev/null || true
+          PRERELEASE=""
+          [ "${IS_SNAPSHOT:-0}" = "1" ] && PRERELEASE="--prerelease"
           gh release create "$VERSION" artifacts/* \
             --target "$GITHUB_SHA" \
             --title "$VERSION ($DATE)" \
-            --generate-notes
+            --generate-notes \
+            $PRERELEASE

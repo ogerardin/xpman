@@ -27,4 +27,4 @@ jdeps \
     --print-module-deps \
     --ignore-missing-deps \
     --multi-release ${TARGET_VER} \
-   ${TMP_DIR}/BOOT-INF/lib/xpman-fx-1.0-SNAPSHOT.jar
+   ${TMP_DIR}/BOOT-INF/lib/xpman-fx-1.0.1-SNAPSHOT.jar
