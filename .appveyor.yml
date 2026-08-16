@@ -6,6 +6,9 @@ branches:
   only:
     - main
 
+# Do not build on tags (GitHub, Bitbucket, GitLab, Gitea)
+skip_tags: true
+
 image:
   - Visual Studio 2022
   - Ubuntu
