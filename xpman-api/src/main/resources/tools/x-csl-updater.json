@@ -1,0 +1,24 @@
+{
+  "name": "X-CSL updater",
+  "homepage": "https://csl.x-air.ru/?lang_id=43",
+  "version": "1.3.3",
+  "description": "X-CSL is library of online traffic models for users of the X-Plane flight simulator who fly in IVAO network.",
+  "items": [
+    {
+      "platform": "MAC",
+      "url": "https://github.com/steptosky/x-csl-updater/releases/download/1.3.3/X-CSL-Updater_mac_1.3.3-fdf8d17.dmg",
+      "file": "X-CSL-Updater.app",
+      "installChecker": {
+        "string": "1.3.3"
+      }
+    },
+    {
+      "platform": "WINDOWS",
+      "url": "https://github.com/steptosky/x-csl-updater/releases/download/1.3.3/X-CSL-Updater_win_1.3.3-fdf8d17.zip",
+      "file": "X-CSL-Updater\\X-CSL-Updater.exe",
+      "installChecker": {
+        "string": "1.3.3"
+      }
+    }
+  ]
+}
