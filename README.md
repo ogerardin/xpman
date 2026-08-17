@@ -1,50 +1,81 @@
-![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=white)
-![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-
-![GitHub top language](https://img.shields.io/github/languages/top/ogerardin/xpman)
-![GPL-3.0](https://img.shields.io/github/license/ogerardin/xpman)
-[![Build Status](https://circleci.com/gh/ogerardin/xpman/tree/main.svg?style=shield)](https://app.circleci.com/pipelines/github/ogerardin/xpman?branch=main)
-[![Build status](https://ci.appveyor.com/api/projects/ogerardin/xpman/branch/main?svg=true)](https://ci.appveyor.com/project/ogerardin/xpman/branch/main)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/fd86ae4c0e164762babd6bf8059c02e7)](https://app.codacy.com/gh/ogerardin/xpman/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+![macOS](https://img.shields.io/badge/mac%20os-000000?style=flat-square&logo=macos&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)
+[![Build Status](https://github.com/ogerardin/xpman/actions/workflows/build.yml/badge.svg)](https://github.com/ogerardin/xpman/actions/workflows/build.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Maintainability](https://qlty.sh/gh/ogerardin/projects/xpman/maintainability.svg)](https://qlty.sh/gh/ogerardin/projects/xpman)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/fd86ae4c0e164762babd6bf8059c02e7)](https://app.codacy.com/gh/ogerardin/xpman/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-# X-Plane Manager
-X-Plane Manager (or XPman) is intended to be a configuration manager for Laminar Research's flight simulator [X-Plane](https://www.x-plane.com/) (version 11 and later).
+# XPman — X-Plane Manager
 
-Similar tools exist but they are not cross-platform, have limited functionality, are difficult to use or are payware.
+A cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 11 and 12.
 
+## Features
 
-## Goals 
-- Manage X-Plane aircraft and liveries, scenery packages, nav data, plugins and extensions
-- Work on all platforms supported by X-Plane (Windows, Mac, Linux)  
-- Offer idiomatic installation (e.g. setup.exe on Windows) and close-to-native look and feel
+- **Aircraft** — Install, delete, and manage aircraft and liveries. Recognize specific aircraft models for version checking and update notifications.
+- **Scenery** — Install scenery packages and auto-order `scenery_packs.ini` for optimal load order.
+- **Plugins** — Install and manage global plugins.
+- **Nav data** — List and manage navigation data sets.
+- **Tools** — Install and uninstall generic tools from manifest files.
+- **X-Plane updates** — Get notified when a new X-Plane version is available and start the updater.
+- **Disk usage** — View disk space consumed by each category (aircraft, scenery, plugins, etc.).
 
-## Status
-Currently in development stages. Some things work, some don't... 
-Check [feature status](docs/features.md).
+## Screenshots
 
-You know the drill: USE AT YOUR OWN RISK.
+![Main window](assets/screenshots/Screenshot%202026-08-18%20at%2001.32.55.png)
 
-# Installing X-Plane Manager
-Download the package appropriate for your platform from [GitHub releases](https://github.com/ogerardin/xpman/releases) and install
-it.
-All packages are bundled with a Java runtime so you don't have to worry about installing Java.
+![Aircraft tree](assets/screenshots/Screenshot%202026-08-18%20at%2001.33.32.png)
 
-## Windows
-When running the EXE or MSI, SmartScreen might display a dialog saying "Windows protected your PC".
-To run the installer you have to click on "More info" then "Run anyway". X-Plane Manager
-doesn't contain any malware, it's 100% open source and all the code used to build and package it
-is public and auditable.
+![Inspection results](assets/screenshots/Screenshot%202026-08-18%20at%2001.33.42.png)
 
-# Development
-X-Plane Manager is a Standalone JavaFX application built with **Java 25** and **JavaFX 25**. 
-Platform installers (.dmg/.pkg on macOS, .exe/.msi on Windows, .deb/.rpm on Linux) are produced via **jpackage**, each bundled with a platform-specific JRE. 
+![Scenery management](assets/screenshots/Screenshot%202026-08-18%20at%2001.33.48.png)
 
-It is split in 3 modules:
-- xpman-api is a pure Java API to interact with X-Plane's installation.
-- xpman-fx is the JavaFX UI built on top of xpman-api
-- xpman-fx-dist is responsible for packaging xpman-fx in distributable forms
+## Installation
 
+Download the latest release for your platform from [GitHub Releases](https://github.com/ogerardin/xpman/releases). All packages are bundled with a Java runtime — no separate Java installation required.
 
+| Platform | Format |
+|----------|--------|
+| macOS | `.dmg` or `.pkg` |
+| Windows | `.exe` or `.msi` |
+| Linux | `.deb` or `.rpm` |
 
+### Windows
+
+When running the EXE or MSI, Windows SmartScreen may display a warning. Click **More info** then **Run anyway** — XPman is 100% open source and all build code is public and auditable.
+
+### macOS
+
+macOS may block the app because it is not signed with an Apple Developer ID. Go to **System Settings > Privacy & Security** and click **Open Anyway** to allow it to run.
+
+## Development
+
+XPman is a standalone JavaFX desktop application.
+
+**Tech stack:** Java 25, JavaFX 25, Maven, Lombok, Gson, JUnit 5
+
+### Modules
+
+| Module | Purpose |
+|--------|---------|
+| `xpman-api` | Pure Java API — domain model, file parsers, inspection framework, install logic |
+| `xpman-fx` | JavaFX UI — FXML views, controllers, wizards, custom cell factories |
+| `xpman-fx-dist` | Distribution packaging — uber-jar repackaged into platform installers via jpackage |
+
+### Building
+
+Requires JDK 25.
+
+```bash
+# Full build (all modules, no tests)
+mvn -B -DskipTests clean package
+
+# Run tests
+mvn test
+```
+
+See [AGENTS.md](AGENTS.md) for detailed architecture, CI/CD, and testing information.
+
+## License
+
+XPman is licensed under the [GNU General Public License v3.0](LICENSE).
