@@ -163,6 +163,9 @@ jobs:
             source scripts/ci-version.sh "${CIRCLE_TAG:-}"
             echo "export REVISION=${REVISION}" >> "${BASH_ENV}"
             echo "export IS_SNAPSHOT=${IS_SNAPSHOT}" >> "${BASH_ENV}"
+            # Also write scoop shims to PATH so subsequent bash.exe steps can find mvn
+            SCOOP_SHIMS=$(cygpath -u "$USERPROFILE/scoop/shims" 2>/dev/null || true)
+            echo "export PATH=\"${SCOOP_SHIMS}:\${PATH}\"" >> "${BASH_ENV}"
       - run:
           name: Build
           timeout: 25m

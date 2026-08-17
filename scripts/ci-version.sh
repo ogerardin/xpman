@@ -21,13 +21,14 @@ set -euo pipefail
 SEMVER_REGEX='^[0-9]+\.[0-9]+\.[0-9]+$'
 
 # Parse "major.minor.incremental" into <prefix>_MAJOR/_MINOR/_INCREMENTAL variables.
+# Uses eval for bash 3.2 compatibility (printf -v is bash 4+).
 parse_version() {
     local version="$1" prefix="$2"
     local major minor incremental
     IFS='.' read -r major minor incremental <<< "$version"
-    printf -v "${prefix}_MAJOR" '%s' "$major"
-    printf -v "${prefix}_MINOR" '%s' "$minor"
-    printf -v "${prefix}_INCREMENTAL" '%s' "$incremental"
+    eval "${prefix}_MAJOR=\${major}"
+    eval "${prefix}_MINOR=\${minor}"
+    eval "${prefix}_INCREMENTAL=\${incremental}"
 }
 
 compute_version() {
