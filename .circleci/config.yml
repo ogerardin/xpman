@@ -161,20 +161,22 @@ jobs:
           shell: bash.exe
           command: |
             source scripts/ci-version.sh "${CIRCLE_TAG:-}"
-            echo "export REVISION=${REVISION}" >> "${BASH_ENV}"
-            echo "export IS_SNAPSHOT=${IS_SNAPSHOT}" >> "${BASH_ENV}"
-            # Also write scoop shims to PATH so subsequent bash.exe steps can find mvn
-            SCOOP_SHIMS=$(cygpath -u "$USERPROFILE/scoop/shims" 2>/dev/null || true)
-            echo "export PATH=\"${SCOOP_SHIMS}:\${PATH}\"" >> "${BASH_ENV}"
+            mkdir -p workspace
+            echo "${REVISION}" > workspace/revision.txt
+            echo "${IS_SNAPSHOT}" > workspace/is_snapshot.txt
+            echo "REVISION=${REVISION}"
       - run:
           name: Build
           timeout: 25m
-          shell: bash.exe
           environment:
             MAVEN_OPTS: -Dstdout.encoding=UTF-8
           command: |
+            $REVISION = (Get-Content workspace\revision.txt -ErrorAction SilentlyContinue).Trim()
+            if (-not $REVISION) { $REVISION = "0.0.0-UNKNOWN" }
+            $env:REVISION = $REVISION
+            Write-Host "Building with REVISION=$REVISION"
             mvn -v
-            mvn -B -DskipTests clean package -Drevision="${REVISION}" -Pinstallers
+            cmd /c "mvn -B -DskipTests clean package -Drevision=%REVISION% -Pinstallers"
       - save_cache:
           key: maven-{{ checksum "effective-pom.xml" }}-{{ arch }}
           paths:
@@ -183,6 +185,8 @@ jobs:
           name: Prepare artifacts
           shell: bash.exe
           command: |
+            REVISION=$(cat workspace/revision.txt)
+            IS_SNAPSHOT=$(cat workspace/is_snapshot.txt)
             mkdir -p workspace/artifacts
             SNAP=""
             [ "${IS_SNAPSHOT:-0}" = "1" ] && SNAP="-SNAPSHOT"
