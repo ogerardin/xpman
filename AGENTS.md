@@ -20,7 +20,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - The build uses **Maven CI-friendly versions** (`${revision}`, local default in the root POM) — see **Versioning** below. CI always overrides it with `-Drevision` computed by `scripts/ci-version.sh`.
 
 - Many xpman-api tests access a real X-Plane installation discovered via auto-detection of common install locations (or optionally `XPMAN_XPLANE_ROOT` env var). Tests use `@EnableOnLocalXPlane` / `@EnableOnLocalXPlane11` / `@EnableOnLocalXPlane12` / `@EnableOnAircraftPresent` / `@EnableOnSceneryPresent` to skip when requirements aren't met.
-- There is **no lint** or **typecheck** step beyond the compiler. The project previously had SonarCloud/Codacy but SonarCloud has been removed.
+- There is **no lint** or **typecheck** step beyond the compiler. The project previously had SonarCloud/Codacy but both have been removed.
 
 ## Architecture
 
