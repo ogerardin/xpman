@@ -89,7 +89,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
             System.getProperties().entrySet().stream()
                     .sorted(Comparator.comparing(entry -> (String) entry.getKey()))
                     .map(entry -> String.format("  %s: %s", entry.getKey(), entry.getValue()))
-                    .forEach(log::info);
+                    .forEach(log::debug);
         } else {
             // just dump a few selected properties
             Stream.of("java.vendor", "java.version", "os.arch", "os.name", "os.version")

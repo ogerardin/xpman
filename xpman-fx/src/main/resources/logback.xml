@@ -25,7 +25,7 @@
     <logger name="com.ogerardin.xpman.util.SpelUtil" level="INFO" />
     <logger name="com.ogerardin.xpman.util.jfx.menu" level="INFO" />
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE" />
 <!--        <appender-ref ref="FILE" />-->
     </root>
