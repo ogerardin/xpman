@@ -4,7 +4,6 @@
 [![Build Status](https://github.com/ogerardin/xpman/actions/workflows/build.yml/badge.svg)](https://github.com/ogerardin/xpman/actions/workflows/build.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Maintainability](https://qlty.sh/gh/ogerardin/projects/xpman/maintainability.svg)](https://qlty.sh/gh/ogerardin/projects/xpman)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/fd86ae4c0e164762babd6bf8059c02e7)](https://app.codacy.com/gh/ogerardin/xpman/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 # XPman — X-Plane Manager
 
