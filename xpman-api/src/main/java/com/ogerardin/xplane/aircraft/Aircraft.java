@@ -153,12 +153,12 @@ public class Aircraft extends XPlaneObject implements Inspectable {
 
     @SuppressWarnings("unused")
     public Path getThumb() {
-        return getAcfDerivedFile("_icon11_thumb.png");
+        return getAcfDerivedFileIfExists("_icon11_thumb.png");
     }
 
     @SuppressWarnings("unused")
     public Path getIcon() {
-        return getAcfDerivedFile("_icon11.png");
+        return getAcfDerivedFileIfExists("_icon11.png");
     }
 
     private Path getAcfDerivedFile(String suffix) {
@@ -166,6 +166,11 @@ public class Aircraft extends XPlaneObject implements Inspectable {
         String acfFilename = file.getFileName().toString();
         String derivedFilename = FilenameUtils.removeExtension(acfFilename) + suffix;
         return file.resolveSibling(derivedFilename);
+    }
+
+    private Path getAcfDerivedFileIfExists(String suffix) {
+        Path file = getAcfDerivedFile(suffix);
+        return Files.exists(file) ? file : null;
     }
 
     @SneakyThrows

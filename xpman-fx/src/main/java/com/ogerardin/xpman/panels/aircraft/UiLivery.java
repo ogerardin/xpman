@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.nio.file.Path;
+
 @Getter
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(callSuper = false)
@@ -32,6 +34,16 @@ public class UiLivery extends UiAircraft {
     @Override
     public String getLatestVersion() {
         return null;
+    }
+
+    @Override
+    public Path getIcon() {
+        return livery.getIcon();
+    }
+
+    @Override
+    public Path getThumb() {
+        return livery.getThumb();
     }
 
     @SuppressWarnings("unused")
