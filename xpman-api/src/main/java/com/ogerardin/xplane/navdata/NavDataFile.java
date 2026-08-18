@@ -35,8 +35,22 @@ public class NavDataFile implements NavDataItem {
     @EqualsAndHashCode.Exclude
     private final DatFile datFile = loadDatFile();
 
+    @Getter(lazy = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private final DatFileData data = loadData();
+
     private DatFile loadDatFile() {
         return new DatFile(getFullPath());
+    }
+
+    private DatFileData loadData() {
+        try {
+            return getDatFile().getData();
+        } catch (Exception e) {
+            log.info("Failed to parse {}: {}", getFullPath(), e.toString());
+            return null;
+        }
     }
 
     @Override
@@ -73,14 +87,6 @@ public class NavDataFile implements NavDataItem {
                 .map(DatFileData::getHeader)
                 .map(DatHeader::getBuild)
                 .orElse(null);
-    }
-    private DatFileData getData() {
-        try {
-            return getDatFile().getData();
-        } catch (Exception e) {
-            log.info("Failed to parse {}: {}", getFullPath(), e.toString());
-            return null;
-        }
     }
 
 }
