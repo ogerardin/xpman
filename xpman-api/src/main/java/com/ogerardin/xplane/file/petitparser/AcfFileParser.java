@@ -15,14 +15,42 @@ import static org.petitparser.parser.primitive.CharacterParser.noneOf;
 import static org.petitparser.parser.primitive.CharacterParser.of;
 import static org.petitparser.parser.primitive.StringParser.of;
 
+/**
+ * Parser for X-Plane ACF (aircraft configuration) files.
+ *
+ * <p>This parser handles the ACF file format which contains aircraft properties
+ * in key-value pairs within a PROPERTIES_BEGIN/PROPERTIES_END section.</p>
+ *
+ * <h2>Grammar Overview</h2>
+ * <pre>
+ * ACFFile = Header("ACF") Newlines Properties
+ * Properties = "PROPERTIES_BEGIN" Property* "PROPERTIES_END"
+ * Property = "P " name " " value Newline
+ * </pre>
+ *
+ * <h2>Usage Example</h2>
+ * <pre>{@code
+ * AcfFileParser parser = new AcfFileParser();
+ * AcfFileData data = parser.parse(acfContents);
+ * String version = data.getHeader().getSpecVersion();
+ * }</pre>
+ *
+ * @author Olivier G.
+ * @see AcfFileData
+ */
 @Slf4j
 public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
 
+    /**
+     * Required file type for ACF files.
+     */
     static final String REQUIRED_TYPE = "ACF";
 
     /**
      * Matches a full X-Plane aircraft file.
      * Upon successful match, pushes an instance of {@link AcfFileData}
+     *
+     * @return parser for ACF files
      */
     @Override
     public Parser XPlaneFile() {
@@ -37,6 +65,8 @@ public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
     /**
      * Matches a "properties" section.
      * Upon successful match, pushes an instance of {{@link AcfFileData.AcfProperties}}
+     *
+     * @return parser for properties section
      */
     @SuppressWarnings({"unchecked"})
     Parser Properties() {
@@ -52,10 +82,20 @@ public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
                 ;
     }
 
+    /**
+     * Parse the PROPERTIES_END marker.
+     *
+     * @return parser for properties end marker
+     */
     private Parser PropertiesEnd() {
         return of("PROPERTIES_END").seq(JunkLine()).flatten();
     }
 
+    /**
+     * Parse the PROPERTIES_BEGIN marker.
+     *
+     * @return parser for properties begin marker
+     */
     private Parser PropertiesBegin() {
         return of("PROPERTIES_BEGIN").seq(JunkLine()).flatten();
     }
@@ -63,6 +103,8 @@ public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
     /**
      * Matches a line with property name and value.
      * Upon successful match, pushes a {@link AcfProperty} instance
+     *
+     * @return parser for property lines
      */
     Parser Property() {
         return of("P ")
@@ -77,6 +119,8 @@ public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
     /**
      * Matches a property value.
      * Upon successful match, pushes the value as a String.
+     *
+     * @return parser for property values
      */
     Parser PropertyValue() {
         return noneOf("\r\n").plus().flatten();
@@ -85,11 +129,18 @@ public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
     /**
      * Matches a property name.
      * Upon successful match, pushes the name as a String.
+     *
+     * @return parser for property names
      */
     Parser PropertyName() {
         return PropertyNameChar().plus().flatten();
     }
 
+    /**
+     * Parse a property name character (alphanumeric, underscore, comma, slash).
+     *
+     * @return parser for property name characters
+     */
     Parser PropertyNameChar() {
         return Alphanumeric().or(anyOf("_,/"));
     }
