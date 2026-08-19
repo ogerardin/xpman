@@ -4,6 +4,8 @@ import com.ogerardin.xplane.XPlane;
 import lombok.ToString;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link NavDataSet} in the XPNAV1150/XPFIX1101/XPAWY1100/XPHOLD1140 formats
@@ -18,9 +20,9 @@ public class XPNavDataSet extends NavDataSet {
             "earth_hold.dat",
             "earth_mora.dat",
             "earth_msa.dat"
-            //TODO consider CIFP/$ICAO.dat files
     };
 
+    private final CIFPSummary cifpSummary;
 
     public XPNavDataSet(String name, String description, XPlane xPlane, Path folder) {
         this(name, description, xPlane, folder, DEFAULT_FILES);
@@ -28,5 +30,13 @@ public class XPNavDataSet extends NavDataSet {
 
     public XPNavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
         super(name, description, xPlane, folder, fileNames);
+        this.cifpSummary = new CIFPSummary(folder.resolve("CIFP"));
+    }
+
+    @Override
+    public List<? extends NavDataItem> getChildren() {
+        List<NavDataItem> children = new ArrayList<>(super.getChildren());
+        children.add(cifpSummary);
+        return children;
     }
 }

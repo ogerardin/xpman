@@ -25,6 +25,25 @@ public class NavDataFile implements NavDataItem {
 
     private final Path file;
 
+    /**
+     * When set, {@link #getFullPath()} returns this path directly instead of
+     * resolving {@link #file} against the parent folder. Used for files that
+     * live outside the NavDataSet's primary folder (e.g. XP12 airspaces/atc data).
+     */
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Path absolutePath = null;
+
+    /**
+     * Creates a NavDataFile backed by an absolute path, bypassing the normal
+     * folder-relative resolution.
+     */
+    public static NavDataFile of(NavDataSet navDataSet, Path absolutePath) {
+        NavDataFile f = new NavDataFile(navDataSet, absolutePath.getFileName());
+        f.setAbsolutePath(absolutePath);
+        return f;
+    }
+
     @Override
     public Path getPath() {
         return getFullPath();
@@ -65,7 +84,7 @@ public class NavDataFile implements NavDataItem {
     }
 
     private Path getFullPath() {
-        return navDataSet.getFolder().resolve(file);
+        return absolutePath != null ? absolutePath : navDataSet.getFolder().resolve(file);
     }
 
     public String getAiracCycle() {

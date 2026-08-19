@@ -50,6 +50,15 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
                 .toList();
     }
 
+    /**
+     * Adds an extra file to this data set after construction.
+     * Used for version-specific files (e.g. XP12 airspaces/atc data).
+     */
+    protected void addExtraFile(NavDataFile file) {
+        files = new ArrayList<>(files);
+        files.add(file);
+    }
+
 
     @Override
     public InspectionResult inspect() {

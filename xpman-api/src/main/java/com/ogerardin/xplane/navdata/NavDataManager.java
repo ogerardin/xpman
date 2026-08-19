@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
@@ -88,7 +89,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet baseNavData() {
-        return new XPNavDataSet("Base (shipped with X-Plane)",
+        XPNavDataSet dataSet = new XPNavDataSet("Base (shipped with X-Plane)",
                 "<h3><span id=\"The_base_-_what_is_shipped_with_X-Plane\">The base &#8211; what is shipped with X-Plane:</span></h3>\n" +
                         "<p>X-Plane 11/12 ships with a global base layer of data that enables IFR navigation world-wide. The data cycle represented by those files will remain the same over the lifetime of X-Plane 12.<br />\n" +
                         "    These files are:</p>\n" +
@@ -107,10 +108,18 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>Resources/default scenery/1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)</li>\n" +
                         "</ul>\n",
                 xPlane, xPlane.getPaths().defaultData());
+        if (xPlane.getMajorVersion() == XPlaneMajorVersion.XP12) {
+            dataSet.addExtraFile(NavDataFile.of(dataSet,
+                    xPlane.getPaths().defaultData().resolve("airspaces").resolve("airspace.txt")));
+            dataSet.addExtraFile(NavDataFile.of(dataSet,
+                    xPlane.getPaths().resources().resolve("default scenery")
+                            .resolve("1200 atc data").resolve("Earth nav data").resolve("atc.dat")));
+        }
+        return dataSet;
     }
 
     private NavDataSet updatedBaseNavData() {
-        return new XPNavDataSet("Updated base (supplied by third-parties)",
+        XPNavDataSet dataSet = new XPNavDataSet("Updated base (supplied by third-parties)",
                 "<h3><span id=\"The_updated_base_-_what_is_supplied_by_third-party_providers\">The updated base &#8211; what is supplied by third-party providers</span></h3>\n" +
                         "<p>This layer is what advanced hobbyist users care about. They want updated data, because they want to fly online. Participation in the online networks usually requires fairly recent data. Aerosoft and Navigraph offer newest data by a monthly subscription. This data consists of the files:</p>\n" +
                         "<ul>\n" +
@@ -127,9 +136,14 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<p>they must be located in <strong>$X-Plane/Custom Data/</strong></p>\n" +
                         "<p>These files completely replace the base layer of X-Plane. If these files are present, the X-Plane base layer is ignored. Note that because of the referential integrity, it is not possible to update just the earth_fix.dat and not the earth_awy.dat. Upon load, it is checked that all files are of the same cycle number. Mix-matching different cycles is not supported.</p>\n",
                 xPlane, xPlane.getPaths().customData());
-        //TODO consider additional files:
-        //airspaces/airspace.txt (starting with X-Plane 12)
-        //1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)
+        if (xPlane.getMajorVersion() == XPlaneMajorVersion.XP12) {
+            dataSet.addExtraFile(NavDataFile.of(dataSet,
+                    xPlane.getPaths().customData().resolve("airspaces").resolve("airspace.txt")));
+            dataSet.addExtraFile(NavDataFile.of(dataSet,
+                    xPlane.getPaths().customData().resolve("1200 atc data")
+                            .resolve("Earth nav data").resolve("atc.dat")));
+        }
+        return dataSet;
     }
 
     private NavDataSet faaUpdatedApproaches() {
