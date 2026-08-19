@@ -64,10 +64,14 @@ public class NavDataFile implements NavDataItem {
     }
 
     private DatFileData loadData() {
+        if (!Files.exists(getFullPath())) {
+            log.debug("Nav data file not found: {}", getFullPath());
+            return null;
+        }
         try {
             return getDatFile().getData();
         } catch (Exception e) {
-            log.info("Failed to parse {}: {}", getFullPath(), e.toString());
+            log.warn("Failed to parse {}: {}", getFullPath(), e.toString());
             return null;
         }
     }
