@@ -65,6 +65,6 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
 
     @Override
     public Boolean getExists() {
-        return files.stream().map(NavDataFile::getFile).anyMatch(Files::exists);
+        return files.stream().map(NavDataFile::getPath).anyMatch(Files::exists);
     }
 }
