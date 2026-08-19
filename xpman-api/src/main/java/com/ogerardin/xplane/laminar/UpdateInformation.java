@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.XPlaneReleaseInfo;
 import com.ogerardin.xplane.file.ServersFile;
 import com.ogerardin.xplane.file.data.servers.ServersFileData;
+import com.ogerardin.xplane.util.Urls;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +33,7 @@ public class UpdateInformation {
             log.error("Server list URL is unknown for version '{}'", majorVersion.name());
             return null;
         }
-        final URL url = new URL(serverListUrl);
+        final URL url = Urls.url(serverListUrl);
         ServersFile serversFile = new ServersFile(url);
         return serversFile.getData();
     }

@@ -5,6 +5,7 @@ import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -43,8 +44,8 @@ public class XIvAp extends Plugin {
     @Override
     public Map<String, URL> getLinks() {
         return Maps.mapOf(
-                "IvAp home page", new URL(IVAP_HOME_URL),
-                "X-IvAp manual", new URL(X_IVAP_MANUAL_URL)
+                "IvAp home page", Urls.url(IVAP_HOME_URL),
+                "X-IvAp manual", Urls.url(X_IVAP_MANUAL_URL)
         );
     }
 

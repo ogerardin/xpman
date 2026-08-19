@@ -3,6 +3,7 @@ package com.ogerardin.xplane.scenery.custom;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -64,7 +65,7 @@ public class XpfrScenery extends SceneryPackage {
                 super.getLinks(),
                 Maps.mapOf(
                         "Scenery detailed sheet on xpfr.org",
-                        new URL(String.format("https://www.xpfr.org/?body=scene_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
+                        Urls.url(String.format("https://www.xpfr.org/?body=scene_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
                 )
         );
     }

@@ -3,6 +3,7 @@ package com.ogerardin.xplane.scenery.custom;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 
@@ -35,13 +36,13 @@ public class OpenSceneryX extends SceneryPackage {
     @Override
     public Map<String, URL> getLinks() {
         return Maps.merge(super.getLinks(),
-                Maps.mapOf("OpenSceneryX project home page", new URL("https://www.opensceneryx.com/"))
+                Maps.mapOf("OpenSceneryX project home page", Urls.url("https://www.opensceneryx.com/"))
         );
     }
 
     @SneakyThrows
     @Override
     public URL getIconUrl() {
-        return new URL("https://raw.githubusercontent.com/OpenSceneryX/Library/develop/icon.png");
+        return Urls.url("https://raw.githubusercontent.com/OpenSceneryX/Library/develop/icon.png");
     }
 }

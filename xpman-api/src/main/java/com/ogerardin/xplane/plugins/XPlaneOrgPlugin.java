@@ -2,6 +2,7 @@ package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -37,7 +38,7 @@ public class XPlaneOrgPlugin extends Plugin {
         // not optimal, but works: we fetch the whole HTML page and regex the version out of it
         // TODO: improve this
         try {
-            final URL url = new URL(xPlaneOrgDownloadPage);
+            final URL url = Urls.url(xPlaneOrgDownloadPage);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             connection.setInstanceFollowRedirects(true);
@@ -52,7 +53,7 @@ public class XPlaneOrgPlugin extends Plugin {
             if (matcher.matches()) {
                 return matcher.group(1);
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             log.debug("Failed to fetch HTML page", e);
         }
         return null;
@@ -62,7 +63,7 @@ public class XPlaneOrgPlugin extends Plugin {
     @Override
     public Map<String, URL> getLinks() {
         return Maps.mapOf(
-                "Plugin page on X-Plane.org", new URL(xPlaneOrgDownloadPage)
+                "Plugin page on X-Plane.org", Urls.url(xPlaneOrgDownloadPage)
         );
     }
 }

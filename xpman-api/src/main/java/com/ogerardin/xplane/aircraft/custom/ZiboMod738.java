@@ -14,6 +14,7 @@ import com.ogerardin.xplane.plugins.custom.TerrainRadar;
 import com.ogerardin.xplane.util.GoogleDriveClient;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -92,8 +93,8 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         return Maps.merge(
                 super.getLinks(),
                 Maps.mapOf(
-                        "ZIBO community on Facebook", new URL("https://www.facebook.com/zibocommunity"),
-                        "ZIBO mod forum on X-Plane.org", new URL("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
+                        "ZIBO community on Facebook", Urls.url("https://www.facebook.com/zibocommunity"),
+                        "ZIBO mod forum on X-Plane.org", Urls.url("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
                         "Download page (" + channel.getName() + ")", channel.getUrl()
                 ));
     }
@@ -191,7 +192,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         @SneakyThrows
         @Override
         public URL getUrl() {
-            return new URL("https://drive.google.com/drive/folders/" + GoogleDriveChannel.ZIBO_FOLDER_ID);
+            return Urls.url("https://drive.google.com/drive/folders/" + GoogleDriveChannel.ZIBO_FOLDER_ID);
         }
     }
 

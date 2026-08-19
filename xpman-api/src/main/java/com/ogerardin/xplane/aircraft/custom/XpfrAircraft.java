@@ -5,6 +5,7 @@ import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -53,7 +54,7 @@ public class XpfrAircraft extends Aircraft {
                 super.getLinks(),
                 Maps.mapOf(
                         "Aircraft detailed sheet on xpfr.org",
-                        new URL(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
+                        Urls.url(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
                 )
         );
     }
