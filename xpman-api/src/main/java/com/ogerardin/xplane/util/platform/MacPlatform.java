@@ -29,13 +29,6 @@ public class MacPlatform implements Platform {
     @SneakyThrows
     @Override
     public void reveal(@NonNull Path path) {
-        // if path is a directory, use any contained file otherwise the Finder will not select the directory
-        // (except if it's an app)
-        if (Files.isDirectory(path) && ! AppBundle.isAppBundle(path)) {
-            try (Stream<Path> pathStream = Files.list(path)) {
-                path = pathStream.findFirst().orElse(path);
-            }
-        }
         CommandExecutor.exec("open", "-R", path.toString());
     }
 
