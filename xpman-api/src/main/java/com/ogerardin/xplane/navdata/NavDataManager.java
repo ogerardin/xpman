@@ -64,7 +64,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<p>Professional customers with access to 424 master files can use them to override the X-Plane global database.</p>\n" +
                         "<p>Upon sim start, X-Plane will examine the <strong>$X-Plane/Custom Data/</strong> folder of its installation for a file named <strong>earth_424.dat</strong>. If this file is found, it will be interpreted according to the ARINC 424.18 standard with the FAA CIFP exceptions, and will be used to load the following information into X-Plane:</p>\n" +
                         "<ul>\n" +
-                        "<li>Fixes (EA and PC records)</li>\n" +
+                        "<li>Fixes (EA,PC and HC records)</li>\n" +
                         "<li>Navaids (D, DB and PN records)</li>\n" +
                         "<li>Airways (ER records)</li>\n" +
                         "<li>Published Holdings (EP records)</li>\n" +
@@ -73,12 +73,15 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>ILS (PI records)</li>\n" +
                         "<li>Markers (PM records)</li>\n" +
                         "<li>Airport data (PA records)</li>\n" +
+                        "<li>Heliport data (HA records)</li>\n" +
                         "<li>Airport gate/parking locations (PB records)</li>\n" +
                         "<li>Airport terminal procedures (PD, PE, PF records)</li>\n" +
+                        "<li>Heliport terminal procedures (HD, HE, HF records)</li>\n" +
                         "<li>Airport runway information (PG records)</li>\n" +
-                        "<li>Path points (PP records)</li>\n" +
+                        "<li>Path points (PP and HP records)</li>\n" +
                         "<li>GLS stations (PT records)</li>\n" +
-                        "    <li>GBAS path points (PQ records)</li>\n" +
+                        "<li>Communication information (PV and HV records)</li>\n" +
+                        "<li>GBAS path points (PQ records)</li>\n" +
                         "</ul>\n" +
                         "<p>After this file has been read, X-Plane will not load any other information from other text files. It is assumed that when the installation is provided with a global 424 file, no data of any other format needs to be loaded. In particular, X-Plane will then NOT load any of the files described in the following as &#8220;Global data&#8221;.</p>\n",
                 xPlane, xPlane.getPaths().customData(), "earth_424.dat");
@@ -135,17 +138,19 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<p>The FAACIFP file is an ARINC424.18 file provided by the Federal Aviation Administration free of charge and can be downloaded from their website.</p>\n" +
                         "<p>In X-Plane 11/12, this file is used to replace P* records with the latest from the FAA. The following data is read from this file, and overrides data loaded from the global layer:</p>\n" +
                         "<ul>\n" +
-                        "<li>Terminal Fixes (PC records)</li>\n" +
+                        "<li>Terminal Fixes (PC and HC records)</li>\n" +
                         "<li>Terminal Navaids (D records where the 5.6 field is not empty, PN records)</li>\n" +
                         "<li>ILS (PI records)</li>\n" +
                         "<li>Markers (PM records)</li>\n" +
                         "<li>Airport data (PA records)</li>\n" +
+                        "<li>Heliport data (HA records)</li>\n" +
                         "<li>Airport gate/parking locations (PB records)</li>\n" +
                         "<li>Airport terminal procedures (PD, PE, PF records)</li>\n" +
+                        "<li>Heliport terminal procedures (HD, HE and HF records)</li>\n" +
                         "<li>Airport runway information (PG records)</li>\n" +
-                        "<li>Path points (PP records)</li>\n" +
+                        "<li>Path points (PP and HP records)</li>\n" +
                         "<li>GLS stations (PT records)</li>\n" +
-                        "    <li>GBAS path points (PQ records)</li>\n" +
+                        "<li>GBAS path points (PQ records)</li>\n" +
                         "</ul>\n" +
                         "<p>The file</p>\n" +
                         "<ul>\n" +
