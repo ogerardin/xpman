@@ -38,6 +38,9 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     @EqualsAndHashCode.Exclude
     private List<NavDataFile> files = new ArrayList<>();
 
+    @EqualsAndHashCode.Exclude
+    private List<NavDataItem> extraChildren = new ArrayList<>();
+
     protected NavDataSet(String name, String description, XPlane xPlane, Path folder, String... fileNames) {
         super(xPlane);
         this.name = name;
@@ -59,6 +62,15 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         files.add(file);
     }
 
+    /**
+     * Adds an extra child item (not a file) to this data set after construction.
+     * Used for summary nodes like CIFPSummary that don't map to individual files.
+     */
+    protected void addExtraChild(NavDataItem child) {
+        extraChildren = new ArrayList<>(extraChildren);
+        extraChildren.add(child);
+    }
+
 
     @Override
     public InspectionResult inspect() {
@@ -69,7 +81,12 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
 
     @Override
     public List<? extends NavDataItem> getChildren() {
-        return files;
+        if (extraChildren.isEmpty()) {
+            return files;
+        }
+        List<NavDataItem> all = new ArrayList<>(files);
+        all.addAll(extraChildren);
+        return all;
     }
 
     @Override
