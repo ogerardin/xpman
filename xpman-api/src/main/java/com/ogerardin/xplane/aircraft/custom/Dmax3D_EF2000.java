@@ -5,6 +5,7 @@ import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -35,7 +36,7 @@ public class Dmax3D_EF2000 extends Aircraft {
     @SneakyThrows
     public Map<String, URL> getLinks() {
         return Maps.merge(super.getLinks(),
-                Maps.mapOf("Eurofighter Typhoon on dmax3d.com", new URL("http://www.dmax3d.com/dmax3d/eurofighter.html")
+                Maps.mapOf("Eurofighter Typhoon on dmax3d.com", Urls.url("http://www.dmax3d.com/dmax3d/eurofighter.html")
                 )
         );
     }

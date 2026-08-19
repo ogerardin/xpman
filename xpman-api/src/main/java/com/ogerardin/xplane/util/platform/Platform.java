@@ -1,11 +1,11 @@
 package com.ogerardin.xplane.util.platform;
 
+import com.ogerardin.xplane.util.Urls;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -38,7 +38,7 @@ public interface Platform {
 
     @SneakyThrows
     default void openUrl(@NonNull String url) {
-        openUrl(new URL(url));
+        openUrl(Urls.url(url));
     }
 
     /**

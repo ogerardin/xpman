@@ -5,6 +5,7 @@ import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.SneakyThrows;
 
 import java.net.URL;
@@ -35,8 +36,8 @@ public class ColimataConcorde extends Aircraft {
         return Maps.merge(
                 super.getLinks(),
                 Maps.mapOf(
-                        "X-Plane Forum Support Thread", new URL("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
-                        "Colimata Homepage", new URL("http://www.colimata.com")
+                        "X-Plane Forum Support Thread", Urls.url("https://forums.x-plane.org/index.php?/forums/forum/477-concorde-fxp/"),
+                        "Colimata Homepage", Urls.url("http://www.colimata.com")
                 )
         );
     }

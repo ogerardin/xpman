@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.XPlaneOrgPlugin;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,8 +36,8 @@ public class AviTab extends XPlaneOrgPlugin {
         return  Maps.merge(
                 super.getLinks(),
                 Maps.mapOf(
-                        "GitHub page", new URL("https://github.com/fpw/avitab"),
-                        "Wiki", new URL("https://github.com/fpw/avitab/wiki")
+                        "GitHub page", Urls.url("https://github.com/fpw/avitab"),
+                        "Wiki", Urls.url("https://github.com/fpw/avitab/wiki")
                 )
         );
     }
