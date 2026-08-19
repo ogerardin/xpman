@@ -41,6 +41,11 @@ public class CIFPSummary implements NavDataItem {
     }
 
     @Override
+    public Path getPath() {
+        return cifpDir;
+    }
+
+    @Override
     public String getName() {
         return "CIFP (" + files.size() + " files)";
     }

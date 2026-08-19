@@ -108,6 +108,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>Resources/default scenery/1200 atc data/Earth nav data/atc.dat (starting with X-Plane 12)</li>\n" +
                         "</ul>\n",
                 xPlane, xPlane.getPaths().defaultData());
+        dataSet.addExtraChild(new CIFPSummary(xPlane.getPaths().defaultData().resolve("CIFP")));
         if (xPlane.getMajorVersion() == XPlaneMajorVersion.XP12) {
             dataSet.addExtraFile(NavDataFile.of(dataSet,
                     xPlane.getPaths().defaultData().resolve("airspaces").resolve("airspace.txt")));
@@ -136,6 +137,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<p>they must be located in <strong>$X-Plane/Custom Data/</strong></p>\n" +
                         "<p>These files completely replace the base layer of X-Plane. If these files are present, the X-Plane base layer is ignored. Note that because of the referential integrity, it is not possible to update just the earth_fix.dat and not the earth_awy.dat. Upon load, it is checked that all files are of the same cycle number. Mix-matching different cycles is not supported.</p>\n",
                 xPlane, xPlane.getPaths().customData());
+        dataSet.addExtraChild(new CIFPSummary(xPlane.getPaths().customData().resolve("CIFP")));
         if (xPlane.getMajorVersion() == XPlaneMajorVersion.XP12) {
             dataSet.addExtraFile(NavDataFile.of(dataSet,
                     xPlane.getPaths().customData().resolve("airspaces").resolve("airspace.txt")));
