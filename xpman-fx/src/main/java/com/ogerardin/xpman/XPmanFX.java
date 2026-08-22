@@ -48,7 +48,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private Menu recentMenu;
 
     @Getter
-    private final JsonFileConfigPersister<XPManPrefs> configManager = new JsonFileConfigPersister<>(XPManPrefs.class);
+    private final JsonFileConfigPersister<XPManPrefs> configManager = new JsonFileConfigPersister<>(XPManPrefs.class, ".xpman");
 
     @Getter(lazy = true)
     private final XPManPrefs config = configManager.getConfig();
