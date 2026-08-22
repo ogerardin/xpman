@@ -36,7 +36,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - **JPMS** is enforced — both xpman-api and xpman-fx have `module-info.java`. Most dependencies are explicit JPMS modules; **`commons-configuration`, `commons-lang`, `petitparser-core`, and `zip4j` are filename-based automatic modules** (declared under `// filename-based automodules` in `xpman-api/module-info.java`).
 - **No Spring DI container.** `XPlane(folder)` is the root object that manually constructs all managers. `spring-expression` (currently 7.0.8) is used only for SpEL evaluation in cell factories — it is the only SpEL consumer. The Spring Boot Maven plugin is used only for repackaging into an uber-jar (`JarLauncher`), NOT for a Spring app.
 - **Lombok** is heavily used: `@Data`, `@Slf4j`, `@Getter(lazy=true)`, `@SneakyThrows`, `@Delegate`, `@Builder`, `@UtilityClass`.
-- **Gson** for JSON (not Jackson). User config persisted to `~/XPManPrefs.json`.
+- **Gson** for JSON (not Jackson). User config persisted to the dotfile `~/.xpman`.
 - **FXML** for all UI views — controllers follow naming convention matching the FXML file. Resource root is `xpman-fx/src/main/resources/fxml/`.
 - `IntrospectionHelper.getBestSubclassInstance()` uses ClassGraph to scan the classpath for specialized domain subclasses at runtime (e.g. `ZiboMod738 extends Aircraft`).
 
