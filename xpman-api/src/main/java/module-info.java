@@ -8,9 +8,8 @@ module xpman.api {
     requires com.sun.jna.platform;
     requires org.apache.commons.io;
 
-    // filename-based automodules
+    // filename-based automodule
     requires petitparser.core;
-    requires zip4j;
 
     requires org.apache.commons.lang3;
     requires org.apache.commons.configuration2;

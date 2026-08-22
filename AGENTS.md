@@ -33,7 +33,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 | `xpman-fx-dist` | *(none)* | Distribution packaging — repackaged uber-jar → platform installers (.dmg/.pkg, .exe/.msi, .deb/.rpm) via **jpackage**; the macOS DMG is built with **dmgbuild** |
 
 - **Java 25** source/target (`maven.compiler.release=25`); requires JDK 25 to build.
-- **JPMS** is enforced — both xpman-api and xpman-fx have `module-info.java`. Most dependencies are explicit JPMS modules; **`commons-configuration`, `commons-lang`, `petitparser-core`, and `zip4j` are filename-based automatic modules** (declared under `// filename-based automodules` in `xpman-api/module-info.java`).
+- **JPMS** is enforced — both xpman-api and xpman-fx have `module-info.java`. Most dependencies are explicit JPMS modules; only **`petitparser-core`** is a filename-based automatic module (declared under `// filename-based automodule` in `xpman-api/module-info.java`). Zip handling uses the JDK's own `java.util.zip`.
 - **No Spring DI container.** `XPlane(folder)` is the root object that manually constructs all managers. `spring-expression` (currently 7.0.8) is used only for SpEL evaluation in cell factories — it is the only SpEL consumer. The Spring Boot Maven plugin is used only for repackaging into an uber-jar (`JarLauncher`), NOT for a Spring app.
 - **Lombok** is heavily used: `@Data`, `@Slf4j`, `@Getter(lazy=true)`, `@SneakyThrows`, `@Delegate`, `@Builder`, `@UtilityClass`.
 - **Gson** for JSON (not Jackson). User config persisted to the dotfile `~/.xpman`.
