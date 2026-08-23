@@ -48,6 +48,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private Menu recentMenu;
 
+    @FXML
+    private MenuItem themeMenuItem;
+
     @Getter
     private final JsonFileConfigPersister<XPManPrefs> configManager = new JsonFileConfigPersister<>(XPManPrefs.class, ".xpman");
 
@@ -196,11 +199,26 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void initialize() {
         updateRecent();
+        updateThemeMenuItem();
         XPManPrefs config = getConfig();
         if (config.getLastXPlanePath() != null) {
             Platform.runLater(() -> openXPlane(Paths.get(config.getLastXPlanePath()).toFile()));
         } else {
             Platform.runLater(this::open);
+        }
+    }
+
+    @FXML
+    private void toggleTheme() {
+        getThemeManager().toggle();
+        updateThemeMenuItem();
+    }
+
+    private void updateThemeMenuItem() {
+        if (themeMenuItem != null) {
+            themeMenuItem.setText(getThemeManager().isDark()
+                    ? "Switch to Light Theme"
+                    : "Switch to Dark Theme");
         }
     }
 

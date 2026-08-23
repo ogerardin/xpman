@@ -20,6 +20,9 @@
                 </accelerator>
             </MenuItem>
         </Menu>
+        <Menu mnemonicParsing="false" text="View">
+            <MenuItem fx:id="themeMenuItem" mnemonicParsing="false" onAction="#toggleTheme" text="Switch to Light Theme" />
+        </Menu>
         <Menu fx:id="toolsMenu" mnemonicParsing="false" text="Tools">
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
