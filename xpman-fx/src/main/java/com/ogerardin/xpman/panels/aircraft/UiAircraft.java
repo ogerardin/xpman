@@ -93,7 +93,6 @@ public class UiAircraft {
         Stage stage = new Stage();
         stage.setTitle("Aircraft details");
         stage.setScene(new Scene(pane));
-//        stage.initOwner(this.tableView.getScene().getWindow());
         stage.show();
     }
 

@@ -76,7 +76,5 @@ public class ValidatingEditingCell<S> extends TableCell<S, String> {
     public void startEdit() {
         super.startEdit();
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-//        textField.selectAll();
-//        getGraphic().requestFocus();
     }
 }

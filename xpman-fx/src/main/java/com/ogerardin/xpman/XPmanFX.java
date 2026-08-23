@@ -88,8 +88,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         // catch-all exception handler (text version)
         Thread.setDefaultUncaughtExceptionHandler((thread, e) -> log.error("Caught exception", e));
 
-//        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-//        root.setLevel(Level.DEBUG);
 
         String version = XPmanFX.class.getPackage().getImplementationVersion();
         log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
@@ -294,7 +292,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         Pane mainPane = loader.load();
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add(getClass().getResource("/css/xpman.css").toExternalForm());
-//        scene.getRoot().setStyle("-fx-font-family: 'sans-serif'");
         stage.setScene(scene);
 
         installSectionAccelerators(scene);

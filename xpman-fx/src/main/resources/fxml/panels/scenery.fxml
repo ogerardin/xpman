@@ -23,12 +23,9 @@
                         <Tooltip text="Move Scenery Pack down one rank in scenery_packs.ini" />
                     </tooltip>
                 </Button>
-<!--                <Button mnemonicParsing="false" text="Analyze" />-->
-<!--                <Button mnemonicParsing="false" text="Check for updates" />-->
                 <Button mnemonicParsing="false" onAction="#installScenery" text="Install...">
     <graphic><FontIcon iconLiteral="fth-download"/></graphic>
 </Button>
-<!--                <ComboBox prefWidth="150.0" promptText="Filter" />-->
                 <Button mnemonicParsing="false" onAction="#organize" text="Organize scenery_pack.ini">
     <graphic><FontIcon iconLiteral="fth-settings"/></graphic>
 </Button>

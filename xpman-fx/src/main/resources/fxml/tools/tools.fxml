@@ -14,10 +14,6 @@
             <SplitPane dividerPositions="0.5">
                 <TableView fx:id="tableView" prefHeight="300.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                     <columns>
-<!--
-                        <TableColumn prefWidth="75.0" text="Icon">
-                        </TableColumn>
--->
                         <TableColumn prefWidth="250.0" text="Name">
                             <cellValueFactory>
                                 <PropertyValueFactory property="name" />
