@@ -16,8 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.text.TextFlow;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,10 +101,9 @@ public class XPlaneController {
     private static List<Node> buildUpdateMessage(String versionType, XPlaneReleaseInfo versionInfo, XPlane xPlane) {
         String version = versionInfo.version();
         List<Node> nodes = new ArrayList<>();
-        Glyph warningGlyph = new Glyph("FontAwesome", FontAwesome.Glyph.EXCLAMATION_TRIANGLE) {{
-            setStyle("-fx-text-fill: orange;");
-        }};
-        nodes.add(warningGlyph);
+        FontIcon warningIcon = new FontIcon(Feather.ALERT_TRIANGLE);
+        warningIcon.getStyleClass().add("warning-icon");
+        nodes.add(warningIcon);
         nodes.add(new Label(" " + versionType + " " + version + " is available. Run the"));
         nodes.add(new Hyperlink("X-Plane Installer") {{
             setOnAction(__ -> {
