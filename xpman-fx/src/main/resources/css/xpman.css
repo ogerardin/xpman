@@ -213,6 +213,28 @@
     -fx-text-fill: -color-danger-emphasis;
 }
 
+/* --- Inspection severity icons --- */
+.severity-icon-error {
+    -fx-icon-color: -color-danger-emphasis;
+    -fx-fill: -color-danger-emphasis;
+}
+
+.severity-icon-warn {
+    -fx-icon-color: -color-warning-emphasis;
+    -fx-fill: -color-warning-emphasis;
+}
+
+.severity-icon-info {
+    -fx-icon-color: -color-accent-emphasis;
+    -fx-fill: -color-accent-emphasis;
+}
+
+/* --- About dialog --- */
+.about-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em;
+}
+
 /* --- Notification banners --- */
 .banner-info,
 .banner-warning,

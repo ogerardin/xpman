@@ -16,11 +16,7 @@
    <ButtonType fx:constant="CLOSE" />
    <content>
        <AnchorPane>
-           <Text fx:id="title" text="X-Plane Manager ..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-               <font>
-                   <Font name="SansSerif Bold" size="14.0" />
-               </font>
-           </Text>
+           <Text fx:id="title" styleClass="about-title" text="X-Plane Manager ..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"/>
            <Text fx:id="build" layoutX="20.0" layoutY="49.0" text="Build ..." />
            <Text fx:id="runtime" layoutX="20.0" layoutY="78.0" text="Runtime: ..." />
            <Text fx:id="vm" layoutX="20.0" layoutY="95.0" text="VM: ..." />
