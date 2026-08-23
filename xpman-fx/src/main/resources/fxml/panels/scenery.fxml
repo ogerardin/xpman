@@ -77,12 +77,12 @@
                             <BooleanCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" text="Tile count" style="-fx-alignment: CENTER-RIGHT;">
+                    <TableColumn editable="false" prefWidth="70.0" text="Tile count" styleClass="numeric-column">
                         <cellValueFactory>
                             <PropertyValueFactory property="tileCount" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" text="Obj count" style="-fx-alignment: CENTER-RIGHT;">
+                    <TableColumn editable="false" prefWidth="70.0" text="Obj count" styleClass="numeric-column">
                         <cellValueFactory>
                             <PropertyValueFactory property="objCount" />
                         </cellValueFactory>

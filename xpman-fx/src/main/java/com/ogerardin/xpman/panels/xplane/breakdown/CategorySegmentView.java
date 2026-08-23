@@ -27,12 +27,11 @@ class CategorySegmentView extends StackPane {
                         .then(LOADING_ANIMATION)
                         .otherwise((ImageView) null)
                 );
-//        label.setGraphic(DOTS);
-        label.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 1.2em;");
+        label.getStyleClass().add("segment-label");
         label.setTextOverrun(OverrunStyle.ELLIPSIS);
         setAlignment(label, Pos.CENTER_LEFT);
         getChildren().add(label);
-        setStyle(String.format("-fx-background-color: %s;", segment.getCategory().getColor()));
+        getStyleClass().add(segment.getCategory().getStyleClass());
         setPadding(new Insets(5));
         setPrefHeight(50);
     }

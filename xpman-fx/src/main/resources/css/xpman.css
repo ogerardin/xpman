@@ -32,36 +32,46 @@
     -fx-font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
 }
 
-.validation-cell:invalid,
-.validation-cell:invalid .text-field {
+.validation-cell .validation-field {
+    -fx-text-fill: -color-success-fg;
+}
+
+.validation-cell .validation-field.invalid {
     -fx-text-fill: -color-danger-fg;
 }
 
 /* --- Segmented disk-usage bar --- */
-.segment-default {
+.segment-aircraft {
+    -fx-background-color: -color-accent-muted;
+}
+
+.segment-global-scenery {
+    -fx-background-color: -color-success-muted;
+}
+
+.segment-custom-scenery {
+    -fx-background-color: -color-warning-muted;
+}
+
+.segment-disabled-scenery {
     -fx-background-color: -color-bg-subtle;
     -fx-border-color: -color-border-muted;
     -fx-border-width: 1px;
 }
 
-.segment-aircraft {
-    -fx-background-color: -color-accent-muted;
-}
-
-.segment-scenery {
-    -fx-background-color: -color-success-muted;
-}
-
-.segment-plugins {
-    -fx-background-color: -color-warning-muted;
-}
-
-.segment-navdata {
-    -fx-background-color: -color-danger-muted;
-}
-
 .segment-other {
-    -fx-background-color: -color-fg-muted;
+    -fx-background-color: -color-fg-subtle;
+}
+
+.segment-label,
+.segment-info {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em;
+}
+
+/* --- Table column alignment helper --- */
+.numeric-column {
+    -fx-alignment: CENTER-RIGHT;
 }
 
 /* --- Empty state placeholder (icon + message) --- */

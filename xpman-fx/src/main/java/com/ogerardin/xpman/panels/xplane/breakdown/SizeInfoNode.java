@@ -20,7 +20,7 @@ class SizeInfoNode extends Label {
     private SizeInfoNode(String text) {
         super(text);
         setPadding(new Insets(4));
-        setStyle("-fx-font-weight: bold; -fx-font-size: 1.2em;");
+        getStyleClass().add("segment-info");
     }
 
     private static String humanReadbleSize(double size) {

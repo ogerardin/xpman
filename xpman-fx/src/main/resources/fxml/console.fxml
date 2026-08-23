@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <DialogPane fx:id="dialogPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="543.0"
             prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.util.jfx.console.ConsoleController">
@@ -23,10 +22,7 @@
             </top>
             <center>
                 <TextArea fx:id="textArea" wrapText="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
-                          style="-fx-control-inner-background: #000000; -fx-highlight-fill: #ffffff; -fx-highlight-text-fill: #000000; -fx-text-fill: #ffffff;" text="Sample output">
-                    <font>
-                        <Font name="InputMono" size="12.0" />
-                    </font>
+                          styleClass="console" text="Sample output">
                 </TextArea>
             </center>
         </BorderPane>

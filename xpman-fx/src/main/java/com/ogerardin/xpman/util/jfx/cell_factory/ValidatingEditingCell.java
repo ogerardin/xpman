@@ -19,13 +19,14 @@ import java.util.function.Predicate;
 public class ValidatingEditingCell<S> extends TableCell<S, String> {
 
     public ValidatingEditingCell(Predicate<String> validator) {
-        setStyle("-fx-font-family: monospace;");
+        getStyleClass().add("validation-cell");
         setGraphic(createTextField(validator));
         setContentDisplay(ContentDisplay.TEXT_ONLY);
     }
 
     private TextField createTextField(Predicate<String> validator) {
         final TextField textField = new TextField();
+        textField.getStyleClass().add("validation-field");
         final BooleanProperty valid = new SimpleBooleanProperty();
 
         valid.bind(Bindings.createBooleanBinding(() -> textField.getText() != null && validator.test(textField.getText()),
@@ -45,8 +46,10 @@ public class ValidatingEditingCell<S> extends TableCell<S, String> {
     }
 
     private void setValidStyle(TextField textField, boolean isValid) {
-        String color = isValid ? "green" : "red";
-        textField.setStyle(getStyle() + "-fx-text-fill: " + color + ";");
+        textField.getStyleClass().remove("invalid");
+        if (!isValid) {
+            textField.getStyleClass().add("invalid");
+        }
     }
 
     @Override
