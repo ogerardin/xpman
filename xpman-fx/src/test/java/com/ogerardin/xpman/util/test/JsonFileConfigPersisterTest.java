@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.util.test;
 
+import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 
 class JsonFileConfigPersisterTest {
 
@@ -41,13 +42,13 @@ class JsonFileConfigPersisterTest {
     }
 
     @Test
-    void themeDefaultsToDarkWhenMissingFromPrefs() throws Exception {
-        Class<?> prefsClass = Class.forName("com.ogerardin.xpman.config.XPManPrefs");
+    void themeDefaultsToDarkWhenMissingFromPrefs() throws IOException {
         Path file = Files.createTempFile("XPManPrefs", ".json");
         try {
             Files.writeString(file, "{\"lastXPlanePath\":\"/X-Plane 12\"}");
-            JsonFileConfigPersister<?> prefsManager = new JsonFileConfigPersister<>(prefsClass, file);
-            assertThat(prefsManager.getConfig().toString(), containsString("theme=dark"));
+            JsonFileConfigPersister<XPManPrefs> prefsManager = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            XPManPrefs config = prefsManager.getConfig();
+            assertThat(config.getTheme(), is("dark"));
         } finally {
             Files.deleteIfExists(file);
         }
