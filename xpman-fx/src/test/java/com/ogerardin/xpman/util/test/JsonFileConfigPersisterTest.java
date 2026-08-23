@@ -8,8 +8,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 class JsonFileConfigPersisterTest {
 
@@ -32,6 +38,19 @@ class JsonFileConfigPersisterTest {
         prefs.setBli(Arrays.asList("hihihihi", "huhuhuhu"));
 
         prefsManager.save();
+    }
+
+    @Test
+    void themeDefaultsToDarkWhenMissingFromPrefs() throws Exception {
+        Class<?> prefsClass = Class.forName("com.ogerardin.xpman.config.XPManPrefs");
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{\"lastXPlanePath\":\"/X-Plane 12\"}");
+            JsonFileConfigPersister<?> prefsManager = new JsonFileConfigPersister<>(prefsClass, file);
+            assertThat(prefsManager.getConfig().toString(), containsString("theme=dark"));
+        } finally {
+            Files.deleteIfExists(file);
+        }
     }
 
     @EqualsAndHashCode(callSuper = true)

@@ -15,6 +15,8 @@ public class XPManPrefs extends JfxAppPrefs {
     String lastXPlanePath;
     StringSet recentPaths = new StringSet();
 
+    String theme = "dark";
+
     List<RegexSceneryClass> sceneryClasses;
 
     public static class StringSet extends HashSet<String> {}

@@ -11,6 +11,7 @@ import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
+import com.ogerardin.xpman.util.jfx.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -52,6 +53,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @Getter(lazy = true)
     private final XPManPrefs config = configManager.getConfig();
+
+    @Getter
+    private final ThemeManager themeManager = new ThemeManager(getConfig(), this::saveConfig);
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
 
@@ -215,6 +219,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
             windowEvent.consume();
             quit();
         });
+
+        getThemeManager().applySavedTheme();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         loader.setControllerFactory(this::buildController);
