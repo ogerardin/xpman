@@ -44,6 +44,7 @@ module xpman.fx {
     opens com.ogerardin.xpman.panels.scenery.wizard to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.xplane to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.scenery_organizer;
+    opens com.ogerardin.xpman.shell to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.tools to javafx.fxml, javafx.base;
     opens com.ogerardin.xpman.util.jfx to javafx.base, javafx.fxml, com.google.gson;
     opens com.ogerardin.xpman.util.jfx.console to javafx.base, javafx.fxml;

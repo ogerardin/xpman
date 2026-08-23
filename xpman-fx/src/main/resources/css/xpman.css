@@ -74,6 +74,78 @@
     -fx-alignment: CENTER-RIGHT;
 }
 
+/* --- Sidebar navigation --- */
+.sidebar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 12px;
+    -fx-spacing: 4px;
+}
+
+.sidebar-title {
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 8px 12px 8px;
+}
+
+.sidebar-nav {
+    -fx-spacing: 2px;
+}
+
+.sidebar-item {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-alignment: center-left;
+    -fx-padding: 8px 10px;
+    -fx-background-radius: 6px;
+}
+
+.sidebar-item:hover {
+    -fx-background-color: -color-accent-subtle;
+}
+
+.sidebar-item:selected {
+    -fx-background-color: -color-accent-muted;
+}
+
+.sidebar-item .ikonli-font-icon {
+    -fx-fill: -color-fg-muted;
+}
+
+.sidebar-item:hover .ikonli-font-icon {
+    -fx-fill: -color-fg-default;
+}
+
+.sidebar-item:selected .ikonli-font-icon {
+    -fx-fill: -color-fg-emphasis;
+}
+
+.sidebar-footer {
+    -fx-spacing: 2px;
+}
+
+.sidebar-footer-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-alignment: center-left;
+    -fx-padding: 6px 10px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.sidebar-footer-button:hover {
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-fg-default;
+}
+
+.sidebar-version {
+    -fx-text-fill: -color-fg-subtle;
+    -fx-padding: 2px 10px;
+}
+
 /* --- Empty state placeholder (icon + message) --- */
 .empty-state {
     -fx-alignment: center;

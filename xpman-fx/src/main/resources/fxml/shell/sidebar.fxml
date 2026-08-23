@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ogerardin.xpman.shell.SidebarController"
+      styleClass="sidebar" prefWidth="220.0" minWidth="200.0">
+    <Label styleClass="sidebar-title" text="XPman"/>
+    <VBox fx:id="navBox" styleClass="sidebar-nav"/>
+    <Region VBox.vgrow="ALWAYS"/>
+    <VBox styleClass="sidebar-footer">
+        <Button fx:id="themeButton" styleClass="sidebar-footer-button" mnemonicParsing="false"
+                onAction="#toggleTheme" text="Light theme"/>
+        <Button styleClass="sidebar-footer-button" mnemonicParsing="false" onAction="#about" text="About"/>
+        <Label fx:id="versionLabel" styleClass="sidebar-version"/>
+    </VBox>
+</VBox>
