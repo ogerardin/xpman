@@ -91,6 +91,22 @@
         </dependency>
 
         <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-feather-pack</artifactId>
+            <version>12.4.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>de.jangassen</groupId>
             <artifactId>nsmenufx</artifactId>
             <version>3.1.0</version>
