@@ -235,6 +235,43 @@
     -fx-font-size: 1.2em;
 }
 
+/* --- Toast notifications --- */
+.toast-root {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
+    -fx-padding: 8px 14px 8px 14px;
+    -fx-cursor: hand;
+}
+
+.toast {
+    -fx-text-fill: -color-fg-default;
+}
+
+.toast-success .ikonli-font-icon {
+    -fx-icon-color: -color-success-emphasis;
+    -fx-fill: -color-success-emphasis;
+}
+
+.toast-info .ikonli-font-icon {
+    -fx-icon-color: -color-accent-emphasis;
+    -fx-fill: -color-accent-emphasis;
+}
+
+/* --- Danger button (destructive confirmations) --- */
+.danger-button {
+    -fx-background-color: -color-danger-emphasis;
+    -fx-text-fill: -color-fg-emphasis;
+}
+
+.danger-button:hover {
+    -fx-background-color: -color-danger-emphasis;
+    -fx-opacity: 0.9;
+}
+
 /* --- Notification banners --- */
 .banner-info,
 .banner-warning,

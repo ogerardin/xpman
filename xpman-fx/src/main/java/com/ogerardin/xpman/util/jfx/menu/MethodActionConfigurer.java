@@ -2,6 +2,7 @@ package com.ogerardin.xpman.util.jfx.menu;
 
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;
+import com.ogerardin.xpman.util.jfx.Toast;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
@@ -47,7 +48,10 @@ public class MethodActionConfigurer<T, R> {
         OnSuccess onSuccess = method.getAnnotation(OnSuccess.class);
         if (onSuccess != null) {
             // we must do something upton completion
-            builder.onSuccess(result -> this.onSuccess(result, onSuccess.resultVariableName(), onSuccess.value(), evalContextRoot));
+            builder.onSuccess(result -> {
+                this.onSuccess(result, onSuccess.resultVariableName(), onSuccess.value(), evalContextRoot);
+                Toast.success(windowSupplier.get(), IntrospectionHelper.getLabelForMethod(method) + ": done");
+            });
         }
 
         return builder.build();
@@ -63,6 +67,10 @@ public class MethodActionConfigurer<T, R> {
         Alert alert = new Alert(alertType, confirmMessage, ButtonType.OK, ButtonType.CANCEL);
         alert.setTitle("Confirm");
         alert.initOwner(ownerWindow);
+        // destructive confirmations (trash moves etc.) get a danger accent on the OK button
+        if (confirmMessage.toLowerCase().contains("trash")) {
+            alert.getDialogPane().lookupButton(ButtonType.OK).getStyleClass().add("danger-button");
+        }
         Optional<ButtonType> choice = alert.showAndWait();
         return choice.orElse(ButtonType.CANCEL) == ButtonType.OK;
     }
