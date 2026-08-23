@@ -9,10 +9,10 @@ import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
+import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
@@ -24,8 +24,6 @@ import java.util.function.Function;
 
 @Slf4j
 public class NavDataController {
-
-    private static final Label PLACEHOLDER = new Label("No nav data to show");
 
     @NonNull
     private final XPlaneProperty xPlaneProperty;
@@ -44,7 +42,7 @@ public class NavDataController {
 
     @FXML
     public void initialize() {
-        treeTableView.placeholderProperty().setValue(PLACEHOLDER);
+        treeTableView.placeholderProperty().setValue(new EmptyState("fth-navigation", "No nav data to show"));
 
         treeTableView.setRowFactory(new IntrospectingContextMenuTreeTableRowFactory<>(this));
 

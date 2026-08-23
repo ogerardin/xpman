@@ -182,6 +182,12 @@
     -fx-text-alignment: center;
 }
 
+.empty-state-spinner {
+    -fx-progress-color: -color-accent-muted;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+}
+
 /* --- Notification banners --- */
 .banner-info,
 .banner-warning,

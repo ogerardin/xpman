@@ -6,6 +6,7 @@ import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
+import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
@@ -34,6 +35,8 @@ public class PluginsController extends Controller {
 
         // add context menu
         pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+
+        pluginTable.setPlaceholder(new EmptyState("fth-package", "No plugins to show"));
     }
 
     public void reload() {

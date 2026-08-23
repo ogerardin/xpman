@@ -10,6 +10,7 @@ import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
+import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.Filter;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import javafx.application.Platform;
@@ -21,7 +22,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
@@ -38,8 +38,6 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class AircraftsController extends Controller {
-
-    private static final Label EMPTY_PLACEHOLDER = new Label("No aircraft to show");
 
     private final XPlaneProperty xPlaneProperty;
 
@@ -131,7 +129,9 @@ public class AircraftsController extends Controller {
         boolean empty = items.isEmpty();
         placeholderPane.setVisible(empty || loading);
         placeholderPane.setManaged(empty || loading);
-        placeholderPane.getChildren().setAll(loading ? LOADING : EMPTY_PLACEHOLDER);
+        placeholderPane.getChildren().setAll(loading
+                ? EmptyState.loading("Loading aircraft...")
+                : new EmptyState("fth-send", "No aircraft to show"));
     }
 
     GenericContextMenuFactory<UiAircraft> getCardMenuFactory() {

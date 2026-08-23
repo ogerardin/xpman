@@ -13,6 +13,7 @@ import com.ogerardin.xpman.panels.scenery.wizard.OrganizeWizard;
 import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
+import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.SortedList;
@@ -50,6 +51,8 @@ public class SceneryController extends Controller {
     public void initialize() {
         // add context menu to table rows
         sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+
+        sceneryTable.setPlaceholder(new EmptyState("fth-map", "No scenery to show"));
 
         // sort by rank with nulls last (rank is null if scenery is disabled)
         rankColumn.setSortType(TableColumn.SortType.ASCENDING);
