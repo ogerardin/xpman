@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.panels.aircraft.AircraftsController">
     <top>
         <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
-            <Button mnemonicParsing="false" onAction="#reload" text="Reload"/>
-            <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
+            <Button mnemonicParsing="false" onAction="#reload" text="Reload">
+    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
+</Button>
+            <Button mnemonicParsing="false" onAction="#install" text="Install...">
+    <graphic><FontIcon iconLiteral="fth-download"/></graphic>
+</Button>
             <Separator/>
             <Label text="Search"/>
             <TextField fx:id="searchField" promptText="Name, author or studio" prefWidth="200.0"/>

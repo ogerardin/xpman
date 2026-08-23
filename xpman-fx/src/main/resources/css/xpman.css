@@ -74,6 +74,25 @@
     -fx-alignment: CENTER-RIGHT;
 }
 
+/* --- Table views: softer look --- */
+.table-view,
+.tree-table-view {
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.table-view .column-header,
+.tree-table-view .column-header {
+    -fx-background-color: -color-bg-subtle;
+}
+
+.table-view .table-row-cell:hover,
+.tree-table-view .tree-table-row-cell:hover {
+    -fx-background-color: -color-accent-subtle;
+}
+
 /* --- Sidebar navigation --- */
 .sidebar {
     -fx-background-color: -color-bg-subtle;

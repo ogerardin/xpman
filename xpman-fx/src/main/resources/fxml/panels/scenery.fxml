@@ -3,13 +3,16 @@
 <?import com.ogerardin.xpman.util.jfx.cell_factory.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.panels.scenery.SceneryController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                <Button mnemonicParsing="false" text="Reload" onAction="#reload" />
+                <Button mnemonicParsing="false" text="Reload" onAction="#reload">
+    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
+</Button>
                 <Button mnemonicParsing="false" text="▲">
                     <tooltip>
                         <Tooltip text="Move Scenery Pack up one rank in scenery_packs.ini" />
@@ -22,9 +25,13 @@
                 </Button>
 <!--                <Button mnemonicParsing="false" text="Analyze" />-->
 <!--                <Button mnemonicParsing="false" text="Check for updates" />-->
-                <Button mnemonicParsing="false" onAction="#installScenery" text="Install..." />
+                <Button mnemonicParsing="false" onAction="#installScenery" text="Install...">
+    <graphic><FontIcon iconLiteral="fth-download"/></graphic>
+</Button>
 <!--                <ComboBox prefWidth="150.0" promptText="Filter" />-->
-                <Button mnemonicParsing="false" onAction="#organize" text="Organize scenery_pack.ini" />
+                <Button mnemonicParsing="false" onAction="#organize" text="Organize scenery_pack.ini">
+    <graphic><FontIcon iconLiteral="fth-settings"/></graphic>
+</Button>
             </ToolBar>
         </top>
         <center>

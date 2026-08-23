@@ -4,16 +4,21 @@
 <?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanTreeCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.cell_factory.IdentityTreeCellValueFactory?>
 <?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.navdata.NavDataController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                <Button mnemonicParsing="false" onAction="#reload" text="Reload"/>
+                <Button mnemonicParsing="false" onAction="#reload" text="Reload">
+    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
+</Button>
 <!--                <Button mnemonicParsing="false" text="Analyze"/>-->
 <!--                <Button mnemonicParsing="false" text="Check for updates"/>-->
-                <Button mnemonicParsing="false" onAction="#install" text="Install..."/>
+                <Button mnemonicParsing="false" onAction="#install" text="Install...">
+    <graphic><FontIcon iconLiteral="fth-download"/></graphic>
+</Button>
             </ToolBar>
         </top>
         <center>
