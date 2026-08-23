@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextFlow?>
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ogerardin.xpman.panels.home.HomeController">
+    <VBox styleClass="dashboard" prefWidth="800.0">
+        <HBox styleClass="dashboard-header">
+            <ImageView fitHeight="96.0" fitWidth="128.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../../img/x-plane.png"/>
+            </ImageView>
+            <VBox styleClass="dashboard-header-info">
+                <Label fx:id="titleLabel" styleClass="dashboard-title" text="No X-Plane installation selected"/>
+                <Hyperlink fx:id="folder" onAction="#showFolder" text="Select a folder..."/>
+                <Hyperlink fx:id="log" onAction="#showLog" text="Log file" visible="false" managed="false"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox styleClass="dashboard-header-actions" spacing="8.0">
+                <Button fx:id="startXPlaneButton" styleClass="dashboard-primary-button" disable="true"
+                        mnemonicParsing="false" onAction="#startXPlane" text="Start X-Plane" maxWidth="Infinity"/>
+                <Button mnemonicParsing="false" onAction="#installAnything" text="Install anything..."
+                        maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+
+        <TextFlow fx:id="releaseUpdateTextFlow" styleClass="banner-warning" visible="false" managed="false"/>
+        <TextFlow fx:id="betaUpdateTextFlow" styleClass="banner-warning" visible="false" managed="false"/>
+
+        <Label styleClass="dashboard-section-title" text="Disk usage"/>
+        <fx:include source="../breakdown.fxml"/>
+
+        <Label styleClass="dashboard-section-title" text="Library"/>
+        <HBox styleClass="dashboard-tiles" spacing="12.0">
+            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showAircraft" maxWidth="Infinity"
+                    HBox.hgrow="ALWAYS">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="4.0">
+                        <Label fx:id="aircraftCount" styleClass="dashboard-tile-count" text="—"/>
+                        <Label styleClass="dashboard-tile-label" text="Aircraft"/>
+                    </VBox>
+                </graphic>
+            </Button>
+            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showScenery" maxWidth="Infinity"
+                    HBox.hgrow="ALWAYS">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="4.0">
+                        <Label fx:id="sceneryCount" styleClass="dashboard-tile-count" text="—"/>
+                        <Label styleClass="dashboard-tile-label" text="Scenery"/>
+                    </VBox>
+                </graphic>
+            </Button>
+            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showNavData" maxWidth="Infinity"
+                    HBox.hgrow="ALWAYS">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="4.0">
+                        <Label fx:id="navDataCount" styleClass="dashboard-tile-count" text="—"/>
+                        <Label styleClass="dashboard-tile-label" text="Nav data"/>
+                    </VBox>
+                </graphic>
+            </Button>
+            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showPlugins" maxWidth="Infinity"
+                    HBox.hgrow="ALWAYS">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="4.0">
+                        <Label fx:id="pluginsCount" styleClass="dashboard-tile-count" text="—"/>
+                        <Label styleClass="dashboard-tile-label" text="Plugins"/>
+                    </VBox>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+</ScrollPane>

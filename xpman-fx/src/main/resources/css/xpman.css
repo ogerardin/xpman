@@ -187,3 +187,61 @@
     -fx-background-color: -color-danger-subtle;
     -fx-border-color: -color-danger-muted;
 }
+
+/* --- Home dashboard --- */
+.dashboard {
+    -fx-padding: 20px;
+    -fx-spacing: 12px;
+}
+
+.dashboard-header {
+    -fx-spacing: 16px;
+    -fx-alignment: center-left;
+}
+
+.dashboard-header-info {
+    -fx-spacing: 2px;
+}
+
+.dashboard-header-actions {
+    -fx-pref-width: 180px;
+}
+
+.dashboard-title {
+    -fx-font-size: 1.4em;
+    -fx-font-weight: bold;
+}
+
+.dashboard-section-title {
+    -fx-font-size: 1.1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-muted;
+    -fx-padding: 8px 0 0 0;
+}
+
+.dashboard-tile {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 14px 8px;
+}
+
+.dashboard-tile:hover {
+    -fx-background-color: -color-accent-subtle;
+    -fx-border-color: -color-accent-muted;
+}
+
+.dashboard-tile-count {
+    -fx-font-size: 1.6em;
+    -fx-font-weight: bold;
+}
+
+.dashboard-tile-label {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.dashboard-primary-button:disabled {
+    -fx-opacity: 0.5;
+}

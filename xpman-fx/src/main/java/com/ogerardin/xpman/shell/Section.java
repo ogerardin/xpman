@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Section {
-    HOME("Home", "fth-home", "/fxml/panels/xplane.fxml"),
+    HOME("Home", "fth-home", "/fxml/panels/home.fxml"),
     AIRCRAFT("Aircraft", "fth-send", "/fxml/panels/aircraft.fxml"),
     SCENERY("Scenery", "fth-map", "/fxml/panels/scenery.fxml"),
     NAV_DATA("Nav data", "fth-navigation", "/fxml/panels/navdata.fxml"),

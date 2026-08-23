@@ -36,13 +36,13 @@ module xpman.fx {
     opens com.ogerardin.xpman.install.wizard to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.aircraft to javafx.base, javafx.fxml, spring.expression;
+    opens com.ogerardin.xpman.panels.home to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.aircraft.details to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.navdata to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.plugins to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.scenery to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.scenery.rules to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.scenery.wizard to javafx.base, javafx.fxml, spring.expression;
-    opens com.ogerardin.xpman.panels.xplane to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.scenery_organizer;
     opens com.ogerardin.xpman.shell to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.tools to javafx.fxml, javafx.base;

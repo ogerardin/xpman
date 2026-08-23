@@ -218,6 +218,14 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
      * the corresponding view on first access.
      */
     @SneakyThrows
+    /**
+     * Displays the content of the given section in the main content area, loading and caching
+     * the corresponding view on first access.
+     */
+    public void navigateTo(Section section) {
+        sidebarController.select(section);
+    }
+
     private void showSection(Section section) {
         Node content = sectionCache.computeIfAbsent(section, this::loadSectionContent);
         if (contentArea.getChildren().isEmpty() || contentArea.getChildren().get(0) != content) {
