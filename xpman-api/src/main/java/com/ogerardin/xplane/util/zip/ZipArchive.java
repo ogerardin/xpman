@@ -48,14 +48,16 @@ public class ZipArchive implements Archive {
         return getPaths().size();
     }
 
-    @Override
-    public boolean isValidArchive() {
+    @Getter(lazy = true)
+    private final boolean validArchive = computeValidArchive();
+
+    private boolean computeValidArchive() {
         try {
-            //noinspection ResultOfMethodCallIgnored
+            // materialize entry list: forces parsing of the central directory
             getPaths();
             return true;
         } catch (Exception e) {
-            log.error("Invalid archive", e);
+            log.error("Invalid archive: {}", getZipFile(), e);
             return false;
         }
     }
