@@ -53,6 +53,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - `xpman-fx` opens packages to `javafx.base`, `javafx.fxml`, `spring.expression`, and `com.google.gson` for reflection access.
 - `com.ogerardin.xpman.scenery_organizer` is opened **unqualified** (to all modules, including the unnamed module) so SpEL's `ReflectivePropertyAccessor` can `setAccessible` on `LibrarySceneryClass` when running under IntelliJ's classpath layout (where Spring jars land in the unnamed module). A qualified `opens ... to spring.expression` is insufficient there.
 - The runtime `--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls` (ControlsFX compatibility) is passed via the jpackage `<javaOptions>` in `xpman-fx-dist/pom.xml` (per-OS profile). The legacy `xpman.l4j.ini` was removed with the launch4j migration.
+- **IDE dev runs need the same flag manually**: ControlsFX's `Wizard.readSettings()` reflectively calls `Parent.getChildren()`, so an IntelliJ (or plain `java`) modular launch of `com.ogerardin.xpman.XPmanFX` must add `--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls` to its VM options — otherwise navigating a wizard fails with `InaccessibleObjectException`. jpackage builds already include it.
 
 ## macOS DMG (dmgbuild)
 
