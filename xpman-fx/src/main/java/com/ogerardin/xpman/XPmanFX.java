@@ -9,15 +9,19 @@ import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.shell.Section;
+import com.ogerardin.xpman.shell.SidebarController;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import com.ogerardin.xpman.util.jfx.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -31,7 +35,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,6 +56,14 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     private MenuItem themeMenuItem;
+
+    @FXML
+    private StackPane contentArea;
+
+    @FXML
+    private SidebarController sidebarController;
+
+    private final Map<Section, Node> sectionCache = new EnumMap<>(Section.class);
 
     @Getter
     private final JsonFileConfigPersister<XPManPrefs> configManager = new JsonFileConfigPersister<>(XPManPrefs.class, ".xpman");
@@ -200,12 +214,34 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private void initialize() {
         updateRecent();
         updateThemeMenuItem();
+        sidebarController.selectedSectionProperty().addListener((__, ___, section) ->
+                Optional.ofNullable(section).ifPresent(this::showSection));
+        sidebarController.select(Section.HOME);
         XPManPrefs config = getConfig();
         if (config.getLastXPlanePath() != null) {
             Platform.runLater(() -> openXPlane(Paths.get(config.getLastXPlanePath()).toFile()));
         } else {
             Platform.runLater(this::open);
         }
+    }
+
+    /**
+     * Displays the content of the given section in the main content area, loading and caching
+     * the corresponding view on first access.
+     */
+    @SneakyThrows
+    private void showSection(Section section) {
+        Node content = sectionCache.computeIfAbsent(section, this::loadSectionContent);
+        if (contentArea.getChildren().isEmpty() || contentArea.getChildren().get(0) != content) {
+            contentArea.getChildren().setAll(content);
+        }
+    }
+
+    @SneakyThrows
+    private Node loadSectionContent(Section section) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(section.getContentFxml()));
+        loader.setControllerFactory(this::buildController);
+        return loader.load();
     }
 
     @FXML

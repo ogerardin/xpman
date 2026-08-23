@@ -32,11 +32,16 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        // catch-all exception handler (GUI version)
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> Platform.runLater(() -> ErrorDialog.showError(throwable, primaryStage)));
+        // catch-all exception handler (GUI version), installed only once the stage is up:
+        // exceptions during setupStage() below are better handled by the text logger
+        // (a Platform.runLater-based handler would never run if startup fails)
+        // catch-all exception handler (text version) for the startup phase
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> log.error("Caught exception during startup", throwable));
 
         log.debug("Setting up stage");
         setupStage(primaryStage);
+
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> Platform.runLater(() -> ErrorDialog.showError(throwable, primaryStage)));
 
         // if we're on a Mac, use native Mac application menu
         if (Platforms.getCurrent() == Platforms.MAC) {

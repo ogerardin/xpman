@@ -10,12 +10,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Section {
-    HOME("Home", "fe-home", "/fxml/panels/xplane.fxml"),
-    AIRCRAFT("Aircraft", "fe-plane", "/fxml/panels/aircraft.fxml"),
-    SCENERY("Scenery", "fe-map", "/fxml/panels/scenery.fxml"),
-    NAV_DATA("Nav data", "fe-navigation", "/fxml/panels/navdata.fxml"),
-    PLUGINS("Plugins", "fe-plug", "/fxml/panels/plugins.fxml"),
-    TOOLS("Tools", "fe-tool", "/fxml/tools/tools.fxml");
+    HOME("Home", "fth-home", "/fxml/panels/xplane.fxml"),
+    AIRCRAFT("Aircraft", "fth-send", "/fxml/panels/aircraft.fxml"),
+    SCENERY("Scenery", "fth-map", "/fxml/panels/scenery.fxml"),
+    NAV_DATA("Nav data", "fth-navigation", "/fxml/panels/navdata.fxml"),
+    PLUGINS("Plugins", "fth-package", "/fxml/panels/plugins.fxml"),
+    TOOLS("Tools", "fth-tool", "/fxml/tools/tools.fxml");
 
     private final String label;
     private final String iconLiteral;
