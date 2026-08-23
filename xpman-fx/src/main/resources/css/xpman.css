@@ -1,0 +1,107 @@
+/*
+ * XPman override layer.
+ *
+ * This stylesheet is added to the main Scene on top of the AtlantaFX user-agent
+ * theme (PrimerDark / PrimerLight, see ThemeManager). It defines the app's own
+ * style classes only; it does not restyle standard JavaFX control selectors.
+ *
+ * RULE: use ONLY AtlantaFX functional color variables (the -color-* lookups
+ * defined on .root by the active theme). Never hardcode raw colors (hex, rgb,
+ * named) so that the dark and light themes both stay correct. Font names in
+ * the monospace font stacks are names, not colors, and are the only exception.
+ */
+
+/* --- Console: terminal-like output area --- */
+.console {
+    /* Override AtlantaFX's text-input lookups: inset background and default
+       foreground, keeping the themed border and focus ring. */
+    -color-input-bg: -color-bg-inset;
+    -color-input-bg-focused: -color-bg-inset;
+    -color-input-fg: -color-fg-default;
+    -fx-font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+}
+
+/* --- Warning icon (Ikonli FontIcon or other icon node) --- */
+.warning-icon {
+    -fx-icon-color: -color-warning-emphasis;
+    -fx-fill: -color-warning-emphasis;
+}
+
+/* --- Validating table cells --- */
+.validation-cell {
+    -fx-font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+}
+
+.validation-cell:invalid,
+.validation-cell:invalid .text-field {
+    -fx-text-fill: -color-danger-fg;
+}
+
+/* --- Segmented disk-usage bar --- */
+.segment-default {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+}
+
+.segment-aircraft {
+    -fx-background-color: -color-accent-muted;
+}
+
+.segment-scenery {
+    -fx-background-color: -color-success-muted;
+}
+
+.segment-plugins {
+    -fx-background-color: -color-warning-muted;
+}
+
+.segment-navdata {
+    -fx-background-color: -color-danger-muted;
+}
+
+.segment-other {
+    -fx-background-color: -color-fg-muted;
+}
+
+/* --- Empty state placeholder (icon + message) --- */
+.empty-state {
+    -fx-alignment: center;
+    -fx-spacing: 8px;
+    -fx-padding: 32px;
+}
+
+.empty-state-icon {
+    -fx-icon-color: -color-fg-muted;
+    -fx-fill: -color-fg-muted;
+}
+
+.empty-state-message {
+    -fx-text-fill: -color-fg-muted;
+    -fx-text-alignment: center;
+}
+
+/* --- Notification banners --- */
+.banner-info,
+.banner-warning,
+.banner-danger {
+    -fx-border-width: 1px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-padding: 6px 12px 6px 12px;
+}
+
+.banner-info {
+    -fx-background-color: -color-accent-subtle;
+    -fx-border-color: -color-accent-muted;
+}
+
+.banner-warning {
+    -fx-background-color: -color-warning-subtle;
+    -fx-border-color: -color-warning-muted;
+}
+
+.banner-danger {
+    -fx-background-color: -color-danger-subtle;
+    -fx-border-color: -color-danger-muted;
+}

@@ -19,8 +19,6 @@ public class MethodHyperlink<T> extends Hyperlink implements Refreshable {
         super(text);
         this.target = target;
 
-        getStylesheets().add(MethodHyperlink.class.getResource("/css/hyperlink.css").toExternalForm());
-
         EnabledIf enabledIf = method.getAnnotation(EnabledIf.class);
         this.enabledIfExpr = (enabledIf != null) ? enabledIf.value() : null;
 

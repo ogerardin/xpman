@@ -226,6 +226,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         loader.setControllerFactory(this::buildController);
         Pane mainPane = loader.load();
         Scene scene = new Scene(mainPane);
+        scene.getStylesheets().add(getClass().getResource("/css/xpman.css").toExternalForm());
 //        scene.getRoot().setStyle("-fx-font-family: 'sans-serif'");
         stage.setScene(scene);
 
