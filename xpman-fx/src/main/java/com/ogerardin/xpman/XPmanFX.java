@@ -269,6 +269,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 //        scene.getRoot().setStyle("-fx-font-family: 'sans-serif'");
         stage.setScene(scene);
 
+        stage.setMinWidth(900);
+        stage.setMinHeight(600);
+
         restoreWindowPosition(stage);
     }
 
