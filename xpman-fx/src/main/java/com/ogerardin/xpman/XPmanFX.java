@@ -20,6 +20,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
@@ -229,6 +232,23 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         return loader.load();
     }
 
+    /**
+     * Registers Alt+1..6 and Shortcut+1..6 accelerators for direct section navigation.
+     */
+    private void installSectionAccelerators(Scene scene) {
+        Section[] sections = Section.values();
+        for (int i = 0; i < sections.length; i++) {
+            KeyCode code = KeyCode.valueOf("DIGIT" + (i + 1));
+            Section section = sections[i];
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(code, KeyCombination.ALT_DOWN),
+                    () -> sidebarController.select(section));
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(code, KeyCombination.SHORTCUT_DOWN),
+                    () -> sidebarController.select(section));
+        }
+    }
+
     @FXML
     private void toggleTheme() {
         getThemeManager().toggle();
@@ -268,6 +288,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         scene.getStylesheets().add(getClass().getResource("/css/xpman.css").toExternalForm());
 //        scene.getRoot().setStyle("-fx-font-family: 'sans-serif'");
         stage.setScene(scene);
+
+        installSectionAccelerators(scene);
 
         stage.setMinWidth(900);
         stage.setMinHeight(600);
