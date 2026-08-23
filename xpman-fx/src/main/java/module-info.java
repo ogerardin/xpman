@@ -14,6 +14,10 @@ module xpman.fx {
     requires com.sun.jna.platform;
     requires java.desktop;
     requires nsmenufx;
+    requires atlantafx.base;
+    requires org.kordamp.ikonli.core;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.feather;
 
     exports com.ogerardin.xpman.panels.aircraft;
     exports com.ogerardin.xpman.tools;
