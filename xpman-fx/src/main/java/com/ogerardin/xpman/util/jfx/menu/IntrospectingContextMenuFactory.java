@@ -37,6 +37,13 @@ public abstract class IntrospectingContextMenuFactory<T> {
         return menu;
     }
 
+    /**
+     * Returns the introspected context menu for the given item; can be attached to any node.
+     */
+    public ContextMenu menuFor(T item) {
+        return getContextMenu(item);
+    }
+
 
     protected MenuItem[] buildMenuItems(T target, Class<?> aClass) {
         return IntrospectionHelper.computeRelevantMethods(aClass).stream()

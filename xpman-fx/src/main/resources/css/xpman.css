@@ -245,3 +245,127 @@
 .dashboard-primary-button:disabled {
     -fx-opacity: 0.5;
 }
+
+/* --- Aircraft card grid --- */
+.aircraft-grid {
+    -fx-hgap: 12px;
+    -fx-vgap: 12px;
+    -fx-padding: 12px;
+}
+
+.aircraft-card {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+    -fx-spacing: 2px;
+    -fx-min-width: 220px;
+    -fx-pref-width: 220px;
+}
+
+.aircraft-card:hover {
+    -fx-border-color: -color-accent-muted;
+    -fx-background-color: -color-accent-subtle;
+}
+
+.aircraft-card-thumb {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.25), 4, 0, 0, 1);
+}
+
+.aircraft-card-thumb-placeholder {
+    -fx-background-color: -color-bg-inset;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.aircraft-card-name {
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.aircraft-card-author {
+    -fx-text-fill: -color-fg-muted;
+    -fx-wrap-text: true;
+}
+
+.aircraft-card-badges {
+    -fx-spacing: 6px;
+    -fx-padding: 4px 0 0 0;
+}
+
+.aircraft-card-badges .label {
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-fg-muted;
+    -fx-padding: 1px 6px 1px 6px;
+    -fx-background-radius: 4px;
+}
+
+.aircraft-card-liveries {
+    -fx-background-color: -color-accent-subtle;
+    -fx-border-color: -color-accent-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 1px 6px 1px 6px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.aircraft-card-liveries:hover {
+    -fx-background-color: -color-accent-muted;
+}
+
+.aircraft-card-actions {
+    -fx-spacing: 4px;
+    -fx-padding: 4px 0 0 0;
+    -fx-opacity: 0;
+}
+
+.aircraft-card:hover .aircraft-card-actions {
+    -fx-opacity: 1;
+}
+
+.aircraft-card-action {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 3px;
+    -fx-background-radius: 4px;
+}
+
+.aircraft-card-action .ikonli-font-icon {
+    -fx-fill: -color-fg-muted;
+}
+
+.aircraft-card-action:hover {
+    -fx-background-color: -color-accent-muted;
+}
+
+.aircraft-card-action:hover .ikonli-font-icon {
+    -fx-fill: -color-fg-emphasis;
+}
+
+.aircraft-card-livery-row {
+    -fx-padding: 6px 0 0 0;
+}
+
+.livery-card {
+    -fx-background-color: -color-bg-inset;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 4px;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.livery-card:hover {
+    -fx-border-color: -color-accent-muted;
+}
+
+.livery-card-name {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 0.85em;
+    -fx-max-width: 96px;
+}

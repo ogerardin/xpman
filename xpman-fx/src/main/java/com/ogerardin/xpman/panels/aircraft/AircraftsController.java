@@ -11,28 +11,35 @@ import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.Filter;
-import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
+import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Slf4j
 public class AircraftsController extends Controller {
 
-    private static final Label PLACEHOLDER = new Label("No aircraft to show");
+    private static final Label EMPTY_PLACEHOLDER = new Label("No aircraft to show");
 
     private final XPlaneProperty xPlaneProperty;
 
@@ -40,13 +47,24 @@ public class AircraftsController extends Controller {
     private ComboBox<Filter<Aircraft>> filterCombo;
 
     @FXML
+    private TextField searchField;
+
+    @FXML
     private ToolBar toolbar;
 
     @FXML
-    private TableView<UiAircraft> aircraftsTable;
+    private FlowPane cardsPane;
+
+    @FXML
+    private StackPane placeholderPane;
+
+    private final StringProperty searchText = new SimpleStringProperty("");
 
     private ManagerItemsObservableList<Aircraft, UiAircraft> uiItems;
     private FilteredList<UiAircraft> filteredUiItems;
+
+    private final GenericContextMenuFactory<UiAircraft> cardMenuFactory =
+            new GenericContextMenuFactory<>(this);
 
     public AircraftsController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
@@ -69,20 +87,55 @@ public class AircraftsController extends Controller {
                 UiAircraft::new
         );
         filteredUiItems = new FilteredList<>(uiItems);
-        aircraftsTable.setItems(filteredUiItems);
+        filteredUiItems.predicateProperty().bind(
+                Bindings.createObjectBinding(this::combinedPredicate, filterCombo.valueProperty(), searchText));
 
-        // add context menu
-        aircraftsTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+        searchField.textProperty().addListener((__, ___, text) -> searchText.set(text == null ? "" : text));
+
+        // rebuild the card grid whenever the filtered list changes
+        filteredUiItems.addListener((ListChangeListener<UiAircraft>) __ -> Platform.runLater(this::updateCards));
 
         // disable toolbar whenever xPlaneProperty is null
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
 
-        // show "loading" animation when aircraft list is loading
-        aircraftsTable.placeholderProperty().bind(
-                Bindings.when(uiItems.getLoadingProperty())
-                        .then((Node) LOADING)
-                        .otherwise(PLACEHOLDER)
-        );
+        updateCards();
+    }
+
+    /**
+     * @return the combined predicate for the current filter combo selection and search text
+     */
+    private Predicate<UiAircraft> combinedPredicate() {
+        Filter<Aircraft> filter = filterCombo.getValue();
+        Predicate<Aircraft> filterPredicate = filter != null ? filter.getPredicate() : o -> true;
+        String needle = searchText.get() == null ? "" : searchText.get().trim().toLowerCase(Locale.ROOT);
+        return uiAircraft -> filterPredicate.test(uiAircraft.getAircraft())
+                && (needle.isEmpty() || matches(uiAircraft, needle));
+    }
+
+    private static boolean matches(UiAircraft uiAircraft, String needle) {
+        return contains(uiAircraft.getName(), needle)
+                || contains(uiAircraft.getStudio(), needle)
+                || contains(uiAircraft.getAuthor(), needle);
+    }
+
+    private static boolean contains(String value, String needle) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(needle);
+    }
+
+    private void updateCards() {
+        List<UiAircraft> items = filteredUiItems;
+        cardsPane.getChildren().clear();
+        items.forEach(uiAircraft -> cardsPane.getChildren().add(new AircraftCardView(uiAircraft, this)));
+
+        boolean loading = uiItems.getLoadingProperty().get();
+        boolean empty = items.isEmpty();
+        placeholderPane.setVisible(empty || loading);
+        placeholderPane.setManaged(empty || loading);
+        placeholderPane.getChildren().setAll(loading ? LOADING : EMPTY_PLACEHOLDER);
+    }
+
+    GenericContextMenuFactory<UiAircraft> getCardMenuFactory() {
+        return cardMenuFactory;
     }
 
     /**
@@ -129,13 +182,7 @@ public class AircraftsController extends Controller {
         uiItems.reload();
     }
 
-
     public void reload() {
         uiItems.reload();
-    }
-
-    public void applyFilter() {
-        Predicate<Aircraft> predicate = filterCombo.getValue().getPredicate();
-        filteredUiItems.setPredicate(uiAircraft -> predicate.test(uiAircraft.getAircraft()));
     }
 }
