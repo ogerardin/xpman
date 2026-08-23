@@ -35,6 +35,10 @@ public class ArchiveInstallSource implements InstallSource, Archive {
     private final Set<InstallType> candidateTypes = computeCandidateTypes();
 
     private Set<InstallType> computeCandidateTypes() {
+        if (!archive.isValidArchive()) {
+            log.debug("Not a valid archive, skipping install type detection");
+            return Collections.emptySet();
+        }
         try {
             return Arrays.stream(InstallType.values())
                     .filter(it -> it.test(archive))
