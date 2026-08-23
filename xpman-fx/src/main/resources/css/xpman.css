@@ -188,6 +188,31 @@
     -fx-max-height: 40px;
 }
 
+/* --- ControlsFX wizard --- */
+.wizard-pane {
+    -fx-background-color: -color-bg-default;
+}
+
+.wizard-pane .graphic-container {
+    -fx-background-color: -color-accent-muted;
+}
+
+.wizard-pane .label.header {
+    -fx-text-fill: -color-fg-default;
+    -fx-font-size: 1.2em;
+    -fx-font-weight: bold;
+}
+
+/* --- Validation decoration (ControlsFX GraphicValidationDecoration) --- */
+.validation-error .label,
+.validation-error .text {
+    -fx-text-fill: -color-danger-fg;
+}
+
+.validation-error .glyph-font {
+    -fx-text-fill: -color-danger-emphasis;
+}
+
 /* --- Notification banners --- */
 .banner-info,
 .banner-warning,

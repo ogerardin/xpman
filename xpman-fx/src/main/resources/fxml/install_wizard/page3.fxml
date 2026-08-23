@@ -3,13 +3,16 @@
 <?import com.ogerardin.xpman.util.jfx.wizard.ValidatingWizardPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.VBox?>
 <ValidatingWizardPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.install.wizard.Page3Controller">
     <headerText>Installing...</headerText>
-   <content>
-      <VBox prefHeight="200.0" prefWidth="100.0">
-         <Label fx:id="fileLabel" text="..."/>
-         <ProgressBar fx:id="progress" prefWidth="600.0" progress="0.0"/>
-      </VBox>
-   </content>
+    <content>
+        <VBox spacing="10.0">
+            <Label fx:id="fileLabel" text="..."/>
+            <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0.0"/>
+            <TextArea fx:id="logArea" styleClass="console" editable="false" wrapText="true"
+                      VBox.vgrow="ALWAYS" prefHeight="260.0"/>
+        </VBox>
+    </content>
 </ValidatingWizardPane>
