@@ -4,6 +4,7 @@ import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.MethodActionConfigurer;
 import com.ogerardin.xpman.util.jfx.menu.MethodButton;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -160,6 +161,12 @@ public class AircraftCardView extends VBox {
         // overflowing the fixed-width card
         liveryRow = new FlowPane(6, 6);
         liveryRow.getStyleClass().add("aircraft-card-livery-row");
+        // the outer card grid sizes rows by prefHeight(-1): without a preferred wrap length the
+        // livery FlowPane would report its single-row height and the expanded card would paint
+        // over neighbouring rows
+        liveryRow.prefWrapLengthProperty().bind(Bindings.createDoubleBinding(
+                () -> getWidth() - snappedLeftInset() - snappedRightInset(),
+                widthProperty()));
         uiAircraft.getAircraft().getLiveries().forEach(livery ->
                 liveryRow.getChildren().add(buildLiveryCard(new UiLivery(uiAircraft.getAircraft(), livery))));
         getChildren().add(liveryRow);
