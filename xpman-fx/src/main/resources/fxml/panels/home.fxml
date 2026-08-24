@@ -33,11 +33,13 @@
         <TextFlow fx:id="betaUpdateTextFlow" styleClass="banner-warning" visible="false" managed="false"/>
 
         <Label styleClass="dashboard-section-title" text="Disk usage"/>
-        <fx:include source="../breakdown.fxml"/>
+        <StackPane styleClass="dashboard-card">
+            <fx:include source="../breakdown.fxml"/>
+        </StackPane>
 
         <Label styleClass="dashboard-section-title" text="Library"/>
         <HBox styleClass="dashboard-tiles" spacing="12.0">
-            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showAircraft" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showAircraft" maxWidth="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
@@ -46,7 +48,7 @@
                     </VBox>
                 </graphic>
             </Button>
-            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showScenery" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showScenery" maxWidth="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
@@ -55,7 +57,7 @@
                     </VBox>
                 </graphic>
             </Button>
-            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showNavData" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showNavData" maxWidth="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
@@ -64,7 +66,7 @@
                     </VBox>
                 </graphic>
             </Button>
-            <Button styleClass="dashboard-tile" mnemonicParsing="false" onAction="#showPlugins" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showPlugins" maxWidth="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">

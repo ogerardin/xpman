@@ -328,7 +328,7 @@
     -fx-padding: 8px 0 0 0;
 }
 
-.dashboard-tile {
+.dashboard-card {
     -fx-background-color: -color-bg-subtle;
     -fx-border-color: -color-border-muted;
     -fx-border-width: 1px;
