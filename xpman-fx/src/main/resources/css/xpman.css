@@ -468,5 +468,5 @@
 .livery-card-name {
     -fx-text-fill: -color-fg-muted;
     -fx-font-size: 0.85em;
-    -fx-max-width: 96px;
+    -fx-max-width: 88px;
 }

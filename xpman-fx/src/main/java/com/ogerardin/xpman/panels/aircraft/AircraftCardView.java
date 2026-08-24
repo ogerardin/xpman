@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -38,7 +39,9 @@ public class AircraftCardView extends VBox {
     private final AircraftsController controller;
     private final GenericContextMenuFactory<UiAircraft> menuFactory;
 
-    private HBox liveryRow;
+    private FlowPane liveryRow;
+
+    private FontIcon liveriesChevron;
 
     public AircraftCardView(UiAircraft uiAircraft, AircraftsController controller) {
         this.controller = controller;
@@ -65,9 +68,9 @@ public class AircraftCardView extends VBox {
         if (liveryCount > 0) {
             Button liveryButton = new Button(liveryCount + " liveries");
             liveryButton.getStyleClass().add("aircraft-card-liveries");
-            FontIcon chevron = new FontIcon(Feather.CHEVRON_DOWN);
-            chevron.setIconSize(ICON_SIZE);
-            liveryButton.setGraphic(chevron);
+            liveriesChevron = new FontIcon(Feather.CHEVRON_DOWN);
+            liveriesChevron.setIconSize(ICON_SIZE);
+            liveryButton.setGraphic(liveriesChevron);
             liveryButton.setOnAction(__ -> toggleLiveries(uiAircraft));
             badges.getChildren().add(liveryButton);
         }
@@ -150,19 +153,30 @@ public class AircraftCardView extends VBox {
             boolean expanded = !liveryRow.isVisible();
             liveryRow.setVisible(expanded);
             liveryRow.setManaged(expanded);
+            setLiveriesExpanded(expanded);
             return;
         }
-        liveryRow = new HBox(6);
+        // FlowPane wraps livery cards within the card width (2 per row) instead of
+        // overflowing the fixed-width card
+        liveryRow = new FlowPane(6, 6);
         liveryRow.getStyleClass().add("aircraft-card-livery-row");
         uiAircraft.getAircraft().getLiveries().forEach(livery ->
                 liveryRow.getChildren().add(buildLiveryCard(new UiLivery(uiAircraft.getAircraft(), livery))));
         getChildren().add(liveryRow);
+        setLiveriesExpanded(true);
+    }
+
+    private void setLiveriesExpanded(boolean expanded) {
+        if (liveriesChevron != null) {
+            liveriesChevron.setRotate(expanded ? 90 : 0);
+        }
     }
 
     private VBox buildLiveryCard(UiLivery uiLivery) {
         VBox card = new VBox(4);
         card.getStyleClass().add("livery-card");
-        Node thumb = loadThumbnail(uiLivery.getThumb(), 96, 60);
+        // 88px wide so that two livery cards fit per row within the 202px card content width
+        Node thumb = loadThumbnail(uiLivery.getThumb(), 88, 55);
         Label name = new Label(uiLivery.getLivery().getName());
         name.getStyleClass().add("livery-card-name");
         card.getChildren().addAll(thumb, name);
