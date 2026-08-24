@@ -191,7 +191,11 @@ public class AircraftCardView extends VBox {
             menuFactory.menuFor(uiLivery).show(card, event.getScreenX(), event.getScreenY());
             event.consume();
         });
-        card.setOnMouseClicked(__ -> uiLivery.reveal());
+        card.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                uiLivery.reveal();
+            }
+        });
         return card;
     }
 
