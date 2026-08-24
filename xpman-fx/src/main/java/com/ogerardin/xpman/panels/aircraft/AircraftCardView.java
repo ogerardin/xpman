@@ -5,13 +5,18 @@ import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.MethodActionConfigurer;
 import com.ogerardin.xpman.util.jfx.menu.MethodButton;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -83,10 +88,8 @@ public class AircraftCardView extends VBox {
 
         getChildren().addAll(thumbnail, info, actions);
 
-        setOnContextMenuRequested(event -> {
-            menuFactory.menuFor(uiAircraft).show(this, event.getScreenX(), event.getScreenY());
-            event.consume();
-        });
+        ContextMenu cardMenu = menuFactory.menuFor(uiAircraft);
+        setOnContextMenuRequested(event -> showMenu(cardMenu, this, event));
         setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
                 runAction(uiAircraft, "details");
@@ -187,16 +190,28 @@ public class AircraftCardView extends VBox {
         Label name = new Label(uiLivery.getLivery().getName());
         name.getStyleClass().add("livery-card-name");
         card.getChildren().addAll(thumb, name);
-        card.setOnContextMenuRequested(event -> {
-            menuFactory.menuFor(uiLivery).show(card, event.getScreenX(), event.getScreenY());
-            event.consume();
-        });
-        card.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                uiLivery.reveal();
-            }
-        });
+        ContextMenu liveryMenu = menuFactory.menuFor(uiLivery);
+        card.setOnContextMenuRequested(event -> showMenu(liveryMenu, card, event));
         return card;
+    }
+
+    /**
+     * Shows the given context menu over the owner node and guarantees that any mouse press
+     * outside it (in the main window) dismisses it: in addition to the popup's own auto-hide,
+     * a one-shot scene-level press filter hides the menu explicitly.
+     */
+    private static void showMenu(ContextMenu menu, Node owner, ContextMenuEvent event) {
+        menu.setAutoHide(true);
+        menu.show(owner, event.getScreenX(), event.getScreenY());
+        event.consume();
+
+        Scene scene = owner.getScene();
+        if (scene == null) {
+            return;
+        }
+        EventHandler<MouseEvent> outsidePressHandler = __ -> menu.hide();
+        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler);
+        menu.setOnHidden(__ -> scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler));
     }
 
     private static Node loadThumbnail(Path path, double fitWidth, double fitHeight) {
