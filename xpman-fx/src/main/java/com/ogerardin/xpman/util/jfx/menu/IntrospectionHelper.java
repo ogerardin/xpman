@@ -9,11 +9,19 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @UtilityClass
 public class IntrospectionHelper {
 
+    private static final Map<Class<?>, List<Method>> METHODS_CACHE = new ConcurrentHashMap<>();
+
     public static List<Method> computeRelevantMethods(Class<?> aClass) {
+        return METHODS_CACHE.computeIfAbsent(aClass, IntrospectionHelper::computeRelevantMethodsUncached);
+    }
+
+    private static List<Method> computeRelevantMethodsUncached(Class<?> aClass) {
         return Arrays.stream(aClass.getDeclaredMethods())
                 // skip if method is an Object method
                 .filter(IntrospectionHelper::isNotObjectMethod)

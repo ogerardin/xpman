@@ -24,9 +24,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -88,7 +89,10 @@ public class AircraftsController extends Controller {
         filteredUiItems.predicateProperty().bind(
                 Bindings.createObjectBinding(this::combinedPredicate, filterCombo.valueProperty(), searchText));
 
-        searchField.textProperty().addListener((__, ___, text) -> searchText.set(text == null ? "" : text));
+        // debounce search input: rebuilding the card grid on every keystroke is too costly
+        PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
+        searchDebounce.setOnFinished(__ -> searchText.set(searchField.getText() == null ? "" : searchField.getText()));
+        searchField.textProperty().addListener((__, ___, ____) -> searchDebounce.playFromStart());
 
         // rebuild the card grid whenever the filtered list changes
         filteredUiItems.addListener((ListChangeListener<UiAircraft>) __ -> Platform.runLater(this::updateCards));
@@ -122,6 +126,8 @@ public class AircraftsController extends Controller {
 
     private void updateCards() {
         List<UiAircraft> items = filteredUiItems;
+        // evict menus for stale objects before rebuilding (see IntrospectingContextMenuFactory)
+        cardMenuFactory.clearCache();
         cardsPane.getChildren().clear();
         items.forEach(uiAircraft -> cardsPane.getChildren().add(new AircraftCardView(uiAircraft, this)));
 

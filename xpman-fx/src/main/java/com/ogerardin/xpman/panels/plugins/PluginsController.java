@@ -18,6 +18,9 @@ public class PluginsController extends Controller {
     @FXML
     private TableView<UiPlugin> pluginTable;
 
+    private final IntrospectingContextMenuTableRowFactory<UiPlugin> rowFactory =
+            new IntrospectingContextMenuTableRowFactory<>(this);
+
     private ManagerItemsObservableList<Plugin, UiPlugin> uiItems;
 
     public PluginsController(XPmanFX mainController) {
@@ -34,12 +37,13 @@ public class PluginsController extends Controller {
         pluginTable.setItems(uiItems);
 
         // add context menu
-        pluginTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+        pluginTable.setRowFactory(rowFactory);
 
         pluginTable.setPlaceholder(new EmptyState("fth-package", "No plugins to show"));
     }
 
     public void reload() {
+        rowFactory.clearCache();
         uiItems.reload();
     }
 

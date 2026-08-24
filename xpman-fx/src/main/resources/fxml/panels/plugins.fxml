@@ -4,11 +4,18 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.plugins.PluginsController">
-
-    <TableView fx:id="pluginTable" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <top>
+        <ToolBar BorderPane.alignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#reload" text="Reload">
+                <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
+            </Button>
+        </ToolBar>
+    </top>
+    <center>
+        <TableView fx:id="pluginTable" prefHeight="400.0" prefWidth="600.0">
       <columns>
           <TableColumn prefWidth="150.0" text="Name">
               <cellValueFactory>
@@ -32,4 +39,5 @@
           </TableColumn>
       </columns>
     </TableView>
-</AnchorPane>
+    </center>
+</BorderPane>

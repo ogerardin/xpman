@@ -1,22 +1,18 @@
 package com.ogerardin.xpman.install.wizard;
 
+import com.ogerardin.xpman.util.jfx.wizard.ThemedValidationDecoration;
 import com.ogerardin.xpman.util.jfx.wizard.Validating;
 import javafx.fxml.FXML;
-import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import lombok.experimental.Delegate;
 import org.apache.commons.lang3.StringUtils;
-import org.controlsfx.control.decoration.Decoration;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
-import org.controlsfx.validation.decoration.GraphicValidationDecoration;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Wizard page 1 controller: allows selection of the source archive.
@@ -35,13 +31,7 @@ public class Page1Controller implements Validating {
         // decorate fields in error
         setErrorDecorationEnabled(true);
 
-        // don't decorate required fields (because current decoration makes the field look invalid...)
-        setValidationDecorator(new GraphicValidationDecoration() {
-            @Override
-            protected Collection<Decoration> createRequiredDecorations(Control target) {
-                return Collections.emptyList();
-            }
-        });
+        setValidationDecorator(new ThemedValidationDecoration());
 
         registerValidator(sourcePathField, Validator.createPredicateValidator(
                 Page1Controller::fileExists, "File does not exist!"));

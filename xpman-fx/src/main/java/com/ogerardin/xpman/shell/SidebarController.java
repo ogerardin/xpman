@@ -60,9 +60,10 @@ public class SidebarController {
         });
 
         String version = getClass().getPackage().getImplementationVersion();
-        versionLabel.setText(version != null ? "v" + version : "");
+        versionLabel.setText(version != null ? "v" + version : "dev");
 
         updateThemeButton();
+        xpmanFX.getThemeManager().darkProperty().addListener((__, ___, dark) -> updateThemeButton());
     }
 
     public ObjectProperty<Section> selectedSectionProperty() {
@@ -90,7 +91,6 @@ public class SidebarController {
     @FXML
     private void toggleTheme() {
         xpmanFX.getThemeManager().toggle();
-        updateThemeButton();
     }
 
     @FXML

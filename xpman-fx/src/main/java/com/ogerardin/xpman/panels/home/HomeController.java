@@ -189,6 +189,11 @@ public class HomeController {
 
     @FXML
     public void showFolder() {
+        if (xPlane == null) {
+            // no installation selected yet: the hyperlink acts as the folder chooser entry point
+            mainController.open();
+            return;
+        }
         Platforms.getCurrent().reveal(xPlane.getXPlaneExecutable());
     }
 
@@ -199,7 +204,9 @@ public class HomeController {
 
     @FXML
     private void showLog() {
-        Platforms.getCurrent().openFile(xPlane.getLogPath());
+        if (xPlane != null) {
+            Platforms.getCurrent().openFile(xPlane.getLogPath());
+        }
     }
 
     @FXML

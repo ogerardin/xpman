@@ -40,6 +40,9 @@ public class SceneryController extends Controller {
     @FXML
     private TableColumn<UiScenery, Integer> rankColumn;
 
+    private final IntrospectingContextMenuTableRowFactory<UiScenery> rowFactory =
+            new IntrospectingContextMenuTableRowFactory<>(this);
+
     private ManagerItemsObservableList<SceneryPackage, UiScenery> uiItems;
 
     public SceneryController(XPmanFX mainController) {
@@ -50,7 +53,7 @@ public class SceneryController extends Controller {
     @FXML
     public void initialize() {
         // add context menu to table rows
-        sceneryTable.setRowFactory(new IntrospectingContextMenuTableRowFactory<>(this));
+        sceneryTable.setRowFactory(rowFactory);
 
         sceneryTable.setPlaceholder(new EmptyState("fth-map", "No scenery to show"));
 
@@ -91,6 +94,7 @@ public class SceneryController extends Controller {
     }
 
     public void reload() {
+        rowFactory.clearCache();
         uiItems.reload();
     }
 

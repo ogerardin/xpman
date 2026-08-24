@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xplane.install.GenericInstaller;
+import com.ogerardin.xpman.util.jfx.Toast;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -53,6 +54,9 @@ public class Page3Controller implements PageListener {
             }
             if (message != null) {
                 fileLabel.setText(p != null && p == 1.0 ? "Done!" : message);
+            }
+            if (p != null && p == 1.0) {
+                Toast.success(logArea.getScene() != null ? logArea.getScene().getWindow() : null, "Installation complete");
             }
         });
     }

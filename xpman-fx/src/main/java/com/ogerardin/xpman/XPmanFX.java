@@ -83,11 +83,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         return xPlaneProperty;
     }
 
-
     public static void main(String[] args) {
         // catch-all exception handler (text version)
         Thread.setDefaultUncaughtExceptionHandler((thread, e) -> log.error("Caught exception", e));
-
 
         String version = XPmanFX.class.getPackage().getImplementationVersion();
         log.info("Starting X-Plane Manager version {}", Optional.ofNullable(version).orElse("Unknown"));
@@ -112,7 +110,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     @FXML
-    private void open() {
+    public void open() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Please select X-Plane directory");
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
@@ -200,6 +198,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private void initialize() {
         updateRecent();
         updateThemeMenuItem();
+        getThemeManager().darkProperty().addListener((__, ___, dark) -> updateThemeMenuItem());
         sidebarController.selectedSectionProperty().addListener((__, ___, section) ->
                 Optional.ofNullable(section).ifPresent(this::showSection));
         sidebarController.select(Section.HOME);
@@ -212,13 +211,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     /**
-     * Displays the content of the given section in the main content area, loading and caching
-     * the corresponding view on first access.
-     */
-    @SneakyThrows
-    /**
-     * Displays the content of the given section in the main content area, loading and caching
-     * the corresponding view on first access.
+     * Selects the given section in the sidebar (which displays it in the content area).
      */
     public void navigateTo(Section section) {
         sidebarController.select(section);
@@ -258,7 +251,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void toggleTheme() {
         getThemeManager().toggle();
-        updateThemeMenuItem();
     }
 
     private void updateThemeMenuItem() {

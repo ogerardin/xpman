@@ -7,8 +7,9 @@
  *
  * RULE: use ONLY AtlantaFX functional color variables (the -color-* lookups
  * defined on .root by the active theme). Never hardcode raw colors (hex, rgb,
- * named) so that the dark and light themes both stay correct. Font names in
- * the monospace font stacks are names, not colors, and are the only exception.
+ * named) so that the dark and light themes both stay correct. Exceptions:
+ * font names in the monospace font stacks, and black drop shadows (which read
+ * correctly on both light and dark backgrounds).
  */
 
 /* --- Console: terminal-like output area --- */
@@ -197,20 +198,11 @@
     -fx-background-color: -color-accent-muted;
 }
 
-.wizard-pane .label.header {
-    -fx-text-fill: -color-fg-default;
-    -fx-font-size: 1.2em;
-    -fx-font-weight: bold;
-}
-
-/* --- Validation decoration (ControlsFX GraphicValidationDecoration) --- */
-.validation-error .label,
-.validation-error .text {
-    -fx-text-fill: -color-danger-fg;
-}
-
-.validation-error .glyph-font {
-    -fx-text-fill: -color-danger-emphasis;
+/* --- Validation (ThemedValidationDecoration) --- */
+.validation-tooltip {
+    -fx-background-color: -color-danger-emphasis;
+    -fx-text-fill: -color-fg-emphasis;
+    -fx-background-radius: 4px;
 }
 
 /* --- Inspection severity icons --- */

@@ -34,6 +34,9 @@ public class NavDataController {
     @FXML
     private TreeTableView<UiNavDataItem> treeTableView;
 
+    private final IntrospectingContextMenuTreeTableRowFactory<UiNavDataItem> rowFactory =
+            new IntrospectingContextMenuTreeTableRowFactory<>(this);
+
     private ManagerItemsObservableList<NavDataSet, NavDataSet> items;
 
     public NavDataController(XPmanFX mainController) {
@@ -44,7 +47,7 @@ public class NavDataController {
     public void initialize() {
         treeTableView.placeholderProperty().setValue(new EmptyState("fth-navigation", "No nav data to show"));
 
-        treeTableView.setRowFactory(new IntrospectingContextMenuTreeTableRowFactory<>(this));
+        treeTableView.setRowFactory(rowFactory);
 
         // we can't set the ManagerItemsObservableList directly as a model of the tree, so we just
         // create it, and we will listen to changes to build the tree model
@@ -84,6 +87,7 @@ public class NavDataController {
     }
 
     public void reload() {
+        rowFactory.clearCache();
         items.reload();
     }
 

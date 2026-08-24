@@ -1,12 +1,11 @@
 package com.ogerardin.xpman.util.jfx.panels;
 
+import com.ogerardin.xpman.util.jfx.EmptyState;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,8 +21,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class TreeTableViewLoadTask<T> extends Task<Void> {
 
-    private static final ImageView LOADING
-            = new ImageView(new Image(TreeTableViewLoadTask.class.getResource("/img/loading.gif").toExternalForm()));
+    private static final Node LOADING = EmptyState.loading("Loading...");
 
     private final TreeTableView<T> treeTableView;
 

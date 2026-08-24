@@ -18,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -178,15 +176,13 @@ public class AircraftCardView extends VBox {
 
     private static Node loadThumbnail(Path path, double fitWidth, double fitHeight) {
         if (path != null && Files.exists(path)) {
-            try (InputStream inputStream = Files.newInputStream(path)) {
-                ImageView imageView = new ImageView(new Image(inputStream));
-                imageView.setPreserveRatio(true);
-                imageView.setFitWidth(fitWidth);
-                imageView.setFitHeight(fitHeight);
-                return imageView;
-            } catch (IOException e) {
-                log.warn("Failed to load thumbnail: {}", path);
-            }
+            // background loading keeps the FX thread responsive while thumbnails decode
+            Image image = new Image(path.toUri().toString(), true);
+            ImageView imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(fitWidth);
+            imageView.setFitHeight(fitHeight);
+            return imageView;
         }
         FontIcon placeholder = new FontIcon(Feather.IMAGE);
         placeholder.setIconSize(32);

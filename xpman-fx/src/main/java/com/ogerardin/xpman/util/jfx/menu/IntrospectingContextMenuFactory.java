@@ -17,6 +17,8 @@ import java.util.Map;
  * Base class for factories that create {@link ContextMenu}s by introspecting an object.
  * Warning: for efficiency reasons, the menu is cached and reused for each object; make sure that the #hashCode() and
  * #equals() methods of the object are properly implemented.
+ * Call {@link #clearCache()} whenever the underlying items are (re)loaded, so that menus for stale
+ * objects don't accumulate (the cached menus strongly reference their targets).
  * @param <T> type of the target object
  */
 @Slf4j
@@ -25,6 +27,13 @@ public abstract class IntrospectingContextMenuFactory<T> {
 
     @Getter(AccessLevel.NONE)
     private final Map<T, ContextMenu> MENU_CACHE = new HashMap<>();
+
+    /**
+     * Evicts all cached menus. Call when the item set is (re)loaded.
+     */
+    public void clearCache() {
+        MENU_CACHE.clear();
+    }
 
     private final Object evaluationContextRoot;
 

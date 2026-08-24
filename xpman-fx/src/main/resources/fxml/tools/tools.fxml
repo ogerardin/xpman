@@ -7,6 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.TextFlow?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import org.controlsfx.control.SegmentedButton?>
 <AnchorPane prefHeight="600.0" prefWidth="909.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.tools.ToolsController">
     <BorderPane prefHeight="600.0" prefWidth="946.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-146.0" AnchorPane.topAnchor="0.0">
@@ -45,7 +46,10 @@
         </right>
         <top>
             <ToolBar BorderPane.alignment="CENTER">
-                <SegmentedButton styleClass="dark">
+                <Button mnemonicParsing="false" onAction="#reload" text="Reload">
+                    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
+                </Button>
+                <SegmentedButton>
                     <buttons>
                         <ToggleButton fx:id="installedButton" onAction="#filterInstalled" text="Installed" />
                         <ToggleButton onAction="#filterAvailable" text="Available" />
