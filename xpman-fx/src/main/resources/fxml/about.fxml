@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<DialogPane prefHeight="222.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
+<DialogPane prefWidth="416.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.about.AboutController">
     <graphic>
         <ImageView fitHeight="128.0" fitWidth="128.0">
             <Image url="@../img/icon.png" />
@@ -15,17 +15,20 @@
     </graphic>
    <ButtonType fx:constant="CLOSE" />
    <content>
-       <AnchorPane>
-           <Text fx:id="title" styleClass="about-title" text="X-Plane Manager ..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"/>
-           <Text fx:id="build" layoutX="20.0" layoutY="49.0" text="Build ..." />
-           <Text fx:id="runtime" layoutX="20.0" layoutY="78.0" text="Runtime: ..." />
-           <Text fx:id="vm" layoutX="20.0" layoutY="95.0" text="VM: ..." />
-           <Text fx:id="cpu" layoutX="20.0" layoutY="113.0" text="CPU: ..." />
-           <Hyperlink layoutX="16.0" layoutY="140.0" onAction="#openLink" text="github.com/ogerardin/xpman" />
-           <Text layoutX="19.0" layoutY="174.0" text="© 2022-2026 by Olivier Gérardin" />
-           <ImageView layoutX="11.0" layoutY="178.0" onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
-               <Image url="@../img/gplv3.png" />
-           </ImageView>
-       </AnchorPane>
+       <VBox spacing="6.0" styleClass="about-content">
+           <Text fx:id="title" styleClass="about-title" text="X-Plane Manager ..."/>
+           <Text fx:id="build" text="Build ..."/>
+           <Text fx:id="runtime" text="Runtime: ..."/>
+           <Text fx:id="vm" text="VM: ..."/>
+           <Text fx:id="cpu" text="CPU: ..."/>
+           <Hyperlink onAction="#openLink" text="github.com/ogerardin/xpman"/>
+           <HBox spacing="8.0" styleClass="about-footer" alignment="CENTER_LEFT">
+               <Text text="© 2022-2026 by Olivier Gérardin"/>
+               <ImageView onMouseClicked="#showLicence" preserveRatio="true" smooth="false">
+                   <Image url="@../img/gplv3.png" />
+               </ImageView>
+           </HBox>
+       </VBox>
    </content>
 </DialogPane>
+
