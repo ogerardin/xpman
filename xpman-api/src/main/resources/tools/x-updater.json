@@ -2,6 +2,7 @@
   "name": "Flight factor's X-Updater",
   "homepage": "https://x-updater.com",
   "description": "X-Updater is used for updating FlightFactor's products.",
+  "icon": "fth-download",
   "items": [
     {
       "platform": "LINUX",
