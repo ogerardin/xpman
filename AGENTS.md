@@ -48,6 +48,14 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - **Custom event system**: Lightweight `EventDispatcher<E>` with `EventListener<E>` — no framework.
 - **Platform polymorphism**: The `Platform` interface is extended with default methods for platform-specific behavior (e.g. `getCandidateInstallBaseFolders`); each `MacPlatform`/`WindowsPlatform`/`LinuxPlatform` overrides as needed. Always prefer adding a method to the `Platform` interface over `if/else` on platform type.
 
+## Style Policies
+
+- **Zero boilerplate.** Aim for concise code; leverage Lombok, records, and language features to eliminate ceremony.
+- **Polymorphism over conditionals.** Prefer dispatch via interfaces, enums with behavior, or strategy pattern over `if`/`switch` chains.
+- **Java idioms.** Use `Optional`, streams, `sealed` types, pattern matching, and other modern Java conventions where they improve clarity.
+- **JavaFX bindings.** Use property bindings instead of manual listener/callback wiring wherever the relationship is declarative.
+- **Javadoc on all classes.** Keep it concise and helpful — one-liner purpose, no `@author`, no redundant `@param`/`@return` noise. Skip Javadoc on self-evident records/enums.
+
 ## JPMS Notes
 
 - `xpman-fx` opens packages to `javafx.base`, `javafx.fxml`, `spring.expression`, and `com.google.gson` for reflection access.
