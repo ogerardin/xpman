@@ -3,8 +3,12 @@ package com.ogerardin.xpman.panels.xplane.breakdown;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.SegmentedBar.Segment;
+
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * A specialized {@link Segment} that represents a {@link UsageCategory}.
@@ -14,6 +18,9 @@ import org.controlsfx.control.SegmentedBar.Segment;
 class CategorySegment extends Segment {
 
     private final UsageCategory category;
+
+    @Setter
+    private List<Path> folderPaths = List.of();
 
     private final BooleanProperty computing = new SimpleBooleanProperty(false);
     public final BooleanProperty computingProperty() {
@@ -34,10 +41,6 @@ class CategorySegment extends Segment {
     public CategorySegment(UsageCategory category) {
         this(category, 0);
     }
-
-
-
-
 
 
 }

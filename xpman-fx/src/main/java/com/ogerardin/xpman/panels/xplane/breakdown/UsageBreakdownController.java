@@ -7,15 +7,14 @@ import com.ogerardin.xpman.XPmanFX;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 import org.controlsfx.control.SegmentedBar;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.*;
+import java.util.function.Function;
 
-import static com.ogerardin.xpman.panels.xplane.breakdown.UsageCategory.*;
+import static com.ogerardin.xpman.panels.xplane.breakdown.UsageCategory.OTHER;
 
 /**
  * Controller for the disk usage breakdown panel.
@@ -40,7 +39,7 @@ public class UsageBreakdownController {
         // set all segments to "computing"
         breakdown.getSegments().stream()
                 .<Runnable>map(segment -> () -> segment.computingProperty().setValue(true))
-                .forEach(javafx.application.Platform::runLater);
+                .forEach(Platform::runLater);
 
         // schedule size computation
         AsyncHelper.runAsync(() -> computeSegments(xPlane));
@@ -53,40 +52,39 @@ public class UsageBreakdownController {
 
     @SneakyThrows
     private void computeSegments(XPlane xPlane) {
-        //TODO use JavaFX property bindings?
-        final long size = FileUtils.getFolderSize(xPlane.getBaseFolder());
-        setSegment(OTHER, size);
+        // Phase 1: pre-compute folder sizes for categories that have a pathResolver
+        Map<UsageCategory, Long> folderSizes = computeFolderSizes(xPlane);
 
-        //TODO can this be done in parallel?
-        computeSegment(AIRCRAFT, xPlane.getAircraftManager().getAircraftFolder());
-        computeSegment(GLOBAL_SCENERY, xPlane.getPaths().globalScenery());
-        computeSegment(CUSTOM_SCENERY, xPlane.getSceneryManager().getSceneryFolder());
-        computeSegment(CUSTOM_SCENERY_DISABLED, xPlane.getSceneryManager().getDisabledSceneryFolder());
+        // Phase 2: compute all category results uniformly (fully polymorphic)
+        Map<UsageCategory, UsageCategory.CategoryResult> results = new LinkedHashMap<>();
+        for (UsageCategory category : UsageCategory.values()) {
+            results.put(category, category.getSizeComputer().apply(xPlane, folderSizes));
+        }
+
+        // Phase 3: apply all results on FX thread in one pass
+        Platform.runLater(() -> results.forEach((category, result) -> {
+            CategorySegment seg = segmentFor(category);
+            seg.setFolderPaths(result.folderPaths());
+            seg.setValue((double) result.size());
+        }));
     }
 
-    private long computeSegment(UsageCategory category, Path folder) throws IOException {
-        final long folderSize = Files.exists(folder) ? FileUtils.getFolderSize(folder) : 0;
-        Platform.runLater(() -> rebalance(OTHER, category, folderSize));
-        return folderSize;
+    @SneakyThrows
+    private Map<UsageCategory, Long> computeFolderSizes(XPlane xPlane) {
+        Map<UsageCategory, Long> sizes = new EnumMap<>(UsageCategory.class);
+        for (UsageCategory category : UsageCategory.values()) {
+            Function<XPlane, Path> resolver = category.getPathResolver();
+            if (resolver == null) continue;
+            Path folder = resolver.apply(xPlane);
+            sizes.put(category, Files.exists(folder) ? FileUtils.getFolderSize(folder) : 0);
+        }
+        return sizes;
     }
 
-    private void setSegment(UsageCategory category, long size) {
-        breakdown.getSegments().stream()
+    private CategorySegment segmentFor(UsageCategory category) {
+        return breakdown.getSegments().stream()
                 .filter(segment -> segment.getCategory() == category)
                 .findFirst()
-                .ifPresent(segment -> Platform.runLater(() -> segment.setValue((double) size)));
+                .orElseThrow();
     }
-
-    @Synchronized
-    private void rebalance(UsageCategory fromCategory, UsageCategory toCategory, long folderSize) {
-        for (CategorySegment segment : breakdown.getSegments()) {
-            UsageCategory segmentCategory = segment.getCategory();
-            if (segmentCategory == fromCategory) {
-                segment.setValue(segment.getValue() - (double) folderSize);
-            } else if (segmentCategory == toCategory) {
-                segment.setValue(segment.getValue() + (double) folderSize);
-            }
-        }
-    }
-
 }
