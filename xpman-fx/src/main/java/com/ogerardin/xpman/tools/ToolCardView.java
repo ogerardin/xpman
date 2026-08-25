@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -99,6 +100,7 @@ public class ToolCardView extends HBox {
             String label = IntrospectionHelper.getLabelForMethod(method);
             MethodButton<UiTool> button = new MethodButton<>(label, method, evaluationContextRoot, uiTool);
             button.getStyleClass().add("tool-card-action");
+            button.setMinWidth(Region.USE_PREF_SIZE);
             button.managedProperty().bind(button.visibleProperty());
             button.refresh();
             buttons.getChildren().add(button);
