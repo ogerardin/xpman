@@ -71,9 +71,10 @@
 }
 
 .segment-info {
-    -fx-background-color: -color-bg-emphasis;
-    -fx-text-fill: -color-fg-emphasis;
-    -fx-background-radius: 6px;
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 4px, 3px;
+    -fx-text-fill: -color-fg-default;
     -fx-padding: 4px 8px;
 }
 
