@@ -92,6 +92,7 @@ public class ToolCardView extends HBox {
 
     private Node buildActionButtons(UiTool uiTool, Object evaluationContextRoot) {
         HBox buttons = new HBox(8);
+        HBox.setHgrow(buttons, Priority.NEVER);
 
         List<Method> methods = IntrospectionHelper.computeRelevantMethods(uiTool.getClass());
         for (Method method : methods) {
