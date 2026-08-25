@@ -70,6 +70,13 @@
     -fx-font-size: 1.2em;
 }
 
+.segment-info {
+    -fx-background-color: -color-bg-emphasis;
+    -fx-text-fill: -color-fg-emphasis;
+    -fx-background-radius: 6px;
+    -fx-padding: 4px 8px;
+}
+
 /* --- Table column alignment helper --- */
 .numeric-column {
     -fx-alignment: CENTER-RIGHT;
