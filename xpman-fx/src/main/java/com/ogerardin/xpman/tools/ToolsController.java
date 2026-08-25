@@ -60,7 +60,7 @@ public class ToolsController extends Controller {
     private void updateCardList() {
         cardListContainer.getChildren().clear();
         for (UiTool uiTool : filteredList) {
-            ToolCardView card = new ToolCardView(uiTool);
+            ToolCardView card = new ToolCardView(uiTool, this);
             card.setOnMouseClicked(__ -> detailView.setTool(uiTool));
             cardListContainer.getChildren().add(card);
         }

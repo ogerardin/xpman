@@ -1,10 +1,12 @@
 package com.ogerardin.xpman.tools;
 
 import com.ogerardin.xplane.tools.ToolIcon;
+import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
+import com.ogerardin.xpman.util.jfx.menu.MethodButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,15 +16,18 @@ import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 /**
- * A card displaying a single tool: icon, name, description, version badge, and action button.
+ * A card displaying a single tool: icon, name, description, version badge, and action buttons.
  */
 public class ToolCardView extends HBox {
 
     private static final int ICON_SIZE = 32;
     private static final int ICON_FONT_SIZE = 20;
 
-    public ToolCardView(UiTool uiTool) {
+    public ToolCardView(UiTool uiTool, Object evaluationContextRoot) {
         getStyleClass().add("tool-card");
         setSpacing(12);
         setPadding(new Insets(12));
@@ -30,10 +35,10 @@ public class ToolCardView extends HBox {
 
         Node icon = resolveIcon(uiTool);
         VBox content = buildContent(uiTool);
-        Button actionButton = buildActionButton(uiTool);
+        Node actionButtons = buildActionButtons(uiTool, evaluationContextRoot);
 
         HBox.setHgrow(content, Priority.ALWAYS);
-        getChildren().addAll(icon, content, actionButton);
+        getChildren().addAll(icon, content, actionButtons);
     }
 
     private Node resolveIcon(UiTool uiTool) {
@@ -85,20 +90,19 @@ public class ToolCardView extends HBox {
         return content;
     }
 
-    private Button buildActionButton(UiTool uiTool) {
-        Button button = new Button();
-        button.getStyleClass().add("tool-card-action");
+    private Node buildActionButtons(UiTool uiTool, Object evaluationContextRoot) {
+        HBox buttons = new HBox(8);
 
-        if (uiTool.isInstalled()) {
-            button.setText("Run");
-            button.setGraphic(new FontIcon(Feather.PLAY));
-            button.setOnAction(__ -> uiTool.run());
-        } else if (uiTool.isInstallable()) {
-            button.setText("Install");
-            button.setGraphic(new FontIcon(Feather.DOWNLOAD));
-            button.setOnAction(__ -> uiTool.install());
+        List<Method> methods = IntrospectionHelper.computeRelevantMethods(uiTool.getClass());
+        for (Method method : methods) {
+            String label = IntrospectionHelper.getLabelForMethod(method);
+            MethodButton<UiTool> button = new MethodButton<>(label, method, evaluationContextRoot, uiTool);
+            button.getStyleClass().add("tool-card-action");
+            button.managedProperty().bind(button.visibleProperty());
+            button.refresh();
+            buttons.getChildren().add(button);
         }
 
-        return button;
+        return buttons;
     }
 }
