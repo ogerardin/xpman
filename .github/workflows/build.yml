@@ -217,11 +217,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete "$VERSION" --yes --cleanup-tag 2>/dev/null || true
-          PRERELEASE=""
-          [ "${IS_SNAPSHOT:-0}" = "1" ] && PRERELEASE="--prerelease"
-          gh release create "$VERSION" artifacts/* \
-            --target "$GITHUB_SHA" \
-            --title "$VERSION ($DATE)" \
-            --generate-notes \
-            $PRERELEASE
+          if [ "${IS_SNAPSHOT:-0}" = "1" ]; then
+            # Pre-release: overwrite same version, accumulate older ones
+            gh release delete "$VERSION" --yes --cleanup-tag 2>/dev/null || true
+            gh release create "$VERSION" artifacts/* \
+              --target "$GITHUB_SHA" \
+              --title "$VERSION ($DATE)" \
+              --generate-notes \
+              --prerelease
+          else
+            # Full release: clean up all pre-releases, then publish
+            gh release list --prerelease --json tagName --jq '.[].tagName' | \
+              xargs -r gh release delete --yes --cleanup-tag
+            gh release create "$VERSION" artifacts/* \
+              --target "$GITHUB_SHA" \
+              --title "$VERSION ($DATE)" \
+              --generate-notes
+          fi
