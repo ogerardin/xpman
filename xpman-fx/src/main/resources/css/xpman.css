@@ -485,3 +485,117 @@
     -fx-font-size: 0.85em;
     -fx-max-width: 88px;
 }
+
+/* --- Tool card list --- */
+.tool-card-list {
+    -fx-spacing: 0;
+    -fx-padding: 0;
+}
+
+.tool-card {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12px;
+    -fx-spacing: 12px;
+    -fx-alignment: center-left;
+}
+
+.tool-card:hover {
+    -fx-background-color: -color-accent-subtle;
+}
+
+.tool-card-icon {
+    -fx-icon-color: -color-fg-muted;
+    -fx-fill: -color-fg-muted;
+}
+
+.tool-card-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+}
+
+.tool-card-description {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 0.95em;
+    -fx-max-width: 400px;
+}
+
+.tool-card-version {
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-fg-muted;
+    -fx-padding: 2px 8px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 0.85em;
+}
+
+.tool-card-action {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-text-fill: -color-fg-emphasis;
+    -fx-padding: 6px 12px;
+    -fx-background-radius: 6px;
+}
+
+.tool-card-action:hover {
+    -fx-opacity: 0.9;
+}
+
+/* --- Tool detail panel --- */
+.tool-detail {
+    -fx-padding: 20px;
+    -fx-spacing: 16px;
+}
+
+.tool-detail-header {
+    -fx-spacing: 16px;
+    -fx-alignment: center-left;
+}
+
+.tool-detail-icon {
+    -fx-icon-color: -color-fg-muted;
+    -fx-fill: -color-fg-muted;
+}
+
+.tool-detail-name {
+    -fx-font-size: 1.6em;
+    -fx-font-weight: bold;
+}
+
+.tool-detail-version {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 1.1em;
+}
+
+.tool-detail-status {
+    -fx-background-color: -color-success-subtle;
+    -fx-text-fill: -color-success-fg;
+    -fx-padding: 4px 10px;
+    -fx-background-radius: 6px;
+    -fx-font-size: 0.9em;
+}
+
+.tool-detail-description {
+    -fx-text-fill: -color-fg-default;
+    -fx-font-size: 1em;
+    -fx-wrap-text: true;
+}
+
+.tool-detail-metadata {
+    -fx-spacing: 8px;
+    -fx-padding: 12px;
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 6px;
+}
+
+.tool-detail-metadata .label {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.tool-detail-homepage {
+    -fx-text-fill: -color-accent-fg;
+    -fx-font-size: 1em;
+}
+
+.tool-detail-homepage:hover {
+    -fx-underline: true;
+}
