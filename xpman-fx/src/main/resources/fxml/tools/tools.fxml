@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.SegmentedButton?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -12,8 +13,12 @@
                 <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
             </Button>
             <Separator/>
-            <ToggleButton fx:id="installedButton" onAction="#handleFilterClick" text="Installed"/>
-            <ToggleButton fx:id="availableButton" onAction="#handleFilterClick" text="Available"/>
+            <SegmentedButton>
+                <buttons>
+                    <ToggleButton fx:id="installedButton" onAction="#filterInstalled" text="Installed"/>
+                    <ToggleButton fx:id="availableButton" onAction="#filterAvailable" text="Available"/>
+                </buttons>
+            </SegmentedButton>
         </ToolBar>
     </top>
     <center>

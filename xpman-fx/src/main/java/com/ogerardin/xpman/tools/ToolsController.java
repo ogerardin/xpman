@@ -36,7 +36,6 @@ public class ToolsController extends Controller {
 
     private ManagerItemsObservableList<Tool, UiTool> uiItems;
     private FilteredList<UiTool> filteredList;
-    private ToggleButton lastClicked;
 
     public ToolsController(XPmanFX mainController) {
         this.xPlaneProperty = mainController.xPlaneProperty();
@@ -53,9 +52,9 @@ public class ToolsController extends Controller {
         filteredList = new FilteredList<>(uiItems);
         filteredList.addListener((ListChangeListener<UiTool>) __ -> updateCardList());
 
+        // initially display installed tools only (simulate click on "Installed" button)
         installedButton.setSelected(true);
-        lastClicked = installedButton;
-        filteredList.setPredicate(UiTool::isInstalled);
+        installedButton.fire();
     }
 
     private void updateCardList() {
@@ -79,23 +78,15 @@ public class ToolsController extends Controller {
     }
 
     @FXML
-    public void handleFilterClick(ActionEvent event) {
-        ToggleButton clicked = (ToggleButton) event.getSource();
+    public void filterInstalled(ActionEvent event) {
+        boolean selected = event.getSource() instanceof ToggleButton button && button.isSelected();
+        filteredList.setPredicate(selected ? UiTool::isInstalled : (uiTool -> true));
+    }
 
-        if (clicked == lastClicked && clicked.isSelected()) {
-            clicked.setSelected(false);
-            lastClicked = null;
-            filteredList.setPredicate(null);
-        } else {
-            if (lastClicked != null) {
-                lastClicked.setSelected(false);
-            }
-            clicked.setSelected(true);
-            lastClicked = clicked;
-            filteredList.setPredicate(clicked == installedButton
-                    ? UiTool::isInstalled
-                    : UiTool::isInstallable);
-        }
+    @FXML
+    public void filterAvailable(ActionEvent event) {
+        boolean selected = event.getSource() instanceof ToggleButton button && button.isSelected();
+        filteredList.setPredicate(selected ? UiTool::isInstallable : (uiTool -> true));
     }
 
     public void reload() {
