@@ -210,6 +210,7 @@ jobs:
         run: |
           source scripts/ci-version.sh "${GITHUB_REF_NAME:-}"
           echo "VERSION=${REVISION}" >> "$GITHUB_ENV"
+          echo "GH_VERSION=${GH_VERSION}" >> "$GITHUB_ENV"
           echo "IS_SNAPSHOT=${IS_SNAPSHOT}" >> "$GITHUB_ENV"
           echo "DATE=$(date +%Y-%m-%d)" >> "$GITHUB_ENV"
 
@@ -218,9 +219,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "${IS_SNAPSHOT:-0}" = "1" ]; then
-            # Pre-release: overwrite same version, accumulate older ones
-            gh release delete "$VERSION" --yes --cleanup-tag 2>/dev/null || true
-            gh release create "$VERSION" artifacts/* \
+            # Pre-release: dedup same-day titles, then create
+            gh release list --json tagName,name,isPrerelease --jq \
+              '.[] | select(.isPrerelease and .name == "'"$VERSION ($DATE)"'") | .tagName' | \
+              xargs -r gh release delete --yes --cleanup-tag
+            gh release create "$GH_VERSION" artifacts/* \
               --target "$GITHUB_SHA" \
               --title "$VERSION ($DATE)" \
               --generate-notes \

@@ -37,6 +37,7 @@ compute_version() {
     if [[ "$tag" =~ $SEMVER_REGEX ]]; then
         REVISION="$tag"
         IS_SNAPSHOT=0
+        GH_VERSION="$tag"
         return
     fi
 
@@ -48,12 +49,14 @@ compute_version() {
 
     parse_version "$base" "BASE"
     REVISION="${BASE_MAJOR}.${BASE_MINOR}.$((BASE_INCREMENTAL + 1))-SNAPSHOT"
+    GH_VERSION="${REVISION}+sha.$(git rev-parse --short HEAD)"
     IS_SNAPSHOT=1
 }
 
 main() {
     compute_version "${1:-}"
     echo "REVISION=${REVISION}"
+    echo "GH_VERSION=${GH_VERSION}"
     echo "IS_SNAPSHOT=${IS_SNAPSHOT}"
 }
 
