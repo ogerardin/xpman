@@ -9,6 +9,7 @@ import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.EmptyState;
 import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
@@ -35,6 +36,7 @@ public class ToolsController extends Controller {
 
     private ManagerItemsObservableList<Tool, UiTool> uiItems;
     private FilteredList<UiTool> filteredList;
+    private ToggleButton lastClicked;
 
     public ToolsController(XPmanFX mainController) {
         this.xPlaneProperty = mainController.xPlaneProperty();
@@ -52,7 +54,8 @@ public class ToolsController extends Controller {
         filteredList.addListener((ListChangeListener<UiTool>) __ -> updateCardList());
 
         installedButton.setSelected(true);
-        filterInstalled();
+        lastClicked = installedButton;
+        filteredList.setPredicate(UiTool::isInstalled);
     }
 
     private void updateCardList() {
@@ -76,13 +79,23 @@ public class ToolsController extends Controller {
     }
 
     @FXML
-    public void filterInstalled() {
-        filteredList.setPredicate(UiTool::isInstalled);
-    }
+    public void handleFilterClick(ActionEvent event) {
+        ToggleButton clicked = (ToggleButton) event.getSource();
 
-    @FXML
-    public void filterAvailable() {
-        filteredList.setPredicate(UiTool::isInstallable);
+        if (clicked == lastClicked && clicked.isSelected()) {
+            clicked.setSelected(false);
+            lastClicked = null;
+            filteredList.setPredicate(null);
+        } else {
+            if (lastClicked != null) {
+                lastClicked.setSelected(false);
+            }
+            clicked.setSelected(true);
+            lastClicked = clicked;
+            filteredList.setPredicate(clicked == installedButton
+                    ? UiTool::isInstalled
+                    : UiTool::isInstallable);
+        }
     }
 
     public void reload() {

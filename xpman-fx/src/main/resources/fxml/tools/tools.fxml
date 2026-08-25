@@ -12,8 +12,8 @@
                 <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
             </Button>
             <Separator/>
-            <ToggleButton fx:id="installedButton" onAction="#filterInstalled" text="Installed"/>
-            <ToggleButton fx:id="availableButton" onAction="#filterAvailable" text="Available"/>
+            <ToggleButton fx:id="installedButton" onAction="#handleFilterClick" text="Installed"/>
+            <ToggleButton fx:id="availableButton" onAction="#handleFilterClick" text="Available"/>
         </ToolBar>
     </top>
     <center>
