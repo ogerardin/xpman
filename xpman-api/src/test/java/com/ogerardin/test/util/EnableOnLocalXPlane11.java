@@ -1,5 +1,6 @@
 package com.ogerardin.test.util;
 
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
@@ -10,5 +11,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(EnableOnLocalXPlaneVersionCondition.class)
+@XPlaneVersionRequired(XPlaneMajorVersion.XP11)
 public @interface EnableOnLocalXPlane11 {
 }

@@ -57,7 +57,7 @@ public class ZipArchive implements Archive {
             getPaths();
             return true;
         } catch (Exception e) {
-            log.error("Invalid archive: {}", getZipFile(), e);
+            log.debug("Invalid archive: {}", getZipFile(), e);
             return false;
         }
     }
