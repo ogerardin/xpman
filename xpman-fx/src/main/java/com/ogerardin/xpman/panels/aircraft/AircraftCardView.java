@@ -66,9 +66,9 @@ public class AircraftCardView extends VBox {
 
         HBox badges = new HBox(6);
         badges.getStyleClass().add("aircraft-card-badges");
-        Optional.ofNullable(uiAircraft.getAcfFile().getFileSpecVersion())
-                .filter(spec -> !spec.isBlank())
-                .map(spec -> badge("XP " + spec))
+        Optional.ofNullable(uiAircraft.getVersion())
+                .filter(v -> !v.isBlank())
+                .map(AircraftCardView::badge)
                 .ifPresent(badges.getChildren()::add);
         int liveryCount = uiAircraft.getAircraft().getLiveries().size();
         if (liveryCount > 0) {
