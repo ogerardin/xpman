@@ -20,20 +20,16 @@ import java.util.function.Function;
 @Getter
 enum UsageCategory {
     AIRCRAFT("Aircraft", "segment-aircraft",
-            xp -> xp.getAircraftManager().getAircraftFolder(),
-            (xp, __) -> computeFolderPath(xp, xp.getAircraftManager().getAircraftFolder())),
+            xp -> xp.getAircraftManager().getAircraftFolder()),
 
     GLOBAL_SCENERY("Global scenery", "segment-global-scenery",
-            xp -> xp.getPaths().globalScenery(),
-            (xp, __) -> computeFolderPath(xp, xp.getPaths().globalScenery())),
+            xp -> xp.getPaths().globalScenery()),
 
     CUSTOM_SCENERY("Custom scenery", "segment-custom-scenery",
-            xp -> xp.getSceneryManager().getSceneryFolder(),
-            (xp, __) -> computeFolderPath(xp, xp.getSceneryManager().getSceneryFolder())),
+            xp -> xp.getSceneryManager().getSceneryFolder()),
 
     CUSTOM_SCENERY_DISABLED("Disabled scenery", "segment-disabled-scenery",
-            xp -> xp.getSceneryManager().getDisabledSceneryFolder(),
-            (xp, __) -> computeFolderPath(xp, xp.getSceneryManager().getDisabledSceneryFolder())),
+            xp -> xp.getSceneryManager().getDisabledSceneryFolder()),
 
     OTHER("Other", "segment-other",
             null,
@@ -51,6 +47,11 @@ enum UsageCategory {
     private final String styleClass;
     private final Function<XPlane, Path> pathResolver;
     private final BiFunction<XPlane, Map<UsageCategory, Long>, CategoryResult> sizeComputer;
+
+    UsageCategory(String text, String styleClass, Function<XPlane, Path> pathResolver) {
+        this(text, styleClass, pathResolver,
+                (xp, __) -> computeFolderPath(xp, pathResolver.apply(xp)));
+    }
 
     static CategoryResult computeFolderPath(XPlane xp, Path folder) {
         if (!Files.exists(folder)) return new CategoryResult(0, List.of());
