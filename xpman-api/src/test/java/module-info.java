@@ -7,6 +7,7 @@ module xpman.api.test {
     requires petitparser.core;
     requires org.mockito;
     requires com.google.api.services.drive;
+    requires com.google.gson;
     requires org.apache.commons.io;
 
     exports com.ogerardin.test.util;

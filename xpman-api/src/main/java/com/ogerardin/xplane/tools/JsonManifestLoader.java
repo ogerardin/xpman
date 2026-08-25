@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -63,6 +64,20 @@ public class JsonManifestLoader {
             .registerTypeAdapter(XPlaneMajorVersion.class,
                     (JsonDeserializer<XPlaneMajorVersion>) (json, __, ___) -> XPlaneMajorVersion.of(json.getAsString()))
             .registerTypeAdapter(Predicate.class, PredicateAdapter.INSTANCE)
+            .registerTypeAdapter(ToolIcon.class, (JsonDeserializer<ToolIcon>) (json, __, ___) -> {
+                String value = json.getAsString();
+                if (value.startsWith("http://") || value.startsWith("https://")) {
+                    try {
+                        return new ToolIcon.Url(new URL(value));
+                    } catch (java.net.MalformedURLException e) {
+                        throw new JsonParseException("Invalid icon URL: " + value, e);
+                    }
+                } else if (value.startsWith("/")) {
+                    return new ToolIcon.Resource(value);
+                } else {
+                    return new ToolIcon.IconFont(value);
+                }
+            })
             .create();
 
     /**

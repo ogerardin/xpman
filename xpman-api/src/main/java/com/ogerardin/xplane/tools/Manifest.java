@@ -41,7 +41,8 @@ public record Manifest(
         XPlaneMajorVersion xplaneVersion,
         URL url,
         Predicate<Path> installChecker,
-        Set<Manifest> items
+        Set<Manifest> items,
+        ToolIcon icon
 ) {
 
     /**
