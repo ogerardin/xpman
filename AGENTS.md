@@ -53,6 +53,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - **Zero boilerplate.** Aim for concise code; leverage Lombok, records, and language features to eliminate ceremony.
 - **Polymorphism over conditionals.** Prefer dispatch via interfaces, enums with behavior, or strategy pattern over `if`/`switch` chains.
 - **Java idioms.** Use `Optional`, streams, `sealed` types, pattern matching, and other modern Java conventions where they improve clarity.
+- **Functional style.** Prefer functional programming where possible — e.g. streams instead of loops, method references over lambdas, immutable collections.
 - **JavaFX bindings.** Use property bindings instead of manual listener/callback wiring wherever the relationship is declarative.
 - **Javadoc on all classes.** Keep it concise and helpful — one-liner purpose, no `@author`, no redundant `@param`/`@return` noise. Skip Javadoc on self-evident records/enums.
 

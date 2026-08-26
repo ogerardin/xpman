@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public class EnableOnLocalXPlaneVersionCondition implements ExecutionCondition {
@@ -51,12 +53,10 @@ public class EnableOnLocalXPlaneVersionCondition implements ExecutionCondition {
      * {@link EnableOnLocalXPlane12}) and returns that meta-annotation.
      */
     private static XPlaneVersionRequired findVersionRequired(AnnotatedElement annotated) {
-        for (Annotation annotation : annotated.getAnnotations()) {
-            XPlaneVersionRequired required = annotation.annotationType().getAnnotation(XPlaneVersionRequired.class);
-            if (required != null) {
-                return required;
-            }
-        }
-        return null;
+        return Arrays.stream(annotated.getAnnotations())
+                .map(annotation -> annotation.annotationType().getAnnotation(XPlaneVersionRequired.class))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 }
