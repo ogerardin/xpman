@@ -12,16 +12,12 @@
             <MenuItem onAction="#installWizard" text="Universal installer..." />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#manageTools" text="Manage tools..."/>
-            <MenuItem mnemonicParsing="false" text="Preferences..." />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem id="quit" mnemonicParsing="false" onAction="#quit" text="Quit">
                 <accelerator>
                     <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                 </accelerator>
             </MenuItem>
-        </Menu>
-        <Menu mnemonicParsing="false" text="View">
-            <MenuItem fx:id="themeMenuItem" mnemonicParsing="false" onAction="#toggleTheme" text="Switch to Light Theme" />
         </Menu>
         <Menu fx:id="toolsMenu" mnemonicParsing="false" text="Tools">
         </Menu>

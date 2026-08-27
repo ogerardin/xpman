@@ -9,6 +9,7 @@ import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.shell.SidebarController;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
@@ -58,9 +60,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private Menu recentMenu;
 
     @FXML
-    private MenuItem themeMenuItem;
-
-    @FXML
     private StackPane contentArea;
 
     @FXML
@@ -76,6 +75,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @Getter
     private final ThemeManager themeManager = new ThemeManager(getConfig(), this::saveConfig);
+
+    @Getter
+    private final SceneryOrganizer sceneryOrganizer = new SceneryOrganizer(getConfig().getSceneryClasses());
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
 
@@ -122,7 +124,23 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @SneakyThrows
     private void openXPlane(File selectedDirectory) {
-        Path folder = selectedDirectory.toPath().toRealPath();
+        Path folder = selectedDirectory.toPath();
+        if (!Files.exists(folder)) {
+            String stalePath = folder.toString();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    String.format("The folder %s no longer exists. Remove it from the recent paths list?", folder));
+            alert.setHeaderText("Folder not found");
+            alert.initOwner(primaryStage);
+            alert.showAndWait()
+                    .filter(buttonType -> buttonType == ButtonType.OK)
+                    .ifPresent(buttonType -> {
+                        getConfig().getRecentPaths().remove(stalePath);
+                        saveConfig();
+                        updateRecent();
+                    });
+            return;
+        }
+        folder = folder.toRealPath();
         log.info("Opening X-Plane folder {}", folder);
         XPlane xplane = new XPlane(folder);
 
@@ -185,6 +203,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         }
     }
 
+    @FXML
     @SneakyThrows
     public void about() {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -197,8 +216,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void initialize() {
         updateRecent();
-        updateThemeMenuItem();
-        getThemeManager().darkProperty().addListener((__, ___, dark) -> updateThemeMenuItem());
         sidebarController.selectedSectionProperty().addListener((__, ___, section) ->
                 Optional.ofNullable(section).ifPresent(this::showSection));
         sidebarController.select(Section.HOME);
@@ -248,19 +265,6 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         }
     }
 
-    @FXML
-    private void toggleTheme() {
-        getThemeManager().toggle();
-    }
-
-    private void updateThemeMenuItem() {
-        if (themeMenuItem != null) {
-            themeMenuItem.setText(getThemeManager().isDark()
-                    ? "Switch to Light Theme"
-                    : "Switch to Dark Theme");
-        }
-    }
-
     private void updateRecent() {
         final XPManPrefs config = getConfig();
         List<? extends MenuItem> menuItems = config.getRecentPaths().stream()
@@ -295,7 +299,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     @Override
-    protected void saveConfig() {
+    public void saveConfig() {
         configManager.save();
     }
 

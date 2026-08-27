@@ -107,7 +107,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     protected abstract C getConfig();
 
-    protected abstract void saveConfig();
+    public abstract void saveConfig();
 
     private void saveWindowPosition(Stage stage) {
         final JfxAppPrefs.WindowPosition position = new JfxAppPrefs.WindowPosition(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());

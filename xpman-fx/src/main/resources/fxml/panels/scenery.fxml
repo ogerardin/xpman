@@ -5,30 +5,48 @@
 <?import javafx.scene.control.cell.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.panels.scenery.SceneryController">
-    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0">
         <top>
             <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <Button mnemonicParsing="false" text="Reload" onAction="#reload">
-    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
-</Button>
+                    <graphic>
+                        <FontIcon iconLiteral="fth-refresh-cw"/>
+                    </graphic>
+                </Button>
                 <Button mnemonicParsing="false" text="▲">
                     <tooltip>
-                        <Tooltip text="Move Scenery Pack up one rank in scenery_packs.ini" />
+                        <Tooltip text="Move Scenery Pack up one rank in scenery_packs.ini"/>
                     </tooltip>
                 </Button>
                 <Button mnemonicParsing="false" text="▼">
                     <tooltip>
-                        <Tooltip text="Move Scenery Pack down one rank in scenery_packs.ini" />
+                        <Tooltip text="Move Scenery Pack down one rank in scenery_packs.ini"/>
                     </tooltip>
                 </Button>
                 <Button mnemonicParsing="false" onAction="#installScenery" text="Install...">
-    <graphic><FontIcon iconLiteral="fth-download"/></graphic>
-</Button>
+                    <graphic>
+                        <FontIcon iconLiteral="fth-download"/>
+                    </graphic>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#openSceneryClasses" text="Scenery classes...">
+                    <graphic>
+                        <FontIcon iconLiteral="fth-list"/>
+                    </graphic>
+                </Button>
                 <Button mnemonicParsing="false" onAction="#organize" text="Organize scenery_pack.ini">
-    <graphic><FontIcon iconLiteral="fth-settings"/></graphic>
-</Button>
+                    <graphic>
+                        <FontIcon iconLiteral="fth-settings"/>
+                    </graphic>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#openSceneryPacksIni" text="Open scenery_packs.ini">
+                    <graphic>
+                        <FontIcon iconLiteral="fth-external-link"/>
+                    </graphic>
+                </Button>
             </ToolBar>
         </top>
         <center>
@@ -44,7 +62,7 @@
                     </TableColumn>
                     <TableColumn fx:id="rankColumn" editable="false" prefWidth="58.0" text="Rank">
                         <cellValueFactory>
-                            <PropertyValueFactory property="rank" />
+                            <PropertyValueFactory property="rank"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="70.0" text="Enabled?">
@@ -57,17 +75,17 @@
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="249.0" text="Name">
                         <cellValueFactory>
-                            <PropertyValueFactory property="name" />
+                            <PropertyValueFactory property="name"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="150.0" text="Version">
                         <cellValueFactory>
-                            <PropertyValueFactory property="version" />
+                            <PropertyValueFactory property="version"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="68.0" text="Has airport?">
                         <cellValueFactory>
-                            <PropertyValueFactory property="hasAirport" />
+                            <PropertyValueFactory property="hasAirport"/>
                         </cellValueFactory>
                         <cellFactory>
                             <BooleanCellFactory/>
@@ -75,7 +93,7 @@
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="70.0" text="Library?">
                         <cellValueFactory>
-                            <PropertyValueFactory property="library" />
+                            <PropertyValueFactory property="library"/>
                         </cellValueFactory>
                         <cellFactory>
                             <BooleanCellFactory/>
@@ -83,17 +101,17 @@
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="70.0" text="Tile count" styleClass="numeric-column">
                         <cellValueFactory>
-                            <PropertyValueFactory property="tileCount" />
+                            <PropertyValueFactory property="tileCount"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="70.0" text="Obj count" styleClass="numeric-column">
                         <cellValueFactory>
-                            <PropertyValueFactory property="objCount" />
+                            <PropertyValueFactory property="objCount"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn editable="false" prefWidth="140.0" text="Class">
                         <cellValueFactory>
-                            <SpelValueFactory expression="sceneryClass.name" />
+                            <SpelValueFactory expression="sceneryClass.name"/>
                         </cellValueFactory>
                     </TableColumn>
                 </columns>

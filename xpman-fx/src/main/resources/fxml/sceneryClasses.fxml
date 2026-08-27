@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefWidth="600.0" prefHeight="450.0" minWidth="400.0" minHeight="300.0"
+            xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ogerardin.xpman.panels.scenery.rules.SceneryClassesController">
+    <center>
+        <VBox spacing="8.0" style="-fx-padding: 16;">
+            <Label wrapText="true" text="Associate scenery packages to a rank and class by matching the scenery name with a regex."/>
+            <fx:include fx:id="rules" source="rules.fxml" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </center>
+    <bottom>
+        <ButtonBar>
+            <BorderPane.margin>
+                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+            </BorderPane.margin>
+            <buttons>
+                <Button onAction="#save" text="Apply" ButtonBar.buttonData="OK_DONE"/>
+                <Button fx:id="closeButton" onAction="#close" text="Close" ButtonBar.buttonData="CANCEL_CLOSE"/>
+            </buttons>
+        </ButtonBar>
+    </bottom>
+</BorderPane>

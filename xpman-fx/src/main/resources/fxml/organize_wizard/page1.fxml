@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.ogerardin.xpman.util.jfx.wizard.ValidatingWizardPane?>
-<ValidatingWizardPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.scenery.wizard.Page1Controller">
-    <headerText>This wizard will re-order scenery packages in the scenery_pack.ini file according to a set of rules.
-        Packages will be grouped by class and ordered according to the list below. Libraries are automatically
-        recognized and don't need to be defined here. A scenery pack matches a class if the name of its containing folder matches
-        the specified regular expression (RegEx).
-    </headerText>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<ValidatingWizardPane prefHeight="400.0" prefWidth="600.0"
+                      xmlns="http://javafx.com/javafx/8.0.171"
+                      xmlns:fx="http://javafx.com/fxml/1"
+                      fx:controller="com.ogerardin.xpman.panels.scenery.wizard.Page1Controller">
+    <headerText>This wizard will re-order scenery packages in the scenery_packs.ini file
+        according to your configured scenery classes.</headerText>
     <content>
-        <fx:include fx:id="rules" source="../rules.fxml"/>
+        <VBox spacing="12.0" style="-fx-padding: 16;">
+            <Label wrapText="true" text="Scenery packages will be grouped by class and ordered according to your configured rules. Libraries are automatically recognized and don't need to be defined."/>
+            <Label wrapText="true" text="To edit scenery classes (add, remove, reorder, or change regex patterns), use the 'Scenery classes...' button in the Scenery panel."/>
+            <Label wrapText="true" style="-fx-font-style: italic;" text="Press Next to preview the resulting scenery_packs.ini order."/>
+        </VBox>
     </content>
 </ValidatingWizardPane>

@@ -1,14 +1,9 @@
 package com.ogerardin.xpman.panels.scenery.wizard;
 
-import com.ogerardin.xpman.panels.scenery.rules.RulesController;
-import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
-import javafx.fxml.FXML;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.controlsfx.dialog.WizardPane;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 public class Page1Controller implements PageListener {
@@ -16,20 +11,8 @@ public class Page1Controller implements PageListener {
     @NonNull
     private final OrganizeWizard wizard;
 
-    @FXML
-    private RulesController rulesController;
-
-    @FXML
-    public void initialize() {
-        // display scenery classes in embedded rules editor
-        final List<RegexSceneryClass> sceneryClasses = wizard.getSceneryOrganizer().getOrderedSceneryClasses();
-        rulesController.setItems(sceneryClasses);
-    }
-
     @Override
-    public void onExitingPage(WizardPane wizardPane) {
-        // when leaving the page, retrieve edited rules and assign them to the scenery organizer
-        final List<RegexSceneryClass> sceneryClasses = rulesController.getItems();
-        wizard.getSceneryOrganizer().setOrderedSceneryClasses(sceneryClasses);
+    public void onEnteringPage(WizardPane wizardPane) {
+        // No-op: scenery classes are now managed in the Scenery classes window
     }
 }
