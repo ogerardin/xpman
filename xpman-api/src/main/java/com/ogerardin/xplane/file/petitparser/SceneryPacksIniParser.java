@@ -27,10 +27,8 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * <pre>
  * I
  * 1100 version
- * SCENERY_PACK
- * *GLOBAL AIRPORTS*
- * SCENERY_PACK
- * Custom Scenery/My Airport/
+ * SCENERY_PACK *GLOBAL AIRPORTS*
+ * SCENERY_PACK Custom Scenery/My Airport/
  * </pre>
  *
  * @author Olivier G.

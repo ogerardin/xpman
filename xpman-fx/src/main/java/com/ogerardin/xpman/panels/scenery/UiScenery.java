@@ -28,6 +28,8 @@ public class UiScenery {
         Platforms.getCurrent().reveal(sceneryPackage.getFolder());
     }
 
+    // FIXME the official method for disabling a scenerypack is described in https://www.x-plane.com/kb/prioritization-scenery-packs/
+    // it involves changing SCENERY_PACK to SCENERY_PACK_DISABLED, and not moving it to another folder
     @Label("'Enable Scenery Package'")
     @EnabledIf("! enabled")
     @OnSuccess("reload()")
@@ -35,7 +37,8 @@ public class UiScenery {
         xPlane.getSceneryManager().enableSceneryPackage(sceneryPackage);
     }
 
-    //TODO different warning when the package is a library because the library might be used by other scenery
+    // FIXME the official method for disabling a scenerypack is described in https://www.x-plane.com/kb/prioritization-scenery-packs/
+    // it involves changing SCENERY_PACK to SCENERY_PACK_DISABLED, and not moving it to another folder
     @Label("'Disable Scenery Package'")
     @EnabledIf("enabled")
     @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
