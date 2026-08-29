@@ -20,6 +20,7 @@ module xpman.api.test {
     opens com.ogerardin.xplane.test.laminar to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.tools to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.plugins to org.junit.platform.commons;
+    opens com.ogerardin.xplane.test.scenery to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.util to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.util.zip to org.junit.platform.commons;
 
