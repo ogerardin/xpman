@@ -9,9 +9,29 @@ import javafx.scene.control.skin.TableColumnHeader;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 @UtilityClass
 @Slf4j
 public class TableViewUtil {
+
+    /**
+     * Sets the header tooltip of each column identified by its id ({@code fx:id} in FXML).
+     * Ids with no matching column are logged and skipped.
+     */
+    public <S> void setColumnHeaderTooltips(TableView<S> tableView, Map<String, String> tooltipsByColumnId) {
+        tooltipsByColumnId.forEach((columnId, text) -> {
+            TableColumn<S, ?> column = tableView.getColumns().stream()
+                    .filter(c -> columnId.equals(c.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (column == null) {
+                log.warn("Failed to set header tooltip: no column with id " + columnId);
+                return;
+            }
+            setColumnHeaderTooltip(tableView, column, text);
+        });
+    }
 
     public <S, T> void setColumnHeaderTooltip(TableView<S> tableView, TableColumn<S, T> tableColumn, String text) {
         // From https://stackoverflow.com/questions/23224826/how-to-add-a-tooltip-to-a-tableview-header-cell-in-javafx-8

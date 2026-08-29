@@ -65,7 +65,7 @@
                             <PropertyValueFactory property="rank"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" sortable="false" text="Status">
+                    <TableColumn fx:id="statusColumn" editable="false" prefWidth="70.0" sortable="false" text="Status">
                         <cellValueFactory>
                             <PropertyValueFactory property="status"/>
                         </cellValueFactory>
@@ -73,17 +73,17 @@
                             <SceneryStatusCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="249.0" sortable="false" text="Name">
+                    <TableColumn fx:id="nameColumn" editable="false" prefWidth="249.0" sortable="false" text="Name">
                         <cellValueFactory>
                             <PropertyValueFactory property="name"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="150.0" sortable="false" text="Version">
+                    <TableColumn fx:id="versionColumn" editable="false" prefWidth="150.0" sortable="false" text="Version">
                         <cellValueFactory>
                             <PropertyValueFactory property="version"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="68.0" sortable="false" text="Has airport?">
+                    <TableColumn fx:id="hasAirportColumn" editable="false" prefWidth="68.0" sortable="false" text="Has airport?">
                         <cellValueFactory>
                             <PropertyValueFactory property="hasAirport"/>
                         </cellValueFactory>
@@ -91,7 +91,7 @@
                             <BooleanCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" sortable="false" text="Library?">
+                    <TableColumn fx:id="libraryColumn" editable="false" prefWidth="70.0" sortable="false" text="Library?">
                         <cellValueFactory>
                             <PropertyValueFactory property="library"/>
                         </cellValueFactory>
@@ -99,17 +99,17 @@
                             <BooleanCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" sortable="false" text="Tile count" styleClass="numeric-column">
+                    <TableColumn fx:id="tileCountColumn" editable="false" prefWidth="70.0" sortable="false" text="Tile count" styleClass="numeric-column">
                         <cellValueFactory>
                             <PropertyValueFactory property="tileCount"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="70.0" sortable="false" text="Obj count" styleClass="numeric-column">
+                    <TableColumn fx:id="objCountColumn" editable="false" prefWidth="70.0" sortable="false" text="Obj count" styleClass="numeric-column">
                         <cellValueFactory>
                             <PropertyValueFactory property="objCount"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="140.0" sortable="false" text="Class">
+                    <TableColumn fx:id="classColumn" editable="false" prefWidth="140.0" sortable="false" text="Class">
                         <cellValueFactory>
                             <SpelValueFactory expression="sceneryClassName"/>
                         </cellValueFactory>

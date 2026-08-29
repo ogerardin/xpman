@@ -31,6 +31,7 @@ import lombok.SneakyThrows;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 
 public class SceneryController extends Controller {
@@ -72,8 +73,18 @@ public class SceneryController extends Controller {
         rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
         sceneryTable.getSortOrder().setAll(Collections.singletonList(rankColumn));
 
-        // set tooltip for "rank" column
-        TableViewUtil.setColumnHeaderTooltip(sceneryTable, rankColumn, "The rank of this scenery in scenery_packs.ini");
+        // set tooltip for each column header
+        TableViewUtil.setColumnHeaderTooltips(sceneryTable, Map.of(
+                "rankColumn", "The rank of this scenery in scenery_packs.ini (entries listed first have higher priority)",
+                "statusColumn", "The status of this scenery with respect to scenery_packs.ini: Enabled, Disabled, Folder missing, Token, or blank if not listed",
+                "nameColumn", "The scenery folder name; entries with no folder on disk show their ini path or token",
+                "versionColumn", "The scenery version, when the scenery type provides a way to determine it",
+                "hasAirportColumn", "Whether the scenery contains an airport (presence of an apt.dat file)",
+                "libraryColumn", "Whether the scenery is an object library (presence of a library.txt file)",
+                "tileCountColumn", "The number of terrain tiles (.dsf files) in the scenery",
+                "objCountColumn", "The number of object files (.obj files) in the scenery",
+                "classColumn", "The scenery class assigned by the scenery organizer rules"
+        ));
 
         // disable the toolbar if we don't have a current X-Plane instance
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
