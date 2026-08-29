@@ -2,7 +2,8 @@ package com.ogerardin.xpman.scenery_organizer;
 
 import com.ogerardin.xplane.scenery.SceneryPackage;
 
-enum OtherSceneryClass implements SceneryClass {
+/** Fallback {@link SceneryClass} for sceneries that match no other class. */
+public enum OtherSceneryClass implements SceneryClass {
 
     INSTANCE;
 

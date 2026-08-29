@@ -27,7 +27,7 @@ public class Page2Controller implements PageListener {
         // get the list of enabled scenery packages, ordered by rank in sceneryPackages.ini
         var sceneryPackages = wizard.getXPlane().getSceneryManager().getSceneryPackages().stream()
                 .filter(SceneryPackage::isEnabled)
-                .sorted(Comparator.comparingInt(SceneryPackage::getRank))
+                .sorted(Comparator.comparing(SceneryPackage::getRank, Comparator.nullsLast(Comparator.naturalOrder())))
                 .toList();
         // apply scenery organizer rules to get new ordered list
         var sceneryOrganizer = wizard.getSceneryOrganizer();

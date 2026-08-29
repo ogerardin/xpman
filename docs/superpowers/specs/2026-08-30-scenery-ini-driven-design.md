@@ -41,7 +41,7 @@ the table always reflects the file order. The `*GLOBAL_AIRPORTS*` token resolves
 | Ini path resolution | `SceneryPackIniItem.resolveFolder(Path baseFolder, Path globalAirportsFolder)` — polymorphic: path item → `baseFolder.resolve(folder)`; token → `globalAirportsFolder`. `globalAirportsFolder` = `xPlane.getPaths().globalAirports()` (version-aware: `Custom Scenery/Global Airports` on XP11, `Global Scenery/Global Airports` on XP12) |
 | Disabled-folder compatibility | Non-standard `Custom Scenery (disabled)` is **not scanned** for leftovers. If a path entry's primary folder is missing but `<disabledSceneryFolder>/<name>` exists, resolve **there** (pack `enabled=false`) — this preserves the legacy folder-move Enable/Disable toggle without scanning the folder |
 | Parse grammar | `SceneryPack() = SceneryPackDisabled() .or(SceneryPackEnabled()) .or(JunkLine())`. `SCENERY_PACK_DISABLED ` tried **first**; `JunkLine = noneOf("\r\n").star() seq(Newline) → null`; then filter nulls preserving order. Fixes mid-file truncation on disabled/unknown lines |
-| Items | `SceneryPackIniItem` gains `disabled` flag (sealed base, `@EqualsAndHashCode(callSuper = true)` on subclasses); **single-arg constructors kept** (default `disabled=false`) so existing `SceneryIniFile11/12ParserTest` compile unchanged; add twound2-arg `/ of(String, boolean)`; `of(String)` delegates to `of(String, false)` |
+| Items | `SceneryPackIniItem` gains `disabled` flag (sealed base, `@EqualsAndHashCode(callSuper = true)` on subclasses); **single-arg constructors kept** (default `disabled=false`) so existing `SceneryIniFile11/12ParserTest` compile unchanged; add two-arg `of(String, boolean)`; `of(String)` delegates to `of(String, false)` |
 | Constants | Move `GLOBAL_AIRPORTS_MARKER = "*GLOBAL_AIRPORTS*"` + new `GLOBAL_AIRPORTS_FOLDER = "Global Airports"` into `TokenSceneryPackIniItem`; `GlobalAirportsSceneryPackage` references them |
 | Leftovers | Directories of `sceneryFolder` + `globalSceneryFolder` minus the real folders claimed by any ini entry → `NOT_LISTED` entries appended after all ini rows, no rank |
 | Load | `loadPackages()` rebuilds entries: (1) parse ini → item list; (2) index scanned folders → `Map<Path, SceneryPackage>`; (3) per ini item resolve folder, `computeIfAbsent` package, `setEnabled(boolean) location-based`, `setRank(index+1)`, tag claimed set; (4) append leftovers; `items = entries`; fire LOADING/LOADED (unchanged pattern) |
@@ -97,7 +97,7 @@ X-Plane-standard ini flag (`SCENERY_PACK_DISABLED ...`) and the legacy XPman
 | **Modify** | `xpman-fx/.../scenery_organizer/SceneryOrganizer.java` or its caller (null-safe `sceneryClass(...)`: null package → `OtherSceneryClass.INSTANCE`) |
 | **Create** | `xpman-api/src/test/resources/scenery_packs_disabled.ini` (disabled + comment + blank + unknown lines) |
 | **Create** | `xpman-api/src/test/java/com/ogerardin/xplane/test/petitparser/SceneryIniFileDisabledParserTest.java` (ordered `contains(...)`, catches truncation) |
-| **Modify** | `xpman-api/.../scenery/SceneryManagerTest.java` (adaand/or new `@EnableOnLocalXPlane` test for token → `GlobalAirportsSceneryPackage`) |
+| **Modify** | `xpman-api/.../scenery/SceneryManagerTest.java` or new `@EnableOnLocalXPlane` test for token → `GlobalAirportsSceneryPackage` |
 
 ## Verification
 
