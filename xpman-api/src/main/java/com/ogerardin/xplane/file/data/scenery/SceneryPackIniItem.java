@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /** An entry of the scenery_packs.ini file: either a scenery folder path or a special token. */
@@ -29,4 +30,9 @@ public abstract sealed class SceneryPackIniItem permits PathSceneryPackIniItem, 
         }
         return new PathSceneryPackIniItem(Paths.get(folderOrToken), disabled);
     }
+
+    /**
+     * The folder designated by this entry, or null if it cannot be determined (unknown token).
+     */
+    public abstract Path resolveFolder(Path baseFolder, Path globalAirportsFolder);
 }

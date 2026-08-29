@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
@@ -38,5 +39,25 @@ class SceneryPackIniItemTest {
     void disabled_shouldParticipateInEquality() {
         assertNotEquals(SceneryPackIniItem.of("Custom Scenery/KSEA", false),
                 SceneryPackIniItem.of("Custom Scenery/KSEA", true));
+    }
+
+    @Test
+    void resolveFolder_shouldResolvePathItemAgainstBaseFolder() {
+        var item = new PathSceneryPackIniItem(Path.of("Custom Scenery/KSEA"));
+        assertThat(item.resolveFolder(Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")),
+                is(Path.of("/xplane/Custom Scenery/KSEA")));
+    }
+
+    @Test
+    void resolveFolder_shouldResolveGlobalAirportsToken() {
+        var item = new TokenSceneryPackIniItem(TokenSceneryPackIniItem.GLOBAL_AIRPORTS_MARKER);
+        assertThat(item.resolveFolder(Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")),
+                is(Path.of("/xplane/Global Scenery/Global Airports")));
+    }
+
+    @Test
+    void resolveFolder_shouldReturnNullForUnknownToken() {
+        var item = new TokenSceneryPackIniItem("*FOO*");
+        assertNull(item.resolveFolder(Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")));
     }
 }

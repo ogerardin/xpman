@@ -21,4 +21,9 @@ public non-sealed class PathSceneryPackIniItem extends SceneryPackIniItem {
         super(disabled);
         this.folder = folder;
     }
+
+    @Override
+    public Path resolveFolder(Path baseFolder, Path globalAirportsFolder) {
+        return baseFolder.resolve(folder);
+    }
 }
