@@ -82,6 +82,11 @@
     -fx-alignment: CENTER-RIGHT;
 }
 
+/* --- Scenery table: folder missing rows --- */
+.scenery-row-folder-missing .table-cell {
+    -fx-text-fill: -color-danger-fg;
+}
+
 /* --- Table views: softer look --- */
 .table-view,
 .tree-table-view {

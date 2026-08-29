@@ -3,6 +3,7 @@ package com.ogerardin.xpman.panels.scenery;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.scenery.SceneryEntry;
+import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
@@ -22,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Pane;
@@ -49,8 +51,7 @@ public class SceneryController extends Controller {
     @FXML
     private TableColumn<UiSceneryEntry, Integer> rankColumn;
 
-    private final IntrospectingContextMenuTableRowFactory<UiSceneryEntry> rowFactory =
-            new IntrospectingContextMenuTableRowFactory<>(this);
+    private final SceneryRowFactory rowFactory = new SceneryRowFactory(this);
 
     private ManagerItemsObservableList<SceneryEntry, UiSceneryEntry> uiItems;
 
@@ -156,5 +157,39 @@ public class SceneryController extends Controller {
         XPlane xPlane = xPlaneProperty.get();
         Path path = xPlane.getPaths().customScenery().resolve("scenery_packs.ini");
         Platforms.getCurrent().openFile(path);
+    }
+
+    /**
+     * Row factory that adds a context menu (via annotation introspection) and applies
+     * a style class to rows whose entry has status FOLDER_MISSING.
+     */
+    private static class SceneryRowFactory extends IntrospectingContextMenuTableRowFactory<UiSceneryEntry> {
+
+        private static final String FOLDER_MISSING_STYLE = "scenery-row-folder-missing";
+
+        SceneryRowFactory(Object evaluationContextRoot) {
+            super(evaluationContextRoot);
+        }
+
+        @Override
+        public TableRow<UiSceneryEntry> call(TableView<UiSceneryEntry> tableView) {
+            TableRow<UiSceneryEntry> row = new TableRow<>();
+            row.itemProperty().addListener((__, ___, newItem) -> {
+                if (newItem == null) {
+                    row.setContextMenu(null);
+                    row.getStyleClass().remove(FOLDER_MISSING_STYLE);
+                    return;
+                }
+                row.setContextMenu(getContextMenu(newItem));
+                if (newItem.getStatus() == SceneryEntryStatus.FOLDER_MISSING) {
+                    if (!row.getStyleClass().contains(FOLDER_MISSING_STYLE)) {
+                        row.getStyleClass().add(FOLDER_MISSING_STYLE);
+                    }
+                } else {
+                    row.getStyleClass().remove(FOLDER_MISSING_STYLE);
+                }
+            });
+            return row;
+        }
     }
 }
