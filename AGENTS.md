@@ -51,7 +51,7 @@ mvn test -pl xpman-api -Dtest=ParserTest
 ## Style Policies
 
 - **Zero boilerplate.** Aim for concise code; leverage Lombok, records, and language features to eliminate ceremony.
-- **Polymorphism over conditionals.** Prefer dispatch via interfaces, enums with behavior, or strategy pattern over `if`/`switch` chains.
+- **Polymorphism over conditionals.** Always prefer polymorphism to `switch`/`if-else` when it makes sense — dispatch via interfaces, enums with behavior (e.g. a label-bearing enum rendered directly instead of a switch in the cell factory), or strategy pattern.
 - **Java idioms.** Use `Optional`, streams, `sealed` types, pattern matching, and other modern Java conventions where they improve clarity.
 - **Functional style.** Prefer functional programming where possible — e.g. streams instead of loops, method references over lambdas, immutable collections.
 - **JavaFX bindings.** Use property bindings instead of manual listener/callback wiring wherever the relationship is declarative.
