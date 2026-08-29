@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.petitparser.parser.Parser;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.petitparser.parser.primitive.CharacterParser.noneOf;
 import static org.petitparser.parser.primitive.StringParser.of;
@@ -20,7 +21,10 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * <h2>Grammar Overview</h2>
  * <pre>
  * SceneryPacksIniFile = Header("SCENERY") SceneryPack*
- * SceneryPack = "SCENERY_PACK " folderNameOrToken Newline
+ * SceneryPack = DisabledSceneryPack | EnabledSceneryPack | JunkLine
+ * DisabledSceneryPack = "SCENERY_PACK_DISABLED " folderNameOrToken Newline
+ * EnabledSceneryPack = "SCENERY_PACK " folderNameOrToken Newline
+ * JunkLine = Newline | (nonNewline+ Newline)   -- ignored
  * </pre>
  *
  * <h2>Example Content</h2>
@@ -67,23 +71,54 @@ public class SceneryPacksIniParser extends XPlaneFileParserBase<SceneryPackIniDa
         return SceneryPack().star()
                 .map((List<SceneryPackIniItem> input) -> {
                     final SceneryPackIniData.SceneryPackList items = new SceneryPackIniData.SceneryPackList();
-                    items.addAll(input);
+                    input.stream().filter(Objects::nonNull).forEach(items::add);
                     return items;
                 })
                 ;
     }
 
     /**
-     * Parse a single scenery pack entry.
+     * Parse a single scenery pack entry (or a junk line, which yields null).
      * Upon successful match, pushes a {@link SceneryPackIniItem} instance
      *
      * @return parser for scenery pack entries
      */
     Parser SceneryPack() {
+        return DisabledSceneryPack()
+                .or(EnabledSceneryPack())
+                .or(JunkLine());
+    }
+
+    /**
+     * Parse a disabled scenery pack entry ("SCENERY_PACK_DISABLED ...").
+     * Must be tried before {@link #EnabledSceneryPack()} because "SCENERY_PACK " is a
+     * prefix of "SCENERY_PACK_DISABLED ".
+     */
+    Parser DisabledSceneryPack() {
+        return of("SCENERY_PACK_DISABLED ")
+                .seq(FolderNameOrToken())
+                .seq(Newline())
+                .map((List<Object> input) -> SceneryPackIniItem.of((String) input.get(1), true))
+                ;
+    }
+
+    /**
+     * Parse an enabled scenery pack entry ("SCENERY_PACK ...").
+     */
+    Parser EnabledSceneryPack() {
         return of("SCENERY_PACK ")
                 .seq(FolderNameOrToken())
                 .seq(Newline())
                 .map((List<Object> input) -> SceneryPackIniItem.of((String) input.get(1)))
+                ;
+    }
+
+    /**
+     * Parse any unrecognized line (comments, blank lines); yields null so it can be filtered out.
+     */
+    Parser JunkLine() {
+        return Newline().map(ignored -> (SceneryPackIniItem) null)
+                .or(noneOf("\r\n").plus().seq(Newline()).map(ignored -> (SceneryPackIniItem) null))
                 ;
     }
 
