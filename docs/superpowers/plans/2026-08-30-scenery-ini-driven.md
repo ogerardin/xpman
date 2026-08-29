@@ -1,7 +1,7 @@
 # Ini-driven Scenery Screen
 
 **Date:** 2026-08-30
-**Status:** Not started
+**Status:** Complete (2026-08-30) — all tasks executed, `mvn test` and `mvn -B -DskipTests clean package` green
 **Design doc:** `docs/superpowers/specs/2026-08-30-scenery-ini-driven-design.md`
 
 ## Goal
