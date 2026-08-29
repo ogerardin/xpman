@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.exception.IllegalOperation;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
 import com.ogerardin.xplane.file.data.scenery.PathSceneryPackIniItem;
+import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
@@ -20,22 +21,26 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
+/**
+ * The scenery library: one {@link SceneryEntry} per scenery_packs.ini entry (in file order,
+ * {@link SceneryEntry#getRank() rank} = 1-based position in the file), followed by on-disk
+ * folders not listed in the ini.
+ */
 @Slf4j
 @ToString
-public class SceneryManager extends Manager<SceneryPackage> implements InstallTarget {
-
-    // a comparator that compares SceneryPackages by rank with nulls last
-    public static final Comparator<SceneryPackage> SCENERY_PACKAGE_COMPARATOR = Comparator.comparing(SceneryPackage::getRank, Comparator.nullsLast(Comparator.naturalOrder()));
+public class SceneryManager extends Manager<SceneryEntry> implements InstallTarget {
 
     @NonNull @Getter
     private final Path sceneryFolder;
@@ -54,10 +59,10 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     }
 
     /**
-     * Returns an unmodifiable list of all Scenery Packages available in the X-Plane folder.
-     * If the list has not already been loaded, this method will trigger a synchronous load.
+     * Returns an unmodifiable list of all scenery entries (one per scenery_packs.ini entry in
+     * file order, then on-disk folders not listed in the ini). Triggers a synchronous load if needed.
      */
-    public List<SceneryPackage> getSceneryPackages() {
+    public List<SceneryEntry> getSceneryEntries() {
         if (items == null) {
             loadPackages();
         }
@@ -65,30 +70,78 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
     }
 
     /**
-     * Trigger an asynchronous reload of the scenary package list.
+     * Returns an unmodifiable list of the {@link SceneryPackage} instances of all entries that
+     * have one, in list order.
+     */
+    public List<SceneryPackage> getSceneryPackages() {
+        return getSceneryEntries().stream()
+                .map(SceneryEntry::getSceneryPackage)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    /**
+     * Trigger an asynchronous reload of the scenery entries.
      */
     public void reload() {
         AsyncHelper.runAsync(this::loadPackages);
     }
 
     @SneakyThrows
-//    @Synchronized
     public void loadPackages() {
+        log.info("Loading scenery entries...");
+        fireEvent(ManagerEvent.<SceneryEntry>builder().type(LOADING).source(this).build());
 
-        log.info("Loading scenery packages...");
-        fireEvent(ManagerEvent.<SceneryPackage>builder().type(LOADING).source(this).build());
+        items = buildEntries();
 
-        SceneryPacksIniFile sceneryPacksIniFile = getSceneryPacksIniFile();
-        items = Stream.of(
-                getSceneryPackages(globalSceneryFolder, sceneryPacksIniFile),
-                getSceneryPackages(sceneryFolder, sceneryPacksIniFile),
-                getSceneryPackages(disabledSceneryFolder, null)
-        ).flatMap(Collection::stream)
-//                .sorted(SCENERY_PACKAGE_COMPARATOR)
-                .toList();
+        log.info("Loaded {} scenery entries", items.size());
+        fireEvent(ManagerEvent.<SceneryEntry>builder().type(LOADED).source(this).items(items).build());
+    }
 
-        log.info("Loaded {} scenery packages", items.size());
-        fireEvent(ManagerEvent.<SceneryPackage>builder().type(LOADED).source(this).items(items).build());
+    private List<SceneryEntry> buildEntries() {
+        // on-disk packages by folder (global scenery first, then custom scenery, each sorted by name)
+        Map<Path, SceneryPackage> packagesByFolder = new LinkedHashMap<>();
+        collectPackages(globalSceneryFolder, packagesByFolder);
+        collectPackages(sceneryFolder, packagesByFolder);
+
+        SceneryPacksIniFile iniFile = getSceneryPacksIniFile();
+        List<SceneryPackIniItem> iniItems = iniFile == null ? List.of() : iniFile.getSceneryPackList();
+
+        List<SceneryEntry> entries = new ArrayList<>();
+        Set<Path> resolvedFolders = new HashSet<>();
+
+        for (int i = 0; i < iniItems.size(); i++) {
+            SceneryPackIniItem item = iniItems.get(i);
+            int rank = i + 1;
+            Path resolvedFolder = item.resolveFolder(xPlane.getBaseFolder(), xPlane.getPaths().globalAirports());
+            if (resolvedFolder != null) {
+                resolvedFolders.add(resolvedFolder);
+            }
+            SceneryPackage sceneryPackage = resolvedFolder == null ? null : packagesByFolder.get(resolvedFolder);
+            if (sceneryPackage == null && item instanceof PathSceneryPackIniItem pathItem) {
+                // fallback: legacy enable/disable moves the folder into the disabled scenery
+                // folder without touching the ini; look for it there
+                Path disabledFolder = disabledSceneryFolder.resolve(pathItem.getFolder().getFileName());
+                if (Files.isDirectory(disabledFolder)) {
+                    sceneryPackage = createSceneryPackage(disabledFolder);
+                }
+            }
+            if (sceneryPackage != null) {
+                sceneryPackage.setRank(rank);
+                entries.add(SceneryEntry.inIni(item, sceneryPackage, rank));
+            } else {
+                entries.add(SceneryEntry.unresolved(item, rank));
+            }
+        }
+
+        // append on-disk packages that are not listed in the ini
+        packagesByFolder.forEach((folder, sceneryPackage) -> {
+            if (!resolvedFolders.contains(folder)) {
+                entries.add(SceneryEntry.notListed(sceneryPackage));
+            }
+        });
+
+        return entries;
     }
 
     private SceneryPacksIniFile getSceneryPacksIniFile() {
@@ -97,33 +150,28 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
                 new SceneryPacksIniFile(sceneryPacksIniFile) : null;
     }
 
-    private List<SceneryPackage> getSceneryPackages(Path sceneryFolder, SceneryPacksIniFile iniFile) throws IOException {
-        if (! Files.exists(sceneryFolder)) {
-            return Collections.emptyList();
+    @SneakyThrows
+    private void collectPackages(Path sceneryFolder, Map<Path, SceneryPackage> packagesByFolder) {
+        if (!Files.isDirectory(sceneryFolder)) {
+            return;
         }
-        try (Stream<Path> pathStream = Files.list(sceneryFolder)) {
-            return pathStream
-                    .filter(Files::isDirectory)
-                    .map(folder -> getSceneryPackage(folder, iniFile))
-                    .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        try (var stream = Files.list(sceneryFolder)) {
+            stream.filter(Files::isDirectory)
+                    .sorted()
+                    .map(this::createSceneryPackage)
+                    .forEach(pkg -> packagesByFolder.put(pkg.getFolder(), pkg));
         }
     }
 
     @SneakyThrows
-    private SceneryPackage getSceneryPackage(Path folder, SceneryPacksIniFile iniFile) {
+    private SceneryPackage createSceneryPackage(Path folder) {
         SceneryPackage sceneryPackage = IntrospectionHelper.getBestSubclassInstance(SceneryPackage.class, folder);
-        sceneryPackage.setEnabled(sceneryPackage.getFolder().startsWith(sceneryFolder));
-        // get rank of scenery in scenery_packs.ini
-        if (iniFile != null) {
-            Path sceneryFolder = this.sceneryFolder.getParent().relativize(sceneryPackage.getFolder());
-            PathSceneryPackIniItem item = new PathSceneryPackIniItem(sceneryFolder);
-            // Note: *GLOBAL_AIRPORTS* will never be matched as it is a TokenSceneryPackIniItem
-            int index = iniFile.getSceneryPackList().indexOf(item);
-            if (index >= 0) {
-                sceneryPackage.setRank(index + 1);
-            }
-        }
+        sceneryPackage.setEnabled(isLocatedInAuthorizedBase(sceneryPackage.getFolder()));
         return sceneryPackage;
+    }
+
+    private boolean isLocatedInAuthorizedBase(Path folder) {
+        return folder.startsWith(sceneryFolder) || folder.startsWith(globalSceneryFolder);
     }
 
     private boolean isEnabled(SceneryPackage sceneryPackage) {
@@ -140,7 +188,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
 
     @SneakyThrows
     public void disableSceneryPackage(SceneryPackage sceneryPackage) {
-        if (! isEnabled(sceneryPackage)) {
+        if (!isEnabled(sceneryPackage)) {
             throw new IllegalOperation("SceneryPackage already disabled");
         }
         moveSceneryPackage(sceneryPackage, disabledSceneryFolder);
@@ -157,7 +205,7 @@ public class SceneryManager extends Manager<SceneryPackage> implements InstallTa
 
         // update scenery package
         sceneryPackage.setFolder(target);
-        sceneryPackage.setEnabled(isEnabled(sceneryPackage));
+        sceneryPackage.setEnabled(isLocatedInAuthorizedBase(sceneryPackage.getFolder()));
     }
 
     @SneakyThrows
