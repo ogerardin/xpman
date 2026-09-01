@@ -17,12 +17,12 @@
                         <FontIcon iconLiteral="fth-refresh-cw"/>
                     </graphic>
                 </Button>
-                <Button mnemonicParsing="false" text="▲">
+                <Button mnemonicParsing="false" onAction="#moveUp" text="▲">
                     <tooltip>
                         <Tooltip text="Move Scenery Pack up one rank in scenery_packs.ini"/>
                     </tooltip>
                 </Button>
-                <Button mnemonicParsing="false" text="▼">
+                <Button mnemonicParsing="false" onAction="#moveDown" text="▼">
                     <tooltip>
                         <Tooltip text="Move Scenery Pack down one rank in scenery_packs.ini"/>
                     </tooltip>
@@ -39,7 +39,7 @@
                 </Button>
                 <Button mnemonicParsing="false" onAction="#organize" text="Organize scenery_pack.ini">
                     <graphic>
-                        <FontIcon iconLiteral="fth-settings"/>
+                        <FontIcon iconLiteral="fth-zap"/>
                     </graphic>
                 </Button>
                 <Button mnemonicParsing="false" onAction="#openSceneryPacksIni" text="Open scenery_packs.ini">
@@ -47,6 +47,8 @@
                         <FontIcon iconLiteral="fth-external-link"/>
                     </graphic>
                 </Button>
+                <Label fx:id="unsavedLabel" text="UNSAVED CHANGES" styleClass="unsaved-indicator" visible="false"/>
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" text="Save"/>
             </ToolBar>
         </top>
         <center>

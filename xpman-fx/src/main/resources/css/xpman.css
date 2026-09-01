@@ -87,6 +87,11 @@
     -fx-text-fill: -color-danger-fg;
 }
 
+.unsaved-indicator {
+    -fx-text-fill: -color-warning-emphasis;
+    -fx-font-weight: bold;
+}
+
 /* --- Table views: softer look --- */
 .table-view,
 .tree-table-view {

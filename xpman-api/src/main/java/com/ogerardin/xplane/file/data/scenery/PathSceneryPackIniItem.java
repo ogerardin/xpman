@@ -26,4 +26,14 @@ public non-sealed class PathSceneryPackIniItem extends SceneryPackIniItem {
     public Path resolveFolder(Path baseFolder, Path globalAirportsFolder) {
         return baseFolder.resolve(folder);
     }
+
+    @Override
+    public String getIniValue() {
+        return folder.toString();
+    }
+
+    @Override
+    public boolean isToken() {
+        return false;
+    }
 }

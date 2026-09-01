@@ -32,6 +32,8 @@ public class SceneryPackage implements Inspectable {
 
     private boolean enabled = false;
 
+    private boolean system = false;
+
     /** The rank of the scenery within scenery_packages.ini file (null if not listed) */
     private Integer rank = null;
 

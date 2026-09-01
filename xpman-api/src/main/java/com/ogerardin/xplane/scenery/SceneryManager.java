@@ -1,9 +1,7 @@
 package com.ogerardin.xplane.scenery;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.exception.IllegalOperation;
 import com.ogerardin.xplane.file.SceneryPacksIniFile;
-import com.ogerardin.xplane.file.data.scenery.PathSceneryPackIniItem;
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
@@ -51,6 +49,11 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     @NonNull @Getter
     private final Path globalSceneryFolder;
 
+    private List<SceneryPackIniItem> iniItems = new ArrayList<>();
+    private Map<Path, SceneryPackage> packagesByFolder = new LinkedHashMap<>();
+    @Getter
+    private boolean pendingChanges;
+
     public SceneryManager(@NonNull XPlane xPlane) {
         super(xPlane);
         this.sceneryFolder = xPlane.getPaths().customScenery();
@@ -92,6 +95,10 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
         log.info("Loading scenery entries...");
         fireEvent(ManagerEvent.<SceneryEntry>builder().type(LOADING).source(this).build());
 
+        packagesByFolder = collectPackages();
+        SceneryPacksIniFile iniFile = getSceneryPacksIniFile();
+        iniItems = iniFile == null ? new ArrayList<>() : new ArrayList<>(iniFile.getSceneryPackList());
+        pendingChanges = false;
         items = buildEntries();
 
         log.info("Loaded {} scenery entries", items.size());
@@ -99,14 +106,6 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     }
 
     private List<SceneryEntry> buildEntries() {
-        // on-disk packages by folder (global scenery first, then custom scenery, each sorted by name)
-        Map<Path, SceneryPackage> packagesByFolder = new LinkedHashMap<>();
-        collectPackages(globalSceneryFolder, packagesByFolder);
-        collectPackages(sceneryFolder, packagesByFolder);
-
-        SceneryPacksIniFile iniFile = getSceneryPacksIniFile();
-        List<SceneryPackIniItem> iniItems = iniFile == null ? List.of() : iniFile.getSceneryPackList();
-
         List<SceneryEntry> entries = new ArrayList<>();
         Set<Path> resolvedFolders = new HashSet<>();
 
@@ -118,10 +117,10 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
                 resolvedFolders.add(resolvedFolder);
             }
             SceneryPackage sceneryPackage = resolvedFolder == null ? null : packagesByFolder.get(resolvedFolder);
-            if (sceneryPackage == null && item instanceof PathSceneryPackIniItem pathItem) {
+            if (sceneryPackage == null && resolvedFolder != null) {
                 // fallback: legacy enable/disable moves the folder into the disabled scenery
                 // folder without touching the ini; look for it there
-                Path disabledFolder = disabledSceneryFolder.resolve(pathItem.getFolder().getFileName());
+                Path disabledFolder = disabledSceneryFolder.resolve(resolvedFolder.getFileName());
                 if (Files.isDirectory(disabledFolder)) {
                     sceneryPackage = createSceneryPackage(disabledFolder);
                 }
@@ -151,6 +150,14 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     }
 
     @SneakyThrows
+    private Map<Path, SceneryPackage> collectPackages() {
+        Map<Path, SceneryPackage> result = new LinkedHashMap<>();
+        collectPackages(globalSceneryFolder, result);
+        collectPackages(sceneryFolder, result);
+        return result;
+    }
+
+    @SneakyThrows
     private void collectPackages(Path sceneryFolder, Map<Path, SceneryPackage> packagesByFolder) {
         if (!Files.isDirectory(sceneryFolder)) {
             return;
@@ -167,6 +174,7 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     private SceneryPackage createSceneryPackage(Path folder) {
         SceneryPackage sceneryPackage = IntrospectionHelper.getBestSubclassInstance(SceneryPackage.class, folder);
         sceneryPackage.setEnabled(isLocatedInAuthorizedBase(sceneryPackage.getFolder()));
+        sceneryPackage.setSystem(folder.startsWith(globalSceneryFolder));
         return sceneryPackage;
     }
 
@@ -174,38 +182,117 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
         return folder.startsWith(sceneryFolder) || folder.startsWith(globalSceneryFolder);
     }
 
-    private boolean isEnabled(SceneryPackage sceneryPackage) {
-        return sceneryPackage.getFolder().startsWith(sceneryFolder);
+    public boolean enable(SceneryEntry entry) {
+        return updateDisabled(entry, false);
     }
 
-    @SneakyThrows
-    public void enableSceneryPackage(SceneryPackage sceneryPackage) {
-        if (isEnabled(sceneryPackage)) {
-            throw new IllegalOperation("SceneryPackage already enabled");
+    public boolean disable(SceneryEntry entry) {
+        return updateDisabled(entry, true);
+    }
+
+    private boolean updateDisabled(SceneryEntry entry, boolean disabled) {
+        if (entry.getIniItem() != null && entry.getIniItem().isDisabled() != disabled) {
+            entry.getIniItem().setDisabled(disabled);
+            pendingChanges = true;
+            return true;
         }
-        moveSceneryPackage(sceneryPackage, sceneryFolder);
+        return false;
     }
 
-    @SneakyThrows
-    public void disableSceneryPackage(SceneryPackage sceneryPackage) {
-        if (!isEnabled(sceneryPackage)) {
-            throw new IllegalOperation("SceneryPackage already disabled");
+    public boolean moveUp(SceneryEntry entry) {
+        return move(entry, -1);
+    }
+
+    public boolean moveDown(SceneryEntry entry) {
+        return move(entry, 1);
+    }
+
+    private boolean move(SceneryEntry entry, int offset) {
+        int index = indexOf(entry.getIniItem());
+        int target = index + offset;
+        if (index >= 0 && target >= 0 && target < iniItems.size()) {
+            Collections.swap(iniItems, index, target);
+            updateRanks();
+            pendingChanges = true;
+            return true;
         }
-        moveSceneryPackage(sceneryPackage, disabledSceneryFolder);
+        return false;
+    }
+
+    public boolean addToIni(SceneryEntry entry) {
+        if (entry.getIniItem() == null && entry.getSceneryPackage() != null
+                && !entry.getSceneryPackage().isSystem()) {
+            iniItems.add(SceneryPackIniItem.of(iniValue(entry.getSceneryPackage())));
+            items = buildEntries();
+            pendingChanges = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeFromIni(SceneryEntry entry) {
+        if (entry.getIniItem() != null && entry.getSceneryPackage() == null
+                && iniItems.remove(entry.getIniItem())) {
+            items = buildEntries();
+            pendingChanges = true;
+            return true;
+        }
+        return false;
+    }
+
+    public void organize(List<SceneryPackage> orderedPackages) {
+        Map<SceneryPackage, SceneryPackIniItem> existing = new java.util.IdentityHashMap<>();
+        items.stream().filter(entry -> entry.getIniItem() != null && entry.getSceneryPackage() != null)
+                .forEach(entry -> existing.put(entry.getSceneryPackage(), entry.getIniItem()));
+        iniItems = orderedPackages.stream()
+                .map(pkg -> existing.computeIfAbsent(pkg, this::newIniItem))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
+        changed();
+    }
+
+    private SceneryPackIniItem newIniItem(SceneryPackage pkg) {
+        return SceneryPackIniItem.of(iniValue(pkg));
+    }
+
+    private String iniValue(SceneryPackage pkg) {
+        Path folder = pkg.getFolder();
+        if (folder.startsWith(disabledSceneryFolder)) {
+            folder = sceneryFolder.resolve(folder.getFileName());
+        }
+        return xPlane.getBaseFolder().relativize(folder).toString();
+    }
+
+    private int indexOf(SceneryPackIniItem item) {
+        return item == null ? -1 : java.util.stream.IntStream.range(0, iniItems.size())
+                .filter(index -> iniItems.get(index) == item).findFirst().orElse(-1);
+    }
+
+    private void updateRanks() {
+        int rank = 1;
+        for (SceneryEntry entry : items) {
+            if (entry.getIniItem() != null) {
+                entry.setRank(rank++);
+            }
+        }
+    }
+
+    private void changed() {
+        pendingChanges = true;
+        items = buildEntries();
+        fireEvent(ManagerEvent.<SceneryEntry>builder().type(LOADED).source(this).items(items).build());
     }
 
     @SneakyThrows
-    private void moveSceneryPackage(SceneryPackage sceneryPackage, Path targetFolder) {
-        // move the scenary folder
-        Path sourceFolder = sceneryPackage.getFolder();
-        // ...to the target folder, keeping the original folder name
-        Files.createDirectories(targetFolder);
-        Path target = targetFolder.resolve(sourceFolder.getFileName());
-        Files.move(sourceFolder, target);
-
-        // update scenery package
-        sceneryPackage.setFolder(target);
-        sceneryPackage.setEnabled(isLocatedInAuthorizedBase(sceneryPackage.getFolder()));
+    public void save() {
+        if (!pendingChanges) {
+            return;
+        }
+        SceneryPacksIniFile iniFile = getSceneryPacksIniFile();
+        if (iniFile == null) {
+            throw new IOException("scenery_packs.ini does not exist");
+        }
+        iniFile.write(iniFile.getFile(), iniItems);
+        pendingChanges = false;
     }
 
     @SneakyThrows

@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.panels.scenery.UiSceneryEntry;
+import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -19,12 +20,12 @@ import java.net.URL;
  * - An image from URL for regular entries
  * - Nothing for entries without icon
  */
-public class SceneryIconCellFactory implements TableCellFactory<UiSceneryEntry, URL> {
+public class SceneryIconCellFactory<S extends UiSceneryEntry> implements TableCellFactory<S, URL> {
 
     private static final double ICON_SIZE = 24.0;
 
     @Override
-    public TableCell<UiSceneryEntry, URL> call(TableColumn<UiSceneryEntry, URL> param) {
+    public TableCell<S, URL> call(TableColumn<S, URL> param) {
         return new TableCell<>() {
             @Override
             protected void updateItem(URL url, boolean empty) {
@@ -37,10 +38,15 @@ public class SceneryIconCellFactory implements TableCellFactory<UiSceneryEntry, 
                 }
 
                 // Get the entry from the table row
-                TableRow<UiSceneryEntry> row = getTableRow();
+                TableRow<S> row = getTableRow();
                 UiSceneryEntry entry = (row != null) ? row.getItem() : null;
 
-                if (entry != null && entry.isToken()) {
+                if (entry != null && entry.getStatus() == SceneryEntryStatus.SYSTEM) {
+                    FontIcon icon = new FontIcon(Feather.SHIELD);
+                    icon.setIconSize((int) ICON_SIZE);
+                    setGraphic(icon);
+                    setTooltip(new Tooltip("System folder managed by X-Plane"));
+                } else if (entry != null && entry.isToken()) {
                     // Show token icon with tooltip
                     FontIcon icon = new FontIcon(Feather.BOX);
                     icon.setIconSize((int) ICON_SIZE);

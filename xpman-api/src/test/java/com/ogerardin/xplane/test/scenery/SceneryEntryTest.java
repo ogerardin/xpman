@@ -46,6 +46,21 @@ class SceneryEntryTest {
     }
 
     @Test
+    void rankCanBeUpdatedAfterAnInMemoryMove() {
+        var entry = SceneryEntry.inIni(SceneryPackIniItem.of("Custom Scenery/Foo"), null, 2);
+        entry.setRank(1);
+        assertEquals(1, entry.getRank());
+    }
+
+    @Test
+    void unlistedSystemPackageShouldHaveSystemStatus() {
+        var systemPackage = pkg("/xplane/Global Scenery/X-Plane 12 Demo Areas", true);
+        systemPackage.setSystem(true);
+        var entry = SceneryEntry.notListed(systemPackage);
+        assertEquals(SceneryEntryStatus.SYSTEM, entry.getStatus());
+    }
+
+    @Test
     void disabledInIniEntryShouldBeDisabled() {
         var entry = SceneryEntry.inIni(SceneryPackIniItem.of("Custom Scenery/Foo", true),
                 pkg("/xplane/Custom Scenery/Foo", true), 2);
@@ -54,11 +69,11 @@ class SceneryEntryTest {
     }
 
     @Test
-    void packageInDisabledFolderShouldBeDisabled() {
-        // legacy enable/disable: ini says enabled but the package lives in the disabled folder
+    void iniEnabledPackageInDisabledFolderShouldBeEnabled() {
+        // The ini flag is authoritative; legacy folder placement is not.
         var entry = SceneryEntry.inIni(SceneryPackIniItem.of("Custom Scenery/Foo"),
                 pkg("/xplane/Custom Scenery (disabled)/Foo", false), 1);
-        assertEquals(SceneryEntryStatus.IN_INI_DISABLED, entry.getStatus());
+        assertEquals(SceneryEntryStatus.IN_INI, entry.getStatus());
     }
 
     @Test

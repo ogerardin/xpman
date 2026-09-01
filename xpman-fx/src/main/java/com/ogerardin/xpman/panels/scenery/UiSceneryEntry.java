@@ -32,31 +32,36 @@ public class UiSceneryEntry {
         Platforms.getCurrent().reveal(getSceneryPackage().getFolder());
     }
 
-    // FIXME the official method for disabling a scenerypack is described in https://www.x-plane.com/kb/prioritization-scenery-packs/
-    // it involves changing SCENERY_PACK to SCENERY_PACK_DISABLED, and not moving it to another folder
     @Label("'Enable Scenery Package'")
-    @EnabledIf("sceneryPackage != null && ! sceneryPackage.enabled")
-    @OnSuccess("reload()")
+    @EnabledIf("iniItem != null && iniItem.disabled")
+    @OnSuccess("refreshTable()")
     public void enable() {
-        xPlane.getSceneryManager().enableSceneryPackage(getSceneryPackage());
+        xPlane.getSceneryManager().enable(getSceneryEntry());
     }
 
-    // FIXME the official method for disabling a scenerypack is described in https://www.x-plane.com/kb/prioritization-scenery-packs/
-    // it involves changing SCENERY_PACK to SCENERY_PACK_DISABLED, and not moving it to another folder
     @Label("'Disable Scenery Package'")
-    @EnabledIf("sceneryPackage != null && sceneryPackage.enabled")
-    @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
-            "+ '\" will be moved to \"' + xPlane.baseFolder.relativize(xPlane.sceneryManager.disabledSceneryFolder) " +
-            "+ '\" \n" +
-            "\n" +
-            "Press OK to continue.'")
-    @OnSuccess("reload()")
+    @EnabledIf("iniItem != null && ! iniItem.disabled")
+    @OnSuccess("refreshTable()")
     public void disable() {
-        xPlane.getSceneryManager().disableSceneryPackage(getSceneryPackage());
+        xPlane.getSceneryManager().disable(getSceneryEntry());
+    }
+
+    @Label("'Add to scenery_packs.ini'")
+    @EnabledIf("iniItem == null && sceneryPackage != null && ! sceneryPackage.system")
+    @OnSuccess("syncAndRefresh()")
+    public void addToIni() {
+        xPlane.getSceneryManager().addToIni(getSceneryEntry());
+    }
+
+    @Label("'Remove from scenery_packs.ini'")
+    @EnabledIf("iniItem != null && sceneryPackage == null")
+    @OnSuccess("syncAndRefresh()")
+    public void removeFromIni() {
+        xPlane.getSceneryManager().removeFromIni(getSceneryEntry());
     }
 
     @Label("'Move to Trash'")
-    @EnabledIf("sceneryPackage != null")
+    @EnabledIf("sceneryPackage != null && ! sceneryPackage.system && ! token")
     @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
             "+ '\" will be moved to the trash.\n" +
             "\n" +

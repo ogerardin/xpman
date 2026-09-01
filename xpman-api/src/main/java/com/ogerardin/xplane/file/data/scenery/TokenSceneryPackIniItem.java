@@ -32,4 +32,14 @@ public non-sealed class TokenSceneryPackIniItem extends SceneryPackIniItem {
     public Path resolveFolder(Path baseFolder, Path globalAirportsFolder) {
         return GLOBAL_AIRPORTS_MARKER.equals(token) ? globalAirportsFolder : null;
     }
+
+    @Override
+    public String getIniValue() {
+        return token;
+    }
+
+    @Override
+    public boolean isToken() {
+        return true;
+    }
 }

@@ -2,10 +2,14 @@ package com.ogerardin.xplane.file;
 
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData;
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniData.SceneryPackList;
+import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
 import com.ogerardin.xplane.file.petitparser.SceneryPacksIniParser;
 import lombok.ToString;
 
 import java.nio.file.Path;
+import java.nio.file.Files;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Represents a parsed scenery_packs.ini file containing the prioritized list of scenery packages.
@@ -53,6 +57,20 @@ public class SceneryPacksIniFile extends XPlaneFile<SceneryPackIniData> {
      */
     public SceneryPackList getSceneryPackList() {
         return getData().getItems();
+    }
+
+    /** Writes the supplied ordered entries without changing the parsed file data. */
+    public void write(Path target, List<SceneryPackIniItem> items) throws IOException {
+        var header = getData().getHeader();
+        try (var writer = Files.newBufferedWriter(target)) {
+            writer.write(header.getOrigin() + "\n");
+            writer.write(header.getSpecVersion() + " Version\n");
+            writer.write(header.getFileType() + "\n\n");
+            for (var item : items) {
+                writer.write(item.isDisabled() ? "SCENERY_PACK_DISABLED " : "SCENERY_PACK ");
+                writer.write(item.getIniValue() + "\n");
+            }
+        }
     }
 
     @ToString.Include

@@ -13,6 +13,8 @@ public enum SceneryEntryStatus {
     IN_INI_DISABLED("Disabled"),
     /** Listed in scenery_packs.ini but the folder does not exist on disk. */
     FOLDER_MISSING("Folder missing"),
+    /** System folder managed by X-Plane and intentionally absent from the ini. */
+    SYSTEM("System"),
     /** Folder exists on disk but is not listed in scenery_packs.ini. */
     NOT_LISTED(null);
 

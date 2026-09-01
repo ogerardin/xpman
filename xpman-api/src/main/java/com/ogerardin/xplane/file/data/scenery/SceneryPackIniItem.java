@@ -2,6 +2,7 @@ package com.ogerardin.xplane.file.data.scenery;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -14,7 +15,8 @@ import java.nio.file.Paths;
 public abstract sealed class SceneryPackIniItem permits PathSceneryPackIniItem, TokenSceneryPackIniItem {
 
     /** Whether the entry is disabled in the ini (SCENERY_PACK_DISABLED instead of SCENERY_PACK). */
-    private final boolean disabled;
+    @Setter
+    private boolean disabled;
 
     protected SceneryPackIniItem(boolean disabled) {
         this.disabled = disabled;
@@ -30,6 +32,11 @@ public abstract sealed class SceneryPackIniItem permits PathSceneryPackIniItem, 
         }
         return new PathSceneryPackIniItem(Paths.get(folderOrToken), disabled);
     }
+
+    /** Returns the path or token value written after the scenery-pack directive. */
+    public abstract String getIniValue();
+
+    public abstract boolean isToken();
 
     /**
      * The folder designated by this entry, or null if it cannot be determined (unknown token).

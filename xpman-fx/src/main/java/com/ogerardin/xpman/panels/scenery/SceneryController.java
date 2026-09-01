@@ -4,13 +4,13 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryEntryStatus;
+import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.panels.scenery.rules.SceneryClassesController;
-import com.ogerardin.xpman.panels.scenery.wizard.OrganizeWizard;
 import com.ogerardin.xpman.scenery_organizer.OtherSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
@@ -19,9 +19,14 @@ import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
 import com.ogerardin.xplane.util.platform.Platforms;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -35,6 +40,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 
 public class SceneryController extends Controller {
 
@@ -49,11 +55,18 @@ public class SceneryController extends Controller {
     private TableView<UiSceneryEntry> sceneryTable;
 
     @FXML
+    private javafx.scene.control.Button saveButton;
+
+    @FXML
+    private Label unsavedLabel;
+
+    @FXML
     private TableColumn<UiSceneryEntry, Integer> rankColumn;
 
     private final SceneryRowFactory rowFactory = new SceneryRowFactory(this);
 
     private ManagerItemsObservableList<SceneryEntry, UiSceneryEntry> uiItems;
+    private final BooleanProperty pendingChanges = new SimpleBooleanProperty();
 
     public SceneryController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
@@ -89,6 +102,9 @@ public class SceneryController extends Controller {
 
         // disable the toolbar if we don't have a current X-Plane instance
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
+        saveButton.visibleProperty().bind(pendingChanges);
+        unsavedLabel.visibleProperty().bind(pendingChanges);
+        unsavedLabel.managedProperty().bind(unsavedLabel.visibleProperty());
 
         uiItems = new ManagerItemsObservableList<>(
                 this.xPlaneProperty,
@@ -110,7 +126,57 @@ public class SceneryController extends Controller {
 
     public void reload() {
         rowFactory.clearCache();
+        pendingChanges.set(false);
         uiItems.reload();
+    }
+
+    public void markChanged() {
+        pendingChanges.set(true);
+    }
+
+    public void refreshTable() {
+        sceneryTable.refresh();
+        markChanged();
+    }
+
+    public void syncAndRefresh() {
+        XPlane xPlane = xPlaneProperty.get();
+        uiItems.setAll(xPlane.getSceneryManager().getSceneryEntries().stream()
+                .map(entry -> new UiSceneryEntry(entry, xPlane, sceneryClassOf(entry)))
+                .toList());
+        sceneryTable.refresh();
+        markChanged();
+    }
+
+    @FXML
+    private void moveUp() {
+        int index = sceneryTable.getSelectionModel().getSelectedIndex();
+        selectedEntry().ifPresent(entry -> {
+            if (xPlaneProperty.get().getSceneryManager().moveUp(entry)) {
+                Collections.swap(uiItems, index, index - 1);
+                sceneryTable.getSelectionModel().select(index - 1);
+                sceneryTable.refresh();
+                markChanged();
+            }
+        });
+    }
+
+    @FXML
+    private void moveDown() {
+        int index = sceneryTable.getSelectionModel().getSelectedIndex();
+        selectedEntry().ifPresent(entry -> {
+            if (xPlaneProperty.get().getSceneryManager().moveDown(entry)) {
+                Collections.swap(uiItems, index, index + 1);
+                sceneryTable.getSelectionModel().select(index + 1);
+                sceneryTable.refresh();
+                markChanged();
+            }
+        });
+    }
+
+    private Optional<SceneryEntry> selectedEntry() {
+        return Optional.ofNullable(sceneryTable.getSelectionModel().getSelectedItem())
+                .map(UiSceneryEntry::getSceneryEntry);
     }
 
     public void installScenery() {
@@ -122,10 +188,28 @@ public class SceneryController extends Controller {
 
     @FXML
     private void organize() {
-        XPlane xPlane = xPlaneProperty.get();
-        OrganizeWizard wizard = new OrganizeWizard(xPlane, sceneryOrganizer);
-        wizard.showAndWait();
-        reload();
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                """
+                        This will add unlisted scenery packages, remove invalid entries, and sort scenery packages by class rank.
+                        No change will be saved until you click on the "Save" button\s""");
+        confirmation.showAndWait().filter(ButtonType.OK::equals).ifPresent(__ -> {
+            XPlane xPlane = xPlaneProperty.get();
+            List<SceneryEntry> entries = xPlane.getSceneryManager().getSceneryEntries();
+            List<SceneryPackage> packages = entries.stream()
+                    .filter(entry -> entry.getSceneryPackage() != null)
+                    .filter(entry -> entry.getIniItem() != null || !entry.getSceneryPackage().isSystem())
+                    .map(SceneryEntry::getSceneryPackage)
+                    .toList();
+            List<SceneryPackage> ordered = sceneryOrganizer.apply(packages);
+            xPlane.getSceneryManager().organize(ordered);
+            markChanged();
+        });
+    }
+
+    @FXML
+    private void save() {
+        xPlaneProperty.get().getSceneryManager().save();
+        pendingChanges.set(false);
     }
 
     @FXML
