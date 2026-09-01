@@ -70,10 +70,24 @@ class SceneryEntryTest {
     }
 
     @Test
-    void unresolvedTokenEntryShouldBeToken() {
+    void unresolvedTokenEntryShouldBeFolderMissing() {
         var entry = SceneryEntry.unresolved(new TokenSceneryPackIniItem("*GLOBAL_AIRPORTS*"), 1);
-        assertEquals(SceneryEntryStatus.TOKEN, entry.getStatus());
+        assertEquals(SceneryEntryStatus.FOLDER_MISSING, entry.getStatus());
         assertEquals("*GLOBAL_AIRPORTS*", entry.getName());
+    }
+
+    @Test
+    void tokenEntryShouldBeDetected() {
+        var tokenItem = new TokenSceneryPackIniItem("*GLOBAL_AIRPORTS*");
+        var entry = SceneryEntry.inIni(tokenItem, null, 1);
+        assertTrue(entry.isToken());
+    }
+
+    @Test
+    void pathEntryShouldNotBeToken() {
+        var pathItem = SceneryPackIniItem.of("Custom Scenery/Test");
+        var entry = SceneryEntry.inIni(pathItem, null, 1);
+        assertFalse(entry.isToken());
     }
 
     @Test
@@ -83,8 +97,8 @@ class SceneryEntryTest {
         assertNull(entry.getIconUrl());
         assertFalse(entry.getHasAirport());
         assertFalse(entry.isLibrary());
-        assertEquals(0, entry.getTileCount());
-        assertEquals(0, entry.getObjCount());
+        assertNull(entry.getTileCount());
+        assertNull(entry.getObjCount());
         assertTrue(entry.getLinks().isEmpty());
     }
 }

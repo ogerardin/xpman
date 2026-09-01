@@ -36,9 +36,7 @@ public class SceneryEntry {
             return SceneryEntryStatus.NOT_LISTED;
         }
         if (sceneryPackage == null) {
-            return iniItem instanceof TokenSceneryPackIniItem
-                    ? SceneryEntryStatus.TOKEN
-                    : SceneryEntryStatus.FOLDER_MISSING;
+            return SceneryEntryStatus.FOLDER_MISSING;
         }
         return iniItem.isDisabled() || !sceneryPackage.isEnabled()
                 ? SceneryEntryStatus.IN_INI_DISABLED
@@ -49,6 +47,11 @@ public class SceneryEntry {
     public boolean isEnabled() {
         var status = getStatus();
         return status == SceneryEntryStatus.IN_INI || status == SceneryEntryStatus.NOT_LISTED;
+    }
+
+    /** Whether this entry is a special token (e.g., *GLOBAL_AIRPORTS*). */
+    public boolean isToken() {
+        return iniItem instanceof TokenSceneryPackIniItem;
     }
 
     // null-safe accessors so that unresolved entries (no on-disk package) can still be displayed
@@ -69,12 +72,12 @@ public class SceneryEntry {
         return sceneryPackage != null && sceneryPackage.isLibrary();
     }
 
-    public int getTileCount() {
-        return sceneryPackage != null ? sceneryPackage.getTileCount() : 0;
+    public Integer getTileCount() {
+        return sceneryPackage != null ? sceneryPackage.getTileCount() : null;
     }
 
-    public int getObjCount() {
-        return sceneryPackage != null ? sceneryPackage.getObjCount() : 0;
+    public Integer getObjCount() {
+        return sceneryPackage != null ? sceneryPackage.getObjCount() : null;
     }
 
     public URL getIconUrl() {
