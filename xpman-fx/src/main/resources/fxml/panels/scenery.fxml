@@ -57,7 +57,7 @@
                             <PropertyValueFactory property="iconUrl"/>
                         </cellValueFactory>
                         <cellFactory>
-                            <UrlImageCellFactory height="24.0"/>
+                            <SceneryIconCellFactory/>
                         </cellFactory>
                     </TableColumn>
                     <TableColumn fx:id="rankColumn" editable="false" prefWidth="58.0" text="Rank">
@@ -65,7 +65,7 @@
                             <PropertyValueFactory property="rank"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="statusColumn" editable="false" prefWidth="70.0" sortable="false" text="Status">
+                    <TableColumn fx:id="statusColumn" editable="false" prefWidth="120.0" sortable="false" text="Status">
                         <cellValueFactory>
                             <PropertyValueFactory property="status"/>
                         </cellValueFactory>
