@@ -51,6 +51,8 @@ macOS may block the app because it is not signed with an Apple Developer ID. Go 
 
 XPman is a standalone JavaFX desktop application.
 
+See [EXTENDING.md](EXTENDING.md) for how to implement custom aircraft and scenery classes or declare new tools.
+
 **Tech stack:** Java 25, JavaFX 25, Maven, Lombok, Gson, JUnit 5
 
 ### Modules

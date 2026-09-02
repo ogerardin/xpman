@@ -49,7 +49,7 @@ compute_version() {
 
     parse_version "$base" "BASE"
     REVISION="${BASE_MAJOR}.${BASE_MINOR}.$((BASE_INCREMENTAL + 1))-SNAPSHOT"
-    GH_VERSION="${REVISION}+sha.$(git rev-parse --short HEAD)"
+    GH_VERSION="${REVISION}-sha.$(git rev-parse --short HEAD)"
     IS_SNAPSHOT=1
 }
 
