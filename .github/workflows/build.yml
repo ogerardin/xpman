@@ -223,17 +223,29 @@ jobs:
             gh release list --json tagName,name,isPrerelease --jq \
               '.[] | select(.isPrerelease and .name == "'"$VERSION ($DATE)"'") | .tagName' | \
               xargs -r gh release delete --yes --cleanup-tag
+            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+            if [ -n "$PREV_TAG" ]; then
+              git log --format='- %s' "$PREV_TAG"..HEAD > "${RUNNER_TEMP}/release-notes.md"
+            else
+              git log --format='- %s' -30 HEAD > "${RUNNER_TEMP}/release-notes.md"
+            fi
             gh release create "$GH_VERSION" artifacts/* \
               --target "$GITHUB_SHA" \
               --title "$VERSION ($DATE)" \
-              --generate-notes \
+              --notes-file "${RUNNER_TEMP}/release-notes.md" \
               --prerelease
           else
             # Full release: clean up all pre-releases, then publish
             gh release list --prerelease --json tagName --jq '.[].tagName' | \
               xargs -r gh release delete --yes --cleanup-tag
+            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+            if [ -n "$PREV_TAG" ]; then
+              git log --format='- %s' "$PREV_TAG"..HEAD > "${RUNNER_TEMP}/release-notes.md"
+            else
+              git log --format='- %s' -30 HEAD > "${RUNNER_TEMP}/release-notes.md"
+            fi
             gh release create "$VERSION" artifacts/* \
               --target "$GITHUB_SHA" \
               --title "$VERSION ($DATE)" \
-              --generate-notes
+              --notes-file "${RUNNER_TEMP}/release-notes.md"
           fi
