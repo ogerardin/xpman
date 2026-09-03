@@ -199,24 +199,21 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
         return false;
     }
 
-    public boolean moveUp(SceneryEntry entry) {
-        return move(entry, -1);
-    }
-
-    public boolean moveDown(SceneryEntry entry) {
-        return move(entry, 1);
-    }
-
-    private boolean move(SceneryEntry entry, int offset) {
+    /**
+     * Moves the entry's ini item to the given 0-based index in scenery_packs.ini order
+     * (the dragged/dropped entry takes the target slot) and updates ranks accordingly.
+     * Does nothing and returns false if the entry is not ini-listed or the index is out of bounds.
+     */
+    public boolean moveTo(SceneryEntry entry, int targetIndex) {
         int index = indexOf(entry.getIniItem());
-        int target = index + offset;
-        if (index >= 0 && target >= 0 && target < iniItems.size()) {
-            Collections.swap(iniItems, index, target);
-            updateRanks();
-            pendingChanges = true;
-            return true;
+        if (index < 0 || index == targetIndex
+                || targetIndex < 0 || targetIndex >= iniItems.size()) {
+            return false;
         }
-        return false;
+        iniItems.add(targetIndex, iniItems.remove(index));
+        items = buildEntries();
+        pendingChanges = true;
+        return true;
     }
 
     public boolean addToIni(SceneryEntry entry) {
@@ -265,15 +262,6 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     private int indexOf(SceneryPackIniItem item) {
         return item == null ? -1 : java.util.stream.IntStream.range(0, iniItems.size())
                 .filter(index -> iniItems.get(index) == item).findFirst().orElse(-1);
-    }
-
-    private void updateRanks() {
-        int rank = 1;
-        for (SceneryEntry entry : items) {
-            if (entry.getIniItem() != null) {
-                entry.setRank(rank++);
-            }
-        }
     }
 
     private void changed() {

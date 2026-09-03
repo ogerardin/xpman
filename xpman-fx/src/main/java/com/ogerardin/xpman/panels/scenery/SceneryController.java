@@ -31,13 +31,16 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.List;
@@ -82,10 +85,9 @@ public class SceneryController extends Controller {
         sceneryTable.setPlaceholder(new EmptyState("fth-map", "No scenery to show"));
 
         // the table shows the entries in manager order (ini order, then unlisted folders);
-        // the rank column sort (ascending, nulls last) reflects that same order
-        rankColumn.setSortType(TableColumn.SortType.ASCENDING);
-        rankColumn.setComparator(Comparator.nullsLast(Comparator.naturalOrder()));
-        sceneryTable.getSortOrder().setAll(Collections.singletonList(rankColumn));
+        // sorting is disabled so that view order == ini order: row indices can then be used
+        // directly as scenery_packs.ini indices by drag-and-drop and the move buttons
+        rankColumn.setSortable(false);
 
         // set tooltip for each column header
         TableViewUtil.setColumnHeaderTooltips(sceneryTable, Map.of(
@@ -150,33 +152,99 @@ public class SceneryController extends Controller {
 
     @FXML
     private void moveUp() {
-        int index = sceneryTable.getSelectionModel().getSelectedIndex();
-        selectedEntry().ifPresent(entry -> {
-            if (xPlaneProperty.get().getSceneryManager().moveUp(entry)) {
-                Collections.swap(uiItems, index, index - 1);
-                sceneryTable.getSelectionModel().select(index - 1);
-                sceneryTable.refresh();
-                markChanged();
-            }
-        });
+        moveSelectedBy(-1);
     }
 
     @FXML
     private void moveDown() {
-        int index = sceneryTable.getSelectionModel().getSelectedIndex();
-        selectedEntry().ifPresent(entry -> {
-            if (xPlaneProperty.get().getSceneryManager().moveDown(entry)) {
-                Collections.swap(uiItems, index, index + 1);
-                sceneryTable.getSelectionModel().select(index + 1);
-                sceneryTable.refresh();
-                markChanged();
-            }
-        });
+        moveSelectedBy(1);
     }
 
-    private Optional<SceneryEntry> selectedEntry() {
-        return Optional.ofNullable(sceneryTable.getSelectionModel().getSelectedItem())
-                .map(UiSceneryEntry::getSceneryEntry);
+    private void moveSelectedBy(int offset) {
+        var selectionModel = sceneryTable.getSelectionModel();
+        if (selectionModel.getSelectedItem() != null) {
+            moveToIndex(selectionModel.getSelectedItem(), selectionModel.getSelectedIndex() + offset);
+        }
+    }
+
+    /**
+     * Moves the given ini-listed entry to the target index (for ini-listed rows, the row index
+     * equals the index in scenery_packs.ini), then syncs the table and re-selects the entry.
+     */
+    private void moveToIndex(UiSceneryEntry item, int targetIndex) {
+        if (xPlaneProperty.get().getSceneryManager().moveTo(item.getSceneryEntry(), targetIndex)) {
+            syncAndRefresh();
+            sceneryTable.getSelectionModel().select(targetIndex);
+        }
+    }
+
+    // --- drag-and-drop reordering of ini-listed entries within the scenery table ---
+
+    /** The entry currently being dragged, or null when no drag is in progress. */
+    private UiSceneryEntry draggedEntry;
+
+    /** The row currently highlighted as drop target, or null. */
+    private TableRow<UiSceneryEntry> dropTargetRow;
+
+    private static final String DROP_TARGET_STYLE = "scenery-row-drop-target";
+
+    /** Only ini-listed entries (including tokens) can be dragged, and only onto other ini-listed rows. */
+    private boolean isValidDropTarget(TableRow<UiSceneryEntry> row) {
+        return draggedEntry != null && !row.isEmpty()
+                && row.getItem().getSceneryEntry().getIniItem() != null;
+    }
+
+    void onRowDragDetected(TableRow<UiSceneryEntry> row, MouseEvent event) {
+        UiSceneryEntry item = row.getItem();
+        if (item != null && item.getSceneryEntry().getIniItem() != null) {
+            draggedEntry = item;
+            Dragboard dragboard = row.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(item.getName());
+            dragboard.setContent(content);
+            event.consume();
+        }
+    }
+
+    void onRowDragOver(TableRow<UiSceneryEntry> row, DragEvent event) {
+        if (isValidDropTarget(row)) {
+            event.acceptTransferModes(TransferMode.MOVE);
+            setDropTargetRow(row);
+            event.consume();
+        } else {
+            setDropTargetRow(null);
+        }
+    }
+
+    void onRowDragDropped(TableRow<UiSceneryEntry> row, DragEvent event) {
+        UiSceneryEntry dragged = draggedEntry;
+        if (dragged != null && isValidDropTarget(row)) {
+            moveToIndex(dragged, row.getIndex());
+            event.setDropCompleted(true);
+            event.consume();
+        }
+        draggedEntry = null;
+        setDropTargetRow(null);
+    }
+
+    /** Clears drag state when the drag gesture ends, whether by drop or by cancellation. */
+    void onRowDragDone(DragEvent event) {
+        draggedEntry = null;
+        setDropTargetRow(null);
+        event.consume();
+    }
+
+    void setDropTargetRow(TableRow<UiSceneryEntry> row) {
+        if (dropTargetRow == row) {
+            return;
+        }
+        if (dropTargetRow != null) {
+            dropTargetRow.getStyleClass().remove(DROP_TARGET_STYLE);
+        }
+        dropTargetRow = row;
+        if (row != null && !row.getStyleClass().contains(DROP_TARGET_STYLE)) {
+            row.getStyleClass().add(DROP_TARGET_STYLE);
+        }
     }
 
     public void installScenery() {
@@ -251,8 +319,13 @@ public class SceneryController extends Controller {
 
         private static final String FOLDER_MISSING_STYLE = "scenery-row-folder-missing";
 
-        SceneryRowFactory(Object evaluationContextRoot) {
-            super(evaluationContextRoot);
+        private static final String DISABLED_STYLE = "scenery-row-disabled";
+
+        private final SceneryController controller;
+
+        SceneryRowFactory(SceneryController controller) {
+            super(controller);
+            this.controller = controller;
         }
 
         @Override
@@ -262,6 +335,7 @@ public class SceneryController extends Controller {
                 if (newItem == null) {
                     row.setContextMenu(null);
                     row.getStyleClass().remove(FOLDER_MISSING_STYLE);
+                    row.getStyleClass().remove(DISABLED_STYLE);
                     return;
                 }
                 row.setContextMenu(getContextMenu(newItem));
@@ -272,7 +346,20 @@ public class SceneryController extends Controller {
                 } else {
                     row.getStyleClass().remove(FOLDER_MISSING_STYLE);
                 }
+                if (newItem.getStatus() == SceneryEntryStatus.IN_INI_DISABLED) {
+                    if (!row.getStyleClass().contains(DISABLED_STYLE)) {
+                        row.getStyleClass().add(DISABLED_STYLE);
+                    }
+                } else {
+                    row.getStyleClass().remove(DISABLED_STYLE);
+                }
             });
+            // drag-and-drop reordering
+            row.setOnDragDetected(event -> controller.onRowDragDetected(row, event));
+            row.setOnDragOver(event -> controller.onRowDragOver(row, event));
+            row.setOnDragDropped(event -> controller.onRowDragDropped(row, event));
+            row.setOnDragExited(event -> controller.setDropTargetRow(null));
+            row.setOnDragDone(controller::onRowDragDone);
             return row;
         }
     }

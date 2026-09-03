@@ -24,6 +24,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
@@ -72,5 +75,41 @@ class SceneryManagerTest {
         var packages = xPlane.getSceneryManager().getSceneryPackages();
         assertFalse(packages.isEmpty());
         assertThat(packages, everyItem(notNullValue()));
+    }
+
+    @Test
+    void moveToShouldReorderIniItemsAndUpdateRanks() throws InvalidConfig {
+        XPlane xPlane = new XPlane(XPlaneTestUtil.getDefaultXPRootFolder());
+        SceneryManager manager = xPlane.getSceneryManager();
+        manager.loadPackages();
+
+        List<SceneryEntry> iniEntries = manager.getSceneryEntries().stream()
+                .filter(e -> e.getIniItem() != null)
+                .toList();
+        assumeTrue(iniEntries.size() >= 2, "needs at least 2 ini-listed entries");
+
+        SceneryEntry first = iniEntries.get(0);
+        SceneryEntry second = iniEntries.get(1);
+
+        // moving the first entry to index 1 swaps it with the second
+        assertTrue(manager.moveTo(first, 1));
+        assertTrue(manager.isPendingChanges());
+
+        List<SceneryEntry> reordered = manager.getSceneryEntries().stream()
+                .filter(e -> e.getIniItem() != null)
+                .toList();
+        assertSame(second.getIniItem(), reordered.get(0).getIniItem());
+        assertSame(first.getIniItem(), reordered.get(1).getIniItem());
+        assertEquals(1, reordered.get(0).getRank());
+        assertEquals(2, reordered.get(1).getRank());
+
+        // same index, out-of-bounds indices, and not-listed entries are rejected
+        assertFalse(manager.moveTo(reordered.get(0), 0));
+        assertFalse(manager.moveTo(reordered.get(0), -1));
+        assertFalse(manager.moveTo(reordered.get(0), reordered.size()));
+        manager.getSceneryEntries().stream()
+                .filter(e -> e.getIniItem() == null)
+                .findFirst()
+                .ifPresent(e -> assertFalse(manager.moveTo(e, 0)));
     }
 }

@@ -87,6 +87,11 @@
     -fx-text-fill: -color-danger-fg;
 }
 
+/* --- Scenery table: disabled rows --- */
+.scenery-row-disabled .table-cell {
+    -fx-text-fill: -color-fg-muted;
+}
+
 .unsaved-indicator {
     -fx-text-fill: -color-warning-emphasis;
     -fx-font-weight: bold;
@@ -109,6 +114,11 @@
 .table-view .table-row-cell:hover,
 .tree-table-view .tree-table-row-cell:hover {
     -fx-background-color: -color-accent-subtle;
+}
+
+/* --- Scenery table: drag-and-drop target row --- */
+.table-view .table-row-cell.scenery-row-drop-target {
+    -fx-background-color: -color-accent-muted;
 }
 
 /* --- Sidebar navigation --- */
