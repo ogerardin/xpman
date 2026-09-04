@@ -719,7 +719,7 @@
 
 .navdata-card-file-name {
     -fx-graphic-text-gap: 6px;
-    -fx-text-fill: -color-fg;
+    -fx-text-fill: -color-fg-muted;
 }
 
 .navdata-card-file-missing {
