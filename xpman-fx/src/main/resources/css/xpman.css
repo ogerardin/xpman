@@ -619,3 +619,154 @@
 .tool-detail-homepage:hover {
     -fx-underline: true;
 }
+
+/* --- Nav data card stack --- */
+.navdata-cards {
+    -fx-padding: 12px;
+    -fx-spacing: 12px;
+}
+
+.navdata-card {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+    -fx-spacing: 2px;
+}
+
+.navdata-card:hover {
+    -fx-border-color: -color-accent-muted;
+    -fx-background-color: -color-accent-subtle;
+}
+
+.navdata-card-header {
+    -fx-spacing: 8px;
+    -fx-alignment: center-left;
+    -fx-padding: 0 0 4px 0;
+}
+
+.navdata-card-name {
+    -fx-font-weight: bold;
+    -fx-graphic-text-gap: 6px;
+}
+
+.navdata-card-badge {
+    -fx-background-color: -color-accent-subtle;
+    -fx-border-color: -color-accent-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 1px 6px 1px 6px;
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 0.9em;
+}
+
+.navdata-card-help {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 3px;
+    -fx-background-radius: 4px;
+}
+
+.navdata-card-help .ikonli-font-icon {
+    -fx-fill: -color-fg-muted;
+}
+
+.navdata-card-help:hover {
+    -fx-background-color: -color-accent-muted;
+}
+
+.navdata-status-info {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.navdata-status-warn {
+    -fx-text-fill: -color-warning-emphasis;
+    -fx-font-weight: bold;
+}
+
+.navdata-status-error {
+    -fx-text-fill: -color-danger-fg;
+    -fx-font-weight: bold;
+}
+
+.navdata-card-files-toggle {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 2px 6px 2px 6px;
+    -fx-text-fill: -color-fg-muted;
+    -fx-graphic-text-gap: 4px;
+    -fx-cursor: hand;
+}
+
+.navdata-card-files-toggle:hover {
+    -fx-background-color: -color-bg-inset;
+}
+
+.navdata-card-files {
+    -fx-spacing: 4px;
+    -fx-padding: 8px 0 0 20px;
+}
+
+.navdata-card-file-row {
+    -fx-spacing: 8px;
+    -fx-alignment: center-left;
+    -fx-padding: 2px 0 2px 0;
+}
+
+.navdata-card-file-name {
+    -fx-graphic-text-gap: 6px;
+    -fx-text-fill: -color-fg;
+}
+
+.navdata-card-file-missing {
+    -fx-text-fill: -color-danger-fg;
+    -fx-font-style: italic;
+}
+
+.navdata-card-file-meta {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 0.9em;
+}
+
+.navdata-card-actions {
+    -fx-spacing: 4px;
+    -fx-padding: 4px 0 0 0;
+    -fx-opacity: 0;
+}
+
+.navdata-card:hover .navdata-card-actions {
+    -fx-opacity: 1;
+}
+
+.navdata-card-action {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 3px;
+    -fx-background-radius: 4px;
+}
+
+.navdata-card-action .ikonli-font-icon {
+    -fx-fill: -color-fg-muted;
+}
+
+.navdata-card-action:hover {
+    -fx-background-color: -color-accent-muted;
+}
+
+.navdata-info-description {
+    -fx-text-fill: -color-fg;
+    -fx-wrap-text: true;
+    -fx-padding: 0 0 8px 0;
+}
+
+.navdata-info-path {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-family: monospace;
+    -fx-font-size: 0.9em;
+    -fx-wrap-text: true;
+}
