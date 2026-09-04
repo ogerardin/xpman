@@ -1,60 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.panels.navdata.NavDataTableTreeItemCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanTreeCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.cell_factory.IdentityTreeCellValueFactory?>
 <?import javafx.scene.control.*?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane prefHeight="444.0" prefWidth="864.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.navdata.NavDataController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
-            <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <ToolBar fx:id="toolbar">
                 <Button mnemonicParsing="false" onAction="#reload" text="Reload">
-    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
-</Button>
+                    <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
+                </Button>
                 <Button mnemonicParsing="false" onAction="#install" text="Install...">
-    <graphic><FontIcon iconLiteral="fth-download"/></graphic>
-</Button>
+                    <graphic><FontIcon iconLiteral="fth-download"/></graphic>
+                </Button>
             </ToolBar>
         </top>
         <center>
-            <TreeTableView fx:id="treeTableView" prefHeight="200.0" prefWidth="200.0" showRoot="false" BorderPane.alignment="CENTER">
-                <columns>
-                    <TreeTableColumn editable="false" prefWidth="400.0" sortable="false" text="Name">
-                        <cellValueFactory>
-                            <IdentityTreeCellValueFactory />
-                        </cellValueFactory>
-                        <cellFactory>
-                            <NavDataTableTreeItemCellFactory />
-                        </cellFactory>
-                    </TreeTableColumn>
-                    <TreeTableColumn prefWidth="75.0" text="Exists">
-                        <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="exists" />
-                        </cellValueFactory>
-                        <cellFactory>
-                            <BooleanTreeCellFactory />
-                        </cellFactory>
-                    </TreeTableColumn>
-                    <TreeTableColumn prefWidth="75.0" text="AIRAC Cycle">
-                        <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="airacCycle" />
-                        </cellValueFactory>
-                    </TreeTableColumn>
-                    <TreeTableColumn prefWidth="100.0" text="Metadata">
-                        <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="metadata" />
-                        </cellValueFactory>
-                    </TreeTableColumn>
-                    <TreeTableColumn prefWidth="75.0" text="Build">
-                        <cellValueFactory>
-                            <TreeItemPropertyValueFactory property="build" />
-                        </cellValueFactory>
-                    </TreeTableColumn>
-                </columns>
-            </TreeTableView>
+            <StackPane>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                    <VBox fx:id="cardsPane" spacing="12" styleClass="navdata-cards"/>
+                </ScrollPane>
+                <StackPane fx:id="placeholderPane"/>
+            </StackPane>
         </center>
     </BorderPane>
 </AnchorPane>

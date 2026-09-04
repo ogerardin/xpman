@@ -2,42 +2,45 @@ package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallType;
-import com.ogerardin.xplane.navdata.NavDataGroup;
-import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataSet;
-import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.EmptyState;
-import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
+import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableView;
-import lombok.NonNull;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.function.Function;
-
+/**
+ * Controller for the nav data panel: a vertical stack of {@link NavDataSetCardView}
+ * cards, one per {@link NavDataSet}, mirroring the aircraft panel structure.
+ */
 @Slf4j
-public class NavDataController {
+public class NavDataController extends Controller {
 
-    @NonNull
     private final XPlaneProperty xPlaneProperty;
 
     @FXML
     private ToolBar toolbar;
 
     @FXML
-    private TreeTableView<UiNavDataItem> treeTableView;
+    private VBox cardsPane;
 
-    private final IntrospectingContextMenuTreeTableRowFactory<UiNavDataItem> rowFactory =
-            new IntrospectingContextMenuTreeTableRowFactory<>(this);
+    @FXML
+    private StackPane placeholderPane;
 
-    private ManagerItemsObservableList<NavDataSet, NavDataSet> items;
+    private ManagerItemsObservableList<NavDataSet, UiNavDataItem> uiItems;
+
+    private final GenericContextMenuFactory<UiNavDataItem> cardMenuFactory =
+            new GenericContextMenuFactory<>(this);
 
     public NavDataController(XPmanFX mainController) {
         xPlaneProperty = mainController.xPlaneProperty();
@@ -45,51 +48,44 @@ public class NavDataController {
 
     @FXML
     public void initialize() {
-        treeTableView.placeholderProperty().setValue(new EmptyState("fth-navigation", "No nav data to show"));
-
-        treeTableView.setRowFactory(rowFactory);
-
-        // we can't set the ManagerItemsObservableList directly as a model of the tree, so we just
-        // create it, and we will listen to changes to build the tree model
-        items = new ManagerItemsObservableList<>(
-                this.xPlaneProperty,
+        uiItems = new ManagerItemsObservableList<>(
+                xPlaneProperty,
                 XPlane::getNavDataManager,
-                Function.identity()
+                UiNavDataItem::new
         );
-        items.addListener((ListChangeListener<NavDataSet>) change -> {
-                    List<? extends NavDataSet> navDataSets = change.getList();
-                    // create the root item as a NavDataGroup with model items as children
-                    NavDataGroup navDataRoot = new NavDataGroup("Nav data sets", navDataSets);
-                    // convert root item to TreeItem<UiNavDataItem> (and all items recursively)
-                    TreeItem<UiNavDataItem> root = treeItem(navDataRoot);
-                    root.setExpanded(true);
-                    treeTableView.setRoot(root);
-                }
-        );
+        uiItems.addListener((ListChangeListener<UiNavDataItem>) __ -> Platform.runLater(this::updateCards));
+        toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
+        updateCards();
     }
 
-    private TreeItem<UiNavDataItem> treeItem(NavDataItem navDataItem) {
-        UiNavDataItem value = new UiNavDataItem(navDataItem);
-        TreeItem<UiNavDataItem> treeItem = new TreeItem<>(value);
-        List<TreeItem<UiNavDataItem>> children = navDataItem.getChildren().stream()
-                .map(this::treeItem)
-                .toList();
-        treeItem.getChildren().addAll(children);
-        treeItem.setExpanded(true);
-        return treeItem;
+    private void updateCards() {
+        cardMenuFactory.clearCache();
+        cardsPane.getChildren().clear();
+        for (int i = 0; i < uiItems.size(); i++) {
+            cardsPane.getChildren().add(new NavDataSetCardView(uiItems.get(i), i + 1, uiItems.size(), this));
+        }
+
+        boolean loading = uiItems.getLoadingProperty().get();
+        boolean empty = uiItems.isEmpty();
+        placeholderPane.setVisible(empty || loading);
+        placeholderPane.setManaged(empty || loading);
+        placeholderPane.getChildren().setAll(loading
+                ? EmptyState.loading("Loading nav data...")
+                : new EmptyState("fth-navigation", "No nav data to show"));
+    }
+
+    GenericContextMenuFactory<UiNavDataItem> getCardMenuFactory() {
+        return cardMenuFactory;
     }
 
     public void install() {
         XPlane xPlane = xPlaneProperty.get();
         InstallWizard wizard = new InstallWizard(xPlane, InstallType.NAVDATA);
         wizard.showAndWait();
-        reload();
+        uiItems.reload();
     }
 
     public void reload() {
-        rowFactory.clearCache();
-        items.reload();
+        uiItems.reload();
     }
-
-
 }
