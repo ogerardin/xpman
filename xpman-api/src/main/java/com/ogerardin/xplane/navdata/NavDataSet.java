@@ -3,7 +3,9 @@ package com.ogerardin.xplane.navdata;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
+import com.ogerardin.xplane.inspection.Severity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,6 +16,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A nav data folder containing a set of {@link NavDataItem}s
@@ -72,10 +76,40 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     }
 
 
+    /**
+     * Inspects the data files of this set: reports missing files as errors, and warns
+     * when the existing files carry inconsistent AIRAC cycles.
+     */
     @Override
     public InspectionResult inspect() {
-        //TODO: check that all files exist
-        return InspectionResult.empty();
+        List<InspectionMessage> messages = getChildren().stream()
+                .filter(item -> !item.getExists())
+                .map(item -> InspectionMessage.builder()
+                        .severity(Severity.ERROR)
+                        .message("File not found: " + item.getName())
+                        .build())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        List<String> cycles = getChildren().stream()
+                .filter(NavDataItem::getExists)
+                .map(NavDataItem::getAiracCycle)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted()
+                .toList();
+
+        Severity severity = Severity.INFO;
+        String message = switch (cycles.size()) {
+            case 1 -> "OK — cycle " + cycles.get(0);
+            case 0 -> "No data present";
+            default -> {
+                severity = Severity.WARN;
+                yield "Mixed AIRAC cycles: " + String.join(", ", cycles);
+            }
+        };
+        messages.add(InspectionMessage.builder().severity(severity).message(message).build());
+
+        return InspectionResult.of(messages);
     }
 
 
