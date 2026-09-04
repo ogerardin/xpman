@@ -759,7 +759,7 @@
 }
 
 .navdata-info-description {
-    -fx-text-fill: -color-fg;
+    -fx-text-fill: -color-fg-default;
     -fx-wrap-text: true;
     -fx-padding: 0 0 8px 0;
 }

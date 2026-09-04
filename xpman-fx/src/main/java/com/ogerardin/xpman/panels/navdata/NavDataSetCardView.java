@@ -111,6 +111,10 @@ public class NavDataSetCardView extends VBox {
 
         ContextMenu cardMenu = menuFactory.menuFor(uiItem);
         setOnContextMenuRequested(event -> showMenu(cardMenu, this, event));
+
+        if (uiItem.getChildren().stream().anyMatch(NavDataItem::getExists)) {
+            toggleFiles(uiItem);
+        }
     }
 
     private static Label buildStatusLabel(UiNavDataItem uiItem) {
