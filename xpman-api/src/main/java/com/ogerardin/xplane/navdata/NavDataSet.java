@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A nav data folder containing a set of {@link NavDataFile}s
+ * A nav data folder containing a set of {@link NavDataItem}s
  */
 @Getter
 @ToString
@@ -36,7 +36,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     }
 
     @EqualsAndHashCode.Exclude
-    private List<NavDataFile> files = new ArrayList<>();
+    private List<NavDataItem> files = new ArrayList<>();
 
     @EqualsAndHashCode.Exclude
     private List<NavDataItem> extraChildren = new ArrayList<>();
@@ -49,7 +49,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         this.files = Arrays.stream(fileNames)
 //                .map(folder::resolve)
                 .map(Paths::get)
-                .map((Path file) -> new NavDataFile(this, file))
+                .<NavDataItem>map((Path file) -> new NavDataFile(this, file))
                 .toList();
     }
 
@@ -57,7 +57,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
      * Adds an extra file to this data set after construction.
      * Used for version-specific files (e.g. XP12 airspaces/atc data).
      */
-    protected void addExtraFile(NavDataFile file) {
+    protected void addExtraFile(NavDataItem file) {
         files = new ArrayList<>(files);
         files.add(file);
     }
@@ -91,6 +91,6 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
 
     @Override
     public Boolean getExists() {
-        return files.stream().map(NavDataFile::getPath).anyMatch(Files::exists);
+        return files.stream().map(NavDataItem::getPath).anyMatch(Files::exists);
     }
 }

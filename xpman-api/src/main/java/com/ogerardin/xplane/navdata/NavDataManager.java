@@ -110,9 +110,9 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                 xPlane, xPlane.getPaths().defaultData());
         dataSet.addExtraChild(new CIFPSummary(xPlane.getPaths().defaultData().resolve("CIFP")));
         if (xPlane.getMajorVersion() == XPlaneMajorVersion.XP12) {
-            dataSet.addExtraFile(NavDataFile.of(dataSet,
+            dataSet.addExtraFile(new AirspaceFile(dataSet,
                     xPlane.getPaths().defaultData().resolve("airspaces").resolve("airspace.txt")));
-            dataSet.addExtraFile(NavDataFile.of(dataSet,
+            dataSet.addExtraFile(new AtcFile(dataSet,
                     xPlane.getPaths().resources().resolve("default scenery")
                             .resolve("1200 atc data").resolve("Earth nav data").resolve("atc.dat")));
         }
@@ -139,9 +139,9 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                 xPlane, xPlane.getPaths().customData());
         dataSet.addExtraChild(new CIFPSummary(xPlane.getPaths().customData().resolve("CIFP")));
         if (xPlane.getMajorVersion() == XPlaneMajorVersion.XP12) {
-            dataSet.addExtraFile(NavDataFile.of(dataSet,
+            dataSet.addExtraFile(new AirspaceFile(dataSet,
                     xPlane.getPaths().customData().resolve("airspaces").resolve("airspace.txt")));
-            dataSet.addExtraFile(NavDataFile.of(dataSet,
+            dataSet.addExtraFile(new AtcFile(dataSet,
                     xPlane.getPaths().customData().resolve("1200 atc data")
                             .resolve("Earth nav data").resolve("atc.dat")));
         }
