@@ -1,9 +1,11 @@
 package com.ogerardin.xpman.panels.plugins;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.util.jfx.EmptyState;
@@ -47,5 +49,11 @@ public class PluginsController extends Controller {
         uiItems.reload();
     }
 
+    public void install() {
+        XPlane xPlane = xPlaneProperty.get();
+        InstallWizard wizard = new InstallWizard(xPlane, InstallType.PLUGIN);
+        wizard.showAndWait();
+        uiItems.reload();
+    }
 
 }

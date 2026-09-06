@@ -13,6 +13,9 @@
             <Button mnemonicParsing="false" onAction="#reload" text="Reload">
                 <graphic><FontIcon iconLiteral="fth-refresh-cw"/></graphic>
             </Button>
+            <Button mnemonicParsing="false" onAction="#install" text="Install...">
+                <graphic><FontIcon iconLiteral="fth-download"/></graphic>
+            </Button>
         </ToolBar>
     </top>
     <center>
