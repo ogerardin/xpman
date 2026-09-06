@@ -107,14 +107,12 @@
             <artifactId>jna-platform</artifactId>
             <version>5.14.0</version>
         </dependency>
-<!--
         <dependency>
-            &lt;!&ndash; required to read ELF files (Linux executables) &ndash;&gt;
+            <!-- required to read ELF files (Linux executables) -->
             <groupId>net.fornwall</groupId>
             <artifactId>jelf</artifactId>
-            <version>0.4.5</version>
+            <version>0.12.0</version>
         </dependency>
--->
 
         <dependency>
             <groupId>com.github.petitparser</groupId>

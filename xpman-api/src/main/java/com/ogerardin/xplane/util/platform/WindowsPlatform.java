@@ -102,6 +102,29 @@ public class WindowsPlatform implements Platform {
     }
 
     @Override
+    @SneakyThrows
+    public String extractPluginVersion(Path xplFile) {
+        PE pe = PEParser.parse(xplFile.toString());
+        ResourceDirectory rd = pe.getImageData().getResourceTable();
+        if (rd == null) return null;
+
+        ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.VERSION_INFO);
+        for (ResourceEntry entry : entries) {
+            byte[] data = entry.getData();
+            VersionInfo version = VersionInfo.read(new DataReader(data));
+            if (version.getStringFileInfo() == null) continue;
+            StringTable table = version.getStringFileInfo().getTable(0);
+            for (int j = 0; j < table.getCount(); j++) {
+                StringPair pair = table.getString(j);
+                if ("ProductVersion".equals(pair.getKey())) {
+                    return pair.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public List<Path> getCandidateInstallBaseFolders(Path userHome) {
         List<Path> bases = new ArrayList<>();
         for (File root : File.listRoots()) {

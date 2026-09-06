@@ -18,6 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Getter
@@ -67,6 +69,33 @@ public class MacPlatform implements Platform {
     @SneakyThrows
     public String getVersion(Path appPath) {
         return new AppBundle(appPath).version();
+    }
+
+    // ponytail: heuristic version extraction via string scanning on raw Mach-O binary.
+    // No proper Mach-O parser available; upgrade to one if accuracy becomes critical.
+    private static final Pattern VERSION_PATTERN = Pattern.compile("\\b(\\d+\\.\\d+(?:\\.\\d+){0,2})\\b");
+
+    @Override
+    @SneakyThrows
+    public String extractPluginVersion(Path xplFile) {
+        byte[] bytes = Files.readAllBytes(xplFile);
+        String content = new String(bytes);
+        return findVersionNearPluginName(content, xplFile);
+    }
+
+    private String findVersionNearPluginName(String content, Path xplFile) {
+        String folderName = xplFile.getParent().getFileName().toString();
+        if (folderName.endsWith("64") || folderName.endsWith("32")) {
+            folderName = folderName.substring(0, folderName.length() - 2);
+        }
+
+        int namePos = content.indexOf(folderName);
+        if (namePos < 0) return null;
+
+        int searchEnd = Math.min(content.length(), namePos + 500);
+        String searchArea = content.substring(namePos, searchEnd);
+        Matcher m = VERSION_PATTERN.matcher(searchArea);
+        return m.find() ? m.group(1) : null;
     }
 
     @Override

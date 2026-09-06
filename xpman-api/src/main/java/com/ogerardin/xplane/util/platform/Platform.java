@@ -55,6 +55,13 @@ public interface Platform {
      */
     String getVersion(Path app);
 
+    /**
+     * Extracts version information from an X-Plane plugin (.xpl) binary.
+     */
+    default String extractPluginVersion(Path xplFile) {
+        return null;
+    }
+
     default List<Path> getCandidateInstallBaseFolders(Path userHome) {
         return List.of(
                 userHome.resolve("Applications"),

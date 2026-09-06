@@ -21,6 +21,7 @@ module xpman.api {
     requires google.api.client;
     requires com.google.api.client.json.gson;
     requires com.kichik.pecoff4j;
+    requires net.fornwall.jelf;
 
     exports com.ogerardin.xplane;
     exports com.ogerardin.xplane.util.platform;

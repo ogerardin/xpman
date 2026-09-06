@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.fornwall.jelf.ElfFile;
+import net.fornwall.jelf.ElfSection;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -13,6 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @Slf4j
@@ -74,19 +78,44 @@ public class LinuxPlatform implements Platform {
     @SneakyThrows
     public String getVersion(Path exePath) {
         // there seems to be no symbol in the ELF symbol table pointing to the version string :(
-/*
-        ElfFile elfFile = ElfFile.from(Files.newInputStream(exePath));
-        ElfSymbol symbol = elfFile.getELFSymbol("version_info");
-        ElfSection section = elfFile.getSection(symbol.st_shndx);
-        long offset_in_section = symbol.st_value - section.header.address;
-        long offset_in_file = section.header.section_offset + offset_in_section;
-        ByteBuffer buffer = ByteBuffer.allocate((int) symbol.st_size);
-        try (FileChannel channel = FileChannel.open(exePath, StandardOpenOption.READ)) {
-            channel.position(offset_in_file);
-            channel.read(buffer);
-        }
-*/
         return null;
+    }
+
+    // ponytail: heuristic version extraction via string scanning in .rodata section.
+    // Upgrade to proper ELF symbol-based extraction if accuracy becomes critical.
+    private static final Pattern VERSION_PATTERN = Pattern.compile("\\b(\\d+\\.\\d+(?:\\.\\d+){0,2})\\b");
+
+    @Override
+    @SneakyThrows
+    public String extractPluginVersion(Path xplFile) {
+        ElfFile elf = ElfFile.from(Files.newInputStream(xplFile));
+
+        for (int i = 0; i < elf.e_shnum; i++) {
+            ElfSection section = elf.getSection(i);
+            String name = section.header.getName();
+            if (name != null && name.contains("rodata")) {
+                String content = new String(section.getData());
+                String version = findVersionNearPluginName(content, xplFile);
+                if (version != null) return version;
+            }
+        }
+
+        return null;
+    }
+
+    private String findVersionNearPluginName(String content, Path xplFile) {
+        String folderName = xplFile.getParent().getFileName().toString();
+        if (folderName.endsWith("64") || folderName.endsWith("32")) {
+            folderName = folderName.substring(0, folderName.length() - 2);
+        }
+
+        int namePos = content.indexOf(folderName);
+        if (namePos < 0) return null;
+
+        int searchEnd = Math.min(content.length(), namePos + 500);
+        String searchArea = content.substring(namePos, searchEnd);
+        Matcher m = VERSION_PATTERN.matcher(searchArea);
+        return m.find() ? m.group(1) : null;
     }
 
     @Override
