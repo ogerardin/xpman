@@ -91,6 +91,11 @@ public enum InstallType implements Predicate<Archive> {
         InstallTarget target(@NonNull XPlane xPlane) {
             return xPlane.getPluginManager();
         }
+
+        @Override
+        public Inspection<Archive> additionalInspections() {
+            return CheckHasSingleRootFolder.INSTANCE;
+        }
     };
 
 

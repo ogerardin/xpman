@@ -82,11 +82,23 @@ public class ZipArchive implements Archive {
     @Override
     public void extract(Path folder, ProgressListener progressListener) throws IOException {
         try (ZipFile zip = openZip()) {
-            extractEntries(zip, folder, progressListener);
+            extractEntries(zip, folder, progressListener, null);
         }
     }
 
-    private void extractEntries(ZipFile zip, Path targetFolder, ProgressListener progressListener) throws IOException {
+    @Override
+    public void extract(Path folder, Path subpath, ProgressListener progressListener) throws IOException {
+        try (ZipFile zip = openZip()) {
+            extractEntries(zip, folder, progressListener, subpath);
+        }
+    }
+
+    @Override
+    public Path getSourcePath() {
+        return zipFile;
+    }
+
+    private void extractEntries(ZipFile zip, Path targetFolder, ProgressListener progressListener, Path subpath) throws IOException {
         Files.createDirectories(targetFolder);
         final Path normalizedTarget = targetFolder.toAbsolutePath().normalize();
         final List<? extends ZipEntry> entries = zip.stream().toList();
@@ -99,7 +111,23 @@ public class ZipArchive implements Archive {
                 progressListener.progress((double) copiedBytes / Math.max(1, totalBytes), "Extracting " + entry.getName());
                 nextReport = copiedBytes + PROGRESS_REPORT_INTERVAL;
             }
-            final Path target = normalizedTarget.resolve(entry.getName()).normalize();
+            
+            Path entryPath = Paths.get(entry.getName());
+            
+            // If subpath is specified, only extract entries under that subpath
+            if (subpath != null) {
+                if (!entryPath.startsWith(subpath)) {
+                    continue;
+                }
+                // Strip the subpath prefix
+                if (entryPath.getNameCount() <= subpath.getNameCount()) {
+                    // This is the subpath folder itself, skip it
+                    continue;
+                }
+                entryPath = entryPath.subpath(subpath.getNameCount(), entryPath.getNameCount());
+            }
+            
+            final Path target = normalizedTarget.resolve(entryPath.toString()).normalize();
             // protect against "zip slip" (entries with path traversal outside the target folder)
             if (!target.startsWith(normalizedTarget)) {
                 throw new IOException("Blocked potentially malicious zip entry: " + entry.getName());

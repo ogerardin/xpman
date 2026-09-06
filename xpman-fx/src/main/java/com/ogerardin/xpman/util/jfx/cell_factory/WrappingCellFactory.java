@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -26,6 +27,7 @@ public class WrappingCellFactory<S> implements TableCellFactory<S, String> {
                     Label l = new Label(item);
                     l.setWrapText(true);
                     VBox box = new VBox(l);
+                    box.setAlignment(Pos.CENTER_LEFT);
                     l.heightProperty().addListener((__, ___, newValue) -> {
                         box.setPrefHeight(newValue.doubleValue() + 7);
                         Platform.runLater(() -> this.getTableRow().requestLayout());

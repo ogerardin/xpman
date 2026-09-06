@@ -131,6 +131,11 @@ public class MacPlatform implements Platform {
         return Integer.parseInt(exec.outputLines().get(0));
     }
 
+    @Override
+    public String pluginPathIdentifier() {
+        return "mac";
+    }
+
     /**
      * Represents a macOS application bundle
      * @see <a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/Introduction/Introduction.html">Bundle Programming Guide</a>

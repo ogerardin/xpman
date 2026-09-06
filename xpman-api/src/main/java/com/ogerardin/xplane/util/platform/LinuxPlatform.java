@@ -127,4 +127,9 @@ public class LinuxPlatform implements Platform {
         bases.add(userHome.resolve(".local/share/Steam/steamapps/common"));
         return bases;
     }
+
+    @Override
+    public String pluginPathIdentifier() {
+        return "lin";
+    }
 }

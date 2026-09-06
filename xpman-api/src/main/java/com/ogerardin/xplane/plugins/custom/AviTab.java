@@ -27,7 +27,7 @@ public class AviTab extends XPlaneOrgPlugin {
     }
 
     private boolean isAviTab(Path xplFile) {
-        return xplFile.getFileName().toString().equals("AviTab.xpl");
+        return xplFile.getFileName().toString().equalsIgnoreCase("Avitab.xpl");
     }
 
     @SneakyThrows
@@ -36,8 +36,8 @@ public class AviTab extends XPlaneOrgPlugin {
         return  Maps.merge(
                 super.getLinks(),
                 Maps.mapOf(
-                        "GitHub page", Urls.url("https://github.com/fpw/avitab"),
-                        "Wiki", Urls.url("https://github.com/fpw/avitab/wiki")
+                        "GitHub page", Urls.url("https://github.com/TeamAvitab/avitab"),
+                        "Wiki", Urls.url("https://github.com/TeamAvitab/avitab/wiki")
                 )
         );
     }

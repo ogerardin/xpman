@@ -135,4 +135,9 @@ public class WindowsPlatform implements Platform {
         bases.add(Paths.get("C:\\Program Files (x86)\\Steam\\steamapps\\common"));
         return bases;
     }
+
+    @Override
+    public String pluginPathIdentifier() {
+        return "win";
+    }
 }

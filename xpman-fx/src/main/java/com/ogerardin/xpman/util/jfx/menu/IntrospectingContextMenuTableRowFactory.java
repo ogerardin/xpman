@@ -6,6 +6,7 @@ import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.row_factory.TableRowFactory;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,15 @@ public class IntrospectingContextMenuTableRowFactory<T>
 
     public IntrospectingContextMenuTableRowFactory(Object evaluationContextRoot) {
         super(evaluationContextRoot);
+    }
+
+    @Override
+    protected ContextMenu getContextMenu(T item) {
+        // Don't cache - create fresh menu each time to avoid stale targets
+        MenuItem[] menuItems = buildMenuItems(item, item.getClass());
+        ContextMenu menu = new ContextMenu(menuItems);
+        contextualize(menu);
+        return menu;
     }
 
     public TableRow<T> call(TableView<T> treeTableView) {

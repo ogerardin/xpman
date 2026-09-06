@@ -7,11 +7,7 @@ import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
-import com.ogerardin.xplane.util.Maps;
-import com.ogerardin.xplane.util.platform.LinuxPlatform;
-import com.ogerardin.xplane.util.platform.MacPlatform;
-import com.ogerardin.xplane.util.platform.Platform;
-import com.ogerardin.xplane.util.platform.WindowsPlatform;
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
@@ -24,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
@@ -34,17 +29,17 @@ import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 @ToString
 public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
+    /**
+     * Represents the root folder of a plugin in an archive.
+     * 
+     * @param path the path to the plugin root folder within the archive (may be empty for archive root)
+     * @param name the name to use for the plugin folder when extracting
+     */
+    private record PluginRoot(Path path, String name) {}
+
     @NonNull
     @Getter
     private final Path pluginsFolder;
-
-    private static final Map<String, Class<? extends Platform>> PLATFORM_PLUGIN_MAP = Maps.mapOf(
-            "mac.xpl", MacPlatform.class,
-            "win.xpl", WindowsPlatform.class,
-            "lin.xpl", LinuxPlatform.class
-    );
-
-
 
     public PluginManager(@NonNull XPlane xPlane) {
         super(xPlane);
@@ -74,21 +69,21 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         log.info("Loading plugins...");
         fireEvent(ManagerEvent.<Plugin>builder().type(LOADING).source(this).build());
 
-        items = FileUtils.findFiles(pluginsFolder, path -> path.getFileName().toString().endsWith(".xpl")).stream()
-                .filter(this::isNotUnwantedPlatform)
-                .map(this::maybeGetPlugin)
+        List<Path> xplFiles = FileUtils.findFiles(pluginsFolder, path -> path.getFileName().toString().endsWith(".xpl"));
+        log.debug("Found {} .xpl files: {}", xplFiles.size(), xplFiles);
+        
+        items = xplFiles.stream()
+                .filter(Platforms.getCurrent()::isMatchingPluginPath)
+                .map(xplFile -> {
+                    log.debug("Creating plugin for xplFile: {}", xplFile);
+                    return maybeGetPlugin(xplFile);
+                })
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
 
-        log.info("Loaded {} plugins", items.size());
+        log.info("Loaded {} plugins: {}", items.size(), items.stream().map(p -> p.getName() + " (" + p.getXplFile() + ")").toList());
         fireEvent(ManagerEvent.<Plugin>builder().type(LOADED).source(this).items(items).build());
-    }
-
-    private boolean isNotUnwantedPlatform(Path xplFile) {
-        String filename = xplFile.getFileName().toString();
-        Class<? extends Platform> pluginPlatform = PLATFORM_PLUGIN_MAP.get(filename);
-        return (pluginPlatform == null) || (pluginPlatform == MacPlatform.class);
     }
 
     private Optional<Plugin> maybeGetPlugin(Path xplFile) {
@@ -102,6 +97,85 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
     @Override
     public void install(Archive archive, ProgressListener progressListener) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        PluginRoot pluginRoot = findPluginRoot(archive);
+        
+        if (pluginRoot == null) {
+            // No valid plugin structure found - don't install
+            throw new IOException("Invalid plugin archive: could not determine plugin root folder");
+        }
+        
+        Path targetFolder = pluginsFolder.resolve(pluginRoot.name());
+        
+        if (pluginRoot.path().getNameCount() == 0) {
+            // Plugin root is archive root - extract everything into target folder
+            archive.extract(targetFolder, progressListener);
+        } else {
+            // Plugin root is a named folder - extract subtree into target folder
+            archive.extract(targetFolder, pluginRoot.path(), progressListener);
+        }
+        
+        reload();
+    }
+    
+    /**
+     * Finds the root folder of a plugin archive by locating the folder that contains
+     * platform-specific subdirectories (64, mac_x64, win_x64, lin_x64, etc.).
+     *
+     * @param archive the archive to analyze
+     * @return a PluginRoot containing the path and name, or null if not found
+     */
+    private PluginRoot findPluginRoot(Archive archive) {
+        List<Path> paths = archive.getPaths();
+        
+        // Find all .xpl files
+        List<Path> xplFiles = paths.stream()
+                .filter(p -> p.toString().toLowerCase().endsWith(".xpl"))
+                .toList();
+        
+        if (xplFiles.isEmpty()) {
+            return null;
+        }
+        
+        // Check the first .xpl file to determine the root
+        Path firstXpl = xplFiles.get(0);
+        Path parent = firstXpl.getParent();
+        
+        if (parent == null) {
+            return null;
+        }
+        
+        String parentName = parent.getFileName().toString();
+        
+        // Check if parent matches platform patterns
+        if (isPlatformFolder(parentName)) {
+            // Parent is a platform folder, so root is grandparent
+            Path grandparent = parent.getParent();
+            if (grandparent == null || grandparent.getNameCount() == 0) {
+                // Grandparent is archive root - use archive filename as name
+                String name = deriveNameFromArchive(archive);
+                return new PluginRoot(grandparent != null ? grandparent : Path.of(""), name);
+            } else {
+                // Grandparent is a named folder
+                return new PluginRoot(grandparent, grandparent.getFileName().toString());
+            }
+        } else {
+            // Parent is the plugin root
+            return new PluginRoot(parent, parentName);
+        }
+    }
+    
+    // ponytail: uses archive filename as plugin name when root is archive root
+    // Upgrade path: parse plugin metadata from .xpl file or manifest if available
+    private String deriveNameFromArchive(Archive archive) {
+        String name = archive.getSourcePath().getFileName().toString();
+        int dot = name.lastIndexOf('.');
+        return dot > 0 ? name.substring(0, dot) : name;
+    }
+    
+    private boolean isPlatformFolder(String folderName) {
+        String lower = folderName.toLowerCase();
+        return lower.equals("64") || 
+               lower.equals("32") ||
+               lower.matches("^(mac|win|lin)_x(64|32)$");
     }
 }

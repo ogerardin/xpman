@@ -111,4 +111,16 @@ class ZipArchiveTest {
         assertThrows(java.io.FileNotFoundException.class,
                 () -> newArchive().getAsText(Path.of("no/such/file.txt")));
     }
+
+    @Test
+    void testExtractStripRootFolder() throws IOException {
+        Path target = tempDir.resolve("target-stripped");
+        newArchive().extract(target, Path.of("root"), null);
+
+        assertThat(Files.exists(target.resolve("file1.txt")), is(true));
+        assertThat(Files.exists(target.resolve("sub/file2.txt")), is(true));
+        assertThat(Files.exists(target.resolve("root/file1.txt")), is(false));
+        assertThat(Files.readString(target.resolve("file1.txt")), is("hello"));
+        assertThat(Files.readString(target.resolve("sub/file2.txt")), is("world"));
+    }
 }

@@ -48,7 +48,8 @@ public class Plugin extends XPlaneObject implements Inspectable {
 
     private static Path getBaseFolder(Path xplFile) {
         Path folder = xplFile.getParent();
-        if (folder.endsWith("64") || folder.endsWith("32")) {
+        String folderName = folder.getFileName().toString();
+        if (folderName.endsWith("64") || folderName.endsWith("32")) {
             folder = folder.getParent();
         }
         return folder;

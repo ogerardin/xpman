@@ -69,4 +69,19 @@ public interface Platform {
                 userHome
         );
     }
+
+    default boolean isMatchingPluginPath(Path xplFile) {
+        String path = xplFile.toString().toLowerCase();
+        String id = pluginPathIdentifier();
+        if (id == null) return true;
+        return path.contains(id) || !hasAnyPlatformMarker(path);
+    }
+
+    default String pluginPathIdentifier() {
+        return null;
+    }
+
+    private static boolean hasAnyPlatformMarker(String path) {
+        return path.contains("mac") || path.contains("win") || path.contains("lin");
+    }
 }
