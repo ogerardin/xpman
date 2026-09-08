@@ -17,11 +17,13 @@ import java.util.function.Predicate;
 public enum InstallType implements Predicate<Archive> {
 
     AIRCRAFT {
-        // archive is recognized as an aircraft source if it containes at least one .acf file
+        // archive is recognized as an aircraft source if it contains at least one .acf file and no .xpl files
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
-                    .anyMatch(path -> path.getFileName().toString().endsWith(".acf"));
+                    .anyMatch(path -> path.getFileName().toString().endsWith(".acf"))
+                    && archive.getPaths().stream()
+                    .noneMatch(path -> path.getFileName().toString().endsWith(".xpl"));
         }
 
         @Override
@@ -78,13 +80,10 @@ public enum InstallType implements Predicate<Archive> {
 
     PLUGIN {
         // archive is recognized as a plugin source if it contains at least one .xpl file
-        // and no .acf file
         @Override
         public boolean test(Archive archive) {
             return archive.getPaths().stream()
-                    .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"))
-                    && archive.getPaths().stream()
-                    .noneMatch(path -> path.getFileName().toString().endsWith(".acf"));
+                    .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"));
         }
 
         @Override
