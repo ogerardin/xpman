@@ -178,4 +178,10 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
                lower.equals("32") ||
                lower.matches("^(mac|win|lin)_x(64|32)$");
     }
+
+    @SneakyThrows
+    public void movePluginToTrash(Plugin plugin) {
+        Path folder = plugin.getBaseFolder();
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+    }
 }

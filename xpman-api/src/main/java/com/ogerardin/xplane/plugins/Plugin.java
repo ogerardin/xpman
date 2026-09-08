@@ -8,6 +8,7 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +31,12 @@ public class Plugin extends XPlaneObject implements Inspectable {
 
     private final String desc;
 
+    @SuppressWarnings("unused")
+    public boolean getSystem()
+    {
+        return false;
+    }
+
     @Getter(lazy = true)
     private final String version = Platforms.getCurrent().extractPluginVersion(xplFile);
 
@@ -50,7 +57,7 @@ public class Plugin extends XPlaneObject implements Inspectable {
         return folder.getFileName().toString();
     }
 
-    private static Path getBaseFolder(Path xplFile) {
+    protected static Path getBaseFolder(Path xplFile) {
         Path folder = xplFile.getParent();
         String folderName = folder.getFileName().toString();
         if (folderName.endsWith("64") || folderName.endsWith("32")) {

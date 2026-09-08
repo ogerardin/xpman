@@ -2,6 +2,7 @@
 
 
 <?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.PluginIconCellFactory?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -21,6 +22,14 @@
     <center>
         <TableView fx:id="pluginTable" prefHeight="400.0" prefWidth="600.0">
       <columns>
+          <TableColumn editable="false" prefWidth="48.0" sortable="false">
+              <cellValueFactory>
+                  <PropertyValueFactory property="system"/>
+              </cellValueFactory>
+              <cellFactory>
+                  <PluginIconCellFactory/>
+              </cellFactory>
+          </TableColumn>
           <TableColumn prefWidth="80.0" text="Enabled">
               <cellValueFactory>
                   <PropertyValueFactory property="enabled" />

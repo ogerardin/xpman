@@ -4,11 +4,13 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Value;
+import javafx.scene.control.Alert;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
@@ -31,6 +33,16 @@ public class UiPlugin {
     @EnabledIf("quarantined")
     public void removeQuarantine() {
         Platforms.getCurrent().removeQuarantine(plugin.getBaseFolder());
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Move plugin to Trash'")
+    @EnabledIf("! system")
+    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(plugin.baseFolder) + '\" will be moved to the trash.' " +
+            "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
+    @OnSuccess("reload()")
+    public void moveToTrash() {
+        getXPlane().getPluginManager().movePluginToTrash(plugin);
     }
 
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
