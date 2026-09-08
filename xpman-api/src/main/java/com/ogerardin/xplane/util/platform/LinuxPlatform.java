@@ -104,17 +104,19 @@ public class LinuxPlatform implements Platform {
     }
 
     private String findVersionNearPluginName(String content, Path xplFile) {
-        String folderName = xplFile.getParent().getFileName().toString();
+        Path folder = xplFile.getParent();
+        String folderName = folder.getFileName().toString();
         if (folderName.endsWith("64") || folderName.endsWith("32")) {
-            folderName = folderName.substring(0, folderName.length() - 2);
+            folder = folder.getParent();
+            folderName = folder.getFileName().toString();
         }
 
-        int namePos = content.indexOf(folderName);
-        if (namePos < 0) return null;
-
-        int searchEnd = Math.min(content.length(), namePos + 500);
-        String searchArea = content.substring(namePos, searchEnd);
-        Matcher m = VERSION_PATTERN.matcher(searchArea);
+        // Search for plugin name followed by version pattern anywhere in binary
+        Pattern pluginVersionPattern = Pattern.compile(
+            Pattern.quote(folderName) + "[^\\d]{0,50}(\\d+\\.\\d+(?:\\.\\d+){0,2})",
+            Pattern.CASE_INSENSITIVE
+        );
+        Matcher m = pluginVersionPattern.matcher(content);
         return m.find() ? m.group(1) : null;
     }
 
