@@ -8,13 +8,17 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Slf4j
 @Getter
@@ -65,6 +69,21 @@ public class Plugin extends XPlaneObject implements Inspectable {
 
     public Map<String, URL> getLinks() {
         return Collections.emptyMap();
+    }
+
+    @SuppressWarnings("unused")
+    @Getter(lazy = true)
+    private final Map<String, Path> manuals = computeManuals();
+
+    @SneakyThrows
+    private Map<String, Path> computeManuals() {
+        Map<String, Path> manuals = new HashMap<>();
+        try (Stream<Path> paths = Files.walk(getBaseFolder())) {
+            paths.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".pdf"))
+                    .forEach(p -> manuals.put(p.getFileName().toString(), p));
+        }
+        return manuals;
     }
 
     // ponytail: always returns true, doesn't sync with X-Plane runtime state.

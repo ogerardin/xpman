@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 
 import java.net.URL;
+import java.nio.file.Path;
 
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 @Data
@@ -28,6 +29,11 @@ public class UiPlugin {
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
+    }
+
+    @ForEach(group = "Manuals", iterable = "manuals.entrySet()", itemLabel = "#item.key")
+    public void openManual(@Value("#item.value") Path path) {
+        Platforms.getCurrent().openFile(path);
     }
 
     @OnSuccess("displayInspectionResults(#result)")
