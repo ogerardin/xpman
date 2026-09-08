@@ -19,10 +19,15 @@ import java.nio.file.Path;
 
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 @Data
-public class UiPlugin {
+public class UiPlugin implements PluginRow {
 
     @Delegate(excludes = Inspectable.class)
     final Plugin plugin;
+    
+    @Override
+    public boolean isScript() {
+        return false;
+    }
 
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
@@ -39,6 +44,7 @@ public class UiPlugin {
     @Label("'Move plugin to Trash'")
     @EnabledIf("! system")
     @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(plugin.baseFolder) + '\" will be moved to the trash.' " +
+            "+ plugin.trashWarningDetails " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     @OnSuccess("reload()")
     public void moveToTrash() {

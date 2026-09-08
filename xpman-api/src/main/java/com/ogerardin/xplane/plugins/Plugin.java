@@ -103,6 +103,10 @@ public class Plugin extends XPlaneObject implements Inspectable {
         return Platforms.getCurrent().isQuarantined(getBaseFolder());
     }
 
+    public String getTrashWarningDetails() {
+        return "";
+    }
+
     @Override
     public InspectionResult inspect() {
         String version = getVersion();

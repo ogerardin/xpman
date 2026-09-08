@@ -24,12 +24,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Data
-@RequiredArgsConstructor
 public class ArchiveInstallSource implements InstallSource, Archive {
 
     @NonNull
     @Delegate
     private final Archive archive;
+
+    private final XPlane xPlane;
 
     @Getter(lazy = true)
     private final Set<InstallType> candidateTypes = computeCandidateTypes();
@@ -58,12 +59,16 @@ public class ArchiveInstallSource implements InstallSource, Archive {
 
     private Inspection<Archive> getTypeSpecificInspections() {
         return getInstallType()
-                .map(InstallType::additionalInspections)
+                .map(it -> it.additionalInspections(xPlane))
                 .orElse(Inspection.empty());
     }
 
     public static ArchiveInstallSource ofZip(Path file) {
-        return new ArchiveInstallSource(new ZipArchive(file));
+        return new ArchiveInstallSource(new ZipArchive(file), null);
+    }
+
+    public static ArchiveInstallSource ofZip(Path file, XPlane xPlane) {
+        return new ArchiveInstallSource(new ZipArchive(file), xPlane);
     }
 
     @Override

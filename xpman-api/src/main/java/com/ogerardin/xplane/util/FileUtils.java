@@ -34,6 +34,23 @@ public class FileUtils {
         return files;
     }
 
+    public List<Path> findDirectories(Path startFolder, Predicate<Path> predicate) throws IOException {
+        if (! Files.exists(startFolder)) {
+            return Collections.emptyList();
+        }
+        List<Path> dirs = new ArrayList<>();
+        Files.walkFileTree(startFolder, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                if (predicate.test(dir)) {
+                    dirs.add(dir);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return dirs;
+    }
+
     public long getFolderSize(Path path) throws IOException {
         if (! Files.isDirectory(path)) {
             throw new IllegalArgumentException(path + " is not a directory");

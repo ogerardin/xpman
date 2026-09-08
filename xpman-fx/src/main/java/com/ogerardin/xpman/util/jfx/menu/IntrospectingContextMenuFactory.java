@@ -10,7 +10,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Map;
 public abstract class IntrospectingContextMenuFactory<T> {
 
     @Getter(AccessLevel.NONE)
-    private final Map<T, ContextMenu> MENU_CACHE = new HashMap<>();
+    private final Map<T, ContextMenu> MENU_CACHE = new IdentityHashMap<>();
 
     /**
      * Evicts all cached menus. Call when the item set is (re)loaded.

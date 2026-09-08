@@ -2,6 +2,7 @@ package com.ogerardin.xplane.install;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspection;
+import com.ogerardin.xplane.install.inspections.CheckFlyWithLuaInstalled;
 import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
 import com.ogerardin.xplane.install.inspections.custom.NavigraphCycleVersion;
 import com.ogerardin.xplane.scenery.SceneryPackage;
@@ -32,7 +33,7 @@ public enum InstallType implements Predicate<Archive> {
         }
 
         @Override
-        public Inspection<Archive> additionalInspections() {
+        public Inspection<Archive> additionalInspections(XPlane xPlane) {
             return CheckHasSingleRootFolder.INSTANCE;
         }
     },
@@ -52,7 +53,7 @@ public enum InstallType implements Predicate<Archive> {
         }
 
         @Override
-        public Inspection<Archive> additionalInspections() {
+        public Inspection<Archive> additionalInspections(XPlane xPlane) {
             return CheckHasSingleRootFolder.INSTANCE;
         }
     },
@@ -73,7 +74,7 @@ public enum InstallType implements Predicate<Archive> {
         }
 
         @Override
-        public Inspection<Archive> additionalInspections() {
+        public Inspection<Archive> additionalInspections(XPlane xPlane) {
             return NavigraphCycleVersion.INSTANCE;
         }
     },
@@ -92,8 +93,29 @@ public enum InstallType implements Predicate<Archive> {
         }
 
         @Override
-        public Inspection<Archive> additionalInspections() {
+        public Inspection<Archive> additionalInspections(XPlane xPlane) {
             return CheckHasSingleRootFolder.INSTANCE;
+        }
+    },
+
+    FLYWITHLUA_SCRIPT {
+        // archive is recognized as a FlyWithLua script if it contains .lua files but no .xpl files
+        @Override
+        public boolean test(Archive archive) {
+            return archive.getPaths().stream()
+                    .anyMatch(path -> path.getFileName().toString().endsWith(".lua"))
+                    && archive.getPaths().stream()
+                    .noneMatch(path -> path.getFileName().toString().endsWith(".xpl"));
+        }
+
+        @Override
+        InstallTarget target(@NonNull XPlane xPlane) {
+            return xPlane.getPluginManager();
+        }
+
+        @Override
+        public Inspection<Archive> additionalInspections(XPlane xPlane) {
+            return new CheckFlyWithLuaInstalled(xPlane);
         }
     };
 
@@ -103,7 +125,7 @@ public enum InstallType implements Predicate<Archive> {
         return WordUtils.capitalizeFully(name());
     }
 
-    public Inspection<Archive> additionalInspections() {
+    public Inspection<Archive> additionalInspections(XPlane xPlane) {
         return Inspection.empty();
     }
 

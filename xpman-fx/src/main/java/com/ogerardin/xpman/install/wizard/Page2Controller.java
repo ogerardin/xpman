@@ -61,7 +61,7 @@ public class Page2Controller implements Validating, PageListener {
         // instanciate a GenericInstaller for the file selected in the previous page
         GenericInstaller installer = new GenericInstaller(
                 wizard.getXPlane(),
-                ArchiveInstallSource.ofZip(source),
+                ArchiveInstallSource.ofZip(source, wizard.getXPlane()),
                 wizard.getInstallType());
         wizard.setInstaller(installer);
 

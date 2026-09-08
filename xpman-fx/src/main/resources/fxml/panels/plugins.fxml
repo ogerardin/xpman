@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.cell_factory.PluginIconCellFactory?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanTreeCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.PluginIconTreeCellFactory?>
+<?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -17,48 +17,51 @@
             <Button mnemonicParsing="false" onAction="#install" text="Install...">
                 <graphic><FontIcon iconLiteral="fth-download"/></graphic>
             </Button>
+            <Button fx:id="installScriptButton" mnemonicParsing="false" onAction="#installScript" text="Install Script...">
+                <graphic><FontIcon iconLiteral="fth-file-text"/></graphic>
+            </Button>
         </ToolBar>
     </top>
     <center>
-        <TableView fx:id="pluginTable" prefHeight="400.0" prefWidth="600.0">
+        <TreeTableView fx:id="pluginTable" prefHeight="400.0" prefWidth="600.0" showRoot="false">
       <columns>
-          <TableColumn editable="false" prefWidth="48.0" sortable="false">
+          <TreeTableColumn editable="false" prefWidth="48.0" sortable="false">
               <cellValueFactory>
-                  <PropertyValueFactory property="system"/>
+                  <TreeItemPropertyValueFactory property="system"/>
               </cellValueFactory>
               <cellFactory>
-                  <PluginIconCellFactory/>
+                  <PluginIconTreeCellFactory/>
               </cellFactory>
-          </TableColumn>
-          <TableColumn prefWidth="80.0" text="Enabled">
+          </TreeTableColumn>
+          <TreeTableColumn prefWidth="80.0" text="Enabled">
               <cellValueFactory>
-                  <PropertyValueFactory property="enabled" />
+                  <TreeItemPropertyValueFactory property="enabled" />
               </cellValueFactory>
               <cellFactory>
-                  <BooleanCellFactory/>
+                  <BooleanTreeCellFactory/>
               </cellFactory>
-          </TableColumn>
-          <TableColumn prefWidth="150.0" text="Name">
+          </TreeTableColumn>
+          <TreeTableColumn prefWidth="150.0" text="Name">
               <cellValueFactory>
-                  <PropertyValueFactory property="name" />
+                  <TreeItemPropertyValueFactory property="name" />
               </cellValueFactory>
-          </TableColumn>
-          <TableColumn prefWidth="300.0" text="Description">
+          </TreeTableColumn>
+          <TreeTableColumn prefWidth="300.0" text="Description">
               <cellValueFactory>
-                  <PropertyValueFactory property="desc" />
+                  <TreeItemPropertyValueFactory property="desc" />
               </cellValueFactory>
-          </TableColumn>
-          <TableColumn prefWidth="150.0" text="Version">
+          </TreeTableColumn>
+          <TreeTableColumn prefWidth="150.0" text="Version">
               <cellValueFactory>
-                  <PropertyValueFactory property="version" />
+                  <TreeItemPropertyValueFactory property="version" />
               </cellValueFactory>
-          </TableColumn>
-          <TableColumn prefWidth="150.0" text="Latest version">
+          </TreeTableColumn>
+          <TreeTableColumn prefWidth="150.0" text="Latest version">
               <cellValueFactory>
-                  <PropertyValueFactory property="latestVersion" />
+                  <TreeItemPropertyValueFactory property="latestVersion" />
               </cellValueFactory>
-          </TableColumn>
+          </TreeTableColumn>
       </columns>
-    </TableView>
+    </TreeTableView>
     </center>
 </BorderPane>

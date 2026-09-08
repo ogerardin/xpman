@@ -97,21 +97,83 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
     @Override
     public void install(Archive archive, ProgressListener progressListener) throws IOException {
+        // Detect if this is a script archive (.lua files) or a plugin archive (.xpl files)
+        boolean hasLua = archive.getPaths().stream()
+                .anyMatch(p -> p.getFileName().toString().endsWith(".lua"));
+        boolean hasXpl = archive.getPaths().stream()
+                .anyMatch(p -> p.getFileName().toString().endsWith(".xpl"));
+        
+        if (hasLua && !hasXpl) {
+            installScript(archive, progressListener);
+        } else {
+            installPlugin(archive, progressListener);
+        }
+    }
+    
+    private void installPlugin(Archive archive, ProgressListener progressListener) throws IOException {
         PluginRoot pluginRoot = findPluginRoot(archive);
         
         if (pluginRoot == null) {
-            // No valid plugin structure found - don't install
             throw new IOException("Invalid plugin archive: could not determine plugin root folder");
         }
         
         Path targetFolder = pluginsFolder.resolve(pluginRoot.name());
         
         if (pluginRoot.path().getNameCount() == 0) {
-            // Plugin root is archive root - extract everything into target folder
             archive.extract(targetFolder, progressListener);
         } else {
-            // Plugin root is a named folder - extract subtree into target folder
             archive.extract(targetFolder, pluginRoot.path(), progressListener);
+        }
+        
+        reload();
+    }
+    
+    private void installScript(Archive archive, ProgressListener progressListener) throws IOException {
+        Path flyWithLuaFolder = findFlyWithLuaFolder();
+        if (flyWithLuaFolder == null) {
+            throw new IOException("FlyWithLua plugin is not installed");
+        }
+        
+        Path scriptsFolder = flyWithLuaFolder.resolve("Scripts");
+        if (!scriptsFolder.toFile().exists()) {
+            scriptsFolder.toFile().mkdirs();
+        }
+        
+        // Extract the entire archive into the Scripts folder
+        archive.extract(scriptsFolder, progressListener);
+        
+        reload();
+    }
+    
+    private Path findFlyWithLuaFolder() {
+        try {
+            List<Path> candidates = FileUtils.findDirectories(pluginsFolder, path -> 
+                path.getFileName().toString().equalsIgnoreCase("FlyWithLua")
+            );
+            return candidates.isEmpty() ? null : candidates.get(0);
+        } catch (IOException e) {
+            log.warn("Failed to search for FlyWithLua folder", e);
+            return null;
+        }
+    }
+    
+    public void deleteScript(com.ogerardin.xplane.plugins.custom.FlyWithLuaScript script) throws IOException {
+        Path luaFile = script.getLuaFile();
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(luaFile.toFile());
+        
+        // Also move associated data folders (e.g., SLM-Data/)
+        String baseName = luaFile.getFileName().toString().replaceAll("\\.lua$", "");
+        Path scriptsFolder = luaFile.getParent();
+        
+        // Look for folders that might be associated with this script
+        List<Path> dataFolders = FileUtils.findDirectories(scriptsFolder, path -> {
+            String folderName = path.getFileName().toString();
+            // Match folders like "SLM-Data" for "SimLoadManager.lua"
+            return folderName.toUpperCase().contains(baseName.toUpperCase().replaceAll("MANAGER$", "").replaceAll("SIM", ""));
+        });
+        
+        for (Path folder : dataFolders) {
+            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
         }
         
         reload();

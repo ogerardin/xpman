@@ -34,6 +34,7 @@ module xpman.api {
     exports com.ogerardin.xplane.file;
     exports com.ogerardin.xplane.scenery;
     exports com.ogerardin.xplane.plugins;
+    exports com.ogerardin.xplane.plugins.custom;
     exports com.ogerardin.xplane.laminar;
     exports com.ogerardin.xplane.navdata;
     exports com.ogerardin.xplane.tools;
