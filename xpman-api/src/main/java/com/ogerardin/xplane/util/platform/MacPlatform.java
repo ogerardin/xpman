@@ -138,6 +138,19 @@ public class MacPlatform implements Platform {
         return "mac";
     }
 
+    @Override
+    @SneakyThrows
+    public boolean isQuarantined(Path path) {
+        ExecResults results = CommandExecutor.exec("xattr", "-p", "com.apple.quarantine", path.toString());
+        return results.isSuccessful();
+    }
+
+    @Override
+    @SneakyThrows
+    public void removeQuarantine(Path path) {
+        CommandExecutor.exec("xattr", "-dr", "com.apple.quarantine", path.toString());
+    }
+
     /**
      * Represents a macOS application bundle
      * @see <a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/Introduction/Introduction.html">Bundle Programming Guide</a>

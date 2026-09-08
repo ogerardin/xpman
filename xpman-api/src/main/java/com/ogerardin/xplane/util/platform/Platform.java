@@ -62,6 +62,20 @@ public interface Platform {
         return null;
     }
 
+    /**
+     * Checks if the specified path has the macOS quarantine attribute.
+     * Returns false on non-Mac platforms.
+     */
+    default boolean isQuarantined(Path path) {
+        return false;
+    }
+
+    /**
+     * Removes the macOS quarantine attribute from the specified path.
+     * No-op on non-Mac platforms.
+     */
+    default void removeQuarantine(Path path) {}
+
     default List<Path> getCandidateInstallBaseFolders(Path userHome) {
         return List.of(
                 userHome.resolve("Applications"),

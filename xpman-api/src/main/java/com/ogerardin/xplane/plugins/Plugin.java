@@ -59,7 +59,7 @@ public class Plugin extends XPlaneObject implements Inspectable {
         return folder;
     }
 
-    protected Path getBaseFolder() {
+    public Path getBaseFolder() {
         return getBaseFolder(xplFile);
     }
 
@@ -90,6 +90,10 @@ public class Plugin extends XPlaneObject implements Inspectable {
     // Add persistence and toggle when user demands it.
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean isQuarantined() {
+        return Platforms.getCurrent().isQuarantined(getBaseFolder());
     }
 
     @Override

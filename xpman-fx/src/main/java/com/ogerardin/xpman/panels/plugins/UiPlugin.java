@@ -4,6 +4,7 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
@@ -24,6 +25,12 @@ public class UiPlugin {
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(plugin.getXplFile());
+    }
+
+    @Label("'Remove macOS quarantine'")
+    @EnabledIf("quarantined")
+    public void removeQuarantine() {
+        Platforms.getCurrent().removeQuarantine(plugin.getBaseFolder());
     }
 
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
