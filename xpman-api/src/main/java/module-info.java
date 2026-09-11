@@ -7,6 +7,8 @@ module xpman.api {
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires org.apache.commons.io;
+    requires org.apache.commons.compress;
+    requires org.tukaani.xz;
 
     // filename-based automodule
     requires petitparser.core;

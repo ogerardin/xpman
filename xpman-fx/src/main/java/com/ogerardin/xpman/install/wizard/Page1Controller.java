@@ -40,6 +40,8 @@ public class Page1Controller implements Validating {
     @FXML
     public void selectFile() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archives", "*.zip", "*.7z"));
         File file = fileChooser.showOpenDialog(null);
         if (file == null) {
             return;

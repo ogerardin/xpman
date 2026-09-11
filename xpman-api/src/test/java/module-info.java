@@ -9,6 +9,8 @@ module xpman.api.test {
     requires com.google.api.services.drive;
     requires com.google.gson;
     requires org.apache.commons.io;
+    requires org.apache.commons.compress;
+    requires org.tukaani.xz;
 
     exports com.ogerardin.test.util;
 
