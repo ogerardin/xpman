@@ -6,10 +6,12 @@ import lombok.NonNull;
 
 import java.nio.file.Path;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 public class GlobalAirportsSceneryPackage extends SceneryPackage {
 
     public GlobalAirportsSceneryPackage(@NonNull Path folder) throws InstantiationException {
         super(folder);
-        IntrospectionHelper.require(folder.getFileName().toString().equals(TokenSceneryPackIniItem.GLOBAL_AIRPORTS_FOLDER));
+        require(folder.getFileName().toString().equals(TokenSceneryPackIniItem.GLOBAL_AIRPORTS_FOLDER));
     }
 }

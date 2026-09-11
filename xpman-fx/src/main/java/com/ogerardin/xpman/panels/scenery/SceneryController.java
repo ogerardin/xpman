@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.panels.scenery;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import com.ogerardin.xplane.scenery.SceneryPackage;
@@ -249,7 +248,7 @@ public class SceneryController extends Controller {
 
     public void installScenery() {
         XPlane xPlane = xPlaneProperty.get();
-        InstallWizard wizard = new InstallWizard(xPlane, InstallType.SCENERY);
+        InstallWizard wizard = new InstallWizard(xPlane);
         wizard.showAndWait();
         reload();
     }

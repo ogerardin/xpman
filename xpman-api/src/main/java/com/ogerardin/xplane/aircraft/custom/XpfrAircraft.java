@@ -19,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 
@@ -30,7 +32,7 @@ public class XpfrAircraft extends Aircraft {
     public XpfrAircraft(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile);
         // not all XPFR aircraft have "XPFR" as studio :(
-        IntrospectionHelper.require(getStudio().equals("XPFR") || getVersion() != null);
+        require(getStudio().equals("XPFR") || getVersion() != null);
     }
 
     @SneakyThrows

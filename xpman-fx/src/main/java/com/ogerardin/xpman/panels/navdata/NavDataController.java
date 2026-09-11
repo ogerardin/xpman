@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.XPlaneProperty;
@@ -80,7 +79,7 @@ public class NavDataController extends Controller {
 
     public void install() {
         XPlane xPlane = xPlaneProperty.get();
-        InstallWizard wizard = new InstallWizard(xPlane, InstallType.NAVDATA);
+        InstallWizard wizard = new InstallWizard(xPlane);
         wizard.showAndWait();
         uiItems.reload();
     }

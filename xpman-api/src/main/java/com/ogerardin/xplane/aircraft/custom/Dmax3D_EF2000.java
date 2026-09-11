@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 public class Dmax3D_EF2000 extends Aircraft {
 
     private final Pattern FILE_PATTERN = Pattern.compile("ef2000_v(\\d)(\\d)");
@@ -30,7 +32,7 @@ public class Dmax3D_EF2000 extends Aircraft {
 
     public Dmax3D_EF2000(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile, "Dmax3D Eurofighter Typhoon");
-        IntrospectionHelper.require(getStudio().equals("dmax3d.com") && getAcfName().equals("Eurofighter Typhoon"));
+        require(getStudio().equals("dmax3d.com") && getAcfName().equals("Eurofighter Typhoon"));
     }
 
     @SneakyThrows

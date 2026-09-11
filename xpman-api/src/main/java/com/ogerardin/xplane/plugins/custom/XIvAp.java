@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 @Slf4j
 public class XIvAp extends Plugin {
@@ -33,7 +35,7 @@ public class XIvAp extends Plugin {
 
     public XIvAp(XPlane xPlane, Path xplFile) throws InstantiationException {
         super(xPlane, xplFile, "X-IvAp", "Pilot client for the IVAO network");
-        IntrospectionHelper.require(isXIvAp(xplFile));
+        require(isXIvAp(xplFile));
     }
 
     private boolean isXIvAp(Path xplFile) {

@@ -16,6 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 /**
  * Specialized SceneryPackage that handles XPFR sceneries.<p>
  * See <a href="https://www.xpfr.org/?body=scene_accueil">www.xpfr.org</a>
@@ -30,7 +32,7 @@ public class XpfrScenery extends SceneryPackage {
 
     public XpfrScenery(Path folder) throws InstantiationException {
         super(folder);
-        IntrospectionHelper.require(hasXprfIdFile(folder));
+        require(hasXprfIdFile(folder));
     }
 
     @SneakyThrows

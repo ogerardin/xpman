@@ -12,6 +12,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 @Slf4j
 public class AviTab extends XPlaneOrgPlugin {
@@ -23,7 +25,7 @@ public class AviTab extends XPlaneOrgPlugin {
     public AviTab(XPlane xPlane, Path xplFile) throws InstantiationException {
         super(xPlane, xplFile, "AviTab", "VR-compatible tablet with PDF viewer, moving maps and more",
                 XPLANEORG_URL);
-        IntrospectionHelper.require(isAviTab(xplFile));
+        require(isAviTab(xplFile));
     }
 
     private boolean isAviTab(Path xplFile) {

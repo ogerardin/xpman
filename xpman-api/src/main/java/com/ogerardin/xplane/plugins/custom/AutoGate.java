@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 @Slf4j
 public class AutoGate extends XPlaneOrgPlugin {
@@ -16,7 +18,7 @@ public class AutoGate extends XPlaneOrgPlugin {
     public AutoGate(XPlane xPlane, Path xplFile) throws InstantiationException {
         super(xPlane, xplFile, "AutoGate", "animates jetways and docking guidance systems (DGS)",
                 XPLANE_URL);
-        IntrospectionHelper.require(isAutoGate());
+        require(isAutoGate());
     }
 
     private boolean isAutoGate() {

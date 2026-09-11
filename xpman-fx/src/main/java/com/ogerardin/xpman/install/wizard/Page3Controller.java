@@ -1,6 +1,8 @@
 package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xplane.install.GenericInstaller;
+import com.ogerardin.xplane.install.InstallationException;
+import com.ogerardin.xpman.util.jfx.ErrorDialog;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -38,7 +40,14 @@ public class Page3Controller implements PageListener {
 
         // run the installer in new thread while monitoring progress
         GenericInstaller installer = wizard.getInstaller();
-        Thread thread = new Thread(() -> installer.install(this::updateProgress));
+        Thread thread = new Thread(() -> {
+            try {
+                installer.install(this::updateProgress);
+            } catch (InstallationException e) {
+                log.error("Installation failed", e);
+                Platform.runLater(() -> ErrorDialog.showError(e, null));
+            }
+        });
         thread.start();
     }
 

@@ -38,7 +38,8 @@ public class MethodActionConfigurer<T, R> {
         var builder = new MethodAction.MethodActionBuilder<T, R>()
                 .method(method)
                 .target(target)
-                .paramValues(paramValues);
+                .paramValues(paramValues)
+                .windowSupplier(windowSupplier);
 
         Confirm confirm = method.getAnnotation(Confirm.class);
         if (confirm != null) {

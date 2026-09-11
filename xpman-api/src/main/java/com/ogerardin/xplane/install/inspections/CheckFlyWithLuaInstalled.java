@@ -5,13 +5,12 @@ import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.plugins.Plugin;
-import com.ogerardin.xplane.plugins.custom.FlyWithLua;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaPlugin;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Checks that FlyWithLua is installed before allowing script installation.
+ * Checks that FlyWithLuaPlugin is installed before allowing script installation.
  */
 @RequiredArgsConstructor
 public class CheckFlyWithLuaInstalled implements Inspection<Archive> {
@@ -27,15 +26,15 @@ public class CheckFlyWithLuaInstalled implements Inspection<Archive> {
         }
         
         boolean flyWithLuaInstalled = xPlane.getPluginManager().getPlugins().stream()
-            .anyMatch(plugin -> plugin instanceof FlyWithLua);
+            .anyMatch(plugin -> plugin instanceof FlyWithLuaPlugin);
         
         if (!flyWithLuaInstalled) {
             return InspectionResult.of(InspectionMessage.builder()
                 .severity(Severity.ERROR)
-                .object("FlyWithLua")
-                .message("FlyWithLua plugin is required but not installed")
-                .details("FlyWithLua scripts require the FlyWithLua plugin to be installed first. " +
-                        "Please install FlyWithLua before installing scripts.")
+                .object("FlyWithLuaPlugin")
+                .message("FlyWithLuaPlugin plugin is required but not installed")
+                .details("FlyWithLuaPlugin scripts require the FlyWithLuaPlugin plugin to be installed first. " +
+                        "Please install FlyWithLuaPlugin before installing scripts.")
                 .abort(true)
                 .build());
         }

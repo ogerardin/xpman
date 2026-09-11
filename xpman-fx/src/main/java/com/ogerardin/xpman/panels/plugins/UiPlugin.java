@@ -46,7 +46,6 @@ public class UiPlugin implements PluginRow {
     @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(plugin.baseFolder) + '\" will be moved to the trash.' " +
             "+ plugin.trashWarningDetails " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
-    @OnSuccess("reload()")
     public void moveToTrash() {
         getXPlane().getPluginManager().movePluginToTrash(plugin);
     }

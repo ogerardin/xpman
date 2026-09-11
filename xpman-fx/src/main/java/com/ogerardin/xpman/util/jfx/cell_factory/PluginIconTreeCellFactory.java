@@ -27,13 +27,13 @@ public class PluginIconTreeCellFactory implements TreeTableCellFactory<PluginRow
                     return;
                 }
 
-                PluginRow row = getTreeTableRow() != null ? getTreeTableRow().getItem() : null;
+                PluginRow row = getTableRow() != null ? getTableRow().getItem() : null;
                 
                 if (row != null && row.isScript()) {
                     FontIcon icon = new FontIcon(Feather.CODE);
                     icon.setIconSize((int) ICON_SIZE);
                     setGraphic(icon);
-                    setTooltip(new Tooltip("FlyWithLua script"));
+                    setTooltip(new Tooltip("FlyWithLuaPlugin script"));
                 } else if (Boolean.TRUE.equals(system)) {
                     FontIcon icon = new FontIcon(Feather.SHIELD);
                     icon.setIconSize((int) ICON_SIZE);

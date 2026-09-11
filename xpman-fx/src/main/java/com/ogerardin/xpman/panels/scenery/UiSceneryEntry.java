@@ -66,7 +66,6 @@ public class UiSceneryEntry {
             "+ '\" will be moved to the trash.\n" +
             "\n" +
             "Press OK to continue.'")
-    @OnSuccess("reload()")
     public void moveToTrash() {
         xPlane.getSceneryManager().moveSceneryPackageToTrash(getSceneryPackage());
     }

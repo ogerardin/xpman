@@ -12,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 @Slf4j
 public class TerrainRadar extends XPlaneOrgPlugin {
@@ -21,7 +23,7 @@ public class TerrainRadar extends XPlaneOrgPlugin {
 
     public TerrainRadar(XPlane xPlane, Path xplFile) throws InstantiationException {
         super(xPlane, xplFile, "Terrain Radar", null, XPLANEORG_URL);
-        IntrospectionHelper.require(isTerrainRadar(xplFile));
+        require(isTerrainRadar(xplFile));
     }
 
     private boolean isTerrainRadar(Path xplFile) {

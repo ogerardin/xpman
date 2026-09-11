@@ -1,4 +1,4 @@
-package com.ogerardin.xplane.plugins.custom;
+package com.ogerardin.xplane.plugins.custom.lua;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -109,5 +109,19 @@ public class LuaHeaderParser {
         name = name.replaceAll("([a-z])([A-Z])", "$1 $2");
         
         return name;
+    }
+
+    /**
+     * Metadata parsed from a Lua script header.
+     */
+    public static record LuaMetadata(String name, String description, String version) {
+
+        public static LuaMetadata empty() {
+            return new LuaMetadata(null, null, null);
+        }
+
+        public boolean isEmpty() {
+            return name == null && description == null && version == null;
+        }
     }
 }

@@ -54,4 +54,5 @@ module xpman.api {
     exports com.ogerardin.xplane.exception;
     exports com.ogerardin.xplane.util.zip;
     exports com.ogerardin.xplane.util.progress;
+    exports com.ogerardin.xplane.plugins.custom.lua;
 }

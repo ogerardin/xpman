@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 public class FlightFactorA350 extends Aircraft {
 
@@ -23,7 +25,7 @@ public class FlightFactorA350 extends Aircraft {
 
     public FlightFactorA350(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile, "Flight Factor Airbus A350 XWB Advanced");
-        IntrospectionHelper.require(
+        require(
                 getAcfName().equals("Airbus a350 XP11")
                         && getStudio().equals("FlightFactor")
         );

@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -131,7 +132,7 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     private void installScript(Archive archive, ProgressListener progressListener) throws IOException {
         Path flyWithLuaFolder = findFlyWithLuaFolder();
         if (flyWithLuaFolder == null) {
-            throw new IOException("FlyWithLua plugin is not installed");
+            throw new IOException("FlyWithLuaPlugin plugin is not installed");
         }
         
         Path scriptsFolder = flyWithLuaFolder.resolve("Scripts");
@@ -148,34 +149,17 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     private Path findFlyWithLuaFolder() {
         try {
             List<Path> candidates = FileUtils.findDirectories(pluginsFolder, path -> 
-                path.getFileName().toString().equalsIgnoreCase("FlyWithLua")
+                path.getFileName().toString().equalsIgnoreCase("FlyWithLuaPlugin")
             );
             return candidates.isEmpty() ? null : candidates.get(0);
         } catch (IOException e) {
-            log.warn("Failed to search for FlyWithLua folder", e);
+            log.warn("Failed to search for FlyWithLuaPlugin folder", e);
             return null;
         }
     }
     
-    public void deleteScript(com.ogerardin.xplane.plugins.custom.FlyWithLuaScript script) throws IOException {
-        Path luaFile = script.getLuaFile();
-        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(luaFile.toFile());
-        
-        // Also move associated data folders (e.g., SLM-Data/)
-        String baseName = luaFile.getFileName().toString().replaceAll("\\.lua$", "");
-        Path scriptsFolder = luaFile.getParent();
-        
-        // Look for folders that might be associated with this script
-        List<Path> dataFolders = FileUtils.findDirectories(scriptsFolder, path -> {
-            String folderName = path.getFileName().toString();
-            // Match folders like "SLM-Data" for "SimLoadManager.lua"
-            return folderName.toUpperCase().contains(baseName.toUpperCase().replaceAll("MANAGER$", "").replaceAll("SIM", ""));
-        });
-        
-        for (Path folder : dataFolders) {
-            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
-        }
-        
+    public void deleteScript(FlyWithLuaScript script) throws IOException {
+        script.delete();
         reload();
     }
     
@@ -243,7 +227,7 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
     @SneakyThrows
     public void movePluginToTrash(Plugin plugin) {
-        Path folder = plugin.getBaseFolder();
-        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+        plugin.delete();
+        reload();
     }
 }

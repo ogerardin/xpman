@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.aircraft;
 
+import com.ogerardin.xplane.Deletable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.file.AcfFile;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.WordUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +22,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class Aircraft extends XPlaneObject implements Inspectable {
+public class Aircraft extends XPlaneObject implements Inspectable, Deletable {
 
     @EqualsAndHashCode.Include
     private final AcfFile acfFile;
@@ -193,5 +195,12 @@ public class Aircraft extends XPlaneObject implements Inspectable {
     @Override
     public InspectionResult inspect() {
         return AircraftSpecInspection.INSTANCE.inspect(this);
+    }
+
+    @Override
+    public void delete() throws IOException {
+        Path folder = acfFile.getFile().getParent();
+        // move the folder containing the .acf file to the trash
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
     }
 }

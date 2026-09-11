@@ -1,9 +1,13 @@
 package com.ogerardin.xpman.util.jfx.menu;
 
+import com.ogerardin.xpman.util.jfx.ErrorDialog;
+import javafx.application.Platform;
+import javafx.stage.Window;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -27,6 +31,7 @@ public class MethodAction<T, R> implements Runnable {
 
     private final Supplier<Boolean> confirm;
     private final Consumer<R> onSuccess;
+    private final Supplier<Window> windowSupplier;
 
     public void run() {
         if (confirm != null && !confirm.get()) {
@@ -46,6 +51,8 @@ public class MethodAction<T, R> implements Runnable {
 
         } catch (Exception e) {
             log.error("Exception while invoking method", e);
+            Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
+            Platform.runLater(() -> ErrorDialog.showError(cause, windowSupplier != null ? windowSupplier.get() : null));
         }
     }
 

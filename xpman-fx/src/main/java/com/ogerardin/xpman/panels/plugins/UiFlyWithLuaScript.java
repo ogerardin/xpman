@@ -1,11 +1,10 @@
 package com.ogerardin.xpman.panels.plugins;
 
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.plugins.custom.FlyWithLuaScript;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
-import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import javafx.scene.control.Alert;
 import lombok.Data;
 import lombok.experimental.Delegate;
@@ -45,7 +44,6 @@ public class UiFlyWithLuaScript implements PluginRow {
     @Label("'Move script to Trash'")
     @Confirm(value = "'The script \"' + script.luaFile.fileName + '\" will be moved to the trash.' " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
-    @OnSuccess("reload()")
     public void deleteScript() {
         try {
             script.getXPlane().getPluginManager().deleteScript(script);

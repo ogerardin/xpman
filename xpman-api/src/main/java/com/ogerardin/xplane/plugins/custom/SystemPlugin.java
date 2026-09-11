@@ -8,6 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.util.Set;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
+/**
+ * subclass of {@link Plugin} that represents a system plugin (non deletable)
+ */
 @Slf4j
 @SuppressWarnings("unused")
 public class SystemPlugin extends Plugin {
@@ -16,7 +21,7 @@ public class SystemPlugin extends Plugin {
 
     public SystemPlugin(XPlane xPlane, Path xplFile) throws InstantiationException {
         super(xPlane, xplFile);
-        IntrospectionHelper.require(isSystemPlugin(xplFile));
+        require(isSystemPlugin(xplFile));
     }
 
     @Override

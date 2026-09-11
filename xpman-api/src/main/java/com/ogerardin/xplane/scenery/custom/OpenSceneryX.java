@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 
 /**
  * Specialized SceneryPackage class that handles the OpenSceneryX library.<p>
@@ -22,7 +24,7 @@ public class OpenSceneryX extends SceneryPackage {
 
     public OpenSceneryX(@NonNull Path folder) throws InstantiationException {
         super(folder);
-        IntrospectionHelper.require(getFolder().getFileName().toString().equals("OpenSceneryX"));
+        require(getFolder().getFileName().toString().equals("OpenSceneryX"));
     }
 
     @SneakyThrows

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.ogerardin.xplane.util.IntrospectionHelper.*;
+
 @SuppressWarnings("unused")
 public class ColimataConcorde extends Aircraft {
 
@@ -22,7 +24,7 @@ public class ColimataConcorde extends Aircraft {
 
     public ColimataConcorde(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile, "Colimata Concorde FXP");
-        IntrospectionHelper.require(getAcfName().equals("CONCORDE FXP"));
+        require(getAcfName().equals("CONCORDE FXP"));
     }
 
     @Override

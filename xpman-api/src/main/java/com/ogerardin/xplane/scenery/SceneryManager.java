@@ -285,8 +285,8 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
 
     @SneakyThrows
     public void moveSceneryPackageToTrash(SceneryPackage sceneryPackage) {
-        var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
-        fileUtils.moveToTrash(sceneryPackage.getFolder().toFile());
+        sceneryPackage.delete();
+        reload();
     }
 
     @Override

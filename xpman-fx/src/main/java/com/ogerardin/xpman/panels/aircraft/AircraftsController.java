@@ -3,7 +3,6 @@ package com.ogerardin.xpman.panels.aircraft;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.aircraft.AircraftManager;
-import com.ogerardin.xplane.install.InstallType;
 import com.ogerardin.xplane.util.Streams;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
@@ -183,7 +182,7 @@ public class AircraftsController extends Controller {
 
     public void install() {
         XPlane xPlane = xPlaneProperty.get();
-        InstallWizard wizard = new InstallWizard(xPlane, InstallType.AIRCRAFT);
+        InstallWizard wizard = new InstallWizard(xPlane);
         wizard.showAndWait();
         uiItems.reload();
     }

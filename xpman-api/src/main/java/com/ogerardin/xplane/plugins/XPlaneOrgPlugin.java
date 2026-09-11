@@ -20,6 +20,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A Plugin for which the main distribution channel is X-plane.org, which allows common implementation of
+ * {@link Plugin#getLatestVersion()}
+ */
 @Slf4j
 public class XPlaneOrgPlugin extends Plugin {
 

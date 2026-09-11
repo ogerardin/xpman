@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.plugins;
 
+import com.ogerardin.xplane.Deletable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,7 +25,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Getter
-public class Plugin extends XPlaneObject implements Inspectable {
+public class Plugin extends XPlaneObject implements Inspectable, Deletable {
 
     private final Path xplFile;
 
@@ -121,5 +123,11 @@ public class Plugin extends XPlaneObject implements Inspectable {
             );
         }
         return InspectionResult.empty();
+    }
+
+    @Override
+    public void delete() throws IOException {
+        Path folder = getBaseFolder();
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
     }
 }

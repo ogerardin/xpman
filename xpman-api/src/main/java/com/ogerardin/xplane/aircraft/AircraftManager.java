@@ -102,9 +102,8 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
 
     @SneakyThrows
     public void moveAircraftFolderToTrash(Aircraft aircraft) {
-        Path folder = aircraft.getAcfFile().getFile().getParent();
-        // move the folder containing the .acf file to the trash
-        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+        aircraft.delete();
+        reload();
     }
 
     @Override
@@ -117,6 +116,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     public void moveLiveryToTrash(Livery livery) {
         Path folder = livery.getAircraft().getLiveriesFolder().resolve(livery.getFolder());
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+        reload();
     }
 
     public List<Aircraft> getAircraftByFolder(Path folder) {

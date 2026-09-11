@@ -37,7 +37,9 @@ public class IntrospectionHelper {
                 .acceptPackages(packegaName)
                 .scan()
         ) {
-            ClassInfoList classInfoList = scanResult.getSubclasses(baseClass.getName());
+            ClassInfoList classInfoList = baseClass.isInterface() 
+                ? scanResult.getClassesImplementing(baseClass.getName())
+                : scanResult.getSubclasses(baseClass.getName());
             List<Class<?>> subclasses = classInfoList.loadClasses();
             log.debug("Subclasses of {} found: {}", baseClass, subclasses);
             classToSubclasses.put(baseClass, subclasses);
