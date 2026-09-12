@@ -34,6 +34,12 @@ public interface Platform {
 
     void openFile(@NonNull Path path);
 
+    /**
+     * Opens a file in the system's default text editor.
+     * Unlike {@link #openFile(Path)}, this ensures the file is opened for editing, not with its default handler.
+     */
+    void openInTextEditor(@NonNull Path path);
+
     void openUrl(@NonNull URL url);
 
     @SneakyThrows

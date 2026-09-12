@@ -22,6 +22,11 @@ public class UnknownPlatform implements Platform {
     }
 
     @Override
+    public void openInTextEditor(@NonNull Path path) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void openUrl(@NonNull URL url) {
         throw new UnsupportedOperationException();
     }

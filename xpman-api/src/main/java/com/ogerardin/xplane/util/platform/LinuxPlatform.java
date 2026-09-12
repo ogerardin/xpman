@@ -60,7 +60,13 @@ public class LinuxPlatform implements Platform {
     @SneakyThrows
     @Override
     public void openFile(@NonNull Path file) {
-        CommandExecutor.exec("xdg-open", file.toString());
+        CommandExecutor.exec("xdg-open", file.toString()).orThrow();
+    }
+
+    @SneakyThrows
+    @Override
+    public void openInTextEditor(@NonNull Path file) {
+        CommandExecutor.exec("xdg-open", file.toString()).orThrow();
     }
 
     @SneakyThrows

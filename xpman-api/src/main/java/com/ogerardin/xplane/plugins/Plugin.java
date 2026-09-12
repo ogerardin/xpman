@@ -101,6 +101,8 @@ public class Plugin extends XPlaneObject implements Inspectable, Deletable {
         return true;
     }
 
+    // referenced by com.ogerardin.xpman.panels.plugins.UiPlugin.removeQuarantine
+    @SuppressWarnings("unused")
     public boolean isQuarantined() {
         return Platforms.getCurrent().isQuarantined(getBaseFolder());
     }

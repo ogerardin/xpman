@@ -65,7 +65,13 @@ public class WindowsPlatform implements Platform {
     @SneakyThrows
     @Override
     public void openFile(@NonNull Path file) {
-        CommandExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file));
+        CommandExecutor.exec("cmd", "/c", String.format("start \"\" \"%s\"", file)).orThrow();
+    }
+
+    @SneakyThrows
+    @Override
+    public void openInTextEditor(@NonNull Path file) {
+        CommandExecutor.exec("cmd", "/c", String.format("notepad \"%s\"", file)).orThrow();
     }
 
     @SneakyThrows

@@ -62,7 +62,13 @@ public class MacPlatform implements Platform {
     @Override
     @SneakyThrows
     public void openFile(@NonNull Path file) {
-        CommandExecutor.exec("open", file.toString());
+        CommandExecutor.exec("open", file.toString()).orThrow();
+    }
+
+    @Override
+    @SneakyThrows
+    public void openInTextEditor(@NonNull Path file) {
+        CommandExecutor.exec("open", "-t", file.toString()).orThrow();
     }
 
     @Override
