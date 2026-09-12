@@ -14,8 +14,8 @@
             it with -Drevision=<version> computed from git tags by scripts/ci-version.sh. -->
         <revision>1.0.1-SNAPSHOT</revision>
         <maven.compiler.release>25</maven.compiler.release>
-        <logback.version>1.5.38</logback.version>
-        <lombok.version>1.18.46</lombok.version>
+        <logback.version>1.6.3</logback.version>
+        <lombok.version>1.18.48</lombok.version>
         <mockito.version>5.23.0</mockito.version>
         <byte-buddy.version>1.17.7</byte-buddy.version>
         <dependency-check.version>13.0.0</dependency-check.version>
