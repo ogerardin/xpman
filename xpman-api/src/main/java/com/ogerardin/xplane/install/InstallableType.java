@@ -11,7 +11,9 @@ import com.ogerardin.xplane.util.zip.Archive;
  * check preconditions, and perform installation.
  */
 public interface InstallableType {
-    
+
+    String description();
+
 
     /**
      * Check if the given archive contains content matching this type.

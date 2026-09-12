@@ -17,7 +17,12 @@ import java.io.IOException;
  */
 @SuppressWarnings("unused")
 public class NavDataInstallableType implements InstallableType {
-    
+
+    @Override
+    public String description() {
+        return "nav data";
+    }
+
     @Override
     public boolean recognizes(Archive archive) {
         return archive.getPaths().stream()
