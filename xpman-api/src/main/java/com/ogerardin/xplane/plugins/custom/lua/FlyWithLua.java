@@ -1,9 +1,7 @@
 package com.ogerardin.xplane.plugins.custom.lua;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallationException;
-import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
 import com.ogerardin.xplane.install.types.PluginInstallableType;
 import com.ogerardin.xplane.plugins.XPlaneOrgPlugin;
 import com.ogerardin.xplane.util.FileUtils;
@@ -17,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -25,40 +24,42 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
 @SuppressWarnings("unused")
 @Slf4j
-public class FlyWithLuaPlugin extends XPlaneOrgPlugin {
+public class FlyWithLua extends XPlaneOrgPlugin {
 
     private static final String XPLANEORG_URL = 
         "https://forums.x-plane.org/index.php?/files/file/82888-flywithlua-ng-next-generation-plus-edition-for-x-plane-12-win-lin-mac/";
 
+    public static final String FLY_WITH_LUA_PLUGIN = "FlyWithLua";
+
     @Getter(lazy = true)
     private final List<FlyWithLuaScript> scripts = loadScripts();
 
-    public FlyWithLuaPlugin(XPlane xPlane, Path xplFile) throws InstantiationException {
-        super(xPlane, xplFile, "FlyWithLuaPlugin", "Lua scripting plugin for X-Plane", XPLANEORG_URL);
+    public FlyWithLua(XPlane xPlane, Path xplFile) throws InstantiationException {
+        super(xPlane, xplFile, FLY_WITH_LUA_PLUGIN, "Lua scripting plugin for X-Plane", XPLANEORG_URL);
         require(isFlyWithLua(xplFile));
     }
 
     private boolean isFlyWithLua(Path xplFile) {
-        // Check if the base folder (above platform-specific folder) is named "FlyWithLuaPlugin"
+        // Check if the base folder (above platform-specific folder) is named "FlyWithLua"
         Path folder = xplFile.getParent();
         String folderName = folder.getFileName().toString();
         if (folderName.endsWith("64") || folderName.endsWith("32")) {
             folder = folder.getParent();
         }
-        return folder.getFileName().toString().equalsIgnoreCase("FlyWithLuaPlugin");
+        return folder.getFileName().toString().equalsIgnoreCase(FLY_WITH_LUA_PLUGIN);
     }
 
     private List<FlyWithLuaScript> loadScripts() {
         Path scriptsFolder = getBaseFolder().resolve("Scripts");
         if (!scriptsFolder.toFile().exists()) {
-            log.debug("FlyWithLuaPlugin Scripts folder not found: {}", scriptsFolder);
+            log.debug("FlyWithLua Scripts folder not found: {}", scriptsFolder);
             return List.of();
         }
         
         try {
-            List<Path> luaFiles = FileUtils.findFiles(scriptsFolder, path -> 
-                path.getFileName().toString().endsWith(".lua")
-            );
+            List<Path> luaFiles = Files.list(scriptsFolder)
+                .filter(path -> path.getFileName().toString().endsWith(".lua"))
+                .toList();
             
             log.debug("Found {} Lua scripts in {}", luaFiles.size(), scriptsFolder);
             
@@ -74,7 +75,7 @@ public class FlyWithLuaPlugin extends XPlaneOrgPlugin {
                 .filter(java.util.Objects::nonNull)
                 .toList();
         } catch (java.io.IOException e) {
-            log.warn("Failed to load FlyWithLuaPlugin scripts from {}", scriptsFolder, e);
+            log.warn("Failed to load FlyWithLua scripts from {}", scriptsFolder, e);
             return List.of();
         }
     }
@@ -92,29 +93,34 @@ public class FlyWithLuaPlugin extends XPlaneOrgPlugin {
 
     @Override
     public String getTrashWarningDetails() {
-        return " All FlyWithLuaPlugin scripts will also be deleted.";
+        return " All FlyWithLua scripts will also be deleted.";
     }
 
     /**
-     * Installable type for FlyWithLuaPlugin plugin.
-     * Recognizes archives with FlyWithLuaPlugin's characteristic folder structure
-     * (FlyWithLuaPlugin folder containing Scripts subfolder and .xpl files).
+     * Installable type for FlyWithLua plugin.
+     * Recognizes archives with FlyWithLua's characteristic folder structure
+     * (FlyWithLua folder containing Scripts subfolder and .xpl files).
      * Extends PluginInstallableType to have higher priority in type detection.
      */
     @SuppressWarnings("unused")
-    public static class InstallableType extends PluginInstallableType {
+    public static class FlyWithLuaInstallableType extends PluginInstallableType {
+
+        @Override
+        public String description() {
+            return "FlyWithLua plugin";
+        }
 
         @Override
         public boolean recognizes(Archive archive) {
-            // Check for FlyWithLuaPlugin folder structure:
-            // - A folder named "FlyWithLuaPlugin" (case-insensitive)
+            // Check for FlyWithLua folder structure:
+            // - A folder named "FlyWithLua" (case-insensitive)
             // - That contains a "Scripts" subfolder
             // - And contains .xpl files (in platform subfolder like 64/)
 
             boolean hasFlyWithLuaFolder = archive.getPaths().stream()
                 .anyMatch(path -> {
                     String name = path.getFileName().toString();
-                    return name.equalsIgnoreCase("FlyWithLuaPlugin") && path.getNameCount() >= 1;
+                    return name.equalsIgnoreCase(FLY_WITH_LUA_PLUGIN) && path.getNameCount() >= 1;
                 });
 
             boolean hasScriptsFolder = archive.getPaths().stream()
@@ -130,19 +136,5 @@ public class FlyWithLuaPlugin extends XPlaneOrgPlugin {
             return hasFlyWithLuaFolder && hasScriptsFolder && hasXplFiles;
         }
 
-        @Override
-        public InspectionResult preconditions(XPlane xPlane, Archive archive) {
-            return CheckHasSingleRootFolder.INSTANCE.inspectable(archive).inspect();
-        }
-
-        @Override
-        public void install(XPlane xPlane, Archive archive, ProgressListener progress) throws InstallationException {
-            // FlyWithLuaPlugin installs as a regular plugin
-            try {
-                xPlane.getPluginManager().install(archive, progress);
-            } catch (IOException e) {
-                throw new InstallationException(e);
-            }
-        }
     }
 }

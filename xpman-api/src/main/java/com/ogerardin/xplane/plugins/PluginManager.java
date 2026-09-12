@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
@@ -14,6 +15,7 @@ import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +66,7 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
 
     @SneakyThrows
-//    @Synchronized
+    @Synchronized
     private void loadPlugins()  {
 
         log.info("Loading plugins...");
@@ -82,6 +84,11 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+
+        items.forEach(p -> {
+            p.getVersion();
+            p.getLatestVersion();
+        });
 
         log.info("Loaded {} plugins: {}", items.size(), items.stream().map(p -> p.getName() + " (" + p.getXplFile() + ")").toList());
         fireEvent(ManagerEvent.<Plugin>builder().type(LOADED).source(this).items(items).build());
@@ -132,7 +139,7 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     private void installScript(Archive archive, ProgressListener progressListener) throws IOException {
         Path flyWithLuaFolder = findFlyWithLuaFolder();
         if (flyWithLuaFolder == null) {
-            throw new IOException("FlyWithLuaPlugin plugin is not installed");
+            throw new IOException("FlyWithLua plugin is not installed");
         }
         
         Path scriptsFolder = flyWithLuaFolder.resolve("Scripts");
@@ -149,11 +156,11 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     private Path findFlyWithLuaFolder() {
         try {
             List<Path> candidates = FileUtils.findDirectories(pluginsFolder, path -> 
-                path.getFileName().toString().equalsIgnoreCase("FlyWithLuaPlugin")
+                path.getFileName().toString().equalsIgnoreCase(FlyWithLua.FLY_WITH_LUA_PLUGIN)
             );
             return candidates.isEmpty() ? null : candidates.get(0);
         } catch (IOException e) {
-            log.warn("Failed to search for FlyWithLuaPlugin folder", e);
+            log.warn("Failed to search for FlyWithLua folder", e);
             return null;
         }
     }

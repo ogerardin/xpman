@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
@@ -21,15 +23,30 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
  */
 @SuppressWarnings("unused")
 @Slf4j
-public class SgesScript extends FlyWithLuaScript {
+public class Sges extends FlyWithLuaScript {
 
     private static final String SCRIPT_FILENAME = "Simple_Ground_Equipment_and_Services.lua";
     private static final String DATA_FOLDER = "Simple_Ground_Equipment_and_Services";
     private static final String DOCS_FOLDER = "Simple_Ground_Equipment_and_Services_expanded_documentation";
 
-    public SgesScript(XPlane xPlane, Path luaFile) throws InstantiationException {
+    public Sges(XPlane xPlane, Path luaFile) throws InstantiationException {
         super(xPlane, luaFile);
         require(luaFile.getFileName().toString().equals(SCRIPT_FILENAME));
+    }
+
+    @Override
+    public String getVersion() {
+        try {
+            Pattern pattern = Pattern.compile("version_text_SGES\\s*=\\s*\"([^\"]+)\"");
+            return Files.lines(getLuaFile())
+                    .map(pattern::matcher)
+                    .filter(Matcher::find)
+                    .findFirst()
+                    .map(m -> m.group(1))
+                    .orElseGet(super::getVersion);
+        } catch (IOException e) {
+            return super.getVersion();
+        }
     }
 
     @Override
@@ -56,17 +73,17 @@ public class SgesScript extends FlyWithLuaScript {
      * Recognizes archives containing Simple_Ground_Equipment_and_Services.lua.
      */
     @SuppressWarnings("unused")
-    public static class InstallableType extends FlyWithLuaScript.InstallableType {
+    public static class SgesInstallableType extends FlyWithLuaScriptInstallableType {
+
+        @Override
+        public String description() {
+            return "Simple Ground Equipment & Services";
+        }
 
         @Override
         public boolean recognizes(Archive archive) {
             return archive.getPaths().stream()
                     .anyMatch(path -> path.getFileName().toString().equals(SCRIPT_FILENAME));
-        }
-
-        @Override
-        public InspectionResult preconditions(XPlane xPlane, Archive archive) {
-            return super.preconditions(xPlane, archive);
         }
 
         @Override
@@ -79,12 +96,25 @@ public class SgesScript extends FlyWithLuaScript {
                     throw new InstallationException("FlyWithLua Scripts folder not found");
                 }
 
-                archive.extract(scriptsFolder, progress);
+                Path archiveScriptsFolder = findScriptsFolderInArchive(archive);
+                if (archiveScriptsFolder != null) {
+                    archive.extract(scriptsFolder, archiveScriptsFolder, progress);
+                } else {
+                    archive.extract(scriptsFolder, progress);
+                }
                 xPlane.getPluginManager().reload();
 
             } catch (IOException e) {
                 throw new InstallationException(e);
             }
+        }
+
+        private Path findScriptsFolderInArchive(Archive archive) {
+            return archive.getPaths().stream()
+                    .filter(path -> path.getFileName().toString().equals(SCRIPT_FILENAME))
+                    .map(Path::getParent)
+                    .findFirst()
+                    .orElse(null);
         }
 
         private void deleteOldFiles(XPlane xPlane) throws IOException {
@@ -111,8 +141,8 @@ public class SgesScript extends FlyWithLuaScript {
         private Path findFlyWithLuaScriptsFolder(XPlane xPlane) {
             List<Plugin> plugins = xPlane.getPluginManager().getPlugins();
             return plugins.stream()
-                    .filter(p -> p instanceof FlyWithLuaPlugin)
-                    .map(FlyWithLuaPlugin.class::cast)
+                    .filter(FlyWithLua.class::isInstance)
+                    .map(FlyWithLua.class::cast)
                     .findFirst()
                     .map(fwl -> fwl.getBaseFolder().resolve("Scripts"))
                     .orElse(null);

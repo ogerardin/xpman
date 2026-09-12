@@ -18,16 +18,19 @@ import java.util.List;
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
 /**
- * Specialized FlyWithLuaPlugin script for SimLoad Manager.
+ * Specialized FlyWithLua script for SimLoad Manager.
  * Recognizes SimLoadManager.lua and provides custom deletion logic.
  */
 @Slf4j
-public class SimLoadManagerScript extends FlyWithLuaScript {
-    
-    public SimLoadManagerScript(XPlane xPlane, Path luaFile) throws InstantiationException {
+public class SimLoadManager extends FlyWithLuaScript {
+
+    public static final String SIM_LOAD_MANAGER_LUA = "SimLoadManager.lua";
+    public static final String SLM_DATA_FOLDER = "SLM-Data";
+
+    public SimLoadManager(XPlane xPlane, Path luaFile) throws InstantiationException {
         super(xPlane, luaFile);
         require(
-            luaFile.getFileName().toString().equals("SimLoadManager.lua")
+            luaFile.getFileName().toString().equals(SIM_LOAD_MANAGER_LUA)
         );
     }
     
@@ -37,7 +40,7 @@ public class SimLoadManagerScript extends FlyWithLuaScript {
         super.delete();
         
         // Also delete the SLM-Data folder if it exists
-        Path dataFolder = getLuaFile().getParent().resolve("SLM-Data");
+        Path dataFolder = getLuaFile().getParent().resolve(SLM_DATA_FOLDER);
         if (dataFolder.toFile().exists()) {
             log.debug("Deleting SimLoad Manager data folder: {}", dataFolder);
             com.sun.jna.platform.FileUtils.getInstance().moveToTrash(dataFolder.toFile());
@@ -49,12 +52,12 @@ public class SimLoadManagerScript extends FlyWithLuaScript {
      * Recognizes archives containing SimLoadManager.lua and provides custom installation logic.
      */
     @SuppressWarnings("unused")
-    public static class InstallableType extends FlyWithLuaScript.InstallableType {
+    public static class SimLoadManagerInstallableType extends FlyWithLuaScriptInstallableType {
 
         @Override
         public boolean recognizes(Archive archive) {
             return archive.getPaths().stream()
-                .anyMatch(path -> path.getFileName().toString().equals("SimLoadManager.lua"));
+                .anyMatch(path -> path.getFileName().toString().equals(SIM_LOAD_MANAGER_LUA));
         }
 
         @Override
@@ -63,10 +66,10 @@ public class SimLoadManagerScript extends FlyWithLuaScript {
 
             // Check for SGES script (warning, not error)
             boolean sgesInstalled = xPlane.getPluginManager().getPlugins().stream()
-                .filter(p -> p instanceof FlyWithLuaPlugin)
-                .map(FlyWithLuaPlugin.class::cast)
+                .filter(p -> p instanceof FlyWithLua)
+                .map(FlyWithLua.class::cast)
                 .flatMap(fwl -> fwl.getScripts().stream())
-                .anyMatch(s -> s.getName().contains("Simple Ground Equipment"));
+                .anyMatch(s -> s instanceof Sges);
 
             if (!sgesInstalled) {
                 result = result.append(InspectionResult.of(
@@ -90,7 +93,7 @@ public class SimLoadManagerScript extends FlyWithLuaScript {
                 // Extract only SimLoadManager.lua and SLM-Data/
                 Path scriptsFolder = findFlyWithLuaScriptsFolder(xPlane);
                 if (scriptsFolder == null) {
-                    throw new InstallationException("FlyWithLuaPlugin Scripts folder not found");
+                    throw new InstallationException("FlyWithLua Scripts folder not found");
                 }
 
                 // Extract the entire archive to the scripts folder
@@ -110,8 +113,8 @@ public class SimLoadManagerScript extends FlyWithLuaScript {
                 return;
             }
 
-            Path luaFile = scriptsFolder.resolve("SimLoadManager.lua");
-            Path dataFolder = scriptsFolder.resolve("SLM-Data");
+            Path luaFile = scriptsFolder.resolve(SIM_LOAD_MANAGER_LUA);
+            Path dataFolder = scriptsFolder.resolve(SLM_DATA_FOLDER);
 
             if (Files.exists(luaFile)) {
                 com.sun.jna.platform.FileUtils.getInstance().moveToTrash(luaFile.toFile());
@@ -124,8 +127,8 @@ public class SimLoadManagerScript extends FlyWithLuaScript {
         private Path findFlyWithLuaScriptsFolder(XPlane xPlane) {
             List<Plugin> plugins = xPlane.getPluginManager().getPlugins();
             return plugins.stream()
-                .filter(p -> p instanceof FlyWithLuaPlugin)
-                .map(FlyWithLuaPlugin.class::cast)
+                .filter(p -> p instanceof FlyWithLua)
+                .map(FlyWithLua.class::cast)
                 .findFirst()
                 .map(fwl -> fwl.getBaseFolder().resolve("Scripts"))
                 .orElse(null);

@@ -3,7 +3,7 @@ package com.ogerardin.xpman.panels.plugins;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.plugins.Plugin;
-import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaPlugin;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xpman.XPlaneProperty;
 import com.ogerardin.xpman.XPmanFX;
@@ -66,14 +66,13 @@ public class PluginsController extends Controller {
 
     private void rebuildTree(List<Plugin> plugins) {
         pluginRowFactory.clearCache();
-        TreeItem<PluginRow> root = pluginTable.getRoot();
-        root.getChildren().clear();
+        TreeItem<PluginRow> root = new TreeItem<>();
 
         for (Plugin plugin : plugins) {
             UiPlugin uiPlugin = new UiPlugin(plugin);
             TreeItem<PluginRow> pluginItem = new TreeItem<>(uiPlugin);
 
-            if (plugin instanceof FlyWithLuaPlugin flyWithLua) {
+            if (plugin instanceof FlyWithLua flyWithLua) {
                 List<FlyWithLuaScript> scripts = flyWithLua.getScripts();
                 for (FlyWithLuaScript script : scripts) {
                     UiFlyWithLuaScript uiScript = new UiFlyWithLuaScript(script);
@@ -85,11 +84,12 @@ public class PluginsController extends Controller {
             root.getChildren().add(pluginItem);
         }
 
+        pluginTable.setRoot(root);
         updateInstallScriptButton(plugins);
     }
 
     private void updateInstallScriptButton(List<Plugin> plugins) {
-        boolean flyWithLuaInstalled = plugins.stream().anyMatch(p -> p instanceof FlyWithLuaPlugin);
+        boolean flyWithLuaInstalled = plugins.stream().anyMatch(p -> p instanceof FlyWithLua);
         installScriptButton.setDisable(!flyWithLuaInstalled);
     }
 
@@ -104,13 +104,11 @@ public class PluginsController extends Controller {
         XPlane xPlane = xPlaneProperty.get();
         InstallWizard wizard = new InstallWizard(xPlane);
         wizard.showAndWait();
-        reload();
     }
 
     public void installScript() {
         XPlane xPlane = xPlaneProperty.get();
         InstallWizard wizard = new InstallWizard(xPlane);
         wizard.showAndWait();
-        reload();
     }
 }
