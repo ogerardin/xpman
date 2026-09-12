@@ -7,10 +7,11 @@ import java.util.function.Supplier;
 /**
  * Hold the results of running a command through {@link CommandExecutor#exec()}
  * @param process the {@link Process} instance returned by {@link Runtime#exec}
+ * @param command the command that was executed
  * @param outputLines capture of the command's standard output
  * @param errorLines capture of the command's standard error
  */
-public record ExecResults(Process process, List<String> outputLines, List<String> errorLines) {
+public record ExecResults(Process process, String command, List<String> outputLines, List<String> errorLines) {
 
     public int getExitValue() {
         return process.exitValue();
@@ -31,10 +32,15 @@ public record ExecResults(Process process, List<String> outputLines, List<String
 
     /**
      * If this represents the results of a command that failed, throws a {@link RuntimeException} with a message
-     * containing the command line and the exit status.
+     * containing the command name, exit status, and stderr output.
      */
     public ExecResults orThrow() {
-        return orThrow(() -> new RuntimeException("Command failed with non-zero exit status: " + process.info().commandLine()));
+        return orThrow(() -> {
+            String stderr = errorLines.isEmpty() ? "" : "\n" + String.join("\n", errorLines);
+            return new RuntimeException(
+                String.format("Command %s failed (exit %d)%s", command, getExitValue(), stderr)
+            );
+        });
     }
 
     /**

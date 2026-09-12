@@ -43,15 +43,18 @@ public class CommandExecutor {
     public ExecResults exec() throws IOException, InterruptedException {
         Path actualDir = (dir != null) ? dir : Paths.get(".").toAbsolutePath();
         Process process;
+        String commandString;
         if (cmdarray != null && command != null) {
             throw new IllegalArgumentException("Only one of cmdarray or command can be specified");
         }
         if (cmdarray != null) {
             log.info("Executing {}", Arrays.asList(cmdarray));
             process = Runtime.getRuntime().exec(cmdarray, envp, actualDir.toFile());
+            commandString = Arrays.toString(cmdarray);
         } else {
             log.info("Executing '{}'", command);
             process = Runtime.getRuntime().exec(command, envp, actualDir.toFile());
+            commandString = command;
         }
         if (stdin != null) {
             new OutputStreamWriter(process.getOutputStream()).write(stdin);
@@ -60,7 +63,7 @@ public class CommandExecutor {
         List<String> outLines = new ArrayList<>();
         Thread outStreamGobbler = startStreamGobbler(process.getInputStream(), outLines, outLineHandler);
         List<String> errLines = new ArrayList<>();
-        Thread errStreamGobbler = startStreamGobbler(process.getErrorStream(), outLines, errLineHandler);
+        Thread errStreamGobbler = startStreamGobbler(process.getErrorStream(), errLines, errLineHandler);
 
         int exitValue = process.waitFor();
         log.debug("Process exited with value {}", exitValue);
@@ -68,7 +71,7 @@ public class CommandExecutor {
         outStreamGobbler.join();
         errStreamGobbler.join();
 
-        return new ExecResults(process, outLines, errLines);
+        return new ExecResults(process, commandString, outLines, errLines);
     }
 
     private Thread startStreamGobbler(InputStream inputStream, List<String> outLines, Consumer<String> customHandler) {
