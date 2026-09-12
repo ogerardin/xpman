@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
  * notifications, disk usage breakdown), an "Install anything..." entry point, and clickable tiles
  * with the item counts of each library section.
  */
-@Slf4j
 public class HomeController {
 
     private final XPmanFX mainController;

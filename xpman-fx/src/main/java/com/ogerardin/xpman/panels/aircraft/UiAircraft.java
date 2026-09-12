@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.panels.aircraft;
 
+import com.ogerardin.xplane.Deletable;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
@@ -25,7 +26,7 @@ import java.nio.file.Path;
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 public class UiAircraft {
 
-    @Delegate(excludes = Inspectable.class)
+    @Delegate(excludes = {Inspectable.class, Deletable.class})
     @ToString.Include
     @EqualsAndHashCode.Include
     protected final Aircraft aircraft;
