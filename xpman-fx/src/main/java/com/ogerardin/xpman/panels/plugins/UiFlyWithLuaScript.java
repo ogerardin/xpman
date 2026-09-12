@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.panels.plugins;
 
+import com.ogerardin.xplane.Deletable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -13,7 +14,7 @@ import lombok.experimental.Delegate;
 @Data
 public class UiFlyWithLuaScript implements PluginRow {
 
-    @Delegate(excludes = Inspectable.class)
+    @Delegate(excludes = {Inspectable.class, Deletable.class})
     final FlyWithLuaScript script;
 
     @Override
@@ -39,6 +40,10 @@ public class UiFlyWithLuaScript implements PluginRow {
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(script.getLuaFile());
+    }
+
+    public void openInTextEditor() {
+        Platforms.getCurrent().openInTextEditor(script.getLuaFile());
     }
 
     @Label("'Move script to Trash'")

@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.panels.plugins;
 
+import com.ogerardin.xplane.Deletable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
@@ -21,7 +22,7 @@ import java.nio.file.Path;
 @Data
 public class UiPlugin implements PluginRow {
 
-    @Delegate(excludes = Inspectable.class)
+    @Delegate(excludes = {Inspectable.class, Deletable.class})
     final Plugin plugin;
     
     @Override

@@ -33,7 +33,7 @@ public class PluginIconTreeCellFactory implements TreeTableCellFactory<PluginRow
                     FontIcon icon = new FontIcon(Feather.CODE);
                     icon.setIconSize((int) ICON_SIZE);
                     setGraphic(icon);
-                    setTooltip(new Tooltip("FlyWithLuaPlugin script"));
+                    setTooltip(new Tooltip("FlyWithLua script"));
                 } else if (Boolean.TRUE.equals(system)) {
                     FontIcon icon = new FontIcon(Feather.SHIELD);
                     icon.setIconSize((int) ICON_SIZE);

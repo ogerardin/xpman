@@ -37,8 +37,12 @@ public class IntrospectingContextMenuTreeTableRowFactory<T> extends Introspectin
                 return;
             }
             log.debug("Loading menu for {}", newItem);
-            ContextMenu rowMenu = getContextMenu(newItem);
-            row.setContextMenu(rowMenu);
+            try {
+                row.setContextMenu(getContextMenu(newItem));
+            } catch (Exception e) {
+                log.error("Failed to build context menu for {}", newItem, e);
+                row.setContextMenu(null);
+            }
         });
 
         return row;
