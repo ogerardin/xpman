@@ -51,7 +51,8 @@ public class UiFlyWithLuaScript implements PluginRow {
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
     public void deleteScript() {
         try {
-            script.getXPlane().getPluginManager().deleteScript(script);
+            script.delete();
+            script.getXPlane().getPluginManager().reload();
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }

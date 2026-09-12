@@ -57,6 +57,19 @@ public class FlyWithLuaScript implements Inspectable, Deletable {
     }
 
     /**
+     * Finds the FlyWithLua Scripts folder by locating the installed FlyWithLua plugin.
+     * @return the Scripts folder path, or null if FlyWithLua is not installed
+     */
+    static Path findScriptsFolder(XPlane xPlane) {
+        return xPlane.getPluginManager().getPlugins().stream()
+            .filter(FlyWithLua.class::isInstance)
+            .map(FlyWithLua.class::cast)
+            .findFirst()
+            .map(fwl -> fwl.getBaseFolder().resolve("Scripts"))
+            .orElse(null);
+    }
+
+    /**
      * Installable type for FlyWithLua scripts.
      * Recognizes archives containing .lua files (but no .xpl files) and installs
      * to the FlyWithLua/Scripts folder.
@@ -84,7 +97,18 @@ public class FlyWithLuaScript implements Inspectable, Deletable {
         @Override
         public void install(XPlane xPlane, Archive archive, ProgressListener progress) throws InstallationException {
             try {
-                xPlane.getPluginManager().install(archive, progress);
+                Path scriptsFolder = findScriptsFolder(xPlane);
+                if (scriptsFolder == null) {
+                    throw new InstallationException("FlyWithLua Scripts folder not found");
+                }
+                
+                if (!scriptsFolder.toFile().exists()) {
+                    scriptsFolder.toFile().mkdirs();
+                }
+                
+                archive.extract(scriptsFolder, progress);
+                xPlane.getPluginManager().reload();
+                
             } catch (IOException e) {
                 throw new InstallationException(e);
             }

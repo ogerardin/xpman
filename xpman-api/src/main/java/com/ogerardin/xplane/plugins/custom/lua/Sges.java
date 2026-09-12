@@ -3,7 +3,6 @@ package com.ogerardin.xplane.plugins.custom.lua;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallationException;
-import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,7 +89,7 @@ public class Sges extends FlyWithLuaScript {
             try {
                 deleteOldFiles(xPlane);
 
-                Path scriptsFolder = findFlyWithLuaScriptsFolder(xPlane);
+                Path scriptsFolder = findScriptsFolder(xPlane);
                 if (scriptsFolder == null) {
                     throw new InstallationException("FlyWithLua Scripts folder not found");
                 }
@@ -118,7 +116,7 @@ public class Sges extends FlyWithLuaScript {
         }
 
         private void deleteOldFiles(XPlane xPlane) throws IOException {
-            Path scriptsFolder = findFlyWithLuaScriptsFolder(xPlane);
+            Path scriptsFolder = findScriptsFolder(xPlane);
             if (scriptsFolder == null) {
                 return;
             }
@@ -138,14 +136,5 @@ public class Sges extends FlyWithLuaScript {
             }
         }
 
-        private Path findFlyWithLuaScriptsFolder(XPlane xPlane) {
-            List<Plugin> plugins = xPlane.getPluginManager().getPlugins();
-            return plugins.stream()
-                    .filter(FlyWithLua.class::isInstance)
-                    .map(FlyWithLua.class::cast)
-                    .findFirst()
-                    .map(fwl -> fwl.getBaseFolder().resolve("Scripts"))
-                    .orElse(null);
-        }
     }
 }
