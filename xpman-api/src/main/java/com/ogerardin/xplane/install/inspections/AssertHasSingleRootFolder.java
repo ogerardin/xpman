@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * A {@link PredicateInspection} that produces an error if the source zip contains more than one root folder
  */
-public enum CheckHasSingleRootFolder implements Inspection<Archive> {
+public enum AssertHasSingleRootFolder implements Inspection<Archive> {
 
     INSTANCE;
 
@@ -36,7 +36,7 @@ public enum CheckHasSingleRootFolder implements Inspection<Archive> {
         }
         return InspectionResult.of(InspectionMessage.builder()
                 .severity(Severity.INFO)
-                .message("Root folder: " + rootFolders.iterator().next())
+                .message("Archive root folder: " + rootFolders.iterator().next())
                 .build());
 
     }

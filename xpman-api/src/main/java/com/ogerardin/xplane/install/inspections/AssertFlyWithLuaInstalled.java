@@ -5,36 +5,35 @@ import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaPlugin;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.util.zip.Archive;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Checks that FlyWithLuaPlugin is installed before allowing script installation.
+ * Checks that FlyWithLua is installed before allowing script installation.
  */
 @RequiredArgsConstructor
-public class CheckFlyWithLuaInstalled implements Inspection<Archive> {
-    
-    public static final CheckFlyWithLuaInstalled INSTANCE = new CheckFlyWithLuaInstalled(null);
+public class AssertFlyWithLuaInstalled implements Inspection<Archive> {
     
     private final XPlane xPlane;
     
     @Override
-    public InspectionResult inspect(Archive archive) {
+    public InspectionResult inspect(@NonNull Archive archive) {
         if (xPlane == null) {
             return InspectionResult.empty();
         }
         
         boolean flyWithLuaInstalled = xPlane.getPluginManager().getPlugins().stream()
-            .anyMatch(plugin -> plugin instanceof FlyWithLuaPlugin);
+            .anyMatch(FlyWithLua.class::isInstance);
         
         if (!flyWithLuaInstalled) {
             return InspectionResult.of(InspectionMessage.builder()
                 .severity(Severity.ERROR)
-                .object("FlyWithLuaPlugin")
-                .message("FlyWithLuaPlugin plugin is required but not installed")
-                .details("FlyWithLuaPlugin scripts require the FlyWithLuaPlugin plugin to be installed first. " +
-                        "Please install FlyWithLuaPlugin before installing scripts.")
+                .object(FlyWithLua.FLY_WITH_LUA_PLUGIN)
+                .message("FlyWithLua plugin is required but not installed")
+                .details("FlyWithLua scripts require the FlyWithLua plugin to be installed first. " +
+                        "Please install FlyWithLua before installing scripts.")
                 .abort(true)
                 .build());
         }

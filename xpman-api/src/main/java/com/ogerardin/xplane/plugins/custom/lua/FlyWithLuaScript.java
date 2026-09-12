@@ -4,9 +4,8 @@ import com.ogerardin.xplane.Deletable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.install.InstallableType;
 import com.ogerardin.xplane.install.InstallationException;
-import com.ogerardin.xplane.install.inspections.CheckFlyWithLuaInstalled;
+import com.ogerardin.xplane.install.inspections.AssertFlyWithLuaInstalled;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Represents a FlyWithLuaPlugin script (.lua file) in the Scripts folder.
+ * Represents a FlyWithLua script (.lua file) in the Scripts folder.
  */
 @Slf4j
 @Getter
@@ -58,11 +57,16 @@ public class FlyWithLuaScript implements Inspectable, Deletable {
     }
 
     /**
-     * Installable type for FlyWithLuaPlugin scripts.
+     * Installable type for FlyWithLua scripts.
      * Recognizes archives containing .lua files (but no .xpl files) and installs
-     * to the FlyWithLuaPlugin/Scripts folder.
+     * to the FlyWithLua/Scripts folder.
      */
-    public static class InstallableType implements com.ogerardin.xplane.install.InstallableType {
+    public static class FlyWithLuaScriptInstallableType implements com.ogerardin.xplane.install.InstallableType {
+
+        @Override
+        public String description() {
+            return "FlyWithLua script";
+        }
 
         @Override
         public boolean recognizes(Archive archive) {
@@ -74,7 +78,7 @@ public class FlyWithLuaScript implements Inspectable, Deletable {
 
         @Override
         public InspectionResult preconditions(XPlane xPlane, Archive archive) {
-            return new CheckFlyWithLuaInstalled(xPlane).inspectable(archive).inspect();
+            return new AssertFlyWithLuaInstalled(xPlane).inspectable(archive).inspect();
         }
 
         @Override

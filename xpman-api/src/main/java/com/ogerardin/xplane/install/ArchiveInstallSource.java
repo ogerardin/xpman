@@ -2,7 +2,7 @@ package com.ogerardin.xplane.install;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.install.inspections.CheckIsValidArchive;
+import com.ogerardin.xplane.install.inspections.AssertIsValidArchive;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
@@ -109,7 +109,7 @@ public class ArchiveInstallSource implements InstallSource, Archive {
 
     @Override
     public InspectionResult inspect() {
-        InspectionResult result = CheckIsValidArchive.INSTANCE.inspect(archive);
+        InspectionResult result = AssertIsValidArchive.INSTANCE.inspect(archive);
         if (result.isNotAbort()) {
             result = result.append(inspectInstallableType());
         }
@@ -135,7 +135,7 @@ public class ArchiveInstallSource implements InstallSource, Archive {
         InspectionResult typeMessage = InspectionResult.of(
             com.ogerardin.xplane.inspection.InspectionMessage.builder()
                 .severity(com.ogerardin.xplane.inspection.Severity.INFO)
-                .message("Archive type identified as: " + installableType.getClass().getName())
+                .message("Archive type identified as: " + installableType.description())
                 .build()
         );
         

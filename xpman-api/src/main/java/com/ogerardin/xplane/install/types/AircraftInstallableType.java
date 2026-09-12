@@ -4,7 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallableType;
 import com.ogerardin.xplane.install.InstallationException;
-import com.ogerardin.xplane.install.inspections.CheckHasSingleRootFolder;
+import com.ogerardin.xplane.install.inspections.AssertHasSingleRootFolder;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 
@@ -16,7 +16,12 @@ import java.io.IOException;
  */
 @SuppressWarnings("unused")
 public class AircraftInstallableType implements InstallableType {
-    
+
+    @Override
+    public String description() {
+        return "aircraft";
+    }
+
     @Override
     public boolean recognizes(Archive archive) {
         return archive.getPaths().stream()
@@ -27,7 +32,7 @@ public class AircraftInstallableType implements InstallableType {
     
     @Override
     public InspectionResult preconditions(XPlane xPlane, Archive archive) {
-        return CheckHasSingleRootFolder.INSTANCE.inspectable(archive).inspect();
+        return AssertHasSingleRootFolder.INSTANCE.inspectable(archive).inspect();
     }
     
     @Override
