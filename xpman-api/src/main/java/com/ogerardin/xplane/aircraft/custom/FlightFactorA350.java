@@ -6,7 +6,9 @@ import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +20,7 @@ import java.util.regex.Pattern;
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
 @SuppressWarnings("unused")
+@Slf4j
 public class FlightFactorA350 extends Aircraft {
 
     @Getter(lazy = true)
@@ -54,7 +57,8 @@ public class FlightFactorA350 extends Aircraft {
                         Integer.parseInt(matcher.group(3))
                 );
             }
-        } catch (Exception ignored) {
+        } catch (IOException | NumberFormatException e) {
+            log.warn("Unable to read version number from {}", iniFile, e);
         }
         return super.getVersion();
     }
