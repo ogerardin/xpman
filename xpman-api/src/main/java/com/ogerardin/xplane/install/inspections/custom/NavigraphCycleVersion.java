@@ -23,7 +23,7 @@ public enum NavigraphCycleVersion implements Inspection<Archive> {
             return InspectionResult.of(InspectionMessage.builder()
                     .severity(Severity.INFO).message(text)
                     .build());
-        } catch (FileNotFoundException ignored) {
+        } catch (FileNotFoundException _) {
             return InspectionResult.empty();
         }
     }
