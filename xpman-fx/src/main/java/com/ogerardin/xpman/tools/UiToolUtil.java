@@ -38,7 +38,7 @@ public class UiToolUtil {
                 toolsManager.launch(installedTool);
             }
         } catch (ToolsException e) {
-            new Alert(Alert.AlertType.ERROR, "Error installing " + tool.getName() + ": " + e).showAndWait();
+            new Alert(Alert.AlertType.ERROR, "Error " + (runAfterInstall ? "installing or launching" : "installing") + " " + tool.getName() + ": " + e.getMessage()).showAndWait();
         }
     }
 
@@ -62,7 +62,12 @@ public class UiToolUtil {
      */
     public void runTool(XPlane xPlane, Tool tool) {
         if (tool instanceof InstalledTool installedTool) {
-            xPlane.getToolsManager().launch(installedTool);
+            try {
+                xPlane.getToolsManager().launch(installedTool);
+            } catch (ToolsException e) {
+                new Alert(Alert.AlertType.ERROR, "Error launching " + tool.getName() + ": " + e.getMessage())
+                    .showAndWait();
+            }
             return;
         }
         // tool is not installed, ask if we should install it

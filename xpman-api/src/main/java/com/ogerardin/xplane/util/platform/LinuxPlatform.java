@@ -72,7 +72,7 @@ public class LinuxPlatform implements Platform {
     @SneakyThrows
     @Override
     public void startApp(@NonNull Path app) {
-        CommandExecutor.exec("sh", "-c", app.toString());
+        CommandExecutor.exec("sh", "-c", app.toString()).orThrow();
     }
 
     @Override

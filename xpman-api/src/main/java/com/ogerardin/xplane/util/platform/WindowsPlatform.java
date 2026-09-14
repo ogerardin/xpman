@@ -77,7 +77,7 @@ public class WindowsPlatform implements Platform {
     @SneakyThrows
     @Override
     public void startApp(@NonNull Path app) {
-        CommandExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app));
+        CommandExecutor.exec("cmd", "/c", String.format("start /b \"X-Plane\" \"%s\"", app)).orThrow();
     }
 
     @Override
