@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -54,6 +55,7 @@ public class ZipArchive implements Archive {
     private boolean computeValidArchive() {
         try {
             // materialize entry list: forces parsing of the central directory
+            //noinspection ResultOfMethodCallIgnored
             getPaths();
             return true;
         } catch (Exception e) {
@@ -81,15 +83,20 @@ public class ZipArchive implements Archive {
 
     @Override
     public void extract(Path folder, ProgressListener progressListener) throws IOException {
+        extract(folder, path -> true, progressListener);
+    }
+
+    @Override
+    public void extract(Path folder, Predicate<Path> filter, ProgressListener progressListener) throws IOException {
         try (ZipFile zip = openZip()) {
-            extractEntries(zip, folder, progressListener, null);
+            extractEntries(zip, folder, progressListener, null, filter);
         }
     }
 
     @Override
     public void extract(Path folder, Path subpath, ProgressListener progressListener) throws IOException {
         try (ZipFile zip = openZip()) {
-            extractEntries(zip, folder, progressListener, subpath);
+            extractEntries(zip, folder, progressListener, subpath, path -> true);
         }
     }
 
@@ -98,7 +105,7 @@ public class ZipArchive implements Archive {
         return zipFile;
     }
 
-    private void extractEntries(ZipFile zip, Path targetFolder, ProgressListener progressListener, Path subpath) throws IOException {
+    private void extractEntries(ZipFile zip, Path targetFolder, ProgressListener progressListener, Path subpath, Predicate<Path> filter) throws IOException {
         Files.createDirectories(targetFolder);
         final Path normalizedTarget = targetFolder.toAbsolutePath().normalize();
         final List<? extends ZipEntry> entries = zip.stream().toList();
@@ -126,7 +133,11 @@ public class ZipArchive implements Archive {
                 }
                 entryPath = entryPath.subpath(subpath.getNameCount(), entryPath.getNameCount());
             }
-            
+
+            if (!filter.test(entryPath)) {
+                continue;
+            }
+
             final Path target = normalizedTarget.resolve(entryPath.toString()).normalize();
             // protect against "zip slip" (entries with path traversal outside the target folder)
             if (!target.startsWith(normalizedTarget)) {

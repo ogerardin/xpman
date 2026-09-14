@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Represents a FlyWithLua script (.lua file) in the Scripts folder.
@@ -44,6 +45,14 @@ public class FlyWithLuaScript implements Inspectable, Deletable {
      */
     public Path getBaseFolder() {
         return luaFile.getParent();
+    }
+
+    /**
+     * Returns a map of manual name → path for PDFs associated with this script.
+     * Default implementation returns an empty map; subclasses override to provide documentation.
+     */
+    public Map<String, Path> getManuals() {
+        return Map.of();
     }
     
     @Override

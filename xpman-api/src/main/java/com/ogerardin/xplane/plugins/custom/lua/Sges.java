@@ -10,8 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
@@ -34,15 +37,16 @@ public class Sges extends FlyWithLuaScript {
 
     @Override
     public String getVersion() {
-        try {
-            Pattern pattern = Pattern.compile("version_text_SGES\\s*=\\s*\"([^\"]+)\"");
-            return Files.lines(getLuaFile())
+        Pattern pattern = Pattern.compile("version_text_SGES\\s*=\\s*\"([^\"]+)\"");
+        try (Stream<String> lines = Files.lines(getLuaFile())) {
+            return lines
                     .map(pattern::matcher)
                     .filter(Matcher::find)
                     .findFirst()
                     .map(m -> m.group(1))
                     .orElseGet(super::getVersion);
         } catch (IOException e) {
+            log.error("Error while reading lua script file", e);
             return super.getVersion();
         }
     }
@@ -64,6 +68,23 @@ public class Sges extends FlyWithLuaScript {
             log.debug("Deleting SGES documentation folder: {}", docsFolder);
             com.sun.jna.platform.FileUtils.getInstance().moveToTrash(docsFolder.toFile());
         }
+    }
+
+    @Override
+    public Map<String, Path> getManuals() {
+        Map<String, Path> manuals = new HashMap<>();
+        Path scriptFolder = getLuaFile().getParent();
+        try (Stream<Path> paths = Files.list(scriptFolder)) {
+            paths.filter(Files::isRegularFile)
+                 .filter(p -> {
+                     String name = p.getFileName().toString();
+                     return name.toLowerCase().endsWith(".pdf") && name.startsWith("SGES");
+                 })
+                 .forEach(p -> manuals.put(p.getFileName().toString(), p));
+        } catch (IOException e) {
+            log.debug("Failed to scan for manuals in {}", scriptFolder, e);
+        }
+        return manuals;
     }
 
     /**

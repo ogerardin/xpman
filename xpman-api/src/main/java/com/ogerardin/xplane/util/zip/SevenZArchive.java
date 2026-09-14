@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 @Slf4j
@@ -52,6 +53,7 @@ public class SevenZArchive implements Archive {
 
     private boolean computeValidArchive() {
         try {
+            //noinspection ResultOfMethodCallIgnored
             getPaths();
             return true;
         } catch (Exception e) {
@@ -78,15 +80,20 @@ public class SevenZArchive implements Archive {
 
     @Override
     public void extract(Path folder, ProgressListener progressListener) throws IOException {
+        extract(folder, path -> true, progressListener);
+    }
+
+    @Override
+    public void extract(Path folder, Predicate<Path> filter, ProgressListener progressListener) throws IOException {
         try (SevenZFile szf = openSevenZ()) {
-            extractEntries(szf, folder, progressListener, null);
+            extractEntries(szf, folder, progressListener, null, filter);
         }
     }
 
     @Override
     public void extract(Path folder, Path subpath, ProgressListener progressListener) throws IOException {
         try (SevenZFile szf = openSevenZ()) {
-            extractEntries(szf, folder, progressListener, subpath);
+            extractEntries(szf, folder, progressListener, subpath, path -> true);
         }
     }
 
@@ -95,7 +102,7 @@ public class SevenZArchive implements Archive {
         return sevenZFile;
     }
 
-    private void extractEntries(SevenZFile szf, Path targetFolder, ProgressListener progressListener, Path subpath) throws IOException {
+    private void extractEntries(SevenZFile szf, Path targetFolder, ProgressListener progressListener, Path subpath, Predicate<Path> filter) throws IOException {
         Files.createDirectories(targetFolder);
         final Path normalizedTarget = targetFolder.toAbsolutePath().normalize();
         final List<? extends SevenZArchiveEntry> entries = StreamSupport.stream(szf.getEntries().spliterator(), false).toList();
@@ -119,6 +126,10 @@ public class SevenZArchive implements Archive {
                     continue;
                 }
                 entryPath = entryPath.subpath(subpath.getNameCount(), entryPath.getNameCount());
+            }
+
+            if (!filter.test(entryPath)) {
+                continue;
             }
 
             final Path target = normalizedTarget.resolve(entryPath.toString()).normalize();

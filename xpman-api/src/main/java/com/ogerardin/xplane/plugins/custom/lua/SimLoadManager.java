@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
@@ -22,8 +25,8 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 @Slf4j
 public class SimLoadManager extends FlyWithLuaScript {
 
-    public static final String SIM_LOAD_MANAGER_LUA = "SimLoadManager.lua";
-    public static final String SLM_DATA_FOLDER = "SLM-Data";
+    private static final String SIM_LOAD_MANAGER_LUA = "SimLoadManager.lua";
+    private static final String SLM_DATA_FOLDER = "SLM-Data";
 
     public SimLoadManager(XPlane xPlane, Path luaFile) throws InstantiationException {
         super(xPlane, luaFile);
@@ -45,12 +48,38 @@ public class SimLoadManager extends FlyWithLuaScript {
         }
     }
 
+    @Override
+    public Map<String, Path> getManuals() {
+        Map<String, Path> manuals = new HashMap<>();
+        Path scriptFolder = getLuaFile().getParent();
+        try (Stream<Path> paths = Files.list(scriptFolder)) {
+            paths.filter(Files::isRegularFile)
+                 .filter(p -> {
+                     String name = p.getFileName().toString();
+                     return name.toLowerCase().endsWith(".pdf") && name.startsWith("SLM");
+                 })
+                 .forEach(p -> manuals.put(p.getFileName().toString(), p));
+        } catch (IOException e) {
+            log.debug("Failed to scan for manuals in {}", scriptFolder, e);
+        }
+        return manuals;
+    }
+
     /**
      * Installable type for SimLoad Manager.
      * Recognizes archives containing SimLoadManager.lua and provides custom installation logic.
      */
     @SuppressWarnings("unused")
     public static class SimLoadManagerInstallableType extends FlyWithLuaScriptInstallableType {
+
+        private static boolean isExcludedFile(Path path) {
+            return !path.getFileName().toString().equals("version.txt");
+        }
+
+        @Override
+        public String description() {
+            return "SimLoad Manager";
+        }
 
         @Override
         public boolean recognizes(Archive archive) {
@@ -72,9 +101,9 @@ public class SimLoadManager extends FlyWithLuaScript {
             if (!sgesInstalled) {
                 result = result.append(InspectionResult.of(
                     InspectionMessage.builder()
-                        .severity(Severity.WARN)
-                        .message("Simple Ground Equipment & Services script not found")
-                        .details("SimLoad Manager works best with SGES for visual ground services")
+                        .severity(Severity.ERROR)
+                        .message("Simple Ground Equipment & Services is required")
+                        .details("SimLoad Manager requires SGES to function properly")
                         .build()
                 ));
             }
@@ -96,7 +125,7 @@ public class SimLoadManager extends FlyWithLuaScript {
 
                 // Extract the entire archive to the scripts folder
                 // The archive should contain SimLoadManager.lua and SLM-Data/
-                archive.extract(scriptsFolder, progress);
+                archive.extract(scriptsFolder, SimLoadManagerInstallableType::isExcludedFile, progress);
 
                 xPlane.getPluginManager().reload();
 
