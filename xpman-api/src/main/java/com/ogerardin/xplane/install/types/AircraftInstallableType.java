@@ -19,7 +19,7 @@ public class AircraftInstallableType implements InstallableType {
 
     @Override
     public String description() {
-        return "aircraft";
+        return "generic aircraft";
     }
 
     @Override

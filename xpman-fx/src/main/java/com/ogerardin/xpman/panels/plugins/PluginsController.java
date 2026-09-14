@@ -13,7 +13,6 @@ import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
@@ -25,9 +24,6 @@ public class PluginsController extends Controller {
 
     @FXML
     private TreeTableView<PluginRow> pluginTable;
-
-    @FXML
-    private Button installScriptButton;
 
     private final IntrospectingContextMenuTreeTableRowFactory<PluginRow> pluginRowFactory =
             new IntrospectingContextMenuTreeTableRowFactory<>(this);
@@ -85,12 +81,6 @@ public class PluginsController extends Controller {
         }
 
         pluginTable.setRoot(root);
-        updateInstallScriptButton(plugins);
-    }
-
-    private void updateInstallScriptButton(List<Plugin> plugins) {
-        boolean flyWithLuaInstalled = plugins.stream().anyMatch(p -> p instanceof FlyWithLua);
-        installScriptButton.setDisable(!flyWithLuaInstalled);
     }
 
     public void reload() {
@@ -101,12 +91,6 @@ public class PluginsController extends Controller {
     }
 
     public void install() {
-        XPlane xPlane = xPlaneProperty.get();
-        InstallWizard wizard = new InstallWizard(xPlane);
-        wizard.showAndWait();
-    }
-
-    public void installScript() {
         XPlane xPlane = xPlaneProperty.get();
         InstallWizard wizard = new InstallWizard(xPlane);
         wizard.showAndWait();

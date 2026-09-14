@@ -18,7 +18,7 @@ public class PluginInstallableType implements InstallableType {
 
     @Override
     public String description() {
-        return "plugin";
+        return "generic plugin";
     }
 
     @Override
