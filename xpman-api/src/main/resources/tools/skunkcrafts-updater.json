@@ -1,0 +1,25 @@
+{
+  "name": "Skunkcrafts Updater",
+  "homepage": "https://forums.x-plane.org/index.php?/forums/topic/292710-skunkcrafts-updater-standalone-client/",
+  "description": "Skunkcrafts Updater is a standalone application for keeping X-Plane add-ons updated. It runs independently of X-Plane and supports both XP11 and XP12.",
+  "version": "3.2e",
+  "icon": "fth-download",
+  "installDir": ".",
+  "items": [
+    {
+      "platform": "MAC",
+      "url": "https://1228098873.rsc.cdn77.org/SkunkcraftsUpdater_standalone_3.2e.zip",
+      "file": "SkunkcraftsUpdater.app"
+    },
+    {
+      "platform": "WINDOWS",
+      "url": "https://1228098873.rsc.cdn77.org/SkunkcraftsUpdater_standalone_3.2e.zip",
+      "file": "SkunkcraftsUpdater.exe"
+    },
+    {
+      "platform": "LINUX",
+      "url": "https://1228098873.rsc.cdn77.org/SkunkcraftsUpdater_standalone_3.2e.zip",
+      "file": "SkunkcraftsUpdater_lin"
+    }
+  ]
+}

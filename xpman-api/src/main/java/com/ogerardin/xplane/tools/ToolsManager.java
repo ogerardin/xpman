@@ -85,13 +85,13 @@ public class ToolsManager extends Manager<Tool> {
         // find installed tools (=manifests with existing matching file)
         List<InstalledTool> installedTools = applicableManifests.stream()
                 // file path exists
-                .filter(m -> Files.exists(toolsFolder.resolve(m.file())))
+                .filter(m -> Files.exists(resolveInstallDir(m).resolve(m.file())))
                 // additional checks
                 .filter(m -> Optional.ofNullable(m.installChecker())
-                        .map(checker -> checker.test(toolsFolder.resolve(m.file())))
+                        .map(checker -> checker.test(resolveInstallDir(m).resolve(m.file())))
                         .orElse(true)
                 )
-                .map(manifest -> new InstalledTool(toolsFolder.resolve(manifest.file()), manifest))
+                .map(manifest -> new InstalledTool(resolveInstallDir(manifest).resolve(manifest.file()), manifest))
                 .toList();
         log.debug("Found {} installed tool(s)", installedTools.size());
 
@@ -132,8 +132,19 @@ public class ToolsManager extends Manager<Tool> {
         reload();
     }
 
-    public void launch(InstalledTool tool) {
-        Platforms.getCurrent().startApp(tool.getApp());
+    public void launch(InstalledTool tool) throws ToolsException {
+        try {
+            Platforms.getCurrent().startApp(tool.getApp());
+        } catch (Exception e) {
+            throw new ToolsException(e);
+        }
+    }
+
+    private Path resolveInstallDir(Manifest m) {
+        Path dir = m.installDir() != null 
+            ? xPlane.getBaseFolder().resolve(m.installDir()) 
+            : toolsFolder;
+        return dir.normalize();
     }
 
     private static Manifest loadFromResource(Resource resource) {

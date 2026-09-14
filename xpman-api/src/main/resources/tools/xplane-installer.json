@@ -1,4 +1,5 @@
 {
+  "installDir": ".",
   "items": [
     {
       "xplaneVersion": "11",

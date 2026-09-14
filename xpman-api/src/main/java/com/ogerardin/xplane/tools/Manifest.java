@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  * as a name to rename the downloaded file to.
  * @param file the path to the tool's executable file (.exe file for Windows, .app bundle for Mac, etc.).
  *  This is used to check whether the tool is already installed, and to launch it.
+ * @param installDir optional relative path (from X-Plane root) where the tool should be installed.
+ *  If null, defaults to {@code Resources/tools}. Use {@code "."} for the X-Plane root folder.
  * @param installChecker an additional {@link Predicate} that checks whether the tool is already installed. This can
  *  be used to differentiate between different versions of a tool that have the same executable file name.
  * @param version the version of the tool. If null, the version is extracted from the tool's executable file.
@@ -40,6 +42,7 @@ public record Manifest(
         Platform platform,
         XPlaneMajorVersion xplaneVersion,
         URL url,
+        Path installDir,
         Predicate<Path> installChecker,
         Set<Manifest> items,
         ToolIcon icon
