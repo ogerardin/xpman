@@ -216,15 +216,6 @@
     -fx-max-height: 40px;
 }
 
-/* --- ControlsFX wizard --- */
-.wizard-pane {
-    -fx-background-color: -color-bg-default;
-}
-
-.wizard-pane .graphic-container {
-    -fx-background-color: -color-accent-muted;
-}
-
 /* --- Validation (ThemedValidationDecoration) --- */
 .validation-tooltip {
     -fx-background-color: -color-danger-emphasis;

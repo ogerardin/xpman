@@ -29,13 +29,18 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
 
     private static FontIcon getSeverityIcon(Severity severity) {
         Feather icon = switch (severity) {
-            case ERROR -> Feather.ALERT_OCTAGON;
+            case ERROR -> Feather.X_CIRCLE;
             case WARN -> Feather.ALERT_TRIANGLE;
             case INFO -> Feather.INFO;
         };
         FontIcon fontIcon = new FontIcon(icon);
-        fontIcon.getStyleClass().add("severity-icon-" + severity.name().toLowerCase());
         fontIcon.setIconSize(16);
+        String styleClass = switch (severity) {
+            case ERROR -> "severity-icon-error";
+            case WARN -> "severity-icon-warn";
+            case INFO -> "severity-icon-info";
+        };
+        fontIcon.getStyleClass().add(styleClass);
         return fontIcon;
     }
 

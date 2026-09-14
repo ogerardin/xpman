@@ -52,6 +52,7 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
         loader.setLocation(Wizard.class.getResource(page));
         loader.setControllerFactory(this::buildController);
         WizardPane wizardPane = loader.load();
+        wizardPane.getStylesheets().add(getClass().getResource("/css/xpman.css").toExternalForm());
 
         Object controller = loader.getController();
         if (wizardPane instanceof ValidatingWizardPane validatingWizardPane) {

@@ -21,7 +21,9 @@ public class DiagUtil {
         controller.setItems(messages);
         Stage stage = new Stage();
         stage.setTitle("Inspection results");
-        stage.setScene(new Scene(pane));
+        Scene scene = new Scene(pane);
+        scene.getStylesheets().add(DiagUtil.class.getResource("/css/xpman.css").toExternalForm());
+        stage.setScene(scene);
         if (owner != null) {
             stage.initOwner(owner);
         }

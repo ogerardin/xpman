@@ -27,12 +27,12 @@ public class ThemedValidationDecoration extends GraphicValidationDecoration {
 
     @Override
     protected Node createErrorNode() {
-        return severityIcon(Feather.ALERT_CIRCLE, "severity-icon-error");
+        return severityIcon(Feather.X_CIRCLE, com.ogerardin.xplane.inspection.Severity.ERROR);
     }
 
     @Override
     protected Node createWarningNode() {
-        return severityIcon(Feather.ALERT_TRIANGLE, "severity-icon-warn");
+        return severityIcon(Feather.ALERT_TRIANGLE, com.ogerardin.xplane.inspection.Severity.WARN);
     }
 
     @Override
@@ -42,10 +42,15 @@ public class ThemedValidationDecoration extends GraphicValidationDecoration {
         return tooltip;
     }
 
-    private static Node severityIcon(Feather icon, String styleClass) {
+    private static Node severityIcon(Feather icon, com.ogerardin.xplane.inspection.Severity severity) {
         FontIcon fontIcon = new FontIcon(icon);
-        fontIcon.getStyleClass().add(styleClass);
         fontIcon.setIconSize(16);
+        String styleClass = switch (severity) {
+            case ERROR -> "severity-icon-error";
+            case WARN -> "severity-icon-warn";
+            case INFO -> "severity-icon-info";
+        };
+        fontIcon.getStyleClass().add(styleClass);
         return fontIcon;
     }
 }
