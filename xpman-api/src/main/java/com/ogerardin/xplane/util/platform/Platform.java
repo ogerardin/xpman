@@ -82,6 +82,12 @@ public interface Platform {
      */
     default void removeQuarantine(Path path) {}
 
+    /**
+     * Fixes executable permissions for application bundles after extraction.
+     * No-op on non-Mac platforms.
+     */
+    default void fixAppBundlePermissions(Path path) {}
+
     default List<Path> getCandidateInstallBaseFolders(Path userHome) {
         return List.of(
                 userHome.resolve("Applications"),

@@ -51,7 +51,25 @@ public class MacPlatform implements Platform {
     @Override
     @SneakyThrows
     public void startApp(@NonNull Path app) {
-        CommandExecutor.exec("open", app.toString());
+        ExecResults results = CommandExecutor.exec("open", app.toString());
+        results.orThrow();
+        
+        // Wait briefly and check if app actually launched
+        Thread.sleep(1000);
+        if (!isAppRunning(app)) {
+            throw new RuntimeException("Application failed to start: " + app.getFileName());
+        }
+    }
+    
+    private boolean isAppRunning(Path app) {
+        String appName = app.getFileName().toString().replace(".app", "");
+        try {
+            ExecResults results = CommandExecutor.exec("pgrep", "-f", appName);
+            return results.isSuccessful() && !results.outputLines().isEmpty();
+        } catch (Exception e) {
+            log.warn("Failed to check if app is running", e);
+            return false;
+        }
     }
 
     @Override
@@ -154,7 +172,19 @@ public class MacPlatform implements Platform {
     @Override
     @SneakyThrows
     public void removeQuarantine(Path path) {
-        CommandExecutor.exec("xattr", "-dr", "com.apple.quarantine", path.toString());
+        CommandExecutor.exec("xattr", "-cr", path.toString());
+    }
+
+    @SneakyThrows
+    public void fixAppBundlePermissions(Path path) {
+        if (!AppBundle.isAppBundle(path)) {
+            return;
+        }
+        AppBundle bundle = new AppBundle(path);
+        Path executable = bundle.executable();
+        if (Files.exists(executable)) {
+            CommandExecutor.exec("chmod", "+x", executable.toString());
+        }
     }
 
     /**
