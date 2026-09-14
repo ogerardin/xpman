@@ -114,13 +114,21 @@ public class ToolsManager extends Manager<Tool> {
      */
     public InstalledTool install(InstallableTool tool, ProgressListener progressListener) throws ToolsException {
         Manifest manifest = tool.getManifest();
+        Path installDir = resolveInstallDir(manifest);
         try {
-            ToolUtils.install(manifest.url(), toolsFolder, progressListener);
+            ToolUtils.install(manifest.url(), installDir, manifest.file(), progressListener);
+            
+            Path installedApp = installDir.resolve(manifest.file());
+            // Remove quarantine to prevent Gatekeeper blocking on macOS
+            Platforms.getCurrent().removeQuarantine(installedApp);
+            // Fix executable permissions for .app bundles (lost during zip extraction)
+            Platforms.getCurrent().fixAppBundlePermissions(installedApp);
+            
             // trigger asynchronous reload
             reload();
             // The reload process will load the newly installed tool at some point in the future,
             // but in case the caller wants to use it right away we return a corresponding InstalledTool instance immediately.
-            return InstalledTool.ofInstallable(tool, toolsFolder);
+            return InstalledTool.ofInstallable(tool, installDir);
         } catch (IOException | InterruptedException e) {
             throw new ToolsException(e);
         }

@@ -30,14 +30,14 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ToolUtils {
 
-    public static void install(@NonNull URL url, @NonNull Path toolsFolder, @NonNull ProgressListener progressListener) throws IOException, InterruptedException {
+    public static void install(@NonNull URL url, @NonNull Path toolsFolder, @NonNull Path file, @NonNull ProgressListener progressListener) throws IOException, InterruptedException {
         String path = url.getPath();
         String ref = url.getRef();
         if (path.endsWith(".dmg") || (ref != null && ref.endsWith(".dmg"))) {
             installFromDmg(url, toolsFolder, progressListener);
         }
         else if (path.endsWith(".zip") || (ref != null && ref.endsWith(".zip"))) {
-            installFromZip(url, toolsFolder, progressListener);
+            installFromZip(url, toolsFolder, file, progressListener);
         }
         else {
             throw new IllegalArgumentException("Unsupported URL: " + url);
@@ -116,7 +116,7 @@ public class ToolUtils {
 
     }
 
-    public static void installFromZip(URL url, Path toolsFoder, ProgressListener progressListener) throws IOException {
+    public static void installFromZip(URL url, Path toolsFoder, Path file, ProgressListener progressListener) throws IOException {
         Path tempFile = null;
         Exception exception = null;
         try {
@@ -125,12 +125,11 @@ public class ToolUtils {
             progressListener.output("Downloading " + url + " to " + tempFile);
             FileUtils.copyURLToFile(url, tempFile.toFile());
 
-            // TODO handle cases where the ZIP doesn't contain a single executable
             progressListener.progress(0.50, "Extracting zip");
             progressListener.output("Extracting " + tempFile);
             ZipArchive zipArchive = new ZipArchive(tempFile);
             SubProgressListener subProgressListener = new SubProgressListener(progressListener, .51, 1.00);
-            zipArchive.extract(toolsFoder, subProgressListener);
+            zipArchive.extract(toolsFoder, entryPath -> entryPath.equals(file) || entryPath.startsWith(file), subProgressListener);
 
         }
         catch (Exception e) {
