@@ -92,7 +92,7 @@ public class FlyWithLua extends XPlaneOrgPlugin {
     }
 
     @Override
-    public String getTrashWarningDetails() {
+    public String getUninstallWarningDetails() {
         return " All FlyWithLua scripts will also be deleted.";
     }
 

@@ -68,8 +68,8 @@ public class MethodActionConfigurer<T, R> {
         Alert alert = new Alert(alertType, confirmMessage, ButtonType.OK, ButtonType.CANCEL);
         alert.setTitle("Confirm");
         alert.initOwner(ownerWindow);
-        // destructive confirmations (trash moves etc.) get a danger accent on the OK button
-        if (confirmMessage.toLowerCase().contains("trash")) {
+        // destructive confirmations (uninstalls etc.) get a danger accent on the OK button
+        if (confirmMessage.toLowerCase().contains("uninstall")) {
             alert.getDialogPane().lookupButton(ButtonType.OK).getStyleClass().add("danger-button");
         }
         Optional<ButtonType> choice = alert.showAndWait();

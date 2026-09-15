@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
@@ -22,7 +22,7 @@ import java.nio.file.Path;
 @Data
 public class UiPlugin implements PluginRow {
 
-    @Delegate(excludes = {Inspectable.class, Deletable.class})
+    @Delegate(excludes = {Inspectable.class, Uninstallable.class})
     final Plugin plugin;
     
     @Override
@@ -42,13 +42,13 @@ public class UiPlugin implements PluginRow {
     }
 
     @SuppressWarnings("unused")
-    @Label("'Move plugin to Trash'")
+    @Label("'Uninstall plugin'")
     @EnabledIf("! system")
-    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(plugin.baseFolder) + '\" will be moved to the trash.' " +
-            "+ plugin.trashWarningDetails " +
+    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(plugin.baseFolder) + '\" will be uninstalled.' " +
+            "+ plugin.uninstallWarningDetails " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
-    public void moveToTrash() {
-        getXPlane().getPluginManager().movePluginToTrash(plugin);
+    public void uninstall() {
+        getXPlane().getPluginManager().uninstallPlugin(plugin);
     }
 
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")

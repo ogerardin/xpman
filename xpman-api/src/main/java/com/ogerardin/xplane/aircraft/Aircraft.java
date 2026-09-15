@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.aircraft;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.file.AcfFile;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class Aircraft extends XPlaneObject implements Inspectable, Deletable {
+public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable {
 
     @EqualsAndHashCode.Include
     private final AcfFile acfFile;
@@ -198,7 +198,7 @@ public class Aircraft extends XPlaneObject implements Inspectable, Deletable {
     }
 
     @Override
-    public void delete() throws IOException {
+    public void uninstall() throws IOException {
         Path folder = acfFile.getFile().getParent();
         // move the folder containing the .acf file to the trash
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());

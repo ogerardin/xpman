@@ -183,8 +183,8 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     }
 
     @SneakyThrows
-    public void movePluginToTrash(Plugin plugin) {
-        plugin.delete();
+    public void uninstallPlugin(Plugin plugin) {
+        plugin.uninstall();
         reload();
     }
 }

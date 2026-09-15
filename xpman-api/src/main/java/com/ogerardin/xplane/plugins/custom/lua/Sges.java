@@ -52,8 +52,8 @@ public class Sges extends FlyWithLuaScript {
     }
 
     @Override
-    public void delete() throws IOException {
-        super.delete();
+    public void uninstall() throws IOException {
+        super.uninstall();
 
         Path scriptsFolder = getLuaFile().getParent();
 

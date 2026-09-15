@@ -33,7 +33,7 @@ import java.util.Optional;
 /**
  * A card displaying a single {@link UiAircraft}: thumbnail, name, studio/author, badges, and — when the
  * aircraft has liveries — an expandable row of livery mini-cards. Hovering the card reveals quick action
- * buttons (explore properties, inspect, reveal, move to trash) built through the annotation-driven action
+ * buttons (explore properties, inspect, reveal, uninstall) built through the annotation-driven action
  * framework so that confirmations and post-success behavior are preserved; the full action set remains
  * available through the context menu. Double-clicking the card opens the aircraft details view.
  */
@@ -121,7 +121,7 @@ public class AircraftCardView extends VBox {
         addAction(actions, uiAircraft, "details", Feather.SEARCH);
         addAction(actions, uiAircraft, "inspect", Feather.ACTIVITY);
         addAction(actions, uiAircraft, "reveal", Feather.FOLDER);
-        addAction(actions, uiAircraft, "moveToTrash", Feather.TRASH_2);
+        addAction(actions, uiAircraft, "uninstall", Feather.TRASH_2);
         return actions;
     }
 

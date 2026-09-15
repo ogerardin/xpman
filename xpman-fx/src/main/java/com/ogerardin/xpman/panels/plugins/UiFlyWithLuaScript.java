@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -18,7 +18,7 @@ import java.nio.file.Path;
 @Data
 public class UiFlyWithLuaScript implements PluginRow {
 
-    @Delegate(excludes = {Inspectable.class, Deletable.class})
+    @Delegate(excludes = {Inspectable.class, Uninstallable.class})
     final FlyWithLuaScript script;
 
     @Override
@@ -55,12 +55,12 @@ public class UiFlyWithLuaScript implements PluginRow {
         Platforms.getCurrent().openFile(path);
     }
 
-    @Label("'Move script to Trash'")
-    @Confirm(value = "'The script \"' + script.luaFile.fileName + '\" will be moved to the trash.' " +
+    @Label("'Uninstall script'")
+    @Confirm(value = "'The script \"' + script.luaFile.fileName + '\" will be uninstalled.' " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
-    public void deleteScript() {
+    public void uninstallScript() {
         try {
-            script.delete();
+            script.uninstall();
             script.getXPlane().getPluginManager().reload();
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);

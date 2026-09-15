@@ -52,12 +52,12 @@ public class UiLivery extends UiAircraft {
     }
 
     @SuppressWarnings("unused")
-    @Label("'Move livery to Trash'")
-    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.liveriesFolder.resolve(livery.path)) + '\" will be moved to the trash. '" +
+    @Label("'Uninstall livery'")
+    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.liveriesFolder.resolve(livery.path)) + '\" will be uninstalled. '" +
             "+ 'This will impact all aircraft contained in the same aircraft folder.'" +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
-    public void moveToTrash() {
-        getXPlane().getAircraftManager().moveLiveryToTrash(livery);
+    public void uninstall() {
+        getXPlane().getAircraftManager().uninstallLivery(livery);
     }
 
 

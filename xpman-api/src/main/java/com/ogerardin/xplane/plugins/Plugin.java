@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.plugins;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Getter
-public class Plugin extends XPlaneObject implements Inspectable, Deletable {
+public class Plugin extends XPlaneObject implements Inspectable, Uninstallable {
 
     private final Path xplFile;
 
@@ -107,7 +107,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Deletable {
         return Platforms.getCurrent().isQuarantined(getBaseFolder());
     }
 
-    public String getTrashWarningDetails() {
+    public String getUninstallWarningDetails() {
         return "";
     }
 
@@ -128,7 +128,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Deletable {
     }
 
     @Override
-    public void delete() throws IOException {
+    public void uninstall() throws IOException {
         Path folder = getBaseFolder();
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
     }

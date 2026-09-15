@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.plugins.custom.lua;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
-public class FlyWithLuaScript implements Inspectable, Deletable {
+public class FlyWithLuaScript implements Inspectable, Uninstallable {
     
     private final XPlane xPlane;
     private final Path luaFile;
@@ -61,7 +61,7 @@ public class FlyWithLuaScript implements Inspectable, Deletable {
     }
 
     @Override
-    public void delete() throws IOException {
+    public void uninstall() throws IOException {
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(luaFile.toFile());
     }
 

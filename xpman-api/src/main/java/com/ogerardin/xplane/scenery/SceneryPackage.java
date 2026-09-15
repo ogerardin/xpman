@@ -1,6 +1,6 @@
 package com.ogerardin.xplane.scenery;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Data
 @Slf4j
-public class SceneryPackage implements Inspectable, Deletable {
+public class SceneryPackage implements Inspectable, Uninstallable {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
     public static final String OBJECTS = "Objects";
@@ -96,7 +96,7 @@ public class SceneryPackage implements Inspectable, Deletable {
     }
 
     @Override
-    public void delete() throws IOException {
+    public void uninstall() throws IOException {
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
     }
 }

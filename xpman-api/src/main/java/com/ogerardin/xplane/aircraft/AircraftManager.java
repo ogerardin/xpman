@@ -101,8 +101,8 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     }
 
     @SneakyThrows
-    public void moveAircraftFolderToTrash(Aircraft aircraft) {
-        aircraft.delete();
+    public void uninstallAircraft(Aircraft aircraft) {
+        aircraft.uninstall();
         reload();
     }
 
@@ -113,7 +113,7 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
     }
 
     @SneakyThrows
-    public void moveLiveryToTrash(Livery livery) {
+    public void uninstallLivery(Livery livery) {
         Path folder = livery.getAircraft().getLiveriesFolder().resolve(livery.getFolder());
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
         reload();

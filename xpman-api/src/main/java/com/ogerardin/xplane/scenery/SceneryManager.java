@@ -284,8 +284,8 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     }
 
     @SneakyThrows
-    public void moveSceneryPackageToTrash(SceneryPackage sceneryPackage) {
-        sceneryPackage.delete();
+    public void uninstallSceneryPackage(SceneryPackage sceneryPackage) {
+        sceneryPackage.uninstall();
         reload();
     }
 

@@ -1,6 +1,6 @@
 package com.ogerardin.xpman.panels.aircraft;
 
-import com.ogerardin.xplane.Deletable;
+import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
@@ -26,7 +26,7 @@ import java.nio.file.Path;
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 public class UiAircraft {
 
-    @Delegate(excludes = {Inspectable.class, Deletable.class})
+    @Delegate(excludes = {Inspectable.class, Uninstallable.class})
     @ToString.Include
     @EqualsAndHashCode.Include
     protected final Aircraft aircraft;
@@ -58,12 +58,12 @@ public class UiAircraft {
 //    }
 
     @SuppressWarnings("unused")
-    @Label("'Move aircraft to Trash'")
-    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '\" will be moved to the trash. '" +
+    @Label("'Uninstall aircraft'")
+    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '\" will be uninstalled. '" +
             "+ 'This will impact the following aircraft: ' + xPlane.aircraftManager.getAircraftByFolder(aircraft.acfFile.file.parent) " +
             "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
-    public void moveToTrash() {
-        getXPlane().getAircraftManager().moveAircraftFolderToTrash(aircraft);
+    public void uninstall() {
+        getXPlane().getAircraftManager().uninstallAircraft(aircraft);
     }
 
     @SuppressWarnings("unused")

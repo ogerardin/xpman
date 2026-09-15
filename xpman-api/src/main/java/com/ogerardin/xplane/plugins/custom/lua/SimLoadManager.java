@@ -36,9 +36,9 @@ public class SimLoadManager extends FlyWithLuaScript {
     }
     
     @Override
-    public void delete() throws IOException {
+    public void uninstall() throws IOException {
         // Delete the main script file
-        super.delete();
+        super.uninstall();
         
         // Also delete the SLM-Data folder if it exists
         Path dataFolder = getLuaFile().getParent().resolve(SLM_DATA_FOLDER);

@@ -60,14 +60,14 @@ public class UiSceneryEntry {
         xPlane.getSceneryManager().removeFromIni(getSceneryEntry());
     }
 
-    @Label("'Move to Trash'")
+    @Label("'Uninstall'")
     @EnabledIf("sceneryPackage != null && ! sceneryPackage.system && ! token")
     @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
-            "+ '\" will be moved to the trash.\n" +
+            "+ '\" will be uninstalled.\n" +
             "\n" +
             "Press OK to continue.'")
-    public void moveToTrash() {
-        xPlane.getSceneryManager().moveSceneryPackageToTrash(getSceneryPackage());
+    public void uninstall() {
+        xPlane.getSceneryManager().uninstallSceneryPackage(getSceneryPackage());
     }
 
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
