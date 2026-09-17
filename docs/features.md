@@ -11,15 +11,18 @@
 | Aircraft | recognise specific aircraft -> requirements, check update, home page, etc. | Done, need to add more aircraft                           |
 | Aircraft | Manage Ivap planes (CSL)                                                   | Replaced by external tool "X-CSL updater for IvAp client" |
 | Aircraft | Automatically install IvAp                                                 | Will be an external tool                                  |
+| Aircraft | Skunkcrafts Updater integration (detect, check, apply updates)             | Done                                                      |
 | Liveries | List/delete aircraft liveries                                              | In progress                                               |
 | Liveries | Install livery from ZIP                                                    |                                                           |
 | Plugins  | list global plugins                                                        | Done                                                      |
 | Plugins  | install plugin from zip                                                    |                                                           |
 | Plugins  | recognise specific plugin -> requirements, check update, home page, etc.   |                                                           |
+| Plugins  | Skunkcrafts Updater integration (detect, check, apply updates)             | Done                                                      |
 | Nav data | list recognized navdata sets                                               | Done                                                      |
 | Nav data | automatically update navdata set                                           |                                                           |
 | Scenery  | manage and auto-order scenery_packs.ini                                   | Done                                                      |
 | Scenery  | install scenery from zip                                                   | Done                                                      |
 | Scenery  | generate flight plan for FMS / ATC                                         |                                                           |
+| Scenery  | Skunkcrafts Updater integration (detect, check, apply updates)             | Done                                                      |
 | Tools    | install generic tool from manifest                                         | Done                                                      |
 | Tools    | uninstall generic tool                                                     | Done                                                      |

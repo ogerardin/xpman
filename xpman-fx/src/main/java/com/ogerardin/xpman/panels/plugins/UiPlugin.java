@@ -66,4 +66,22 @@ public class UiPlugin implements PluginRow {
         return plugin.inspect();
     }
 
+    @SuppressWarnings("unused")
+    @Label("'Update via Skunkcrafts Updater'")
+    @EnabledIf("skunkcraftsUpdatable")
+    @OnSuccess("reload()")
+    public void skunkcraftsUpdate() {
+        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(plugin).showAndWait();
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Skunkcrafts: Locked by developer'")
+    @EnabledIf("skunkcraftsLocked")
+    public void skunkcraftsLocked() {
+        new Alert(Alert.AlertType.INFORMATION,
+                "This plugin is currently locked by the developer. " +
+                "The developer may be uploading files. Please try again later.")
+                .showAndWait();
+    }
+
 }

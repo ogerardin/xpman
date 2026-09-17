@@ -96,4 +96,22 @@ public class UiAircraft {
         stage.show();
     }
 
+    @SuppressWarnings("unused")
+    @Label("'Update via Skunkcrafts Updater'")
+    @EnabledIf("skunkcraftsUpdatable")
+    @OnSuccess("reload()")
+    public void skunkcraftsUpdate() {
+        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(aircraft).showAndWait();
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Skunkcrafts: Locked by developer'")
+    @EnabledIf("skunkcraftsLocked")
+    public void skunkcraftsLocked() {
+        new Alert(Alert.AlertType.INFORMATION,
+                "This aircraft is currently locked by the developer. " +
+                "The developer may be uploading files. Please try again later.")
+                .showAndWait();
+    }
+
 }

@@ -81,4 +81,22 @@ public class UiSceneryEntry {
         return getSceneryPackage().inspect();
     }
 
+    @SuppressWarnings("unused")
+    @Label("'Update via Skunkcrafts Updater'")
+    @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsUpdatable")
+    @OnSuccess("reload()")
+    public void skunkcraftsUpdate() {
+        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(getSceneryPackage()).showAndWait();
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Skunkcrafts: Locked by developer'")
+    @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsLocked")
+    public void skunkcraftsLocked() {
+        new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION,
+                "This scenery is currently locked by the developer. " +
+                "The developer may be uploading files. Please try again later.")
+                .showAndWait();
+    }
+
 }

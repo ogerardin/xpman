@@ -13,11 +13,13 @@ A cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 1
 
 - **Aircraft** — Install, delete, and manage aircraft and liveries. Recognize specific aircraft models for version checking and update notifications.
 - **Scenery** — Install scenery packages and auto-order `scenery_packs.ini` for optimal load order.
-- **Plugins** — Install and manage global plugins.
-- **Nav data** — List and manage navigation data sets.
-- **Tools** — Install and uninstall generic tools from manifest files.
+- **Plugins** — Install, delete, and manage global plugins. System plugins are protected from deletion. Plugin versions extracted from native binaries. PDF manuals supported.
+- **FlyWithLua** — Manage FlyWithLua scripts with SGES integration.
+- **Nav data** — List and manage navigation data sets, including XP12 airspace and ATC data.
+- **Tools** — Install and uninstall generic tools from manifest files, with custom install directory support.
 - **X-Plane updates** — Get notified when a new X-Plane version is available and start the updater.
 - **Disk usage** — View disk space consumed by each category (aircraft, scenery, plugins, etc.).
+- **Skunkcrafts Updater integration** — Detect and apply updates for addons that support the Skunkcrafts Updater protocol. Plugins, aircraft, and scenery packages with `skunkcrafts_updater.cfg` can be updated directly from their repositories.
 
 ## Screenshots
 
@@ -61,7 +63,7 @@ See [EXTENDING.md](EXTENDING.md) for how to implement custom aircraft and scener
 |--------|---------|
 | `xpman-api` | Pure Java API — domain model, file parsers, inspection framework, install logic |
 | `xpman-fx` | JavaFX UI — FXML views, controllers, wizards, custom cell factories |
-| `xpman-fx-dist` | Distribution packaging — uber-jar repackaged into platform installers via jpackage |
+| `xpman-fx-dist` | Distribution packaging — uber-jar repackaged into platform installers via jpackage; macOS DMG via dmgbuild |
 
 ### Building
 

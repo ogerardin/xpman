@@ -51,6 +51,7 @@ module xpman.api {
     exports com.ogerardin.xplane.file.data to xpman.api.test;
     exports com.ogerardin.xplane.file.data.atc to xpman.api.test;
     exports com.ogerardin.xplane.manager;
+    exports com.ogerardin.xplane.skunkcrafts;
 
     opens com.ogerardin.xplane.tools to com.google.gson;
     exports com.ogerardin.xplane.exception;

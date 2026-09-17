@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.jfx.menu;
 
 import com.ogerardin.xpman.util.SpelUtil;
+import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,8 @@ public class IntrospectionHelper {
                 .filter(method -> Modifier.isPublic(method.getModifiers()) && !Modifier.isAbstract(method.getModifiers()))
                 // skip setters/getters
                 .filter(method -> !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().startsWith("is"))
+                // skip methods with parameters unless they have @ForEach
+                .filter(method -> method.getParameterCount() == 0 || method.isAnnotationPresent(ForEach.class))
                 .toList();
     }
 

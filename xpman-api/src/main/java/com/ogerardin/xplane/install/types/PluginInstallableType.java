@@ -5,6 +5,7 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallableType;
 import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.install.inspections.AssertHasSingleRootFolder;
+import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 
@@ -29,7 +30,10 @@ public class PluginInstallableType implements InstallableType {
     
     @Override
     public InspectionResult preconditions(XPlane xPlane, Archive archive) {
-        return AssertHasSingleRootFolder.INSTANCE.inspectable(archive).inspect();
+        return AssertHasSingleRootFolder.INSTANCE
+                .and(SkunkcraftsUpdatableInspection.INSTANCE)
+                .inspectable(archive)
+                .inspect();
     }
 
     @Override

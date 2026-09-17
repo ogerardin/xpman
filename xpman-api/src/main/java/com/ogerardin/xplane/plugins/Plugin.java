@@ -7,7 +7,13 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
+import com.ogerardin.xplane.skunkcrafts.WhitelistEntry;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -19,13 +25,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Slf4j
 @Getter
-public class Plugin extends XPlaneObject implements Inspectable, Uninstallable {
+public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, SkunkcraftsUpdatable {
 
     private final Path xplFile;
 
@@ -72,8 +81,51 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable {
         return getBaseFolder(xplFile);
     }
 
+    @Getter(lazy = true)
+    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getBaseFolder());
+
     public String getLatestVersion() {
-        return null;
+        return getSkunkcraftsLatestVersion();
+    }
+
+    @Override
+    public boolean isSkunkcraftsUpdatable() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && !cfg.disabled() && !cfg.locked() && cfg.moduleUrl() != null;
+    }
+
+    @Override
+    public boolean isSkunkcraftsLocked() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && cfg.locked();
+    }
+
+    @Override
+    public String getSkunkcraftsLatestVersion() {
+        if (!isSkunkcraftsUpdatable()) return null;
+        return SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl());
+    }
+
+    @Override
+    public boolean isSkunkcraftsUpdateAvailable() {
+        String latest = getSkunkcraftsLatestVersion();
+        return latest != null && !Objects.equals(getVersion(), latest);
+    }
+
+    @Override
+    public int getSkunkcraftsFilesToUpdateCount() {
+        if (!isSkunkcraftsUpdatable()) {
+            return 0;
+        }
+        return SkunkcraftsUpdater.computeFilesToUpdateCount(getBaseFolder(), getSkunkcraftsConfig());
+    }
+
+    @Override
+    public void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
+        if (!isSkunkcraftsUpdatable()) {
+            throw new SkunkcraftsUpdateException("Plugin is not Skunkcrafts-updatable");
+        }
+        SkunkcraftsUpdater.applyUpdate(getBaseFolder(), getSkunkcraftsConfig(), progress);
     }
 
     public Map<String, URL> getLinks() {

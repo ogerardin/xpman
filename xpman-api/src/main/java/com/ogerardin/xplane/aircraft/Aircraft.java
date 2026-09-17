@@ -5,8 +5,16 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
+import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
+import com.ogerardin.xplane.skunkcrafts.WhitelistEntry;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -22,7 +30,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable {
+public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable, SkunkcraftsUpdatable {
 
     @EqualsAndHashCode.Include
     private final AcfFile acfFile;
@@ -101,7 +109,50 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
     }
 
     public String getLatestVersion() {
-        return null;
+        return getSkunkcraftsLatestVersion();
+    }
+
+    @Getter(lazy = true)
+    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getAcfFile().getFile().getParent());
+
+    @Override
+    public boolean isSkunkcraftsUpdatable() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && !cfg.disabled() && !cfg.locked() && cfg.moduleUrl() != null;
+    }
+
+    @Override
+    public boolean isSkunkcraftsLocked() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && cfg.locked();
+    }
+
+    @Override
+    public String getSkunkcraftsLatestVersion() {
+        if (!isSkunkcraftsUpdatable()) return null;
+        return SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl());
+    }
+
+    @Override
+    public boolean isSkunkcraftsUpdateAvailable() {
+        String latest = getSkunkcraftsLatestVersion();
+        return latest != null && !Objects.equals(getVersion(), latest);
+    }
+
+    @Override
+    public int getSkunkcraftsFilesToUpdateCount() {
+        if (!isSkunkcraftsUpdatable()) {
+            return 0;
+        }
+        return SkunkcraftsUpdater.computeFilesToUpdateCount(getAcfFile().getFile().getParent(), getSkunkcraftsConfig());
+    }
+
+    @Override
+    public void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
+        if (!isSkunkcraftsUpdatable()) {
+            throw new SkunkcraftsUpdateException("Aircraft is not Skunkcrafts-updatable");
+        }
+        SkunkcraftsUpdater.applyUpdate(getAcfFile().getFile().getParent(), getSkunkcraftsConfig(), progress);
     }
 
     public boolean isExtraAircraft() {
@@ -194,7 +245,18 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
 
     @Override
     public InspectionResult inspect() {
-        return AircraftSpecInspection.INSTANCE.inspect(this);
+        InspectionResult result = AircraftSpecInspection.INSTANCE.inspect(this);
+        String latest = getLatestVersion();
+        if (latest != null && !Objects.equals(getVersion(), latest)) {
+            result = result.append(InspectionResult.of(
+                    InspectionMessage.builder()
+                            .severity(Severity.WARN)
+                            .object(getName())
+                            .message("Update available: " + latest)
+                            .build()
+            ));
+        }
+        return result;
     }
 
     @Override
