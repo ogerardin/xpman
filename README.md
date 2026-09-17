@@ -22,14 +22,23 @@ A cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 1
 - **Skunkcrafts Updater integration** — Detect and apply updates for addons that support the Skunkcrafts Updater protocol. Plugins, aircraft, and scenery packages with `skunkcrafts_updater.cfg` can be updated directly from their repositories.
 
 ## Screenshots
+### Main Window
+![Main window](assets/screenshots/Screenshot%202026-09-17%20at%2023.50.17.png)
 
-![Main window](assets/screenshots/Screenshot%202026-08-18%20at%2001.32.55.png)
+### Aircrat management
+![Aircraft management](assets/screenshots/Screenshot%202026-09-17%20at%2023.51.12.png)
 
-![Aircraft tree](assets/screenshots/Screenshot%202026-08-18%20at%2001.33.32.png)
+### Scenery management
+![Scenery management](assets/screenshots/Screenshot%202026-09-17%20at%2023.52.27.png)
 
-![Inspection results](assets/screenshots/Screenshot%202026-08-18%20at%2001.33.42.png)
+### Nav data
+![Nav data](assets/screenshots/Screenshot%202026-09-17%20at%2023.52.45.png)
 
-![Scenery management](assets/screenshots/Screenshot%202026-08-18%20at%2001.33.48.png)
+### Plugin management
+![Plugins](assets/screenshots/Screenshot%202026-09-17%20at%2023.53.36.png)
+
+### Tools
+![Tools](assets/screenshots/Screenshot%202026-09-17%20at%2023.53.58.png)
 
 ## Installation
 
