@@ -2,7 +2,6 @@ package com.ogerardin.xpman.util.jfx.menu;
 
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;
-import com.ogerardin.xpman.util.jfx.Toast;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
@@ -12,12 +11,14 @@ import javafx.stage.Window;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Slf4j
 @Data
 public class MethodActionConfigurer<T, R> {
 
@@ -51,7 +52,7 @@ public class MethodActionConfigurer<T, R> {
             // we must do something upton completion
             builder.onSuccess(result -> {
                 this.onSuccess(result, onSuccess.resultVariableName(), onSuccess.value(), evalContextRoot);
-                Toast.success(windowSupplier.get(), IntrospectionHelper.getLabelForMethod(method) + ": done");
+                log.info("{}: done", IntrospectionHelper.getLabelForMethod(method));
             });
         }
 
