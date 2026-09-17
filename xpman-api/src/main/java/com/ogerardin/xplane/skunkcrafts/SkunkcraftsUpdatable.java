@@ -29,11 +29,11 @@ public interface SkunkcraftsUpdatable {
     boolean isSkunkcraftsUpdateAvailable();
 
     /**
-     * Returns the number of files that need to be updated.
-     * This may involve network calls to fetch the remote whitelist.
-     * @return the number of files to update, or 0 if up to date or not updatable
+     * Fetches the remote whitelist and returns the files to update with their total download size.
+     * This involves network calls to fetch the remote whitelist.
+     * @return the summary of files to update, or an empty summary if up to date, not updatable, or on error
      */
-    int getSkunkcraftsFilesToUpdateCount();
+    SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary();
 
     /** Downloads and applies differential updates for this addon. */
     void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException;

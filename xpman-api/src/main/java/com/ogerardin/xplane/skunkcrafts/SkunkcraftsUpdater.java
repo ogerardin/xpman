@@ -275,35 +275,56 @@ public class SkunkcraftsUpdater {
     }
 
     /**
-     * Computes the number of files that need to be updated.
-     * This is a convenience method that handles the full computation: fetching remote whitelist,
-     * computing ignore set, and counting files to update.
+     * Computes the files to update: fetches the remote whitelist and blacklist, computes the ignore set,
+     * and returns a summary with the file count and their total download size.
      *
      * @param baseFolder the base folder of the addon
      * @param config the Skunkcrafts configuration
-     * @return the number of files to update, or 0 if computation fails
+     * @return the summary of files to update, or an empty summary if computation fails
      */
-    public int computeFilesToUpdateCount(Path baseFolder, SkunkcraftsConfig config) {
+    public SkunkcraftsUpdateSummary computeFilesToUpdateSummary(Path baseFolder, SkunkcraftsConfig config) {
+        List<WhitelistEntry> filesToUpdate = fetchAndDiff(baseFolder, config);
+        long totalSize = filesToUpdate.stream()
+                .mapToLong(entry -> entry.expectedSize() != null ? entry.expectedSize() : fetchRemoteFileSize(config.moduleUrl(), entry))
+                .sum();
+        return new SkunkcraftsUpdateSummary(filesToUpdate.size(), totalSize);
+    }
+
+    /**
+     * Fetches the size of a single remote file via HTTP HEAD, falling back to 0 if unavailable.
+     */
+    private static long fetchRemoteFileSize(String moduleUrl, WhitelistEntry entry) {
+        String url = normalizeBaseUrl(moduleUrl) + entry.relativePath();
+        HttpURLConnection conn = null;
         try {
-            // Fetch remote whitelist
+            conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("HEAD");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            return conn.getResponseCode() == 200 ? conn.getContentLengthLong() : 0;
+        } catch (Exception e) {
+            log.warn("Failed to fetch file size for {}", url, e);
+            return 0;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+    private static List<WhitelistEntry> fetchAndDiff(Path baseFolder, SkunkcraftsConfig config) {
+        try {
             List<WhitelistEntry> whitelist = fetchRemoteWhitelist(config.moduleUrl());
-            
-            // Compute ignore set
             Set<String> ignoreSet = new HashSet<>();
             ignoreSet.addAll(fetchRemoteBlacklist(config.moduleUrl()));
             ignoreSet.addAll(parseLocalIgnore(baseFolder));
-            
             if (!config.liveries()) {
                 ignoreSet.add("liveries");
             }
-            
-            // Compute files to update
-            List<WhitelistEntry> filesToUpdate = computeFilesToUpdate(baseFolder, whitelist, ignoreSet);
-            
-            return filesToUpdate.size();
+            return computeFilesToUpdate(baseFolder, whitelist, ignoreSet);
         } catch (Exception e) {
             log.warn("Failed to compute files to update", e);
-            return 0;
+            return List.of();
         }
     }
 
@@ -384,6 +405,30 @@ public class SkunkcraftsUpdater {
         }
 
         downloadAndApply(baseFolder, config.moduleUrl(), filesToUpdate, progress);
+
+        String remoteVersion = fetchRemoteVersion(config.moduleUrl());
+        if (remoteVersion != null) {
+            writeVersion(baseFolder.resolve(CFG_FILENAME), remoteVersion);
+        }
+    }
+
+    /**
+     * Updates the version field in the local Skunkcrafts config file.
+     */
+    private static void writeVersion(Path cfgFile, String newVersion) throws IOException {
+        List<String> lines = Files.readAllLines(cfgFile);
+        boolean found = false;
+        for (int i = 0; i < lines.size(); i++) {
+            String[] parts = lines.get(i).trim().split("\\|", 2);
+            if (parts.length >= 2 && "version".equalsIgnoreCase(parts[0].trim())) {
+                lines.set(i, "version|" + newVersion);
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            Files.write(cfgFile, lines);
+        }
     }
 
     private String normalizeBaseUrl(String url) {

@@ -1,6 +1,8 @@
 package com.ogerardin.xpman.install.wizard;
 
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xpman.util.SizeFormat;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import com.ogerardin.xpman.util.jfx.wizard.Validating;
 import javafx.beans.property.BooleanProperty;
@@ -62,13 +64,14 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
             }
             remoteVersionLabel.setText(remoteVersion);
 
-            // Compute files to update (summary only)
-            int filesCount = updatable.getSkunkcraftsFilesToUpdateCount();
+            // Compute files to update
+            SkunkcraftsUpdateSummary summary = updatable.getSkunkcraftsUpdateSummary();
+            int filesCount = summary.fileCount();
             if (filesCount == 0) {
                 filesCountLabel.setText("Already up to date");
                 invalidProperty.set(true);
             } else {
-                filesCountLabel.setText(filesCount + " file(s) to update");
+                filesCountLabel.setText(filesCount + " file(s) to update (" + SizeFormat.humanSize(summary.totalSizeBytes()) + ")");
                 invalidProperty.set(false);
             }
 

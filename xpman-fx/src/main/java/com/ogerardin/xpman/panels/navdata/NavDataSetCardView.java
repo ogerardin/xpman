@@ -2,6 +2,7 @@ package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.navdata.NavDataItem;
+import com.ogerardin.xpman.util.SizeFormat;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
 import com.ogerardin.xpman.util.jfx.menu.MethodButton;
@@ -201,26 +202,13 @@ public class NavDataSetCardView extends VBox {
     private static String metaText(NavDataItem item) {
         try {
             Path path = item.getPath();
-            String size = humanSize(Files.size(path));
+            String size = SizeFormat.humanSize(Files.size(path));
             String modified = DATE_FORMAT.format(
                     Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault()));
             return size + " · " + modified;
         } catch (IOException e) {
             return "?";
         }
-    }
-
-    private static String humanSize(long bytes) {
-        if (bytes < 1024) {
-            return bytes + " B";
-        }
-        if (bytes < 1024 * 1024) {
-            return (bytes / 1024) + " KB";
-        }
-        if (bytes < 1024L * 1024 * 1024) {
-            return String.format("%.1f MB", bytes / 1024.0 / 1024);
-        }
-        return String.format("%.1f GB", bytes / 1024.0 / 1024 / 1024);
     }
 
     private static FontIcon icon(Feather feather) {

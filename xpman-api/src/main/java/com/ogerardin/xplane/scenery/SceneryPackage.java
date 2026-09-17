@@ -9,6 +9,7 @@ import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.progress.ProgressListener;
@@ -120,11 +121,11 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
     }
 
     @Override
-    public int getSkunkcraftsFilesToUpdateCount() {
+    public SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
         if (!isSkunkcraftsUpdatable()) {
-            return 0;
+            return new SkunkcraftsUpdateSummary(0, 0);
         }
-        return SkunkcraftsUpdater.computeFilesToUpdateCount(folder, getSkunkcraftsConfig());
+        return SkunkcraftsUpdater.computeFilesToUpdateSummary(folder, getSkunkcraftsConfig());
     }
 
     @Override

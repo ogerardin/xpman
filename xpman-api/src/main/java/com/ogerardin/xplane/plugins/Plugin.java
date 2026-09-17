@@ -10,6 +10,7 @@ import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.skunkcrafts.WhitelistEntry;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -113,11 +114,11 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     @Override
-    public int getSkunkcraftsFilesToUpdateCount() {
+    public SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
         if (!isSkunkcraftsUpdatable()) {
-            return 0;
+            return new SkunkcraftsUpdateSummary(0, 0);
         }
-        return SkunkcraftsUpdater.computeFilesToUpdateCount(getBaseFolder(), getSkunkcraftsConfig());
+        return SkunkcraftsUpdater.computeFilesToUpdateSummary(getBaseFolder(), getSkunkcraftsConfig());
     }
 
     @Override
