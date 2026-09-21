@@ -2,21 +2,31 @@ package com.ogerardin.xpman.panels.home;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneReleaseInfo;
+import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
+import com.ogerardin.xplane.plugins.Plugin;
+import com.ogerardin.xplane.scenery.SceneryPackage;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
+import com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard;
 import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.tools.UiToolUtil;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.feather.Feather;
@@ -59,14 +69,45 @@ public class HomeController {
     private Label navDataCount;
     @FXML
     private Label pluginsCount;
+    @FXML
+    private Label aircraftUpdateBadge;
+    @FXML
+    private Label sceneryUpdateBadge;
+    @FXML
+    private Label pluginsUpdateBadge;
+    @FXML
+    private VBox updatesSection;
+    @FXML
+    private VBox updatesContent;
+
+    private final IntegerProperty aircraftUpdateCount = new SimpleIntegerProperty(0);
+    private final IntegerProperty sceneryUpdateCount = new SimpleIntegerProperty(0);
+    private final IntegerProperty pluginsUpdateCount = new SimpleIntegerProperty(0);
 
     public HomeController(XPmanFX mainController) {
         this.mainController = mainController;
+    }
+
+    @FXML
+    public void initialize() {
         mainController.xPlaneProperty().addListener((__, ___, xPlane) -> {
             this.xPlane = xPlane;
             updateDisplay(xPlane);
             AsyncHelper.runAsync(() -> checkUpdates(xPlane));
         });
+        
+        // Bind badge visibility and text to update counts
+        aircraftUpdateBadge.textProperty().bind(aircraftUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
+        aircraftUpdateBadge.visibleProperty().bind(aircraftUpdateCount.greaterThan(0));
+        aircraftUpdateBadge.managedProperty().bind(aircraftUpdateCount.greaterThan(0));
+        
+        sceneryUpdateBadge.textProperty().bind(sceneryUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
+        sceneryUpdateBadge.visibleProperty().bind(sceneryUpdateCount.greaterThan(0));
+        sceneryUpdateBadge.managedProperty().bind(sceneryUpdateCount.greaterThan(0));
+        
+        pluginsUpdateBadge.textProperty().bind(pluginsUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
+        pluginsUpdateBadge.visibleProperty().bind(pluginsUpdateCount.greaterThan(0));
+        pluginsUpdateBadge.managedProperty().bind(pluginsUpdateCount.greaterThan(0));
     }
 
     private void updateDisplay(XPlane xPlane) {
@@ -89,28 +130,191 @@ public class HomeController {
     }
 
     private void trackCounts(XPlane xPlane) {
-        trackCount(xPlane, XPlane::getAircraftManager, aircraftCount);
-        trackCount(xPlane, XPlane::getSceneryManager, sceneryCount);
-        trackCount(xPlane, XPlane::getNavDataManager, navDataCount);
-        trackCount(xPlane, XPlane::getPluginManager, pluginsCount);
+        trackCount(xPlane, XPlane::getAircraftManager, aircraftCount, this::checkAircraftUpdates);
+        trackCount(xPlane, XPlane::getSceneryManager, sceneryCount, this::checkSceneryUpdates);
+        trackCount(xPlane, XPlane::getNavDataManager, navDataCount, null);
+        trackCount(xPlane, XPlane::getPluginManager, pluginsCount, this::checkPluginUpdates);
     }
 
     /**
      * Registers a listener on the given manager that updates the target label with the item count
-     * whenever the manager loads, and triggers an initial load.
+     * whenever the manager loads, and triggers an initial load. Optionally runs an update check
+     * after items are loaded.
      */
-    private <T> void trackCount(XPlane xPlane, Function<XPlane, Manager<T>> managerGetter, Label countLabel) {
+    private <T> void trackCount(XPlane xPlane, Function<XPlane, Manager<T>> managerGetter, Label countLabel, Runnable updateChecker) {
         Manager<T> manager = managerGetter.apply(xPlane);
         manager.registerListener((ManagerEvent<T> event) -> {
             switch (event.getType()) {
                 case LOADING -> Platform.runLater(() -> countLabel.setText("…"));
-                case LOADED -> Platform.runLater(() ->
-                        countLabel.setText(String.valueOf(event.getItems().size())));
+                case LOADED -> Platform.runLater(() -> {
+                        countLabel.setText(String.valueOf(event.getItems().size()));
+                        if (updateChecker != null) {
+                            AsyncHelper.runAsync(updateChecker);
+                        }
+                });
                 default -> {
                 }
             }
         });
         manager.reload();
+    }
+
+    private void checkAircraftUpdates() {
+        List<Aircraft> aircraft = xPlane.getAircraftManager().getItems();
+        if (aircraft == null) return;
+        
+        long count = aircraft.stream()
+                .filter(SkunkcraftsUpdatable.class::isInstance)
+                .map(SkunkcraftsUpdatable.class::cast)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                .count();
+        
+        Platform.runLater(() -> {
+            aircraftUpdateCount.set((int) count);
+            updateUpdatesSection();
+        });
+    }
+
+    private void checkSceneryUpdates() {
+        List<com.ogerardin.xplane.scenery.SceneryEntry> scenery = xPlane.getSceneryManager().getItems();
+        if (scenery == null) return;
+        
+        long count = scenery.stream()
+                .map(com.ogerardin.xplane.scenery.SceneryEntry::getSceneryPackage)
+                .filter(java.util.Objects::nonNull)
+                .filter(SkunkcraftsUpdatable.class::isInstance)
+                .map(SkunkcraftsUpdatable.class::cast)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                .count();
+        
+        Platform.runLater(() -> {
+            sceneryUpdateCount.set((int) count);
+            updateUpdatesSection();
+        });
+    }
+
+    private void checkPluginUpdates() {
+        List<Plugin> plugins = xPlane.getPluginManager().getItems();
+        if (plugins == null) return;
+        
+        long count = plugins.stream()
+                .filter(SkunkcraftsUpdatable.class::isInstance)
+                .map(SkunkcraftsUpdatable.class::cast)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                .count();
+        
+        Platform.runLater(() -> {
+            pluginsUpdateCount.set((int) count);
+            updateUpdatesSection();
+        });
+    }
+
+    private void updateUpdatesSection() {
+        // ponytail: rebuild from managers each time instead of accumulating state
+        List<SkunkcraftsUpdatable> updates = new ArrayList<>();
+        if (xPlane != null) {
+            xPlane.getAircraftManager().getItems().stream()
+                    .filter(SkunkcraftsUpdatable.class::isInstance)
+                    .map(SkunkcraftsUpdatable.class::cast)
+                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                    .forEach(updates::add);
+            xPlane.getSceneryManager().getItems().stream()
+                    .map(com.ogerardin.xplane.scenery.SceneryEntry::getSceneryPackage)
+                    .filter(java.util.Objects::nonNull)
+                    .filter(SkunkcraftsUpdatable.class::isInstance)
+                    .map(SkunkcraftsUpdatable.class::cast)
+                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                    .forEach(updates::add);
+            xPlane.getPluginManager().getItems().stream()
+                    .filter(SkunkcraftsUpdatable.class::isInstance)
+                    .map(SkunkcraftsUpdatable.class::cast)
+                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                    .forEach(updates::add);
+        }
+        
+        boolean hasUpdates = !updates.isEmpty();
+        updatesSection.setVisible(hasUpdates);
+        updatesSection.setManaged(hasUpdates);
+        
+        if (!hasUpdates) return;
+        
+        updatesContent.getChildren().clear();
+        
+        // Group by category
+        List<SkunkcraftsUpdatable> aircraftUpdates = updates.stream()
+                .filter(u -> u instanceof Aircraft)
+                .toList();
+        List<SkunkcraftsUpdatable> sceneryUpdates = updates.stream()
+                .filter(u -> u instanceof SceneryPackage)
+                .toList();
+        List<SkunkcraftsUpdatable> pluginUpdates = updates.stream()
+                .filter(u -> u instanceof Plugin)
+                .toList();
+        
+        if (!aircraftUpdates.isEmpty()) {
+            updatesContent.getChildren().add(createCategorySection("Aircraft", aircraftUpdates));
+        }
+        if (!sceneryUpdates.isEmpty()) {
+            updatesContent.getChildren().add(createCategorySection("Scenery", sceneryUpdates));
+        }
+        if (!pluginUpdates.isEmpty()) {
+            updatesContent.getChildren().add(createCategorySection("Plugins", pluginUpdates));
+        }
+    }
+
+    private VBox createCategorySection(String category, List<SkunkcraftsUpdatable> updates) {
+        VBox section = new VBox(8);
+        section.getStyleClass().add("updates-category");
+        
+        Label categoryLabel = new Label(category);
+        categoryLabel.getStyleClass().add("updates-category-title");
+        section.getChildren().add(categoryLabel);
+        
+        for (SkunkcraftsUpdatable updatable : updates) {
+            section.getChildren().add(createUpdateItem(updatable));
+        }
+        
+        return section;
+    }
+
+    private HBox createUpdateItem(SkunkcraftsUpdatable updatable) {
+        HBox item = new HBox(12);
+        item.getStyleClass().add("updates-item");
+        item.setPadding(new Insets(8, 12, 8, 12));
+        
+        Label nameLabel = new Label(updatable.getName());
+        nameLabel.getStyleClass().add("updates-item-name");
+        HBox.setHgrow(nameLabel, javafx.scene.layout.Priority.ALWAYS);
+        
+        String currentVersion = updatable.getVersion();
+        String latestVersion = updatable.getSkunkcraftsLatestVersion();
+        Label versionLabel = new Label(
+                (currentVersion != null ? currentVersion : "?") + " → " + latestVersion
+        );
+        versionLabel.getStyleClass().add("updates-item-version");
+        
+        Button updateButton = new Button("Update");
+        updateButton.getStyleClass().add("updates-item-button");
+        updateButton.setOnAction(__ -> {
+            new SkunkcraftsUpdateWizard(updatable).showAndWait();
+            // reload the owning manager: re-reads versions from disk, re-triggers update checks
+            if (updatable instanceof Aircraft) {
+                xPlane.getAircraftManager().reload();
+            } else if (updatable instanceof SceneryPackage) {
+                xPlane.getSceneryManager().reload();
+            } else if (updatable instanceof Plugin) {
+                xPlane.getPluginManager().reload();
+            }
+        });
+        
+        item.getChildren().addAll(nameLabel, versionLabel, updateButton);
+        return item;
     }
 
     private void checkUpdates(XPlane xPlane) {

@@ -45,6 +45,7 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="aircraftCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Aircraft"/>
+                        <Label fx:id="aircraftUpdateBadge" styleClass="dashboard-tile-badge" visible="false" managed="false"/>
                     </VBox>
                 </graphic>
             </Button>
@@ -54,6 +55,7 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="sceneryCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Scenery"/>
+                        <Label fx:id="sceneryUpdateBadge" styleClass="dashboard-tile-badge" visible="false" managed="false"/>
                     </VBox>
                 </graphic>
             </Button>
@@ -72,9 +74,15 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="pluginsCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Plugins"/>
+                        <Label fx:id="pluginsUpdateBadge" styleClass="dashboard-tile-badge" visible="false" managed="false"/>
                     </VBox>
                 </graphic>
             </Button>
         </HBox>
+
+        <VBox fx:id="updatesSection" styleClass="updates-section" visible="false" managed="false" spacing="12.0">
+            <Label styleClass="dashboard-section-title" text="Updates Available"/>
+            <VBox fx:id="updatesContent" styleClass="updates-content" spacing="8.0"/>
+        </VBox>
     </VBox>
 </ScrollPane>

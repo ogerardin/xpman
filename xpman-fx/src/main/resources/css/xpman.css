@@ -343,8 +343,77 @@
     -fx-text-fill: -color-fg-muted;
 }
 
+.dashboard-tile-badge {
+    -fx-font-size: 0.85em;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-warning-emphasis;
+    -fx-background-color: -color-warning-muted;
+    -fx-background-radius: 10px;
+    -fx-padding: 2px 8px;
+}
+
 .dashboard-primary-button:disabled {
     -fx-opacity: 0.5;
+}
+
+/* --- Updates section --- */
+.updates-section {
+    -fx-padding: 12px 0 0 0;
+}
+
+.updates-content {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 12px;
+}
+
+.updates-category {
+    -fx-padding: 8px 0;
+}
+
+.updates-category-title {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+    -fx-padding: 0 0 4px 0;
+}
+
+.updates-item {
+    -fx-background-color: -color-bg-inset;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-alignment: center-left;
+}
+
+.updates-item-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.updates-item-version {
+    -fx-font-size: 0.9em;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.updates-item-button {
+    -fx-background-color: -color-accent-muted;
+    -fx-text-fill: -color-fg-emphasis;
+    -fx-border-color: -color-accent-emphasis;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 4px 12px;
+    -fx-cursor: hand;
+}
+
+.updates-item-button:hover {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-text-fill: -color-fg-emphasis;
 }
 
 /* --- Aircraft card grid --- */
