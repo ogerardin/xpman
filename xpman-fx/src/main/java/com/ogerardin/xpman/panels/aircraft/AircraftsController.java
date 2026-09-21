@@ -84,6 +84,7 @@ public class AircraftsController extends Controller {
                 XPlane::getAircraftManager,
                 UiAircraft::new
         );
+        uiItems.getLoadingProperty().addListener(__ -> updateCards());
         filteredUiItems = new FilteredList<>(uiItems);
         filteredUiItems.predicateProperty().bind(
                 Bindings.createObjectBinding(this::combinedPredicate, filterCombo.valueProperty(), searchText));

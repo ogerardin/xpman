@@ -12,7 +12,11 @@ import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
@@ -21,6 +25,7 @@ import java.util.List;
 public class PluginsController extends Controller {
 
     private final XPlaneProperty xPlaneProperty;
+    private final BooleanProperty loading = new SimpleBooleanProperty();
 
     @FXML
     private TreeTableView<PluginRow> pluginTable;
@@ -35,7 +40,9 @@ public class PluginsController extends Controller {
     @FXML
     public void initialize() {
         pluginTable.setRoot(new TreeItem<>());
-        pluginTable.setPlaceholder(new EmptyState("fth-package", "No plugins to show"));
+        pluginTable.placeholderProperty().bind(Bindings.when(loading)
+                .then((Node) EmptyState.loading("Loading plugins..."))
+                .otherwise(new EmptyState("fth-package", "No plugins to show")));
         pluginTable.setRowFactory(pluginRowFactory);
 
         xPlaneProperty.addListener((__, ___, xPlane) -> {
@@ -54,8 +61,14 @@ public class PluginsController extends Controller {
     private void onPluginManagerEvent(ManagerEvent<Plugin> event) {
         Platform.runLater(() -> {
             switch (event.getType()) {
-                case LOADING -> pluginTable.getRoot().getChildren().clear();
-                case LOADED -> rebuildTree(event.getItems());
+                case LOADING -> {
+                    loading.set(true);
+                    pluginTable.getRoot().getChildren().clear();
+                }
+                case LOADED -> {
+                    loading.set(false);
+                    rebuildTree(event.getItems());
+                }
             }
         });
     }
