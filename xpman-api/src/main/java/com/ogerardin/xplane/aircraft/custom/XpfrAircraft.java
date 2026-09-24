@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -56,7 +57,7 @@ public class XpfrAircraft extends Aircraft {
                 super.getLinks(),
                 Maps.mapOf(
                         "Aircraft detailed sheet on xpfr.org",
-                        Urls.url(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
+                        Urls.url(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getVersion(), StandardCharsets.UTF_8)))
                 )
         );
     }
