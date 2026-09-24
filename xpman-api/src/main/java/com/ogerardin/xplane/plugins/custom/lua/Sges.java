@@ -7,7 +7,12 @@ import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.extern.slf4j.Slf4j;
 
+import com.ogerardin.xplane.util.Maps;
+import com.ogerardin.xplane.util.Urls;
+import lombok.SneakyThrows;
+
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -85,6 +90,15 @@ public class Sges extends FlyWithLuaScript {
             log.debug("Failed to scan for manuals in {}", scriptFolder, e);
         }
         return manuals;
+    }
+
+    @SneakyThrows
+    @Override
+    public Map<String, URL> getLinks() {
+        return Maps.mapOf(
+                "Plugin page on X-Plane.org",
+                Urls.url("https://forums.x-plane.org/files/file/62296-simple-ground-equipment-services-low-tech-services/")
+        );
     }
 
     /**

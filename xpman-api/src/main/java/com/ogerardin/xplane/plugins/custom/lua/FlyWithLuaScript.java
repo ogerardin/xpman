@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -52,6 +53,10 @@ public class FlyWithLuaScript implements Inspectable, Uninstallable {
      * Default implementation returns an empty map; subclasses override to provide documentation.
      */
     public Map<String, Path> getManuals() {
+        return Map.of();
+    }
+
+    public Map<String, URL> getLinks() {
         return Map.of();
     }
     

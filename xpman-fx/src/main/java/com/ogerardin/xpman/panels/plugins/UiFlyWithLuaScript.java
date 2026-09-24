@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
+import java.net.URL;
 import java.nio.file.Path;
 
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
@@ -58,6 +59,11 @@ public class UiFlyWithLuaScript implements PluginRow {
     @ForEach(group = "Manuals", iterable = "manuals.entrySet()", itemLabel = "#item.key")
     public void openManual(@Value("#item.value") Path path) {
         Platforms.getCurrent().openFile(path);
+    }
+
+    @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
+    public void openLink(@Value("#item.value") URL url) {
+        Platforms.getCurrent().openUrl(url);
     }
 
     @Label("'Uninstall script'")
