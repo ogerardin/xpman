@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PluginsController extends Controller {
@@ -75,7 +76,7 @@ public class PluginsController extends Controller {
 
     private void rebuildTree(List<Plugin> plugins) {
         pluginRowFactory.clearCache();
-        TreeItem<PluginRow> root = new TreeItem<>();
+        List<TreeItem<PluginRow>> items = new ArrayList<>();
 
         for (Plugin plugin : plugins) {
             UiPlugin uiPlugin = new UiPlugin(plugin);
@@ -84,16 +85,16 @@ public class PluginsController extends Controller {
             if (plugin instanceof FlyWithLua flyWithLua) {
                 List<FlyWithLuaScript> scripts = flyWithLua.getScripts();
                 for (FlyWithLuaScript script : scripts) {
-                    UiFlyWithLuaScript uiScript = new UiFlyWithLuaScript(script);
-                    pluginItem.getChildren().add(new TreeItem<>(uiScript));
+                    pluginItem.getChildren().add(new TreeItem<>(new UiFlyWithLuaScript(script)));
                 }
                 pluginItem.setExpanded(true);
+                pluginItem.expandedProperty().addListener(__ -> Platform.runLater(pluginTable::refresh));
             }
 
-            root.getChildren().add(pluginItem);
+            items.add(pluginItem);
         }
 
-        pluginTable.setRoot(root);
+        pluginTable.getRoot().getChildren().setAll(items);
     }
 
     public void reload() {
