@@ -37,6 +37,11 @@ public class UiFlyWithLuaScript implements PluginRow {
     }
 
     @Override
+    public boolean isUpdateAvailable() {
+        return false;
+    }
+
+    @Override
     public String getLatestVersion() {
         return null;
     }

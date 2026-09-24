@@ -70,6 +70,11 @@ public class AircraftCardView extends VBox {
                 .filter(v -> !v.isBlank())
                 .map(AircraftCardView::badge)
                 .ifPresent(badges.getChildren()::add);
+        if (uiAircraft.isSkunkcraftsUpdateAvailable()) {
+            Label updateBadge = new Label("Update available");
+            updateBadge.getStyleClass().add("aircraft-card-update-badge");
+            badges.getChildren().add(updateBadge);
+        }
         int liveryCount = uiAircraft.getAircraft().getLiveries().size();
         if (liveryCount > 0) {
             Button liveryButton = new Button(liveryCount + " liveries");

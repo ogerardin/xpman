@@ -3,6 +3,7 @@
 
 <?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanTreeCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.cell_factory.PluginIconTreeCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.PluginUpdateTreeCellFactory?>
 <?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -28,6 +29,14 @@
               </cellValueFactory>
               <cellFactory>
                   <PluginIconTreeCellFactory/>
+              </cellFactory>
+          </TreeTableColumn>
+          <TreeTableColumn editable="false" prefWidth="40.0" sortable="false" text="">
+              <cellValueFactory>
+                  <TreeItemPropertyValueFactory property="updateAvailable"/>
+              </cellValueFactory>
+              <cellFactory>
+                  <PluginUpdateTreeCellFactory/>
               </cellFactory>
           </TreeTableColumn>
           <TreeTableColumn prefWidth="80.0" text="Enabled">

@@ -13,6 +13,8 @@ public interface PluginRow {
     
     String getLatestVersion();
     
+    boolean isUpdateAvailable();
+    
     boolean isEnabled();
     
     boolean getSystem();

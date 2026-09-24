@@ -45,7 +45,7 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="aircraftCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Aircraft"/>
-                        <Label fx:id="aircraftUpdateBadge" styleClass="dashboard-tile-badge" visible="false" managed="false"/>
+                        <Label fx:id="aircraftUpdateBadge" styleClass="dashboard-tile-badge" visible="false"/>
                     </VBox>
                 </graphic>
             </Button>
@@ -55,7 +55,7 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="sceneryCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Scenery"/>
-                        <Label fx:id="sceneryUpdateBadge" styleClass="dashboard-tile-badge" visible="false" managed="false"/>
+                        <Label fx:id="sceneryUpdateBadge" styleClass="dashboard-tile-badge" visible="false"/>
                     </VBox>
                 </graphic>
             </Button>
@@ -65,6 +65,7 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="navDataCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Nav data"/>
+                        <Label styleClass="dashboard-tile-badge" visible="false"/>
                     </VBox>
                 </graphic>
             </Button>
@@ -74,7 +75,7 @@
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="pluginsCount" styleClass="dashboard-tile-count" text="—"/>
                         <Label styleClass="dashboard-tile-label" text="Plugins"/>
-                        <Label fx:id="pluginsUpdateBadge" styleClass="dashboard-tile-badge" visible="false" managed="false"/>
+                        <Label fx:id="pluginsUpdateBadge" styleClass="dashboard-tile-badge" visible="false"/>
                     </VBox>
                 </graphic>
             </Button>

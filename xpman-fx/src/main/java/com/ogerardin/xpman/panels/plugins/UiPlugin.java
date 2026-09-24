@@ -30,6 +30,11 @@ public class UiPlugin implements PluginRow {
         return false;
     }
 
+    @Override
+    public boolean isUpdateAvailable() {
+        return plugin.isSkunkcraftsUpdateAvailable();
+    }
+
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(plugin.getXplFile());

@@ -99,15 +99,12 @@ public class HomeController {
         // Bind badge visibility and text to update counts
         aircraftUpdateBadge.textProperty().bind(aircraftUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
         aircraftUpdateBadge.visibleProperty().bind(aircraftUpdateCount.greaterThan(0));
-        aircraftUpdateBadge.managedProperty().bind(aircraftUpdateCount.greaterThan(0));
         
         sceneryUpdateBadge.textProperty().bind(sceneryUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
         sceneryUpdateBadge.visibleProperty().bind(sceneryUpdateCount.greaterThan(0));
-        sceneryUpdateBadge.managedProperty().bind(sceneryUpdateCount.greaterThan(0));
         
         pluginsUpdateBadge.textProperty().bind(pluginsUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
         pluginsUpdateBadge.visibleProperty().bind(pluginsUpdateCount.greaterThan(0));
-        pluginsUpdateBadge.managedProperty().bind(pluginsUpdateCount.greaterThan(0));
     }
 
     private void updateDisplay(XPlane xPlane) {

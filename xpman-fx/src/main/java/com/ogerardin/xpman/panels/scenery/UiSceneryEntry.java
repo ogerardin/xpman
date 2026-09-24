@@ -26,6 +26,11 @@ public class UiSceneryEntry {
         return sceneryClass.getName();
     }
 
+    public boolean isUpdateAvailable() {
+        return sceneryEntry.getSceneryPackage() != null
+                && sceneryEntry.getSceneryPackage().isSkunkcraftsUpdateAvailable();
+    }
+
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     @EnabledIf("sceneryPackage != null")
     public void reveal() {

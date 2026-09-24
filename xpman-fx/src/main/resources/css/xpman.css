@@ -352,6 +352,19 @@
     -fx-padding: 2px 8px;
 }
 
+.aircraft-card-update-badge {
+    -fx-font-size: 0.85em;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-warning-emphasis;
+    -fx-background-color: -color-warning-muted;
+    -fx-background-radius: 10px;
+    -fx-padding: 2px 8px;
+}
+
+.update-badge-icon {
+    -fx-icon-color: -color-warning-emphasis;
+}
+
 .dashboard-primary-button:disabled {
     -fx-opacity: 0.5;
 }
