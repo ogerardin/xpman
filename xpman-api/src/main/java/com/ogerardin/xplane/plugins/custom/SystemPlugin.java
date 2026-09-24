@@ -2,7 +2,6 @@ package com.ogerardin.xplane.plugins.custom;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.Plugin;
-import com.ogerardin.xplane.util.IntrospectionHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -21,7 +20,7 @@ public class SystemPlugin extends Plugin {
 
     public SystemPlugin(XPlane xPlane, Path xplFile) throws InstantiationException {
         super(xPlane, xplFile);
-        require(isSystemPlugin(xplFile));
+        require(isKnownSystemPlugin(xplFile));
     }
 
     @Override
@@ -29,7 +28,7 @@ public class SystemPlugin extends Plugin {
         return true;
     }
 
-    private static boolean isSystemPlugin(Path xplFile) {
+    private static boolean isKnownSystemPlugin(Path xplFile) {
         String baseFolderName = getBaseFolder(xplFile).getFileName().toString();
         return SYSTEM_PLUGIN_NAMES.contains(baseFolderName);
     }
