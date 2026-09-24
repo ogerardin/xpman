@@ -128,11 +128,10 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
         return cfg != null && cfg.locked();
     }
 
-    @Override
-    public String getSkunkcraftsLatestVersion() {
-        if (!isSkunkcraftsUpdatable()) return null;
-        return SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl());
-    }
+    @Getter(lazy = true)
+    private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
+            ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
+            : null;
 
     @Override
     public boolean isSkunkcraftsUpdateAvailable() {
