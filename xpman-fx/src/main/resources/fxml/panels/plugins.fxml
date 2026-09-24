@@ -39,7 +39,7 @@
                   <PluginUpdateTreeCellFactory/>
               </cellFactory>
           </TreeTableColumn>
-          <TreeTableColumn prefWidth="80.0" text="Enabled">
+          <TreeTableColumn editable="false" prefWidth="80.0" sortable="false" text="Enabled">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="enabled" />
               </cellValueFactory>
@@ -47,22 +47,22 @@
                   <BooleanTreeCellFactory/>
               </cellFactory>
           </TreeTableColumn>
-          <TreeTableColumn prefWidth="150.0" text="Name">
+          <TreeTableColumn editable="false" prefWidth="150.0" sortable="false" text="Name">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="name" />
               </cellValueFactory>
           </TreeTableColumn>
-          <TreeTableColumn prefWidth="300.0" text="Description">
+          <TreeTableColumn editable="false" prefWidth="300.0" sortable="false" text="Description">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="desc" />
               </cellValueFactory>
           </TreeTableColumn>
-          <TreeTableColumn prefWidth="150.0" text="Version">
+          <TreeTableColumn editable="false" prefWidth="150.0" sortable="false" text="Version">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="version" />
               </cellValueFactory>
           </TreeTableColumn>
-          <TreeTableColumn prefWidth="150.0" text="Latest version">
+          <TreeTableColumn editable="false" prefWidth="150.0" sortable="false" text="Latest version">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="latestVersion" />
               </cellValueFactory>
