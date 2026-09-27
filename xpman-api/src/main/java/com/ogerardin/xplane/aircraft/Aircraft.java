@@ -11,11 +11,7 @@ import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
-import com.ogerardin.xplane.skunkcrafts.WhitelistEntry;
-import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -114,46 +110,17 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
     }
 
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getAcfFile().getFile().getParent());
+    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
 
     @Override
-    public boolean isSkunkcraftsUpdatable() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
-        return cfg != null && !cfg.disabled() && !cfg.locked() && cfg.moduleUrl() != null;
-    }
-
-    @Override
-    public boolean isSkunkcraftsLocked() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
-        return cfg != null && cfg.locked();
+    public Path getSkunkcraftsFolder() {
+        return getAcfFile().getFile().getParent();
     }
 
     @Getter(lazy = true)
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
             : null;
-
-    @Override
-    public boolean isSkunkcraftsUpdateAvailable() {
-        String latest = getSkunkcraftsLatestVersion();
-        return latest != null && !Objects.equals(getVersion(), latest);
-    }
-
-    @Override
-    public SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
-        if (!isSkunkcraftsUpdatable()) {
-            return new SkunkcraftsUpdateSummary(0, 0);
-        }
-        return SkunkcraftsUpdater.computeFilesToUpdateSummary(getAcfFile().getFile().getParent(), getSkunkcraftsConfig());
-    }
-
-    @Override
-    public void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
-        if (!isSkunkcraftsUpdatable()) {
-            throw new SkunkcraftsUpdateException("Aircraft is not Skunkcrafts-updatable");
-        }
-        SkunkcraftsUpdater.applyUpdate(getAcfFile().getFile().getParent(), getSkunkcraftsConfig(), progress);
-    }
 
     public boolean isExtraAircraft() {
         return getAcfFile().getFile().getParent().getFileName().toString().equals("Extra Aircraft");

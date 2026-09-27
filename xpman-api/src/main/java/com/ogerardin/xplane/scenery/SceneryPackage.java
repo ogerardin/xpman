@@ -8,11 +8,8 @@ import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.FileUtils;
-import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,46 +91,17 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
     }
 
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(folder);
+    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
 
     @Override
-    public boolean isSkunkcraftsUpdatable() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
-        return cfg != null && !cfg.disabled() && !cfg.locked() && cfg.moduleUrl() != null;
-    }
-
-    @Override
-    public boolean isSkunkcraftsLocked() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
-        return cfg != null && cfg.locked();
+    public Path getSkunkcraftsFolder() {
+        return folder;
     }
 
     @Getter(lazy = true)
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
             : null;
-
-    @Override
-    public boolean isSkunkcraftsUpdateAvailable() {
-        String latest = getSkunkcraftsLatestVersion();
-        return latest != null && !Objects.equals(getVersion(), latest);
-    }
-
-    @Override
-    public SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
-        if (!isSkunkcraftsUpdatable()) {
-            return new SkunkcraftsUpdateSummary(0, 0);
-        }
-        return SkunkcraftsUpdater.computeFilesToUpdateSummary(folder, getSkunkcraftsConfig());
-    }
-
-    @Override
-    public void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
-        if (!isSkunkcraftsUpdatable()) {
-            throw new SkunkcraftsUpdateException("Scenery is not Skunkcrafts-updatable");
-        }
-        SkunkcraftsUpdater.applyUpdate(folder, getSkunkcraftsConfig(), progress);
-    }
 
     /** An optional URL that points to an icon for this scenery. */
     public URL getIconUrl() {

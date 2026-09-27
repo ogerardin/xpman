@@ -9,12 +9,8 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
-import com.ogerardin.xplane.skunkcrafts.WhitelistEntry;
 import com.ogerardin.xplane.util.platform.Platforms;
-import com.ogerardin.xplane.util.progress.ProgressListener;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -83,50 +79,21 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getBaseFolder());
+    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
 
     public String getLatestVersion() {
         return getSkunkcraftsLatestVersion();
     }
 
     @Override
-    public boolean isSkunkcraftsUpdatable() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
-        return cfg != null && !cfg.disabled() && !cfg.locked() && cfg.moduleUrl() != null;
-    }
-
-    @Override
-    public boolean isSkunkcraftsLocked() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
-        return cfg != null && cfg.locked();
+    public Path getSkunkcraftsFolder() {
+        return getBaseFolder();
     }
 
     @Getter(lazy = true)
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
             : null;
-
-    @Override
-    public boolean isSkunkcraftsUpdateAvailable() {
-        String latest = getSkunkcraftsLatestVersion();
-        return latest != null && !Objects.equals(getVersion(), latest);
-    }
-
-    @Override
-    public SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
-        if (!isSkunkcraftsUpdatable()) {
-            return new SkunkcraftsUpdateSummary(0, 0);
-        }
-        return SkunkcraftsUpdater.computeFilesToUpdateSummary(getBaseFolder(), getSkunkcraftsConfig());
-    }
-
-    @Override
-    public void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
-        if (!isSkunkcraftsUpdatable()) {
-            throw new SkunkcraftsUpdateException("Plugin is not Skunkcrafts-updatable");
-        }
-        SkunkcraftsUpdater.applyUpdate(getBaseFolder(), getSkunkcraftsConfig(), progress);
-    }
 
     public Map<String, URL> getLinks() {
         return Collections.emptyMap();

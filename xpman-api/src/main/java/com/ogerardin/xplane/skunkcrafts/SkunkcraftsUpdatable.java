@@ -1,6 +1,8 @@
 package com.ogerardin.xplane.skunkcrafts;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Objects;
 
 import com.ogerardin.xplane.util.progress.ProgressListener;
 
@@ -16,25 +18,49 @@ public interface SkunkcraftsUpdatable {
     /** Returns the current installed version of this addon, or null if unknown. */
     String getVersion();
 
-    /** Whether this addon has a valid, enabled, non-locked Skunkcrafts config. */
-    boolean isSkunkcraftsUpdatable();
+    /** Returns the addon's base folder, where the Skunkcrafts config file lives. */
+    Path getSkunkcraftsFolder();
 
-    /** Whether this addon is locked by the developer (updates temporarily unavailable). */
-    boolean isSkunkcraftsLocked();
+    /** Returns the lazily-loaded Skunkcrafts config, or null if none. */
+    SkunkcraftsConfig getSkunkcraftsConfig();
 
-    /** Fetches the remote version from the Skunkcrafts module URL (lazy/cached). */
+    /** Returns the lazily-fetched remote version, or null if not updatable. */
     String getSkunkcraftsLatestVersion();
 
+    /** Whether this addon has a valid, enabled, non-locked Skunkcrafts config. */
+    default boolean isSkunkcraftsUpdatable() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && !cfg.disabled() && !cfg.locked() && cfg.moduleUrl() != null;
+    }
+
+    /** Whether this addon is locked by the developer (updates temporarily unavailable). */
+    default boolean isSkunkcraftsLocked() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && cfg.locked();
+    }
+
     /** Whether a newer version is available remotely. */
-    boolean isSkunkcraftsUpdateAvailable();
+    default boolean isSkunkcraftsUpdateAvailable() {
+        String latest = getSkunkcraftsLatestVersion();
+        return latest != null && !Objects.equals(getVersion(), latest);
+    }
 
     /**
      * Fetches the remote whitelist and returns the files to update with their total download size.
-     * This involves network calls to fetch the remote whitelist.
      * @return the summary of files to update, or an empty summary if up to date, not updatable, or on error
      */
-    SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary();
+    default SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
+        if (!isSkunkcraftsUpdatable()) {
+            return new SkunkcraftsUpdateSummary(0, 0);
+        }
+        return SkunkcraftsUpdater.computeFilesToUpdateSummary(getSkunkcraftsFolder(), getSkunkcraftsConfig());
+    }
 
     /** Downloads and applies differential updates for this addon. */
-    void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException;
+    default void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
+        if (!isSkunkcraftsUpdatable()) {
+            throw new SkunkcraftsUpdateException(getClass().getSimpleName() + " is not Skunkcrafts-updatable");
+        }
+        SkunkcraftsUpdater.applyUpdate(getSkunkcraftsFolder(), getSkunkcraftsConfig(), progress);
+    }
 }
