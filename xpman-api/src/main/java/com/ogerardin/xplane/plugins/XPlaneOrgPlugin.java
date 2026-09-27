@@ -59,7 +59,9 @@ public class XPlaneOrgPlugin extends Plugin {
             if (matcher.matches()) {
                 return matcher.group(1);
             }
+            log.warn("No softwareVersion found on page for {} ({})", getName(), xPlaneOrgDownloadPage);
         } catch (IOException | RuntimeException e) {
+            log.warn("Could not determine latest version for {} from {}: {}", getName(), xPlaneOrgDownloadPage, e.getMessage());
             log.debug("Failed to fetch HTML page", e);
         }
         return null;
