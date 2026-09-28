@@ -10,7 +10,7 @@ import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.panels.ManagerItemsObservableList;
 import com.ogerardin.xpman.panels.scenery.rules.SceneryClassesController;
-import com.ogerardin.xpman.scenery_organizer.OtherSceneryClass;
+import com.ogerardin.xpman.scenery_organizer.BuiltinSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
@@ -122,7 +122,7 @@ public class SceneryController extends Controller {
     private SceneryClass sceneryClassOf(SceneryEntry sceneryEntry) {
         return Optional.ofNullable(sceneryEntry.getSceneryPackage())
                 .map(sceneryOrganizer::sceneryClass)
-                .orElse(OtherSceneryClass.INSTANCE);
+                .orElse(BuiltinSceneryClass.OTHER);
     }
 
     public void reload() {
@@ -298,7 +298,9 @@ public class SceneryController extends Controller {
         controller.setSceneryController(this);
         Stage stage = new Stage();
         stage.setTitle("Scenery classes");
-        stage.setScene(new Scene(pane));
+        Scene scene = new Scene(pane);
+        scene.getStylesheets().add(getClass().getResource("/css/xpman.css").toExternalForm());
+        stage.setScene(scene);
         stage.initOwner(mainController.getPrimaryStage());
         stage.show();
     }

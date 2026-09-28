@@ -3,13 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane prefWidth="600.0" prefHeight="450.0" minWidth="400.0" minHeight="300.0"
+<BorderPane prefWidth="760.0" prefHeight="560.0" minWidth="400.0" minHeight="300.0"
             xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.panels.scenery.rules.SceneryClassesController">
     <center>
         <VBox spacing="8.0" style="-fx-padding: 16;">
-            <Label wrapText="true" text="Associate scenery packages to a rank and class by matching the scenery name with a regex."/>
+            <Label wrapText="true" text="Scenery classes in load order. Name-matching (regex) rules are consulted before file-based classes (Airport, Library, Other); position determines rank in scenery_packs.ini."/>
             <fx:include fx:id="rules" source="rules.fxml" VBox.vgrow="ALWAYS"/>
         </VBox>
     </center>

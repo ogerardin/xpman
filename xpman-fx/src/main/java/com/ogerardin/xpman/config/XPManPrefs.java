@@ -1,6 +1,8 @@
 package com.ogerardin.xpman.config;
 
-import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
+import com.google.gson.annotations.JsonAdapter;
+import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.scenery_organizer.SceneryClassesAdapter;
 import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +19,8 @@ public class XPManPrefs extends JfxAppPrefs {
 
     String theme = "dark";
 
-    List<RegexSceneryClass> sceneryClasses;
+    @JsonAdapter(SceneryClassesAdapter.class)
+    List<SceneryClass> sceneryClasses;
 
     public static class StringSet extends HashSet<String> {}
 }

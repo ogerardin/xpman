@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.scenery.rules.RulesController">
+<AnchorPane prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.panels.scenery.rules.RulesController">
     <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <center>
             <TableView fx:id="tableView" BorderPane.alignment="CENTER">
@@ -20,7 +20,7 @@
                             <PropertyValueFactory property="name" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn prefWidth="385.0" text="RegEx" fx:id="regexColumn">
+                    <TableColumn prefWidth="485.0" text="RegEx" fx:id="regexColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="regex" />
                         </cellValueFactory>

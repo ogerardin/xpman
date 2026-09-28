@@ -2,79 +2,81 @@ package com.ogerardin.xpman.scenery_organizer;
 
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Data
-@RequiredArgsConstructor
 public class SceneryOrganizer {
 
-    /** User-defined scenery classes ordered as expected in scenery_packs.ini */
-    private final List<RegexSceneryClass> orderedSceneryClasses;
+    private final List<SceneryClass> orderedSceneryClasses;
 
     public SceneryOrganizer() {
         this(defaultSceneryClasses());
     }
 
-    private static List<RegexSceneryClass> defaultSceneryClasses() {
-        return Arrays.asList(
-                new RegexSceneryClass("Airport", "^(?!Global).*[Aa]irport.*|(.*[^A-Z]|^)[A-Z]{4}[^A-Z].*"),
+    public SceneryOrganizer(List<SceneryClass> classes) {
+        this.orderedSceneryClasses = new ArrayList<>(migrate(classes));
+    }
+
+    private static List<SceneryClass> defaultSceneryClasses() {
+        return new ArrayList<>(List.of(
+                BuiltinSceneryClass.AIRPORT,
                 new RegexSceneryClass("X-Plane Landmark", "X-Plane Landmarks.*"),
                 new RegexSceneryClass("Global Airports", "Global Airports"),
-                new RegexSceneryClass("Overlay scenery", ".*overlay.*|.*world2xplane.*|.*trees.*|.*farms.*|.*osm2xp.*"),
-                new RegexSceneryClass("Mesh scenery", "z\\+.*")
-        );
+                new RegexSceneryClass("Overlay scenery", "(?i)(.*overlay.*|.*world2xplane.*|.*trees.*|.*farms.*|.*osm2xp.*|.*simheaven.*|.*x-world.*|.*x_world.*)"),
+                new RegexSceneryClass("Mesh scenery", "(?i)(z\\+.*|.*ortho4xp.*|.*zortho.*|.*yortho.*|.*\\+[0-9]{2}-[0-9]{3}.*|.*elevation_data.*)"),
+                BuiltinSceneryClass.LIBRARY,
+                BuiltinSceneryClass.OTHER
+        ));
+    }
+
+    private static List<SceneryClass> migrate(List<SceneryClass> classes) {
+        if (classes == null || classes.isEmpty()) {
+            return defaultSceneryClasses();
+        }
+        boolean hasBuiltins = classes.stream().anyMatch(SceneryClass::isBuiltin);
+        if (hasBuiltins) {
+            return classes;
+        }
+        List<SceneryClass> result = new ArrayList<>();
+        result.add(BuiltinSceneryClass.AIRPORT);
+        classes.stream()
+                .filter(c -> !"Airport".equals(c.getName()))
+                .forEach(result::add);
+        result.add(BuiltinSceneryClass.LIBRARY);
+        result.add(BuiltinSceneryClass.OTHER);
+        return result;
     }
 
     /**
-     * @return the {@link SceneryClass} for the specified scenery, determined as follows:
-     * <ol>
-     *     <li>if the scenery is a library, then {@link LibrarySceneryClass}</li>
-     *     <li>otherwise the first item of {@link #orderedSceneryClasses} for which the scenery name matches
-     *     {@link SceneryClass#matches} is true </li>
-     *     <li>in case no match was found, then {@link OtherSceneryClass}</li>
-     * </ol>
+     * @return the {@link SceneryClass} for the specified scenery. Name-based (regex) rules are consulted
+     * first as they are more specific (brand-specific patterns), then file-based (builtin) signals
+     * in list order; fallback is {@link BuiltinSceneryClass#OTHER}. The list position determines
+     * sort rank (load order in scenery_packs.ini) regardless of tier.
      */
     public SceneryClass sceneryClass(SceneryPackage sceneryPackage) {
-        if (sceneryPackage.isLibrary()) {
-            return LibrarySceneryClass.INSTANCE;
-        }
-        final Optional<SceneryClass> sceneryClass = getOrderedSceneryClasses().stream()
+        return Stream.concat(
+                        getOrderedSceneryClasses().stream().filter(c -> !c.isBuiltin()),
+                        getOrderedSceneryClasses().stream().filter(SceneryClass::isBuiltin))
                 .filter(c -> c.matches(sceneryPackage))
                 .findFirst()
-                .map(SceneryClass.class::cast);
-        return sceneryClass.orElse(OtherSceneryClass.INSTANCE);
+                .orElse(BuiltinSceneryClass.OTHER);
     }
 
-    /**
-     * @return the rank of the scenery's class for sorting purposes.
-     */
     public int sceneryClassRank(SceneryPackage sceneryPackage) {
-        SceneryClass sceneryClass = sceneryClass(sceneryPackage);
-
-        if (sceneryClass instanceof OtherSceneryClass) {
-            return 98;
-        } else if (sceneryClass instanceof LibrarySceneryClass) {
-            return 99;
-        }
-        return getOrderedSceneryClasses().indexOf(sceneryClass);
+        int index = getOrderedSceneryClasses().indexOf(sceneryClass(sceneryPackage));
+        return index >= 0 ? index : getOrderedSceneryClasses().size();
     }
 
-    /**
-     * Returns a copy of the specified list of {@link SceneryPackage}s ordered according to the
-     * scenery class rank of its members, as defined by {@link #sceneryClassRank} 
-     */
     public List<SceneryPackage> apply(List<SceneryPackage> sceneryPackages) {
-        // make a copy so we don't sort the original list before the user OKs it
         final ArrayList<SceneryPackage> packages = new ArrayList<>(sceneryPackages);
         packages.sort(Comparator.comparingInt(this::sceneryClassRank));
         return packages;
     }
 
-    public void setOrderedSceneryClasses(List<RegexSceneryClass> sceneryClasses) {
+    public void setOrderedSceneryClasses(List<SceneryClass> sceneryClasses) {
         this.orderedSceneryClasses.clear();
         this.orderedSceneryClasses.addAll(sceneryClasses);
     }
-
 }

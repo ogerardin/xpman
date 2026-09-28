@@ -2,7 +2,7 @@ package com.ogerardin.xpman.panels.scenery.rules;
 
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.panels.scenery.SceneryController;
-import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
+import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -41,7 +41,7 @@ public class SceneryClassesController {
 
     @FXML
     private void save() {
-        List<RegexSceneryClass> classes = rulesController.getItems();
+        List<SceneryClass> classes = rulesController.getItems();
         xpmanFX.getSceneryOrganizer().setOrderedSceneryClasses(classes);
         xpmanFX.getConfig().setSceneryClasses(classes);
         xpmanFX.saveConfig();

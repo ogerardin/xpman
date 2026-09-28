@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.scenery.rules;
 
 import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
+import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.cell_factory.ValidatingEditingCell;
 import javafx.beans.binding.Bindings;
@@ -8,8 +9,10 @@ import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.DefaultStringConverter;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,9 +20,9 @@ import java.util.regex.Pattern;
 public class RulesController {
 
     @FXML
-    private TableView<RegexSceneryClass> tableView;
+    private TableView<SceneryClass> tableView;
     @FXML
-    private TableColumn<RegexSceneryClass, Integer> priorityColumn;
+    private TableColumn<SceneryClass, Integer> priorityColumn;
     @FXML
     private Button upButton;
     @FXML
@@ -27,42 +30,59 @@ public class RulesController {
 
     private SceneryOrganizer sceneryOrganizer;
     @FXML
-    private TableColumn<RegexSceneryClass, String> regexColumn;
+    private TableColumn<SceneryClass, String> regexColumn;
     @FXML
-    private TableColumn<RegexSceneryClass, String> nameColumn;
+    private TableColumn<SceneryClass, String> nameColumn;
     @FXML
     private Button deleteButton;
 
-    public void setItems(List<RegexSceneryClass> items) {
+    public void setItems(List<SceneryClass> items) {
         tableView.getItems().setAll(items);
     }
 
     @FXML
     public void initialize() {
-        // Set rules for up/down buttons
         ReadOnlyIntegerProperty selectedIndexProperty = tableView.getSelectionModel().selectedIndexProperty();
-        // disable up button if top row or no row selected
         upButton.disableProperty().bind(selectedIndexProperty.lessThanOrEqualTo(0));
-        // disable down button if bottom row or no row selected
         downButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
             int index = selectedIndexProperty.get();
             return index < 0 || index + 1 >= tableView.getItems().size();
         }, selectedIndexProperty, tableView.getItems()));
 
-        deleteButton.disableProperty().bind(selectedIndexProperty.lessThan(0));
+        deleteButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+            SceneryClass sel = tableView.getSelectionModel().getSelectedItem();
+            return sel == null || !sel.isEditable();
+        }, tableView.getSelectionModel().selectedItemProperty(), tableView.getItems()));
 
-        // Make regex editable
-        regexColumn.setCellFactory(column -> new ValidatingEditingCell<>(this::isValidRegex));
-        regexColumn.setOnEditCommit(event -> {
-            var item = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            item.setRegex(event.getNewValue());
+        tableView.setRowFactory(tv -> {
+            TableRow<SceneryClass> row = new TableRow<>();
+            row.itemProperty().addListener((__, ___, item) ->
+                    row.setStyle(item != null && item.isBuiltin() ? "-fx-font-style: italic; -fx-opacity: 0.8;" : null));
+            return row;
         });
 
-        // Make name editable
-        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameColumn.setCellFactory(column -> new TextFieldTableCell<SceneryClass, String>(new DefaultStringConverter()) {
+            @Override
+            public void startEdit() {
+                if (!getTableRow().getItem().isEditable()) return;
+                super.startEdit();
+            }
+        });
         nameColumn.setOnEditCommit(event -> {
-            var item = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            var item = (RegexSceneryClass) event.getRowValue();
             item.setName(event.getNewValue());
+        });
+
+        regexColumn.setCellFactory(column -> new ValidatingEditingCell<SceneryClass>(this::isValidRegex) {
+            @Override
+            public void startEdit() {
+                if (!getTableRow().getItem().isEditable()) return;
+                super.startEdit();
+            }
+        });
+        regexColumn.setOnEditCommit(event -> {
+            var item = (RegexSceneryClass) event.getRowValue();
+            item.setRegex(event.getNewValue());
         });
 
         tableView.setEditable(true);
@@ -105,9 +125,7 @@ public class RulesController {
 
     private void moveRow(int delta) {
         int index = tableView.getSelectionModel().getSelectedIndex();
-        // swap items
         tableView.getItems().add(index + delta, tableView.getItems().remove(index));
-        // select item at new position
         tableView.getSelectionModel().clearAndSelect(index + delta);
     }
 
@@ -117,13 +135,12 @@ public class RulesController {
         setItems(sceneryOrganizer.getOrderedSceneryClasses());
     }
 
-     public void setSceneryOrganizer(SceneryOrganizer sceneryOrganizer) {
+    public void setSceneryOrganizer(SceneryOrganizer sceneryOrganizer) {
         this.sceneryOrganizer = sceneryOrganizer;
         setItems(sceneryOrganizer.getOrderedSceneryClasses());
     }
 
-    public List<RegexSceneryClass> getItems() {
+    public List<SceneryClass> getItems() {
         return tableView.getItems();
     }
-
 }
