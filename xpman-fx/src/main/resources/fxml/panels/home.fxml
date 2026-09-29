@@ -29,8 +29,10 @@
             </VBox>
         </HBox>
 
-        <TextFlow fx:id="releaseUpdateTextFlow" styleClass="banner-warning" visible="false" managed="false"/>
-        <TextFlow fx:id="betaUpdateTextFlow" styleClass="banner-warning" visible="false" managed="false"/>
+        <VBox fx:id="xplaneUpdatesSection" styleClass="updates-section" visible="false" managed="false" spacing="12.0">
+            <Label styleClass="dashboard-section-title" text="X-Plane Updates Available"/>
+            <VBox fx:id="xplaneUpdatesContent" styleClass="updates-content" spacing="8.0"/>
+        </VBox>
 
         <Label styleClass="dashboard-section-title" text="Disk usage"/>
         <StackPane styleClass="dashboard-card">

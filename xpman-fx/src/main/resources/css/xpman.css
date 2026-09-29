@@ -414,7 +414,7 @@
 }
 
 .updates-item-button {
-    -fx-background-color: -color-accent-muted;
+    -fx-background-color: -color-accent-emphasis;
     -fx-text-fill: -color-fg-emphasis;
     -fx-border-color: -color-accent-emphasis;
     -fx-border-width: 1px;
@@ -426,7 +426,7 @@
 
 .updates-item-button:hover {
     -fx-background-color: -color-accent-emphasis;
-    -fx-text-fill: -color-fg-emphasis;
+    -fx-opacity: 0.9;
 }
 
 /* --- Aircraft card grid --- */

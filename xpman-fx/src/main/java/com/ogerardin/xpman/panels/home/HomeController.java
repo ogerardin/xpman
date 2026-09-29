@@ -27,10 +27,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 import lombok.extern.slf4j.Slf4j;
-import org.kordamp.ikonli.feather.Feather;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +55,9 @@ public class HomeController {
     @FXML
     private Button startXPlaneButton;
     @FXML
-    private TextFlow releaseUpdateTextFlow;
+    private VBox xplaneUpdatesSection;
     @FXML
-    private TextFlow betaUpdateTextFlow;
+    private VBox xplaneUpdatesContent;
     @FXML
     private Label aircraftCount;
     @FXML
@@ -268,57 +265,59 @@ public class HomeController {
     private VBox createCategorySection(String category, List<SkunkcraftsUpdatable> updates) {
         VBox section = new VBox(8);
         section.getStyleClass().add("updates-category");
-        
+
         Label categoryLabel = new Label(category);
         categoryLabel.getStyleClass().add("updates-category-title");
         section.getChildren().add(categoryLabel);
-        
+
         for (SkunkcraftsUpdatable updatable : updates) {
-            section.getChildren().add(createUpdateItem(updatable));
+            section.getChildren().add(createUpdateRow(
+                    updatable.getName(),
+                    updatable.getVersion(),
+                    updatable.getSkunkcraftsLatestVersion(),
+                    "Update",
+                    () -> {
+                        new SkunkcraftsUpdateWizard(updatable).showAndWait();
+                        if (updatable instanceof Aircraft) {
+                            xPlane.getAircraftManager().reload();
+                        } else if (updatable instanceof SceneryPackage) {
+                            xPlane.getSceneryManager().reload();
+                        } else if (updatable instanceof Plugin) {
+                            xPlane.getPluginManager().reload();
+                        }
+                    }));
         }
-        
+
         return section;
     }
 
-    private HBox createUpdateItem(SkunkcraftsUpdatable updatable) {
+    private HBox createUpdateRow(String name, String currentVersion, String latestVersion,
+                                  String buttonLabel, Runnable action) {
         HBox item = new HBox(12);
         item.getStyleClass().add("updates-item");
         item.setPadding(new Insets(8, 12, 8, 12));
-        
-        Label nameLabel = new Label(updatable.getName());
+
+        Label nameLabel = new Label(name);
         nameLabel.getStyleClass().add("updates-item-name");
         HBox.setHgrow(nameLabel, javafx.scene.layout.Priority.ALWAYS);
-        
-        String currentVersion = updatable.getVersion();
-        String latestVersion = updatable.getSkunkcraftsLatestVersion();
+
         Label versionLabel = new Label(
                 (currentVersion != null ? currentVersion : "?") + " → " + latestVersion
         );
         versionLabel.getStyleClass().add("updates-item-version");
-        
-        Button updateButton = new Button("Update");
+
+        Button updateButton = new Button(buttonLabel);
         updateButton.getStyleClass().add("updates-item-button");
-        updateButton.setOnAction(__ -> {
-            new SkunkcraftsUpdateWizard(updatable).showAndWait();
-            // reload the owning manager: re-reads versions from disk, re-triggers update checks
-            if (updatable instanceof Aircraft) {
-                xPlane.getAircraftManager().reload();
-            } else if (updatable instanceof SceneryPackage) {
-                xPlane.getSceneryManager().reload();
-            } else if (updatable instanceof Plugin) {
-                xPlane.getPluginManager().reload();
-            }
-        });
-        
+        updateButton.setOnAction(__ -> action.run());
+
         item.getChildren().addAll(nameLabel, versionLabel, updateButton);
         return item;
     }
 
     private void checkUpdates(XPlane xPlane) {
         final String currentVersion = xPlane.getVersion();
-        if (currentVersion == null) {
-            return;
-        }
+        if (currentVersion == null) return;
+
         UpdateInformation updateInformation = xPlane.getMajorVersion().getUpdateInformation();
         XPlaneReleaseInfo latestFinalReleaseInfo = updateInformation.getLatestFinal();
         XPlaneReleaseInfo latestBetaReleaseInfo = updateInformation.getLatestBeta();
@@ -329,43 +328,34 @@ public class HomeController {
         boolean hasBetaUpdate = !latestBeta.equals(latestFinal) && compareVersions(latestBeta, currentVersion) > 0;
 
         Platform.runLater(() -> {
+            xplaneUpdatesContent.getChildren().clear();
             if (hasReleaseUpdate) {
-                releaseUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Release", latestFinalReleaseInfo, xPlane));
+                xplaneUpdatesContent.getChildren().add(
+                        createXPlaneUpdateRow("Release", currentVersion, latestFinal, latestFinalReleaseInfo, xPlane));
             }
-            releaseUpdateTextFlow.setVisible(hasReleaseUpdate);
-            releaseUpdateTextFlow.setManaged(hasReleaseUpdate);
-
             if (hasBetaUpdate) {
-                betaUpdateTextFlow.getChildren().setAll(buildUpdateMessage("Beta", latestBetaReleaseInfo, xPlane));
+                xplaneUpdatesContent.getChildren().add(
+                        createXPlaneUpdateRow("Beta", currentVersion, latestBeta, latestBetaReleaseInfo, xPlane));
             }
-            betaUpdateTextFlow.setVisible(hasBetaUpdate);
-            betaUpdateTextFlow.setManaged(hasBetaUpdate);
+            boolean hasUpdates = hasReleaseUpdate || hasBetaUpdate;
+            xplaneUpdatesSection.setVisible(hasUpdates);
+            xplaneUpdatesSection.setManaged(hasUpdates);
         });
     }
 
-    private static List<Node> buildUpdateMessage(String versionType, XPlaneReleaseInfo versionInfo, XPlane xPlane) {
-        String version = versionInfo.version();
-        List<Node> nodes = new ArrayList<>();
-        FontIcon warningIcon = new FontIcon(Feather.ALERT_TRIANGLE);
-        warningIcon.getStyleClass().add("warning-icon");
-        nodes.add(warningIcon);
-        nodes.add(new Label(" " + versionType + " " + version + " is available. Run the"));
-        nodes.add(new Hyperlink("X-Plane Installer") {{
-            setOnAction(__ -> {
-                var toolsManager = xPlane.getToolsManager();
-                var xPlaneInstaller = toolsManager.getTool("xplane-installer");
-                UiToolUtil.runTool(xPlane, xPlaneInstaller);
-            });
-        }});
-        nodes.add(new Label("to update."));
-        if (versionInfo.releaseNotesUrl().isPresent()) {
-            nodes.add(new Label(" Read the"));
-            nodes.add(new Hyperlink("Release notes") {{
-                setOnAction(__ -> Platforms.getCurrent().openUrl(versionInfo.releaseNotesUrl().get()));
-            }});
-            nodes.add(new Label("."));
-        }
-        return nodes;
+    private HBox createXPlaneUpdateRow(String label, String currentVersion, String latestVersion,
+                                        XPlaneReleaseInfo releaseInfo, XPlane xPlane) {
+        HBox row = createUpdateRow(label, currentVersion, latestVersion, "Run Installer",
+                () -> {
+                    var xPlaneInstaller = xPlane.getToolsManager().getTool("xplane-installer");
+                    UiToolUtil.runTool(xPlane, xPlaneInstaller);
+                });
+        releaseInfo.releaseNotesUrl().ifPresent(url -> {
+            Hyperlink link = new Hyperlink("Release notes");
+            link.setOnAction(__ -> Platforms.getCurrent().openUrl(url));
+            row.getChildren().add(link);
+        });
+        return row;
     }
 
     /**
