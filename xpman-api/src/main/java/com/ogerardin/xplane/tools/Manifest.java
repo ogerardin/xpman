@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  *  If null, defaults to {@code Resources/tools}. Use {@code "."} for the X-Plane root folder.
  * @param installChecker an additional {@link Predicate} that checks whether the tool is already installed. This can
  *  be used to differentiate between different versions of a tool that have the same executable file name.
- * @param version the version of the tool. If null, the version is extracted from the tool's executable file.
+ * @param version the version of the tool that can be downloaded through the provided links
  */
 @Slf4j
 @With

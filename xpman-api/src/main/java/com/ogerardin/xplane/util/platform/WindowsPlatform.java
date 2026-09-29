@@ -104,7 +104,7 @@ public class WindowsPlatform implements Platform {
                 }
             }
         }
-        return "unknown";
+        return null;
     }
 
     @Override

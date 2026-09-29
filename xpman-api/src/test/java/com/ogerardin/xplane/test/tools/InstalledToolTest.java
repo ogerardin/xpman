@@ -1,0 +1,77 @@
+package com.ogerardin.xplane.test.tools;
+
+import com.ogerardin.xplane.tools.InstalledTool;
+import com.ogerardin.xplane.tools.Manifest;
+import com.ogerardin.xplane.util.platform.Platform;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.nio.file.Path;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+/**
+ * Version resolution for installed tools: extraction is the source of truth (manual installs / self-updates);
+ * placeholder values from app metadata fall back to the manifest version.
+ */
+class InstalledToolTest {
+
+    private static Manifest manifest(String version, Platform platform) {
+        return new Manifest("test", "Test", null, null, version, null, platform,
+                null, null, null, null, null, null);
+    }
+
+    private static Platform platformReturning(String version) {
+        Platform platform = mock(Platform.class);
+        when(platform.getVersion(any())).thenReturn(version);
+        return platform;
+    }
+
+    @Test
+    void extractedRealVersionWinsOverManifest() {
+        Manifest manifest = manifest("3.2e", platformReturning("3.3"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.3"));
+    }
+
+    @Test
+    void placeholderExtractedVersionFallsBackToManifest() {
+        Manifest manifest = manifest("3.2e", platformReturning("0.0.1"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.2e"));
+    }
+
+    @Test
+    void absentExtractedVersionFallsBackToManifest() {
+        Manifest manifest = manifest("3.2e", platformReturning(null));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.2e"));
+    }
+
+    @Test
+    void placeholderExtractedVersionWithNoManifestVersionYieldsNull() {
+        Manifest manifest = manifest(null, platformReturning("0.0.1"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), nullValue());
+    }
+
+    @Test
+    void blankExtractedVersionFallsBackToManifest() {
+        Manifest manifest = manifest("3.2e", platformReturning("  "));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.2e"));
+    }
+
+    @Test
+    void zeroZeroZeroPlaceholderFallsBackToManifest() {
+        Manifest manifest = manifest("1.0.0", platformReturning("0.0.0"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("1.0.0"));
+    }
+
+    @Test
+    void noManifestYieldsNull() {
+        Platform platform = mock(Platform.class);
+        Mockito.lenient().when(platform.getVersion(any())).thenReturn("1.2.3");
+        assertThat(new InstalledTool(Path.of("tool.app")).getVersion(), nullValue());
+    }
+}

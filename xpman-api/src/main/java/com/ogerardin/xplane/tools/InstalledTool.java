@@ -6,7 +6,7 @@ import lombok.NonNull;
 import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Set;
 
 /**
  * A locally installed tool. It may be associated to a {@link Manifest} or not (if it was installed manually).
@@ -65,13 +65,18 @@ public non-sealed class InstalledTool extends Tool {
         return true;
     }
 
+    // ponytail: placeholder versions shipped by tools with unset metadata (e.g. SkunkcraftsUpdater's 0.0.1);
+    // extend as encountered — a genuine 0.0.1 tool would fall back to its manifest version.
+    private static final Set<String> PLACEHOLDER_VERSIONS = Set.of("0.0.0", "0.0.1");
+
     private String loadVersion() {
         Manifest manifest = getManifest();
         if (manifest == null) {
             return null;
         }
-        return Optional.ofNullable(manifest.platform().getVersion(app))
-                .orElse(manifest.version());
+        String version = manifest.platform().getVersion(app);
+        boolean placeholder = version == null || version.isBlank() || PLACEHOLDER_VERSIONS.contains(version);
+        return placeholder ? manifest.version() : version;
     }
 
 
