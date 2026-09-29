@@ -14,8 +14,7 @@ public enum Section {
     AIRCRAFT("Aircraft", "fth-send", "/fxml/panels/aircraft.fxml"),
     SCENERY("Scenery", "fth-map", "/fxml/panels/scenery.fxml"),
     NAV_DATA("Nav data", "fth-navigation", "/fxml/panels/navdata.fxml"),
-    PLUGINS("Plugins", "fth-package", "/fxml/panels/plugins.fxml"),
-    TOOLS("Tools", "fth-tool", "/fxml/tools/tools.fxml");
+    PLUGINS("Plugins", "fth-package", "/fxml/panels/plugins.fxml");
 
     private final String label;
     private final String iconLiteral;

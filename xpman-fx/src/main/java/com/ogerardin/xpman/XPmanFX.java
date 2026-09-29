@@ -10,6 +10,8 @@ import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
+import com.ogerardin.xpman.settings.SettingsCategory;
+import com.ogerardin.xpman.settings.SettingsController;
 import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.shell.SidebarController;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
@@ -27,6 +29,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -249,7 +252,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     /**
-     * Registers Alt+1..6 and Shortcut+1..6 accelerators for direct section navigation.
+     * Registers Alt+1..5 and Shortcut+1..5 accelerators for direct section navigation.
      */
     private void installSectionAccelerators(Scene scene) {
         Section[] sections = Section.values();
@@ -326,7 +329,29 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     public void manageTools() {
-        sidebarController.select(Section.TOOLS);
+        settings(SettingsCategory.TOOLS);
+    }
+
+    @FXML
+    @SneakyThrows
+    public void settings() {
+        settings(SettingsCategory.GENERAL);
+    }
+
+    @SneakyThrows
+    public void settings(SettingsCategory category) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/settings/settings.fxml"));
+        loader.setControllerFactory(this::buildController);
+        Pane pane = loader.load();
+        loader.<SettingsController>getController().select(category);
+        Stage stage = new Stage();
+        stage.setTitle("Settings");
+        Scene scene = new Scene(pane);
+        scene.getStylesheets().add(getClass().getResource("/css/xpman.css").toExternalForm());
+        stage.setScene(scene);
+        stage.initOwner(primaryStage);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
     }
 
     private class RecentMenuItem extends MenuItem {
