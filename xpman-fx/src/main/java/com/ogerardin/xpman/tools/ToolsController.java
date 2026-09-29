@@ -52,9 +52,8 @@ public class ToolsController extends Controller {
         filteredList = new FilteredList<>(uiItems);
         filteredList.addListener((ListChangeListener<UiTool>) __ -> updateCardList());
 
-        // initially display installed tools only (simulate click on "Installed" button)
-        installedButton.setSelected(true);
-        installedButton.fire();
+        // initially display available tools only (simulate click on "Available" button)
+        availableButton.fire();
     }
 
     private void updateCardList() {

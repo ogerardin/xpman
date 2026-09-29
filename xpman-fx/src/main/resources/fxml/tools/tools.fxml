@@ -7,6 +7,9 @@
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.ogerardin.xpman.tools.ToolsController">
+    <fx:define>
+        <ToggleGroup fx:id="toolsFilterGroup"/>
+    </fx:define>
     <top>
         <ToolBar BorderPane.alignment="CENTER">
             <Button mnemonicParsing="false" onAction="#reload" text="Reload">
@@ -15,8 +18,8 @@
             <Separator/>
             <SegmentedButton>
                 <buttons>
-                    <ToggleButton fx:id="installedButton" onAction="#filterInstalled" text="Installed"/>
-                    <ToggleButton fx:id="availableButton" onAction="#filterAvailable" text="Available"/>
+                    <ToggleButton fx:id="availableButton" onAction="#filterAvailable" text="Available" toggleGroup="$toolsFilterGroup"/>
+                    <ToggleButton fx:id="installedButton" onAction="#filterInstalled" text="Installed" toggleGroup="$toolsFilterGroup"/>
                 </buttons>
             </SegmentedButton>
         </ToolBar>
