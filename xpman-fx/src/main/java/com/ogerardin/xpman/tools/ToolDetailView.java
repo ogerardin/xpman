@@ -50,13 +50,18 @@ public class ToolDetailView extends VBox {
         Label nameLabel = new Label(uiTool.getName());
         nameLabel.getStyleClass().add("tool-detail-name");
 
-        Label versionLabel = new Label(uiTool.getVersion() != null ? uiTool.getVersion() : "");
-        versionLabel.getStyleClass().add("tool-detail-version");
+        VBox textContent = new VBox(4, nameLabel);
+        String version = uiTool.getVersion();
+        if (version != null) {
+            Label versionLabel = new Label(version);
+            versionLabel.getStyleClass().add("tool-detail-version");
+            textContent.getChildren().add(versionLabel);
+        }
 
         Label statusLabel = new Label(uiTool.isInstalled() ? "Installed" : "Available");
         statusLabel.getStyleClass().add("tool-detail-status");
+        textContent.getChildren().add(statusLabel);
 
-        VBox textContent = new VBox(4, nameLabel, versionLabel, statusLabel);
         HBox header = new HBox(16, icon, textContent);
         header.getStyleClass().add("tool-detail-header");
         header.setAlignment(Pos.CENTER_LEFT);

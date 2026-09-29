@@ -82,10 +82,13 @@ public class ToolCardView extends HBox {
         descriptionLabel.getStyleClass().add("tool-card-description");
         descriptionLabel.setMaxWidth(Double.MAX_VALUE);
 
-        Label versionLabel = new Label(uiTool.getVersion() != null ? uiTool.getVersion() : "");
-        versionLabel.getStyleClass().add("tool-card-version");
-
-        VBox content = new VBox(4, nameLabel, descriptionLabel, versionLabel);
+        VBox content = new VBox(4, nameLabel, descriptionLabel);
+        String version = uiTool.getVersion();
+        if (version != null) {
+            Label versionLabel = new Label(version);
+            versionLabel.getStyleClass().add("tool-card-version");
+            content.getChildren().add(versionLabel);
+        }
         content.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(content, Priority.ALWAYS);
         return content;
