@@ -16,6 +16,7 @@ import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.shell.SidebarController;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxApp;
+import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import com.ogerardin.xpman.util.jfx.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -351,6 +352,12 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         stage.setScene(scene);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.APPLICATION_MODAL);
+        applyWindowPosition(stage, getConfig().getSettingsPosition());
+        stage.setOnHidden(__ -> {
+            getConfig().setSettingsPosition(new JfxAppPrefs.WindowPosition(
+                    stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()));
+            saveConfig();
+        });
         stage.showAndWait();
     }
 

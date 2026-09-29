@@ -12,7 +12,7 @@ public class JfxAppPrefs {
 
     @Data
     @AllArgsConstructor
-    static class WindowPosition {
+    public static class WindowPosition {
         double x;
         double y;
         double width;

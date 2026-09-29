@@ -19,6 +19,8 @@ public class XPManPrefs extends JfxAppPrefs {
 
     String theme = "dark";
 
+    WindowPosition settingsPosition;
+
     @JsonAdapter(SceneryClassesAdapter.class)
     List<SceneryClass> sceneryClasses;
 

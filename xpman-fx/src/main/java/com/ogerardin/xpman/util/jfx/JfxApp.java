@@ -96,12 +96,15 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     protected abstract void setupStage(Stage primaryStage);
 
     protected void restoreWindowPosition(Stage stage) {
-        final JfxAppPrefs.WindowPosition lastPosition = getConfig().getLastPosition();
-        if (lastPosition != null) {
-            stage.setX(lastPosition.getX());
-            stage.setY(lastPosition.getY());
-            stage.setWidth(lastPosition.getWidth());
-            stage.setHeight(lastPosition.getHeight());
+        applyWindowPosition(stage, getConfig().getLastPosition());
+    }
+
+    protected static void applyWindowPosition(Stage stage, JfxAppPrefs.WindowPosition position) {
+        if (position != null) {
+            stage.setX(position.getX());
+            stage.setY(position.getY());
+            stage.setWidth(position.getWidth());
+            stage.setHeight(position.getHeight());
         }
     }
 
