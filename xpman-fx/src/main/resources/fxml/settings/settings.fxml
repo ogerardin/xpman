@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ogerardin.xpman.settings.SettingsController"
+            styleClass="settings-dialog" prefWidth="800.0" prefHeight="550.0">
+    <left>
+        <TreeView fx:id="categoryTree" styleClass="settings-category-tree" prefWidth="220.0" showRoot="false"/>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea"/>
+    </center>
+    <bottom>
+        <HBox styleClass="settings-button-bar">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button mnemonicParsing="false" onAction="#ok" text="OK" defaultButton="true"/>
+            <Button mnemonicParsing="false" onAction="#cancel" text="Cancel" cancelButton="true"/>
+        </HBox>
+    </bottom>
+</BorderPane>

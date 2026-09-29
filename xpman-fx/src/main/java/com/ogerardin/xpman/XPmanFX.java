@@ -188,7 +188,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    private <C> C buildController(Class<C> type) {
+    public <C> C buildController(Class<C> type) {
         if (type == this.getClass()) {
             // don't reinstantiate this class, use the existing instance
             return (C) this;
