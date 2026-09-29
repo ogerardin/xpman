@@ -15,8 +15,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * Controller of the main window sidebar: the navigation section list, plus a footer with
- * the theme toggle, About action, and app version. Exposes the selected section as a
- * property that {@link XPmanFX} observes to swap the content area.
+ * the theme toggle, Settings and About actions, and app version. Exposes the selected
+ * section as a property that {@link XPmanFX} observes to swap the content area.
  */
 @RequiredArgsConstructor
 public class SidebarController {
@@ -96,6 +96,11 @@ public class SidebarController {
     @FXML
     private void about() {
         xpmanFX.about();
+    }
+
+    @FXML
+    private void settings() {
+        xpmanFX.settings();
     }
 
     private void updateThemeButton() {
