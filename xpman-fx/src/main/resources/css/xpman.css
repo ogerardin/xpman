@@ -193,6 +193,25 @@
     -fx-padding: 2px 10px;
 }
 
+/* --- Settings dialog --- */
+.settings-dialog .settings-category-tree {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 0 1 0 0;
+}
+
+.settings-dialog .settings-button-bar {
+    -fx-padding: 8px 12px;
+    -fx-spacing: 8px;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 1 0 0 0;
+}
+
+.settings-dialog .settings-pane {
+    -fx-padding: 12px;
+    -fx-spacing: 8px;
+}
+
 /* --- Empty state placeholder (icon + message) --- */
 .empty-state {
     -fx-alignment: center;
