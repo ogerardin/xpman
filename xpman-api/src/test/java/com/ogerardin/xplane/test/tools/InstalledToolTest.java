@@ -16,8 +16,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Version resolution for installed tools: extraction is the source of truth (manual installs / self-updates);
- * placeholder values from app metadata fall back to the manifest version.
+ * Version resolution for installed tools: extraction is the only source of truth (manual installs / self-updates);
+ * placeholder values from app metadata result in no version display (no manifest fallback).
  */
 class InstalledToolTest {
 
@@ -39,15 +39,15 @@ class InstalledToolTest {
     }
 
     @Test
-    void placeholderExtractedVersionFallsBackToManifest() {
+    void placeholderExtractedVersionYieldsNull() {
         Manifest manifest = manifest("3.2e", platformReturning("0.0.1"));
-        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.2e"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), nullValue());
     }
 
     @Test
-    void absentExtractedVersionFallsBackToManifest() {
+    void absentExtractedVersionYieldsNull() {
         Manifest manifest = manifest("3.2e", platformReturning(null));
-        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.2e"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), nullValue());
     }
 
     @Test
@@ -57,15 +57,15 @@ class InstalledToolTest {
     }
 
     @Test
-    void blankExtractedVersionFallsBackToManifest() {
+    void blankExtractedVersionYieldsNull() {
         Manifest manifest = manifest("3.2e", platformReturning("  "));
-        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("3.2e"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), nullValue());
     }
 
     @Test
-    void zeroZeroZeroPlaceholderFallsBackToManifest() {
+    void zeroZeroZeroPlaceholderYieldsNull() {
         Manifest manifest = manifest("1.0.0", platformReturning("0.0.0"));
-        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), is("1.0.0"));
+        assertThat(new InstalledTool(Path.of("tool.app"), manifest).getVersion(), nullValue());
     }
 
     @Test
