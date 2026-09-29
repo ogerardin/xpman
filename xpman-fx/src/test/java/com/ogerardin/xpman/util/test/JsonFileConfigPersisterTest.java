@@ -54,6 +54,34 @@ class JsonFileConfigPersisterTest {
         }
     }
 
+    @Test
+    void confirmQuitDefaultsToTrueWhenMissingFromPrefs() throws IOException {
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{\"lastXPlanePath\":\"/X-Plane 12\"}");
+            JsonFileConfigPersister<XPManPrefs> prefsManager = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            assertThat(prefsManager.getConfig().isConfirmQuit(), is(true));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    void confirmQuitRoundTrips() throws IOException {
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{}");
+            JsonFileConfigPersister<XPManPrefs> saver = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            saver.getConfig().setConfirmQuit(false);
+            saver.save();
+
+            JsonFileConfigPersister<XPManPrefs> loader = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            assertThat(loader.getConfig().isConfirmQuit(), is(false));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
     @EqualsAndHashCode(callSuper = true)
     @Data
     public static class TestPrefs extends JfxAppPrefs {

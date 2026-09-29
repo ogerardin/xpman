@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class JfxAppPrefs {
 
+    boolean confirmQuit = true;
+
     WindowPosition lastPosition;
 
     @Data

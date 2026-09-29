@@ -118,6 +118,10 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     @FXML
     protected void quit() {
+        if (!getConfig().isConfirmQuit()) {
+            quitNow();
+            return;
+        }
         Alert alert = new Alert(CONFIRMATION, "Do you really want to quit?");
         alert.initOwner(primaryStage);
         alert.showAndWait()
