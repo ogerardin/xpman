@@ -30,6 +30,7 @@ module xpman.fx {
     exports com.ogerardin.xpman.util.jfx.cell_factory;
     exports com.ogerardin.xpman.util.jfx.row_factory;
     exports com.ogerardin.xpman.scenery_organizer to xpman.fx.test;
+    exports com.ogerardin.xpman.settings to xpman.fx.test;
 
     opens com.ogerardin.xpman to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.config to com.google.gson;
@@ -44,7 +45,7 @@ module xpman.fx {
     opens com.ogerardin.xpman.panels.scenery to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.scenery.rules to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.scenery_organizer;
-    opens com.ogerardin.xpman.settings to javafx.base, javafx.fxml;
+    opens com.ogerardin.xpman.settings to javafx.base, javafx.fxml, com.google.gson;
     opens com.ogerardin.xpman.shell to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.tools to javafx.fxml, javafx.base;
     opens com.ogerardin.xpman.util.jfx to javafx.base, javafx.fxml, com.google.gson;

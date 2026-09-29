@@ -343,7 +343,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     @SneakyThrows
     public void settings() {
-        settings(SettingsCategory.GENERAL);
+        settings(Optional.ofNullable(getConfig().getSettingsCategory()).orElse(SettingsCategory.GENERAL));
     }
 
     @SneakyThrows

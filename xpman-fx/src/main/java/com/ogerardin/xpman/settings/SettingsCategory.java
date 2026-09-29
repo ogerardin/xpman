@@ -16,4 +16,9 @@ public enum SettingsCategory {
     private final String label;
     private final String iconLiteral;
     private final String contentFxml;
+
+    @Override
+    public String toString() {
+        return label;
+    }
 }

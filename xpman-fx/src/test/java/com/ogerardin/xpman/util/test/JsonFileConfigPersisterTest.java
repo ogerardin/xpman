@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.test;
 
 import com.ogerardin.xpman.config.XPManPrefs;
+import com.ogerardin.xpman.settings.SettingsCategory;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import lombok.Data;
@@ -77,6 +78,22 @@ class JsonFileConfigPersisterTest {
 
             JsonFileConfigPersister<XPManPrefs> loader = new JsonFileConfigPersister<>(XPManPrefs.class, file);
             assertThat(loader.getConfig().isConfirmQuit(), is(false));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    void settingsCategoryRoundTrips() throws IOException {
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{}");
+            JsonFileConfigPersister<XPManPrefs> saver = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            saver.getConfig().setSettingsCategory(SettingsCategory.TOOLS);
+            saver.save();
+
+            JsonFileConfigPersister<XPManPrefs> loader = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            assertThat(loader.getConfig().getSettingsCategory(), is(SettingsCategory.TOOLS));
         } finally {
             Files.deleteIfExists(file);
         }

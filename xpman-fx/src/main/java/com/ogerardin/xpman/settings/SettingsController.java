@@ -48,7 +48,11 @@ public class SettingsController {
         }
         categoryTree.setRoot(root);
         categoryTree.getSelectionModel().selectedItemProperty().addListener((__, ___, item) ->
-                Optional.ofNullable(item).map(TreeItem::getValue).ifPresent(this::showCategory));
+                Optional.ofNullable(item).map(TreeItem::getValue).ifPresent(category -> {
+                    showCategory(category);
+                    mainController.getConfig().setSettingsCategory(category);
+                    mainController.saveConfig();
+                }));
     }
 
     /** Selects the given category (which displays its pane). */
