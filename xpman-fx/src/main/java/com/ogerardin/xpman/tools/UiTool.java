@@ -27,10 +27,4 @@ public class UiTool {
         UiToolUtil.uninstallTool(xPlane, (InstalledTool) tool);
     }
 
-    @EnabledIf("runnable")
-    public void run() {
-        UiToolUtil.runTool(xPlane, tool);
-    }
-
-
 }
