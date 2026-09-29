@@ -11,7 +11,6 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem onAction="#installWizard" text="Universal installer..." />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#manageTools" text="Manage tools..."/>
             <MenuItem mnemonicParsing="false" onAction="#settings" text="Settings...">
                 <accelerator>
                     <KeyCodeCombination alt="UP" code="COMMA" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
@@ -25,6 +24,8 @@
             </MenuItem>
         </Menu>
         <Menu fx:id="toolsMenu" mnemonicParsing="false" text="Tools">
+            <MenuItem fx:id="manageToolsMenuItem" mnemonicParsing="false" onAction="#manageTools" text="Manage tools..."/>
+            <SeparatorMenuItem fx:id="toolsMenuSeparator"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
             <MenuItem mnemonicParsing="false" onAction="#help" text="? Help" />

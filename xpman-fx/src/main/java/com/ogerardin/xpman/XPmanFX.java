@@ -58,6 +58,12 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private Menu toolsMenu;
 
     @FXML
+    private MenuItem manageToolsMenuItem;
+
+    @FXML
+    private SeparatorMenuItem toolsMenuSeparator;
+
+    @FXML
     private MenuBar mainMenu;
 
     @FXML
@@ -180,7 +186,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)
                     .collect(Collectors.toList());
-            Platform.runLater(() -> toolsMenu.getItems().setAll(menuItems));
+            Platform.runLater(() -> toolsMenu.getItems().setAll(
+                    Stream.concat(Stream.of(manageToolsMenuItem, toolsMenuSeparator), menuItems.stream()).toList()));
         }
     }
 
