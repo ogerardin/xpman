@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Loads a {@link Manifest} from a JSON file.
@@ -34,6 +35,7 @@ import java.util.function.Predicate;
  *   "installChecker": {
  *      "string": "..."
  *   }
+ *   "versionRegex": "...",
  *   "items": [
  *      ...
  *   ]
@@ -48,6 +50,8 @@ import java.util.function.Predicate;
  *   <li>"string": will check if the executable file contains the specified string</li>
  *   </ul>
  * </li>
+ * <li>"versionRegex" is a regex (compiled to a {@link Pattern}) whose group 1 is extracted from the tool's
+ * binary to determine the installed version, for tools whose executable metadata is unreliable</li>
  * <li>"items" is a list of sub-manifests that will be unfolded recursively, using the parent manifest as default
  * values. This is useful to produce variants without duplicating manifests</li>
  * </ul>
@@ -78,6 +82,8 @@ public class JsonManifestLoader {
                     return new ToolIcon.IconFont(value);
                 }
             })
+            .registerTypeAdapter(Pattern.class,
+                    (JsonDeserializer<Pattern>) (json, __, ___) -> Pattern.compile(json.getAsString()))
             .create();
 
     /**

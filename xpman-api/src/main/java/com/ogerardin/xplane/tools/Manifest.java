@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
  * @param installChecker an additional {@link Predicate} that checks whether the tool is already installed. This can
  *  be used to differentiate between different versions of a tool that have the same executable file name.
  * @param version the version of the tool that can be downloaded through the provided links
+ * @param versionRegex optional regex whose group 1 is extracted from the tool's binary to determine the installed
+ * version, for tools whose executable metadata is unreliable (e.g. Skunkcrafts Updater)
  */
 @Slf4j
 @With
@@ -45,7 +48,8 @@ public record Manifest(
         Path installDir,
         Predicate<Path> installChecker,
         Set<Manifest> items,
-        ToolIcon icon
+        ToolIcon icon,
+        Pattern versionRegex
 ) {
 
     /**

@@ -31,4 +31,23 @@ class JsonManifestLoaderTest {
             assertEquals("https://example.com/icon.png", ((ToolIcon.Url) manifest.icon()).url().toString());
         }
     }
+
+    @Test
+    void loadManifestWithVersionRegex() throws Exception {
+        String json = """
+            {
+              "name": "Test Tool",
+              "versionRegex": "(?<![\\\\d.])(\\\\d+\\\\.\\\\d+[a-z]?)\\\\.go(?!\\\\x00)"
+            }
+            """;
+        try (InputStream is = new ByteArrayInputStream(json.getBytes())) {
+            Manifest manifest = JsonManifestLoader.loadManifest(is, "test.json");
+            assertNotNull(manifest.versionRegex());
+            assertEquals("(?<![\\d.])(\\d+\\.\\d+[a-z]?)\\.go(?!\\x00)", manifest.versionRegex().pattern());
+            // the loaded pattern must work end-to-end against the kind of content it was written for
+            var matcher = manifest.versionRegex().matcher("Plugins3.2e.goversionenabled");
+            assertTrue(matcher.find());
+            assertEquals("3.2e", matcher.group(1));
+        }
+    }
 }

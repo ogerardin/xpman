@@ -5,8 +5,12 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Common interface for operations that have a platform-specific implementation.
@@ -60,6 +64,20 @@ public interface Platform {
      * Returns the version of the application at the specified path.
      */
     String getVersion(Path app);
+
+    /** Returns the path of the application's main binary (the executable inside an app bundle on macOS). */
+    default Path getBinary(Path app) {
+        return app;
+    }
+
+    // ponytail: whole-binary regex scan; fine for one-shot lazy version extraction, revisit if it gets hot.
+    /** Extracts a version from the application's binary by scanning for the first match of the given pattern (group 1). */
+    @SneakyThrows
+    default String extractVersion(Path app, Pattern pattern) {
+        String content = new String(Files.readAllBytes(getBinary(app)), StandardCharsets.ISO_8859_1);
+        Matcher matcher = pattern.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
+    }
 
     /**
      * Extracts version information from an X-Plane plugin (.xpl) binary.

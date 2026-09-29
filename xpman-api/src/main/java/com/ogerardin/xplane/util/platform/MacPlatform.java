@@ -77,6 +77,12 @@ public class MacPlatform implements Platform {
         return new AppBundle(appPath).version();
     }
 
+    @Override
+    @SneakyThrows
+    public Path getBinary(Path app) {
+        return AppBundle.isAppBundle(app) ? new AppBundle(app).executable() : app;
+    }
+
     // ponytail: heuristic version extraction via string scanning on raw Mach-O binary.
     // No proper Mach-O parser available; upgrade to one if accuracy becomes critical.
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\b(\\d+\\.\\d+(?:\\.\\d+){0,2})\\b");

@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * A locally installed tool. It may be associated to a {@link Manifest} or not (if it was installed manually).
@@ -74,9 +75,15 @@ public non-sealed class InstalledTool extends Tool {
         if (manifest == null) {
             return null;
         }
-        String version = manifest.platform().getVersion(app);
-        boolean placeholder = version == null || version.isBlank() || PLACEHOLDER_VERSIONS.contains(version);
-        return placeholder ? null : version;
+        Pattern versionRegex = manifest.versionRegex();
+        String version = versionRegex != null
+                ? manifest.platform().extractVersion(app, versionRegex)
+                : manifest.platform().getVersion(app);
+        return isPlaceholder(version) ? null : version;
+    }
+
+    private static boolean isPlaceholder(String version) {
+        return version == null || version.isBlank() || PLACEHOLDER_VERSIONS.contains(version);
     }
 
 
