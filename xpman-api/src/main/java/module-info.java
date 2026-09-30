@@ -41,6 +41,7 @@ module xpman.api {
     exports com.ogerardin.xplane.navdata;
     exports com.ogerardin.xplane.tools;
     exports com.ogerardin.xplane.install.inspections;
+    exports com.ogerardin.xplane.install.types to xpman.api.test;
     exports com.ogerardin.xplane.file.data.acf;
     exports com.ogerardin.xplane.file.petitparser;
     exports com.ogerardin.xplane.file.data.scenery;
