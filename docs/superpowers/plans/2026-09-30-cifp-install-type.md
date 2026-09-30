@@ -18,16 +18,22 @@ Two implementation-time findings required changing the spec's approach. The desi
 
 The design doc (step 3 of Converter resolution) said to pass a resolved `<os>` root as the filter to `ToolUtils.installFromZip`. Reading `ToolUtils.java:119-148` shows it filters entries with `entryPath.equals(file) || entryPath.startsWith(file)`. Since `Path.startsWith` is true only when the argument is the *leading* path elements, and the Dropbox ZIP nests everything under an **unknown top-level directory**, the unknown prefix must be known *before* filtering. `installFromZip` downloads internally and then filters, so it cannot be given that prefix.
 
-**Resolution used in this plan:** `CifpManager` downloads the ZIP to its own temp file, wraps it in `ZipArchive`, scans `getPaths()` to locate the `<os>` segment, and extracts the whole `<os>` subtree with a predicate. This is *simpler* than the design's intent (no `ToolUtils` reuse, no prefix parameter) and is what the "resolve unknown prefix" requirement actually needs. `ToolUtils` is therefore not used.
+**Resolution used in this plan:** `CifpManager` downloads the ZIP to its own temp file, wraps it in `ZipArchive`, scans `getPaths()` to locate the `<os>` segment, and extracts with the **subpath overload** `extract(toolsFolder, osRoot, progress)`. That overload strips `osRoot` (`ZipArchive.java:134`), which is exactly what discards the unknown prefix — the predicate overload would have preserved it. `ToolUtils` is therefore not used.
 
 ### 3. Platform dispatch is polymorphic, not conditional
 
-Mapping a platform to its converter folder is the kind of platform-specific behavior
-`Platform` already models (see `pluginPathIdentifier()` at `Platform.java:124-126`, and the
-AGENTS.md rule "Always prefer adding a method to the `Platform` interface over `if/else` on
-platform type"). This plan adds `default String cifpConverterFolder()` to `Platform`,
-overridden in `MacPlatform`, `WindowsPlatform`, and `LinuxPlatform`, and left as `null` on
-`UnknownPlatform`. `CifpManager` then contains no `if/else` on `getOsType()`.
+Mapping a platform to its converter folder and binary name is the kind of platform-specific
+behavior `Platform` already models (see `pluginPathIdentifier()` at `Platform.java:124-126`,
+and the AGENTS.md rule "Always prefer adding a method to the `Platform` interface over
+`if/else` on platform type"). This plan adds two hooks to `Platform`:
+
+- `default String cifpConverterFolder()` — the archive subfolder, `null` by default
+- `default String cifpConverterName(XPlaneMajorVersion)` — the executable, `null` by default
+
+Both are overridden in `MacPlatform`, `WindowsPlatform`, and `LinuxPlatform`. The XP11/XP12
+binary choice lives in the `WindowsPlatform` override, because Windows is the only platform
+that ships two executables — so even the version branch is not an `if/else` in `CifpManager`.
+`CifpManager` contains no `if/else` on `getOsType()` and no `WINDOWS.equals(folder)` test.
 
 ### 4. `install.types` must be exported to the test module
 
@@ -59,8 +65,10 @@ there.
 | **Create** | `xpman-api/src/main/java/com/ogerardin/xplane/install/types/CifpInstallableType.java` | `InstallableType` adapter: `recognizes()` on the `FAACIFP18` entry name, empty `preconditions()`, delegates `install()` to `CifpManager` |
 | **Create** | `xpman-api/src/main/java/com/ogerardin/xplane/navdata/CifpManager.java` | Owns converter resolution/download/cache, process execution, and the `Custom Data` copy |
 | **Modify** | `xpman-api/src/main/java/com/ogerardin/xplane/XPlane.java:47-53` | Add `@Getter(lazy=true) private final CifpManager cifpManager = new CifpManager(this);` beside the other managers |
-| **Modify** | `xpman-api/src/main/java/com/ogerardin/xplane/util/platform/Platform.java` | Add `default String cifpConverterFolder()` returning `null`, mirroring the existing `pluginPathIdentifier()` hook |
-| **Modify** | `xpman-api/.../util/platform/{Mac,Windows,Linux}Platform.java` | Override `cifpConverterFolder()` to return `"mac"`, `"windows"`, `"linux"` |
+| **Modify** | `xpman-api/src/main/java/com/ogerardin/xplane/util/platform/Platform.java` | Add `default String cifpConverterFolder()` and `default String cifpConverterName(XPlaneMajorVersion)`, both returning `null`, mirroring the existing `pluginPathIdentifier()` hook |
+| **Modify** | `xpman-api/.../util/platform/MacPlatform.java` | Override both: `"mac"` + extensionless `convert424toxplane` |
+| **Modify** | `xpman-api/.../util/platform/WindowsPlatform.java` | Override both: `"windows"` + `convert424toxplane11.exe` (XP11) / `convert424toxplane.exe` (XP12) |
+| **Modify** | `xpman-api/.../util/platform/LinuxPlatform.java` | Override both: `"linux"` + extensionless `convert424toxplane` |
 | **Modify** | `xpman-api/src/main/java/module-info.java:44` | `exports com.ogerardin.xplane.install.types to xpman.api.test;` so the test can import the type |
 | **Create** | `xpman-api/src/test/java/com/ogerardin/xplane/test/install/CifpInstallableTypeTest.java` | Recognition test over temp-file ZIPs |
 | **Modify** | `docs/superpowers/specs/2026-09-30-cifp-install-type-design.md` | Fix the two wording inconsistencies listed above |
@@ -76,7 +84,7 @@ there.
 - `ExecResults`: `isSuccessful()`, `getExitValue()`, `outputLines()`, `errorLines()` — `ExecResults.java:14-24`.
 - `Platforms.getCurrent()` (Lombok `@Getter(lazy=true)` on the static `current` field) returns the current `Platform`; `Platform` exposes `getOsType()`, `getCpuType()`, `isRunnable(Path)`, `isQuarantined(Path)`, `removeQuarantine(Path)` — `Platforms.java:23-24`, `Platform.java:21-101`. Note the static field is *typed* `Platform`, so `getCurrent()` returns `Platform`, not the `Platforms` enum.
 - `XPlane.getPaths().tools()` → `Resources/tools`; `getPaths().customData()` → `Custom Data`; `getMajorVersion()`; `getNavDataManager().reload()` — `XPlane.java:78-115`, `XPlane.java:33,48,100-111`.
-- `ZipArchive(Path zipFile)` — `ZipArchive.java:27`.
+- `ZipArchive(Path zipFile)` — `ZipArchive.java:27`. It **overrides** the subpath overload `extract(Path, Path subpath, ProgressListener)` (`ZipArchive.java:96-101`), which extracts everything under `subpath` with the prefix stripped (`ZipArchive.java:134`). The predicate overload does *not* strip anything — use the subpath form when the unknown Dropbox prefix must be discarded.
 - `XPlaneMajorVersion.XP11` / `XP12` — `XPlaneMajorVersion.java`.
 - `NavDataManager` already expects `earth_424.dat` in `Custom Data` (`NavDataManager.java:66,88`), so the target filename is fixed by existing code, not a new choice.
 
@@ -260,13 +268,15 @@ import com.ogerardin.xplane.navdata.CifpManager;
 
 - [ ] **Step 2: Add the platform hook**
 
-Following the existing `pluginPathIdentifier()` pattern in `Platform.java:124-126`, add a
-default method that reports which converter folder a platform uses. This keeps the
-platform dispatch polymorphic instead of a chain of `if/else` on `getOsType()`.
+Following the existing `pluginPathIdentifier()` pattern in `Platform.java:124-126`, add two
+default methods: one naming the platform's folder in the converter archive, one naming its
+executable. This keeps *all* platform dispatch polymorphic — neither the folder choice nor
+the binary-name choice appears as an `if/else` or a folder-string comparison in `CifpManager`.
 
 In `xpman-api/src/main/java/com/ogerardin/xplane/util/platform/Platform.java`, add
 alongside the other `default` methods (for example, immediately before
-`getCandidateInstallBaseFolders`):
+`getCandidateInstallBaseFolders`), plus the import
+`import com.ogerardin.xplane.XPlaneMajorVersion;`:
 
 ```java
     /**
@@ -276,9 +286,21 @@ alongside the other `default` methods (for example, immediately before
     default String cifpConverterFolder() {
         return null;
     }
+
+    /**
+     * The name of the convert424toxplane executable for the given X-Plane version,
+     * or null if this platform has no CIFP converter.
+     */
+    default String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return null;
+    }
 ```
 
-Then override it in each platform implementation:
+Then override **both** methods in each platform implementation. Each of `MacPlatform`,
+`WindowsPlatform`, and `LinuxPlatform` also needs its own
+`import com.ogerardin.xplane.XPlaneMajorVersion;` (only `Platform.java` gets it from the
+block above). macOS and Linux ship one extensionless binary that serves every X-Plane
+version:
 
 `MacPlatform.java`:
 
@@ -287,14 +309,10 @@ Then override it in each platform implementation:
     public String cifpConverterFolder() {
         return "mac";
     }
-```
 
-`WindowsPlatform.java`:
-
-```java
     @Override
-    public String cifpConverterFolder() {
-        return "windows";
+    public String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return "convert424toxplane";
     }
 ```
 
@@ -305,9 +323,33 @@ Then override it in each platform implementation:
     public String cifpConverterFolder() {
         return "linux";
     }
+
+    @Override
+    public String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return "convert424toxplane";
+    }
 ```
 
-`UnknownPlatform` keeps the default and therefore reports no converter, which
+Windows is the only platform with two binaries — XP11 needs the versioned `.exe`, XP12 the
+unversioned one — so that is the only place a version check belongs:
+
+`WindowsPlatform.java`:
+
+```java
+    @Override
+    public String cifpConverterFolder() {
+        return "windows";
+    }
+
+    @Override
+    public String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return majorVersion == XPlaneMajorVersion.XP11
+            ? "convert424toxplane11.exe"
+            : "convert424toxplane.exe";
+    }
+```
+
+`UnknownPlatform` keeps both defaults and therefore reports no converter, which
 `CifpManager` turns into an aborting `InstallationException`.
 
 - [ ] **Step 3: Write `CifpManager`**
@@ -348,13 +390,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class CifpManager {
 
-    /** Folder names inside the converter archive; see {@link Platform#cifpConverterFolder()}. */
-    private static final String WINDOWS = "windows";
-
-    /** XP11 needs the versioned converter; XP12 and later use the unversioned one. */
-    private static final String CONVERTER_XP11 = "convert424toxplane11.exe";
-    private static final String CONVERTER = "convert424toxplane";
-
     /** The extensionless file the FAA ships the current cycle in. */
     private static final String FAACIFP18 = "FAACIFP18";
 
@@ -377,9 +412,7 @@ public class CifpManager {
      * Returns the converter binary name for the given platform and X-Plane version.
      */
     static String converterName(Platform platform, XPlaneMajorVersion majorVersion) {
-        boolean xp11Windows = majorVersion == XPlaneMajorVersion.XP11
-                && WINDOWS.equals(osFolderName(platform));
-        return xp11Windows ? CONVERTER_XP11 : CONVERTER;
+        return platform.cifpConverterName(majorVersion);
     }
 
     /**
@@ -420,9 +453,9 @@ public class CifpManager {
             log.debug("CIFP converter '{}' folder found at {} in the archive", os, osRoot);
 
             // Extract the whole <os> subtree so the Windows geoids folder, which must
-            // sit next to the executable, is preserved. The unknown top-level prefix
-            // is stripped by extracting relative to the located root.
-            archive.extract(toolsFolder, entry -> isUnder(entry, osRoot), progress);
+            // sit next to the executable, is preserved. The subpath overload strips the
+            // located root, discarding the unknown Dropbox prefix.
+            archive.extract(toolsFolder, osRoot, progress);
         } finally {
             Files.deleteIfExists(tempZip);
         }
@@ -452,19 +485,16 @@ public class CifpManager {
                 .min(Comparator.comparingInt(Path::getNameCount));
     }
 
+    /** Shared stem of every convert424toxplane executable, with or without a suffix. */
+    private static final String CONVERTER_STEM = "convert424toxplane";
+
     private static boolean hasOsSegmentThenConverter(Path path, String os) {
         return IntStream.range(0, path.getNameCount() - 1)
                 .anyMatch(i -> path.getName(i).toString().equals(os)
-                        && path.getName(i + 1).toString().toLowerCase(Locale.ROOT).startsWith(CONVERTER));
+                        && path.getName(i + 1).toString().toLowerCase(Locale.ROOT).startsWith(CONVERTER_STEM));
     }
 
-    /**
-     * Returns true if the entry is the located root itself or lies beneath it.
-     */
-    private static boolean isUnder(Path entry, Path root) {
-        return entry.equals(root) || entry.startsWith(root);
     }
-}
 ```
 
 Notes on the design decisions in this class:
@@ -476,15 +506,21 @@ Notes on the design decisions in this class:
 
 - [ ] **Step 4: Build the module**
 
-Run: `mvn -q -DskipTests package -pl xpman-api`
+Note that `-DskipTests` still *compiles* the tests, and `CifpInstallableTypeTest` references
+`CifpInstallableType`, which does not exist until Task 3. Use `-Dmaven.test.skip=true` to skip
+test compilation as well:
 
-Expected: BUILD SUCCESS. The `CifpInstallableType.install` reference to `CifpManager` now resolves, and `XPlane` compiles with the new field.
+Run: `mvn -q -Dmaven.test.skip=true package -pl xpman-api`
 
-- [ ] **Step 5: Run the full api test suite**
+Expected: BUILD SUCCESS. `CifpManager` compiles against the new `Platform` hooks, and
+`XPlane` compiles with the new field.
 
-Run: `mvn test -pl xpman-api`
+- [ ] **Step 5: Confirm the rest of the suite is unaffected**
 
-Expected: all existing tests pass. `CifpInstallableTypeTest` still fails to compile at this point because `CifpInstallableType` does not exist yet (Task 3), so run with `-Dmaven.test.skip=true` if the test compilation blocks the run, or simply defer the test run to Task 3 Step 2.
+Run: `mvn -B test -pl xpman-api -Dtest='!CifpInstallableTypeTest'`
+
+Expected: every other test class passes. Deferring `CifpInstallableTypeTest` itself to Task 3
+is deliberate: it cannot compile until `CifpInstallableType` exists.
 
 - [ ] **Step 6: Commit**
 
@@ -556,7 +592,7 @@ public class CifpInstallableType implements InstallableType {
     @Override
     public void install(XPlane xPlane, Archive archive, ProgressListener progress) throws InstallationException {
         try {
-            new CifpManager(xPlane).install(archive, progress);
+            xPlane.getCifpManager().install(archive, progress);
         } catch (IOException e) {
             throw new InstallationException(e);
         } catch (InterruptedException e) {
@@ -605,6 +641,8 @@ import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
 ```
 
+`extractSource` now uses the subpath overload, so no extra imports are needed for it.
+
 Add this method to the class:
 
 ```java
@@ -649,12 +687,26 @@ Add this method to the class:
     /**
      * Extracts the FAACIFP18 entry from the archive into the working directory and
      * renames it to the .dat name the converter expects.
+     *
+     * The entry's parent folder, if any, is used as the extraction subpath so a nested
+     * FAACIFP18 still lands at the root of the working directory under its own name.
      */
     private Path extractSource(Archive archive, Path workingDir, ProgressListener progress) throws IOException {
-        archive.extract(workingDir, entry -> FAACIFP18.equals(entry.getFileName().toString()), progress);
+        Path entry = archive.getPaths().stream()
+                .filter(path -> FAACIFP18.equals(path.getFileName().toString()))
+                .findFirst()
+                .orElseThrow(() -> new IOException("FAACIFP18 not found in the archive"));
+
+        Path parent = entry.getParent();
+        if (parent == null) {
+            archive.extract(workingDir, progress);
+        } else {
+            archive.extract(workingDir, parent, progress);
+        }
+
         Path extracted = workingDir.resolve(FAACIFP18);
         if (!Files.exists(extracted)) {
-            throw new IOException("FAACIFP18 not found in the archive");
+            throw new IOException("FAACIFP18 could not be extracted from the archive");
         }
         Path source = workingDir.resolve("FAACIFP18.dat");
         Files.move(extracted, source, StandardCopyOption.REPLACE_EXISTING);
@@ -883,19 +935,33 @@ git commit -m "docs: correct CIFP design doc inconsistencies"
 
 ## Verified while writing this plan
 
-The Java in Tasks 1-4 is not speculative. It was applied to a scratch working tree and run
-through the real Maven build, then reverted. Recorded results:
+The Java in Tasks 1-4 is not speculative. An earlier revision was applied to a scratch working
+tree and run through the real Maven build, then reverted; the numbers below are from that
+pass, and the code has since been revised (see the caveat afterwards):
 
 - `mvn -B -DskipTests clean package -pl xpman-api` → **BUILD SUCCESS**
 - `mvn -B test -pl xpman-api -Dtest=CifpInstallableTypeTest` → **Tests run: 5, Failures: 0, Errors: 0**
 - `mvn -B test -pl xpman-api` → **Tests run: 131, Failures: 0, Errors: 0, Skipped: 10**
   (the 10 skips are the pre-existing `@EnableOnLocalXPlane` gates)
 
-That exercise found and fixed four defects that are now reflected above: the
+That exercise found and fixed seven defects now reflected above: the
 `InstallationException` constructor mismatch, `Platforms.getCurrent()` returning `Platform`
-rather than the enum, the `getCause()` access-modifier clash, and the missing
-`install.types` export. The install flow (Task 4 steps 1-3) compiles but is not exercised by
-any test — it needs the live network and X-Plane access covered by Task 5.
+rather than the enum, the `getCause()` access-modifier clash, the missing `install.types`
+export, the mis-numbered task steps, the missing `XPlaneMajorVersion` import in the platform
+classes, and the now-unused `CONVERTER` constant in `findOsRoot`.
+
+These results were re-confirmed after the final revisions (subpath extraction,
+`cifpConverterName`, nested-`FAACIFP18` handling, `getCifpManager()` delegation), applying the
+plan verbatim from a clean tree. `mvn -B -DskipTests clean package` (all three modules) also
+returns **BUILD SUCCESS**, confirming the new `Platform` methods and the `install.types` test
+export do not break `xpman-fx` or `xpman-fx-dist`.
+
+Two further defects surfaced in that re-check and are fixed in the plan: the
+`XPlaneMajorVersion` import is needed in each platform class, and `findOsRoot` needs a
+`CONVERTER_STEM` constant because the platform hook owns the exact filenames now.
+
+The install flow (Task 4) is compile-verified only and is not exercised by any test — it
+needs the live network and X-Plane access covered by Task 5.
 
 ## Full verification before declaring done
 
