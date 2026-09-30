@@ -336,6 +336,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * Installs FAA CIFP (ARINC 424) navigation data into an X-Plane installation.
@@ -452,13 +453,9 @@ public class CifpManager {
     }
 
     private static boolean hasOsSegmentThenConverter(Path path, String os) {
-        for (int i = 0; i < path.getNameCount() - 1; i++) {
-            if (path.getName(i).toString().equals(os)) {
-                return path.getName(i + 1).toString().toLowerCase(Locale.ROOT)
-                        .startsWith(CONVERTER);
-            }
-        }
-        return false;
+        return IntStream.range(0, path.getNameCount() - 1)
+                .anyMatch(i -> path.getName(i).toString().equals(os)
+                        && path.getName(i + 1).toString().toLowerCase(Locale.ROOT).startsWith(CONVERTER));
     }
 
     /**
@@ -600,16 +597,12 @@ git commit -m "feat: add CifpInstallableType recognizing FAA CIFP archives"
 
 - [ ] **Step 1: Add the install entry point**
 
-Add these imports to `CifpManager.java`:
+Add these imports to `CifpManager.java` (`FileUtils` is already imported by Task 2, so
+only these are genuinely new):
 
 ```java
-import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
-import org.apache.commons.io.FileUtils;
-
-import java.nio.file.StandardCopyOption;
-import java.util.stream.Stream;
 ```
 
 Add this method to the class:
@@ -649,7 +642,7 @@ Add this method to the class:
             copyToCustomData(source, progress);
             xPlane.getNavDataManager().reload();
         } finally {
-            deleteRecursively(workingDir, progress);
+            FileUtils.deleteQuietly(workingDir.toFile());
         }
     }
 
@@ -681,7 +674,7 @@ Add this method to the class:
         }
         Path target = xPlane.getPaths().customData().resolve("CIFP");
         progress.output("Copying CIFP data to " + target);
-        copyDirectory(generated, target);
+        FileUtils.copyDirectory(generated.toFile(), target.toFile());
     }
 
     /**
@@ -693,86 +686,51 @@ Add this method to the class:
         Files.createDirectories(target.getParent());
         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
     }
-
-    /**
-     * Recursively copies the contents of the source folder into the target folder,
-     * overwriting existing files. The target folder is created if it does not exist.
-     */
-    private void copyDirectory(Path source, Path target) throws IOException {
-        try (Stream<Path> entries = Files.walk(source)) {
-            entries.filter(path -> !path.equals(source)).forEach(path -> {
-                Path destination = target.resolve(source.relativize(path).toString());
-                try {
-                    if (Files.isDirectory(path)) {
-                        Files.createDirectories(destination);
-                    } else {
-                        Files.createDirectories(destination.getParent());
-                        Files.copy(path, destination, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                } catch (IOException e) {
-                    throw new UncheckedCopyException(e);
-                }
-            });
-        } catch (UncheckedCopyException e) {
-            throw e.ioCause();
-        }
-    }
-
-    /**
-     * Deletes the working directory and everything in it, ignoring failures since it is
-     * a temporary folder that the operating system will reclaim.
-     */
-    private void deleteRecursively(Path workingDir, ProgressListener progress) {
-        try (Stream<Path> paths = Files.walk(workingDir)) {
-            paths.sorted(Comparator.reverseOrder()).forEach(path -> {
-                try {
-                    Files.deleteIfExists(path);
-                } catch (IOException e) {
-                    log.debug("Could not delete {}: {}", path, e.toString());
-                }
-            });
-        } catch (IOException e) {
-            log.debug("Could not clean up {}: {}", workingDir, e.toString());
-        }
-    }
 ```
 
-- [ ] **Step 2: Add the unchecked wrapper used by the recursive copy**
+`FileUtils.copyDirectory` already merges into an existing target and overwrites files, so
+it replaces the whole recursive walk *and* removes the need for the exception-wrapping
+helper class. It is the same call `ToolUtils` uses for the DMG case
+(`ToolUtils.java:87`).
 
-Append this private static nested class to `CifpManager.java`:
+- [ ] **Step 2: Clean up the working directory**
+
+`FileUtils.deleteQuietly` handles the recursive delete and swallows failures, which is
+exactly the required behaviour for a temporary folder, so the entire `finally` body and the
+`UncheckedCopyException` class are unnecessary. In `install(...)`, the `finally` block
+becomes:
 
 ```java
-    /**
-     * Carries an IOException out of the lambda passed to {@link Stream#forEach}.
-     */
-    private static final class UncheckedCopyException extends RuntimeException {
-        private UncheckedCopyException(IOException cause) {
-            super(cause);
+        } finally {
+            FileUtils.deleteQuietly(workingDir.toFile());
         }
-
-        private IOException ioCause() {
-            return (IOException) super.getCause();
-        }
-    }
 ```
 
-- [ ] **Step 3: Remove the now-unused import if the compiler flags it**
+Then delete the `UncheckedCopyException` nested class from the class entirely — it exists
+only to smuggle an `IOException` out of the old copy lambda, and nothing references it now.
+Also drop the now-unused `java.util.stream.Stream` and `java.nio.file.StandardCopyOption`
+imports if `StandardCopyOption` is no longer referenced (it still is, by `extractSource` and
+`copyToCustomData`, so keep it; `Stream` is no longer referenced, so remove it).
 
-`CifpManager` already imports `java.util.Comparator` (used by `findOsRoot` and `deleteRecursively`) and `java.util.Optional` (used by `findOsRoot`). If `import java.nio.file.Paths;` was left unused from Task 2, remove it; otherwise `javac` will not complain but the project style prefers no unused imports.
+`CifpManager` already imports `java.util.Comparator` (used by `findOsRoot`),
+`java.util.Optional` (used by `findOsRoot`), and `java.util.stream.IntStream` (used by
+`hasOsSegmentThenConverter`). Remove the `java.util.stream.Stream` import if Task 2 left it
+unused — after this task nothing references it. `javac` will not complain about an unused
+import, but the project style prefers none.
 
-- [ ] **Step 4: Build the module**
+- [ ] **Step 3: Build the module**
 
 Run: `mvn -q -DskipTests package -pl xpman-api`
 
 Expected: BUILD SUCCESS.
 
-- [ ] **Step 5: Run the tests**
+- [ ] **Step 4: Run the tests**
 
 Run: `mvn test -pl xpman-api`
 
 Expected: all tests pass, including the five `CifpInstallableTypeTest` methods. No test executes the install flow, so no network access is required.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add xpman-api/src/main/java/com/ogerardin/xplane/navdata/CifpManager.java
