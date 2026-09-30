@@ -2,6 +2,8 @@ package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneMajorVersion;
+import com.ogerardin.xplane.util.exec.CommandExecutor;
+import com.ogerardin.xplane.util.exec.ExecResults;
 import com.ogerardin.xplane.util.platform.Platform;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.util.progress.ProgressListener;
@@ -16,6 +18,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Optional;
@@ -43,6 +46,99 @@ public class CifpManager {
     );
 
     private final XPlane xPlane;
+
+    /**
+     * Installs the FAA CIFP data found in the specified archive.
+     *
+     * @throws IOException          if the archive cannot be read or the files cannot be written
+     * @throws InterruptedException if the converter process is interrupted
+     */
+    public void install(Archive archive, ProgressListener progress)
+            throws IOException, InterruptedException {
+
+        Path workingDir = Files.createTempDirectory("xpman-cifp");
+        try {
+            Path source = extractSource(archive, workingDir, progress);
+            Path converter = resolveConverter(progress);
+
+            progress.output("Running " + converter.getFileName());
+            ExecResults results = CommandExecutor.builder()
+                    .cmdarray(new String[] { converter.toString(), source.getFileName().toString(), "FMS" })
+                    .dir(workingDir)
+                    .outLineHandler(progress::output)
+                    .errLineHandler(progress::output)
+                    .build()
+                    .exec();
+
+            if (results.isSuccessful()) {
+                copyConvertedData(workingDir, progress);
+            } else {
+                String details = "CIFP conversion failed (exit " + results.getExitValue() + ")";
+                log.warn("{}: {}", details, String.join("\n", results.errorLines()));
+                progress.output(details + "; earth_424.dat will still be installed but no CIFP folder.");
+            }
+
+            copyToCustomData(source, progress);
+            xPlane.getNavDataManager().reload();
+        } finally {
+            FileUtils.deleteQuietly(workingDir.toFile());
+        }
+    }
+
+    /**
+     * Extracts the FAACIFP18 entry from the archive into the working directory and
+     * renames it to the .dat name the converter expects.
+     *
+     * The entry's parent folder, if any, is used as the extraction subpath so a nested
+     * FAACIFP18 still lands at the root of the working directory under its own name.
+     */
+    private Path extractSource(Archive archive, Path workingDir, ProgressListener progress) throws IOException {
+        Path entry = archive.getPaths().stream()
+                .filter(path -> FAACIFP18.equals(path.getFileName().toString()))
+                .findFirst()
+                .orElseThrow(() -> new IOException("FAACIFP18 not found in the archive"));
+
+        Path parent = entry.getParent();
+        if (parent == null) {
+            archive.extract(workingDir, progress);
+        } else {
+            archive.extract(workingDir, parent, progress);
+        }
+
+        Path extracted = workingDir.resolve(FAACIFP18);
+        if (!Files.exists(extracted)) {
+            throw new IOException("FAACIFP18 could not be extracted from the archive");
+        }
+        Path source = workingDir.resolve("FAACIFP18.dat");
+        Files.move(extracted, source, StandardCopyOption.REPLACE_EXISTING);
+        return source;
+    }
+
+    /**
+     * Copies the CIFP folder the converter generated into Custom Data, overwriting
+     * any existing entries.
+     */
+    private void copyConvertedData(Path workingDir, ProgressListener progress) throws IOException {
+        Path generated = workingDir.resolve("CIFP");
+        if (!Files.isDirectory(generated)) {
+            log.warn("CIFP converter produced no CIFP folder in {}", workingDir);
+            progress.output("CIFP converter produced no CIFP folder; only earth_424.dat was installed.");
+            return;
+        }
+        Path target = xPlane.getPaths().customData().resolve("CIFP");
+        progress.output("Copying CIFP data to " + target);
+        FileUtils.copyDirectory(generated.toFile(), target.toFile());
+    }
+
+    /**
+     * Copies the source file to Custom Data as earth_424.dat.
+     */
+    private void copyToCustomData(Path source, ProgressListener progress) throws IOException {
+        Path target = xPlane.getPaths().customData().resolve("earth_424.dat");
+        progress.output("Installing " + target.getFileName());
+        Files.createDirectories(target.getParent());
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+    }
 
     /**
      * Returns the platform folder name inside the converter archive, or null if this
