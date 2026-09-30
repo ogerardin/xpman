@@ -12,6 +12,7 @@ import com.kichik.pecoff4j.resources.StringPair;
 import com.kichik.pecoff4j.resources.StringTable;
 import com.kichik.pecoff4j.resources.VersionInfo;
 import com.kichik.pecoff4j.util.ResourceHelper;
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -145,5 +146,17 @@ public class WindowsPlatform implements Platform {
     @Override
     public String pluginPathIdentifier() {
         return "win";
+    }
+
+    @Override
+    public String cifpConverterFolder() {
+        return "windows";
+    }
+
+    @Override
+    public String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return majorVersion == XPlaneMajorVersion.XP11
+            ? "convert424toxplane11.exe"
+            : "convert424toxplane.exe";
     }
 }

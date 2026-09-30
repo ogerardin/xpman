@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.util.platform;
 
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
 import lombok.Getter;
@@ -173,6 +174,16 @@ public class MacPlatform implements Platform {
         if (Files.exists(executable)) {
             CommandExecutor.exec("chmod", "+x", executable.toString());
         }
+    }
+
+    @Override
+    public String cifpConverterFolder() {
+        return "mac";
+    }
+
+    @Override
+    public String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return "convert424toxplane";
     }
 
     /**

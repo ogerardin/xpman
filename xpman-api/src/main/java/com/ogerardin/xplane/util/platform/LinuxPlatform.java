@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.util.platform;
 
+import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
 import lombok.Getter;
@@ -139,5 +140,15 @@ public class LinuxPlatform implements Platform {
     @Override
     public String pluginPathIdentifier() {
         return "lin";
+    }
+
+    @Override
+    public String cifpConverterFolder() {
+        return "linux";
+    }
+
+    @Override
+    public String cifpConverterName(XPlaneMajorVersion majorVersion) {
+        return "convert424toxplane";
     }
 }
