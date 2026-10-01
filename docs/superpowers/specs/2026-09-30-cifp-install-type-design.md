@@ -35,6 +35,8 @@ navdata layer, and warns that the FAA dataset covers the US only.
 | Conversion | **None.** See "No converter" below |
 | Coverage warning | `Severity.WARN` in `preconditions()`, so wizard page 2 shows it before the user commits; only `ERROR` blocks the Next button |
 | Coverage detection | ARINC 424 `HDR01` record, cols 6–15 carry the dataset's own name. FAA datasets are named `FAACIFP*` |
+| Cycle detection | ARINC 424 `HDR04`, labelled `VOLUME nnnn` — the same AIRAC designator the XPNAV `data cycle` header uses |
+| Cycle consistency | Only the approaches layer: it must match the cycle of the layer it overrides, per X-Plane's documentation. The override replaces the global database and has no such requirement |
 | New UI | Four CSS rules. No FXML or controller wiring changes |
 | Manager | **None.** The install is one extract and one copy |
 
@@ -153,10 +155,60 @@ General partial-coverage detection is possible but was scoped out: region identi
 per-record-type fixed-width fields and are frequently `UNKUNK` even in FAA data, so it needs
 per-record-type parsing plus a maintained list of region codes, over a 50 MB file.
 
-ARINC 424 carries no XPNAV cycle marker, so the override's AIRAC cycle stays unknown. The
-FAA header does carry an unambiguous effective date (`EFFECTIVE 01 OCT 2026`) and a volume
-number, which would be a genuine improvement — left as future work rather than guessed at
-now.
+## AIRAC cycles
+
+The cycle of an ARINC 424 file is read from its `HDR04` record's labelled token rather than a
+hard-coded column, since the record is self-describing:
+
+```
+CODED INSTRUMENT FLIGHT PROCEDURES VOLUME 2610  EFFECTIVE 01 OCT 2026
+```
+
+That number is the same AIRAC designator the XPNAV `data cycle` header uses, which is not an
+assumption: running X-Plane's own converter over this very file emits `data cycle 2610`, so
+cycles read from an ARINC 424 layer and from an XPNAV layer compare directly. The override
+layer therefore reports `OK — cycle 2610` instead of an unknown cycle, and
+`NavDataSet.inspect()`'s pre-existing within-set mixed-cycle detection starts working for
+ARINC 424.
+
+`NavDataItem.normalizeCycle` reduces a value to its trailing four digits, so a cycle written
+as `YYYYMM` compares equal to the same cycle as `YYMM`.
+
+**Known caveat:** `DatFileParser.Cycle()` accepts exactly four digits (`repeat(4,4)`), so a
+hypothetical six-digit `data cycle 202610` would read as `2026`. Left alone deliberately —
+no such file was observed (the converter emits four digits, and AIRAC designators are four
+digits), and a navdata severity is cosmetic: only the *install* wizard blocks on `ERROR`.
+Hardening it means changing how an existing shared parser consumes digits.
+
+## Cycle consistency
+
+X-Plane documents exactly one cross-layer cycle requirement, and it belongs to the
+approaches layer rather than the override:
+
+> *"for integrity reasons, the cycle number of the FAA data must always match the cycle
+> number of the underlying layer. Terminal procedures do reference waypoints out of the
+> terminal area, therefore, the data source for global waypoints must be at the same cycle
+> number."*
+
+The sim-wide override has no such requirement — it replaces the global database rather than
+composing with it — so it is never checked.
+
+`NavDataSet.getConsistentCycle()` reports the single cycle a set's files agree on. The check
+lives on `Arinc424DataSet` behind a `consistencyMessage()` hook, and resolves the layer it
+would be applied to through two shadowing-aware lookups on `NavDataManager`:
+
+| Situation | Severity |
+|---|---|
+| Sim-wide override installed, so nothing else is read | `WARN` — this layer is not used |
+| Effective global layer's cycle known and different | `WARN` — cycle mismatch |
+| Otherwise | silent |
+
+Shadowing is what makes this correct rather than a naive "all present layers must agree": the
+base layer X-Plane ships is always present, on a cycle of its own that never changes, so every
+subscriber would otherwise see a false conflict. `getEffectiveGlobalDataSet()` prefers the
+updated base layer and ignores the shipped one when it is shadowed. `Arinc424DataSet.Role`
+distinguishes the two roles, since both layers are the same class and the reason one is not
+"overriding" is that it composes with the lower layers instead of suppressing them.
 
 ## Error handling
 
@@ -170,22 +222,25 @@ now.
 
 ## Testing
 
-`mvn -B clean test -pl xpman-api` — **144 tests, 0 failures, 10 pre-existing skips**
+`mvn -B clean test` — **155 tests in `xpman-api`, 0 failures, 10 pre-existing skips**
 (was 131 before this feature).
 
 - `CifpInstallableTypeTest` (8): recognition positive/negative including the `FAACIFP18.dat`
   near-miss, ClassGraph discovery, install of both flat and nested entries to `earth_424.dat`,
   absence of leaked folders, and the US-only warning.
-- `Arinc424HeaderTest` (4): real HDR records in their true column layout; a commercial
-  publisher; a non-ARINC file; an empty file.
-- `Arinc424DataSetTest` (5): the overriding flag per instance, the coverage warning, and no
-  coverage claim for a commercial publisher or an absent file.
-- `NavDataSetTest` (4): added `reportsPresentWhenCycleCannotBeRead`; the existing
-  `infoWhenNoData` still passes because an empty set has no files at all.
+- `Arinc424HeaderTest` (5): real HDR records in their true column layout; the `VOLUME 2610`
+  cycle; a header with no `VOLUME`; a commercial publisher; a non-ARINC file; an empty file.
+- `Arinc424DataSetTest` (11): the role flag, coverage warning, cycle read from the header, and
+  the consistency check against a stubbed `NavDataManager` — mismatch, match, updated base
+  preferred over the shadowed shipped base, suppressed by the override, and silence in each
+  of the negative cases.
+- `NavDataSetTest` (8): added `getConsistentCycle()` single/mixed/absent and `normalizeCycle`;
+  the existing `infoWhenNoData` still passes because an empty set has no files at all.
 
 Verified against a **real** downloaded cycle (`CIFP_261001.zip`, 9.1 MB) outside the suite:
 recognized, installed to a 50,317,816-byte `earth_424.dat`, nothing else appearing under
-`Custom Data`, and the override layer reporting `US-only coverage (FAACIFP18)`.
+`Custom Data`, and the override layer reporting `OK — cycle 2610` together with
+`US-only coverage (FAACIFP18)` in 3 ms.
 
 ## Two ARINC 424 layers, not two names for one
 
@@ -228,5 +283,5 @@ says so explicitly.
   it is the better choice for a subscriber with same-cycle global data — but XPman cannot
   detect that setup, and it does nothing for the free user. Worth offering later, if ever.
 - General partial-coverage detection for non-FAA publishers.
-- Extracting an AIRAC 424 effective date or cycle number for display.
+- Extracting the ARINC 424 effective date for display. The cycle is read; the date is not.
 - Uninstall (removing `earth_424.dat`) — the wizard installs, it does not uninstall.

@@ -36,7 +36,21 @@ class Arinc424HeaderTest {
 
         assertThat(header.datasetName(), is("FAACIFP18"));
         assertThat(header.originator(), is("FEDERAL AVIATION ADMINISTRATION"));
+        assertThat(header.cycle(), is("2610"));
         assertThat(header.isFaa(), is(true));
+    }
+
+    @Test
+    void readsNullCycleWhenTheHeaderHasNoVolume() throws IOException {
+        Path file = tempFolder.resolve("earth_424.dat");
+        Files.writeString(file,
+                "HDR01NAVDAT48       001P013203969192610  09-SEP-202612:03:55  NAVDATA (AIRAC 424)     \n" +
+                        "HDR02                                 GLOBAL NAVIGATION SERVICE                    \n");
+
+        Arinc424Header header = Arinc424Header.read(file);
+
+        assertThat(header.datasetName(), is("NAVDAT48"));
+        assertThat(header.cycle(), is(nullValue()));
     }
 
     @Test

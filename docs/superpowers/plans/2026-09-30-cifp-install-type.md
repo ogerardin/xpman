@@ -77,6 +77,42 @@ bugs:
 skips.** Against the converter branch this is 47 net production lines more — the cost of the
 panel and coverage work that replaced 233 lines of converter machinery.
 
+## Cycle reporting and consistency
+
+Added after the first cut shipped, once it was clear that cycle information was both
+available and needed.
+
+**Cycles are directly comparable.** The FAA header's `VOLUME 2610` is the same AIRAC
+designator the XPNAV `data cycle` header uses — not an assumption: running X-Plane's own
+converter over that exact file emits `data cycle 2610`. So `Arinc424Header` reads the
+`VOLUME` token from HDR04, the override layer reports `OK — cycle 2610`, and
+`NavDataSet.inspect()`'s existing mixed-cycle detection starts working for ARINC 424.
+`NavDataItem.normalizeCycle` reduces a value to its trailing four digits so `YYYYMM` and
+`YYMM` forms compare equal.
+
+**The cycle-match requirement belongs to `FAACIFP18`, not `earth_424.dat`.** The
+documentation states it only for the approaches layer, which composes with the global layers
+and therefore needs a matching cycle; the sim-wide override replaces the global database and
+has no such requirement. So the assertion is scoped to the approaches role only.
+
+**Shadowing is the subtle part.** The base layer X-Plane ships is always present, on a cycle
+of its own that never changes. Comparing every present layer would therefore report a
+conflict for every subscriber who installed fresher navdata. `NavDataManager` exposes
+`getEffectiveGlobalDataSet()`, which returns the updated base layer when installed and only
+falls back to the shipped base otherwise — and returns nothing at all while an override
+suppresses the rest, which is the "this layer is not used" case.
+
+**Left alone deliberately:** `DatFileParser.Cycle()` accepts exactly four digits, so a
+hypothetical six-digit cycle would read as `2026`. No such file was observed, and a navdata
+severity is cosmetic — only the install wizard blocks on `ERROR`. Recorded as a caveat rather
+than changing how a shared parser consumes digits.
+
+**Reused instead of invented:** `boolean overriding` became an `Arinc424DataSet.Role` enum,
+because both ARINC 424 layers are the same class and the flag was starting to stand for two
+different things. The layer names became public constants so `NavDataSetCardView`'s icon map
+stops hard-coding strings that have to be kept in step by hand — a drift that already
+required a manual fix once in this branch.
+
 ## Deliberately not done
 
 - **General partial-coverage detection for non-FAA publishers.** Region identifiers sit in

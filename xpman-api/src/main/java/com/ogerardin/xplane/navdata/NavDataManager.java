@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +24,14 @@ import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 @Slf4j
 @ToString
 public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {
+
+    /** Layer names, in decreasing priority order. Referenced by the cross-layer checks. */
+    public static final String SIM_WIDE_OVERRIDE = "Sim-wide ARINC424 override";
+    public static final String BASE = "Base (shipped with X-Plane)";
+    public static final String UPDATED_BASE = "Updated base (supplied by third-parties)";
+    public static final String FAA_APPROACHES = "FAA updated approaches";
+    public static final String HAND_PLACED_LOCALIZERS = "Hand-placed localizers";
+    public static final String USER_DATA = "User data";
 
     public NavDataManager(XPlane xPlane) {
         super(xPlane);
@@ -37,6 +46,36 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
 
     public void reload() {
         AsyncHelper.runAsync(this::loadNavDataSets);
+    }
+
+    /**
+     * The sim-wide ARINC 424 override layer, whether or not it is installed.
+     */
+    public Optional<NavDataSet> getSimWideOverride() {
+        return getNavDataSet(SIM_WIDE_OVERRIDE);
+    }
+
+    /**
+     * The global layer a composable layer would actually be applied on top of: the updated
+     * base layer if installed, otherwise the base layer X-Plane ships. Empty when the sim-wide
+     * override is installed, since it suppresses every global layer.
+     *
+     * <p>Shadowing has to be taken into account: the base layer X-Plane ships is always
+     * present but on a cycle of its own, so comparing against every present layer would
+     * report a conflict for anyone who installed fresher navdata.</p>
+     */
+    public Optional<NavDataSet> getEffectiveGlobalDataSet() {
+        if (getSimWideOverride().filter(NavDataSet::getExists).isPresent()) {
+            return Optional.empty();
+        }
+        return getNavDataSet(UPDATED_BASE).filter(NavDataSet::getExists)
+                .or(() -> getNavDataSet(BASE).filter(NavDataSet::getExists));
+    }
+
+    private Optional<NavDataSet> getNavDataSet(String name) {
+        return getNavDataSets().stream()
+                .filter(dataSet -> name.equals(dataSet.getName()))
+                .findFirst();
     }
 
 
@@ -60,7 +99,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet simWideOverride() {
-        return new Arinc424DataSet("Sim-wide ARINC424 override",
+        return new Arinc424DataSet(SIM_WIDE_OVERRIDE,
                 "<h3><span id=\"Sim-wide_ARINC424_override\">Sim-wide ARINC424 override</span></h3>\n" +
                         "<p>Professional customers with access to 424 master files can use them to override the X-Plane global database.</p>\n" +
                         "<p>Upon sim start, X-Plane will examine the <strong>$X-Plane/Custom Data/</strong> folder of its installation for a file named <strong>earth_424.dat</strong>. If this file is found, it will be interpreted according to the ARINC 424.18 standard with the FAA CIFP exceptions, and will be used to load the following information into X-Plane:</p>\n" +
@@ -85,11 +124,11 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>GBAS path points (PQ records)</li>\n" +
                         "</ul>\n" +
                         "<p>After this file has been read, X-Plane will not load any other information from other text files. It is assumed that when the installation is provided with a global 424 file, no data of any other format needs to be loaded. In particular, X-Plane will then NOT load any of the files described in the following as &#8220;Global data&#8221;.</p>\n",
-                xPlane, xPlane.getPaths().customData(), true, "earth_424.dat");
+                xPlane, xPlane.getPaths().customData(), Arinc424DataSet.Role.SIM_WIDE_OVERRIDE, "earth_424.dat");
     }
 
     private NavDataSet baseNavData() {
-        XPNavDataSet dataSet = new XPNavDataSet("Base (shipped with X-Plane)",
+        XPNavDataSet dataSet = new XPNavDataSet(BASE,
                 "<h3><span id=\"The_base_-_what_is_shipped_with_X-Plane\">The base &#8211; what is shipped with X-Plane:</span></h3>\n" +
                         "<p>X-Plane 11/12 ships with a global base layer of data that enables IFR navigation world-wide. The data cycle represented by those files will remain the same over the lifetime of X-Plane 12.<br />\n" +
                         "    These files are:</p>\n" +
@@ -120,7 +159,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet updatedBaseNavData() {
-        XPNavDataSet dataSet = new XPNavDataSet("Updated base (supplied by third-parties)",
+        XPNavDataSet dataSet = new XPNavDataSet(UPDATED_BASE,
                 "<h3><span id=\"The_updated_base_-_what_is_supplied_by_third-party_providers\">The updated base &#8211; what is supplied by third-party providers</span></h3>\n" +
                         "<p>This layer is what advanced hobbyist users care about. They want updated data, because they want to fly online. Participation in the online networks usually requires fairly recent data. Aerosoft and Navigraph offer newest data by a monthly subscription. This data consists of the files:</p>\n" +
                         "<ul>\n" +
@@ -149,7 +188,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet faaUpdatedApproaches() {
-        return new Arinc424DataSet("FAA updated approaches",
+        return new Arinc424DataSet(FAA_APPROACHES,
                 "<h3><span id=\"The_updated_approaches_-_what_we_get_from_the_FAA_for_free\">The updated approaches &#8211; what we get from the FAA for free</span></h3>\n" +
                         "<p><strong>This is a distinct layer from the sim-wide override above, not an older name for it. " +
                         "It layers FAA terminal data <em>on top of</em> the global layers rather than replacing them, so " +
@@ -182,11 +221,11 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<p>Note that no enroute waypoints, VHF enroute navaids, or enroute airways are loaded from this file. These cannot be replaced safely as it would affect the referential integrity of the airway network.</p>\n" +
                         "<p>Note that for integrity reasons, <span style=\"text-decoration: underline;\">the cycle number of the FAA data must always match the cycle number of the underlying layer</span>. Terminal procedures do reference waypoints out of the terminal area, therefore, the data source for global waypoints must be at the same cycle number.</p>\n" +
                         "<p>Note also that when FAACIFP is in effect, terminal procedures are overridden on a per-airport basis. No attempt is made to mix-match terminal procedures from global data with those loaded from FAACIFP. As terminal procedures reference terminal waypoints, trying to build terminal procedures from global data with points loaded from FACCIFP could lead to unpredictable results. Therefore, once FAACIFP is in effect, Custom Data/CIFP/$ICAO.dat is overridden for each $ICAO with PD/PE/PF records in FAACIFP.</p>\n",
-                xPlane, xPlane.getPaths().customData(), false, "FAACIFP18");
+                xPlane, xPlane.getPaths().customData(), Arinc424DataSet.Role.FAA_APPROACHES, "FAACIFP18");
     }
 
     private NavDataSet handPlacedLocalizers() {
-        return new XPNavDataSet("Hand-placed localizers",
+        return new XPNavDataSet(HAND_PLACED_LOCALIZERS,
                 "<h3><span id=\"Hand-placed_localizers_-_manual_corrections\">Hand-placed localizers &#8211; manual corrections</span></h3>\n" +
                         "<p>Starting with X-Plane 11.50, curated localizer data is only applied to a small number of airports. X-Plane is instead relying on the earth_nav.dat of the <a href=\"//developer.x-plane.com/wp-content/uploads/2020/03/XP-NAV1150-Spec.pdf\">XPNAV1150</a> or newer variety for almost all airports. Such data is shipped with X-Plane 11.50 by default, and also available from Navigraph and Aerosoft. Please be sure to select &#8220;11.50 and later&#8221; as the data download format if you are on X-Plane 11.50 or later. Data made for X-Plane 11.41 or earlier will not assure 1000th-of-a-degree accuracy for localizers and can thus lead to ILS signals guiding the aircraft beside the runway.</p>\n" +
                         "<p>With this data, we have currently identified 5 airports for which the necessary data quality is not assured. These will continue to be supplied from the X-Plane scenery gateway. The file</p>\n" +
@@ -199,7 +238,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet userData() {
-        return new XPNavDataSet("User data",
+        return new XPNavDataSet(USER_DATA,
                 "<h3><span id=\"User_data_-_per-user_overrides\">User data &#8211; per-user overrides</span></h3>\n" +
                         "<p>The last layer is the user-defined layer.</p>\n" +
                         "<p>These files are where all custom waypoints are saved. Whenever a custom waypoint is created (through the default FMS) it is saved in the user_fix.dat file, which overrides previously loaded information. The user_nav.dat can hold custom navaids, though there is no way in the X-Plane UI to create them directly.</p>\n" +

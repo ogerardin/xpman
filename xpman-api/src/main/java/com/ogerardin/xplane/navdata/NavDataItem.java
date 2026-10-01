@@ -9,6 +9,20 @@ import java.util.List;
  */
 public interface NavDataItem {
 
+    /** Length of an AIRAC cycle designator, e.g. 2610 for October 2026. */
+    int CYCLE_LENGTH = 4;
+
+    /**
+     * Reduces a cycle designator to its AIRAC form so that differently formatted values
+     * compare equal. A cycle may be written as {@code YYYYMM}, of which the AIRAC
+     * designator is the trailing four digits.
+     */
+    static String normalizeCycle(String cycle) {
+        return cycle != null && cycle.length() > CYCLE_LENGTH
+                ? cycle.substring(cycle.length() - CYCLE_LENGTH)
+                : cycle;
+    }
+
     String getName();
 
     default Path getPath() {

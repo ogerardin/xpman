@@ -46,11 +46,11 @@ public class CifpInstallableType implements InstallableType {
     public InspectionResult preconditions(XPlane xPlane, Archive archive) {
         return InspectionResult.of(InspectionMessage.builder()
                 .severity(Severity.WARN)
-                .message("Installing this replaces X-Plane's global navigation data with the FAA dataset, and "
-                        + "X-Plane then loads no other navdata file. Only US navdata will be available, and no "
-                        + "enroute navaids or airways are loaded: they cannot be replaced safely without "
-                        + "breaking the referential integrity of the airway network. If you already pay for "
-                        + "Navigraph or Aerosoft navdata, installing this discards it.")
+                .message("Installing this replaces X-Plane's global navigation data with the FAA dataset, and X-Plane "
+                        + "then loads no other navdata file, so anything else in Custom Data becomes unused. "
+                        + "Only US navdata will be available, and no enroute navaids or airways are loaded: "
+                        + "they cannot be replaced safely without breaking the referential integrity of the "
+                        + "airway network.")
                 .build());
     }
 

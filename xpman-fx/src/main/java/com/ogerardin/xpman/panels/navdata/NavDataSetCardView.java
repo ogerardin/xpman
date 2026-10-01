@@ -2,6 +2,7 @@ package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.navdata.NavDataItem;
+import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xpman.util.SizeFormat;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
@@ -42,14 +43,14 @@ public class NavDataSetCardView extends VBox {
     private static final int ICON_SIZE = 14;
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    /** Icon per nav data set, keyed by display name (see NavDataManager.loadNavDataSets()). */
+    /** Icon per nav data set, keyed by display name (see NavDataManager). */
     private static final Map<String, Feather> SET_ICONS = Map.of(
-            "Sim-wide ARINC424 override", Feather.GLOBE,
-            "Base (shipped with X-Plane)", Feather.DATABASE,
-            "Updated base (supplied by third-parties)", Feather.REFRESH_CW,
-            "FAA updated approaches", Feather.FLAG,
-            "Hand-placed localizers", Feather.MAP_PIN,
-            "User data", Feather.USER);
+            NavDataManager.SIM_WIDE_OVERRIDE, Feather.GLOBE,
+            NavDataManager.BASE, Feather.DATABASE,
+            NavDataManager.UPDATED_BASE, Feather.REFRESH_CW,
+            NavDataManager.FAA_APPROACHES, Feather.FLAG,
+            NavDataManager.HAND_PLACED_LOCALIZERS, Feather.MAP_PIN,
+            NavDataManager.USER_DATA, Feather.USER);
 
     /** Icon per data file, keyed by leaf name ("CIFP" = directory of CIFPSummary). */
     private static final Map<String, Feather> FILE_ICONS = Map.ofEntries(

@@ -95,6 +95,7 @@ public class NavDataFile implements NavDataItem {
         return Optional.ofNullable(getData())
                 .map(DatFileData::getHeader)
                 .map(DatHeader::getDataCycle)
+                .map(NavDataItem::normalizeCycle)
                 .orElse(null);
     }
 

@@ -3,15 +3,18 @@ package com.ogerardin.xplane.test.navdata;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Hermetic tests for {@link NavDataSet#inspect()}: missing files and AIRAC cycle
@@ -88,5 +91,38 @@ class NavDataSetTest {
         assertThat(result.getMessages(), hasItem(allOf(
                 hasProperty("severity", is(Severity.INFO)),
                 hasProperty("message", is("Present (AIRAC cycle unknown)")))));
+    }
+
+    @Test
+    void consistentCycleIsTheOneSharedByTheExistingFiles() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2610");
+
+        assertThat(dataSet(data, "earth_nav.dat", "earth_fix.dat").getConsistentCycle(),
+                is(Optional.of("2610")));
+    }
+
+    @Test
+    void consistentCycleIsEmptyWhenTheFilesDisagree() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2507");
+
+        // a within-set conflict is reported by inspect() in its own right
+        assertThat(dataSet(data, "earth_nav.dat", "earth_fix.dat").getConsistentCycle(), is(Optional.empty()));
+    }
+
+    @Test
+    void consistentCycleIsEmptyWhenNoFileIsPresent() throws Exception {
+        assertThat(dataSet(xplaneRoot.resolve("Custom Data"), "earth_nav.dat").getConsistentCycle(),
+                is(Optional.empty()));
+    }
+
+    @Test
+    void cyclesAreNormalisedToTheirAiracDesignator() {
+        assertThat(NavDataItem.normalizeCycle("202610"), is("2610"));
+        assertThat(NavDataItem.normalizeCycle("2610"), is("2610"));
+        assertThat(NavDataItem.normalizeCycle(null), is(nullValue()));
     }
 }

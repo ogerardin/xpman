@@ -31,12 +31,13 @@ public class Arinc424NavDataFile extends NavDataFile {
     /**
      * {@inheritDoc}
      *
-     * <p>ARINC 424 carries no XPNAV AIRAC cycle marker; the status line falls back to
-     * reporting the file as present with an unknown cycle.</p>
+     * <p>The ARINC 424 header carries its own cycle designator ({@code VOLUME 2610}), which
+     * is the same AIRAC numbering the XPNAV {@code data cycle} header uses — so it compares
+     * directly against the cycles reported by the other layers.</p>
      */
     @Override
     public String getAiracCycle() {
-        return null;
+        return getHeader() == null ? null : NavDataItem.normalizeCycle(getHeader().cycle());
     }
 
     @Override

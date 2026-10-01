@@ -97,10 +97,35 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     }
 
     /**
+     * The single AIRAC cycle shared by this set's existing data files.
+     *
+     * <p>Empty when the set has no file, when none of them carries a cycle, or when they
+     * disagree — the last case being a conflict {@link #inspect()} already reports in its
+     * own right.</p>
+     */
+    public Optional<String> getConsistentCycle() {
+        List<String> cycles = getChildren().stream()
+                .filter(NavDataItem::getExists)
+                .map(NavDataItem::getAiracCycle)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        return cycles.size() == 1 ? Optional.of(cycles.get(0)) : Optional.empty();
+    }
+
+    /**
      * An extra message describing the geographic coverage of this data set, when the format
      * makes it detectable. Overridden by formats that carry coverage in their file header.
      */
     protected Optional<InspectionMessage> coverageMessage() {
+        return Optional.empty();
+    }
+
+    /**
+     * An extra message about how this set relates to the other navdata layers, when the
+     * format's role in the hierarchy makes such a check meaningful.
+     */
+    protected Optional<InspectionMessage> consistencyMessage() {
         return Optional.empty();
     }
 
@@ -138,6 +163,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         };
         messages.add(InspectionMessage.builder().severity(severity).message(message).build());
         coverageMessage().ifPresent(messages::add);
+        consistencyMessage().ifPresent(messages::add);
 
         return InspectionResult.of(messages);
     }
