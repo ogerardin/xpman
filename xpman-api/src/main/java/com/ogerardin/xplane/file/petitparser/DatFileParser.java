@@ -85,6 +85,11 @@ public class DatFileParser extends XPlaneFileParserBase<DatFileData> {
      * @return parser for cycle identifiers
      */
     private Parser Cycle() {
+        // ponytail: exactly 4 digits, matching the AIRAC designator length; a 6-digit
+        // "data cycle 202610" would read as 2026 and any leftover digits fall through to
+        // JunkLine. No such file seen (X-Plane's own converter emits 4). Upgrade to a
+        // greedy repeat if a vendor ships YYYYMM, and NavDataItem.normalizeCycle then
+        // reduces it.
         return ofIgnoringCase("data cycle ")
                 .seq(digit().repeat(4,4).flatten())
                 .pick(1);
