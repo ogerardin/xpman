@@ -18,7 +18,11 @@ public class Arinc424DataSet extends NavDataSet {
     /**
      * True when this is the sim-wide override: X-Plane reads {@code earth_424.dat} at sim
      * start and then loads no other navdata text file, so every lower layer is ignored.
-     * False for the legacy {@code FAACIFP18} set, which current X-Plane versions no longer read.
+     *
+     * <p>False for the FAA approaches set, which is a separate mechanism rather than a
+     * superseded one: it layers terminal data <em>on top of</em> the global layers instead
+     * of replacing them, so it makes none of them ignored. X-Plane reads both
+     * {@code earth_424.dat} and {@code FAACIFP18} in X-Plane 11 and 12 alike.</p>
      */
     private final boolean overriding;
 

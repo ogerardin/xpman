@@ -187,11 +187,46 @@ Verified against a **real** downloaded cycle (`CIFP_261001.zip`, 9.1 MB) outside
 recognized, installed to a 50,317,816-byte `earth_424.dat`, nothing else appearing under
 `Custom Data`, and the override layer reporting `US-only coverage (FAACIFP18)`.
 
+## Two ARINC 424 layers, not two names for one
+
+The obvious trap here is reading `earth_424.dat` and `FAACIFP18` as the same mechanism under
+two filenames. X-Plane's navdata documentation (titled *"Navdata in X-Plane 11 and 12"*)
+describes them as two distinct layers, both live in XP11 and XP12:
+
+| | `earth_424.dat` | `FAACIFP18` |
+|---|---|---|
+| Layer | Sim-wide ARINC424 override | Updated approaches |
+| Loads | fixes, navaids, **airways**, holdings, MSA/MORA, ILS, markers, airports, procedures, runway, comms, path points, GLS, GBAS | terminal/P\* only: terminal fixes, terminal navaids, ILS, markers, airports, gates, procedures, runway, path points |
+| Enroute airways / navaids | yes | explicitly no — *"cannot be replaced safely as it would affect the referential integrity of the airway network"* |
+| Other layers | **all suppressed** | layered on top, overriding per airport |
+| Aimed at | *"professional customers with access to 424 master files"* | FAA's free data, but only with matching-cycle global navdata |
+
+`isOverriding()` is therefore false for the approaches set because it overrides *content
+within* the global layers rather than *suppressing* them — not because it is obsolete.
+
+## Why `earth_424.dat` is the install target
+
+The `FAACIFP18` layer only takes effect when its AIRAC cycle matches the underlying global
+navdata. X-Plane ships a base layer whose cycle *"will remain the same over the lifetime of
+X-Plane 12"*, so a current FAA cycle can essentially never match it — that layer only helps
+someone who already runs same-cycle Navigraph or Aerosoft data.
+
+`earth_424.dat` is therefore the only option that works for the free user this feature
+targets, and it is what the community actually does on both versions (the 2017 XP11
+walkthrough and 2024 XP12 reports both rename `FAACIFP18` to `earth_424.dat`).
+
+The consequence is exactly the warning we show: outside FAA-authority airspace the map goes
+empty, and *"if you want to fly outside the USA, you would need to remove or rename
+earth_424.dat to enable X-Plane to use the worldwide default navdata"*. A user who already
+pays for Navigraph or Aerosoft data will lose it to this override, so the install warning
+says so explicitly.
+
 ## Out of scope
 
 - Downloading or discovering cycles.
-- Installing the legacy `FAACIFP18` filename (pre-11.50). The panel labels that layer as
-  legacy and leaves it empty, which is correct for current X-Plane.
+- Installing as `FAACIFP18`. It is a real, supported layer rather than a legacy filename, and
+  it is the better choice for a subscriber with same-cycle global data — but XPman cannot
+  detect that setup, and it does nothing for the free user. Worth offering later, if ever.
 - General partial-coverage detection for non-FAA publishers.
 - Extracting an AIRAC 424 effective date or cycle number for display.
 - Uninstall (removing `earth_424.dat`) — the wizard installs, it does not uninstall.

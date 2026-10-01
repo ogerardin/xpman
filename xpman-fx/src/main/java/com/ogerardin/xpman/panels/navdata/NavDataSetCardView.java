@@ -47,7 +47,7 @@ public class NavDataSetCardView extends VBox {
             "Sim-wide ARINC424 override", Feather.GLOBE,
             "Base (shipped with X-Plane)", Feather.DATABASE,
             "Updated base (supplied by third-parties)", Feather.REFRESH_CW,
-            "FAA updated approaches (legacy filename)", Feather.FLAG,
+            "FAA updated approaches", Feather.FLAG,
             "Hand-placed localizers", Feather.MAP_PIN,
             "User data", Feather.USER);
 

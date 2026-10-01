@@ -149,11 +149,13 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet faaUpdatedApproaches() {
-        return new Arinc424DataSet("FAA updated approaches (legacy filename)",
+        return new Arinc424DataSet("FAA updated approaches",
                 "<h3><span id=\"The_updated_approaches_-_what_we_get_from_the_FAA_for_free\">The updated approaches &#8211; what we get from the FAA for free</span></h3>\n" +
-                        "<p><strong>This layer reflects the pre-11.50 filename. Current X-Plane versions look for " +
-                        "<code>earth_424.dat</code>, not <code>FAACIFP18</code>, so installing a current FAA cycle " +
-                        "populates the layer above and leaves this one empty.</strong></p>\n" +
+                        "<p><strong>This is a distinct layer from the sim-wide override above, not an older name for it. " +
+                        "It layers FAA terminal data <em>on top of</em> the global layers rather than replacing them, so " +
+                        "it only takes effect when its AIRAC cycle matches the cycle of the underlying global navdata. " +
+                        "The base layer X-Plane ships never changes cycle, so this layer stays empty unless you have " +
+                        "installed matching Navigraph or Aerosoft data.</strong></p>\n" +
                         "<p>The FAACIFP file is an ARINC424.18 file provided by the Federal Aviation Administration free of charge and can be downloaded from their website.</p>\n" +
                         "<p>In X-Plane 11/12, this file is used to replace P* records with the latest from the FAA. The following data is read from this file, and overrides data loaded from the global layer:</p>\n" +
                         "<ul>\n" +
