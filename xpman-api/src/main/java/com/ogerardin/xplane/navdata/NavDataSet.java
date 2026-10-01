@@ -97,6 +97,23 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     }
 
     /**
+     * The distinct AIRAC cycles carried by this set's existing data files, sorted.
+     *
+     * <p>Empty when the set has no file, or when none of them carries a readable cycle;
+     * more than one entry means the files disagree, which {@link #inspect()} reports as a
+     * conflict.</p>
+     */
+    public List<String> getCycles() {
+        return getChildren().stream()
+                .filter(NavDataItem::getExists)
+                .map(NavDataItem::getAiracCycle)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    /**
      * The single AIRAC cycle shared by this set's existing data files.
      *
      * <p>Empty when the set has no file, when none of them carries a cycle, or when they
@@ -104,13 +121,27 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
      * own right.</p>
      */
     public Optional<String> getConsistentCycle() {
-        List<String> cycles = getChildren().stream()
-                .filter(NavDataItem::getExists)
-                .map(NavDataItem::getAiracCycle)
-                .filter(Objects::nonNull)
-                .distinct()
-                .toList();
+        List<String> cycles = getCycles();
         return cycles.size() == 1 ? Optional.of(cycles.get(0)) : Optional.empty();
+    }
+
+    /**
+     * A short description of this set's state, for a one-line label: {@code Absent},
+     * {@code No data}, {@code Cycle 2610} or {@code Mixed cycles}.
+     *
+     * <p>Deliberately terse. Longer explanations — coverage, cycle consistency — are
+     * {@link Severity#WARN} and {@link Severity#ERROR} {@link InspectionMessage}s, surfaced
+     * by an icon and in {@link #inspect()}, not squeezed into a label.</p>
+     */
+    public String describeState() {
+        if (!getExists()) {
+            return "Absent";
+        }
+        List<String> cycles = getCycles();
+        if (cycles.isEmpty()) {
+            return "No data";
+        }
+        return cycles.size() == 1 ? "Cycle " + cycles.get(0) : "Mixed cycles";
     }
 
     /**
@@ -147,13 +178,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
                         .build())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        List<String> cycles = getChildren().stream()
-                .filter(NavDataItem::getExists)
-                .map(NavDataItem::getAiracCycle)
-                .filter(Objects::nonNull)
-                .distinct()
-                .sorted()
-                .toList();
+        List<String> cycles = getCycles();
 
         Severity severity = Severity.INFO;
         String message = switch (cycles.size()) {

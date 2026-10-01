@@ -1,6 +1,8 @@
 package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xpman.diag.SeverityIconCellFactory;
 import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xpman.util.SizeFormat;
@@ -28,7 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -106,6 +108,11 @@ public class NavDataSetCardView extends VBox {
         header.getStyleClass().add("navdata-card-header");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
+        FontIcon severityIcon = buildSeverityIcon(uiItem);
+        if (severityIcon != null) {
+            header.getChildren().add(severityIcon);
+        }
+
         if (ignored || suppressed > 0) {
             Label overrideBadge = new Label(ignored
                     ? "ignored by layer " + overriding
@@ -137,25 +144,37 @@ public class NavDataSetCardView extends VBox {
     }
 
     /**
-     * Builds the status label from the most severe inspection message, so a warning such as
-     * partial coverage is visible at a glance instead of being buried under the cycle summary.
-     *
-     * <p>On equal severity the later message wins, because NavDataSet.inspect() appends the
-     * per-file "absent" notes first and the summary, coverage and consistency messages after
-     * them: those are the ones worth showing on the header line.</p>
+     * The card header shows a short state only — see {@code NavDataSet.describeState()}.
+     * Anything more than a dozen characters belongs in the inspection dialog, so coverage
+     * and cycle-consistency messages reach the header as an icon instead of as prose.
      */
     private static Label buildStatusLabel(UiNavDataItem uiItem) {
-        InspectionMessage message = uiItem.inspect().getMessages().stream()
-                .reduce((first, next) -> severityRank(next) >= severityRank(first) ? next : first)
-                .orElseThrow(() -> new IllegalStateException("nav data set reported no inspection message"));
-        Label statusLabel = new Label(message.getMessage());
-        statusLabel.getStyleClass().add("navdata-status-"
-                + message.getSeverity().toString().toLowerCase(Locale.ROOT));
+        Label statusLabel = new Label(uiItem.getState());
+        statusLabel.getStyleClass().add("navdata-status-info");
         return statusLabel;
     }
 
-    private static int severityRank(InspectionMessage message) {
-        return switch (message.getSeverity()) {
+    /**
+     * An icon for the most severe warning or error this layer carries, or null when it has
+     * none. Reuses the severity cell factory's icons and colours, so it matches the icons
+     * the wizard and the inspection dialog show. Not clickable: the existing "inspect"
+     * hover action opens the full text.
+     */
+    private static FontIcon buildSeverityIcon(UiNavDataItem uiItem) {
+        return uiItem.inspect().getMessages().stream()
+                .map(InspectionMessage::getSeverity)
+                .filter(severity -> severity == Severity.WARN || severity == Severity.ERROR)
+                .max(Comparator.comparingInt(NavDataSetCardView::severityRank))
+                .map(SeverityIconCellFactory::getSeverityIcon)
+                .map(icon -> {
+                    icon.setIconSize(ICON_SIZE);
+                    return icon;
+                })
+                .orElse(null);
+    }
+
+    private static int severityRank(Severity severity) {
+        return switch (severity) {
             case INFO -> 0;
             case WARN -> 1;
             case ERROR -> 2;

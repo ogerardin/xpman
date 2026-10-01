@@ -97,21 +97,6 @@ class NavDataSetTest {
     }
 
     @Test
-    void listsAbsentFilesBeforeTheSummary() throws Exception {
-        // NavDataSetCardView breaks severity ties in favour of the last message, so the
-        // header line prefers the cycle over the per-file absence notes. That only holds
-        // while inspect() appends the summary last.
-        Path data = xplaneRoot.resolve("Custom Data");
-        writeDat(data, "earth_nav.dat", "2610");
-
-        List<InspectionMessage> messages =
-                dataSet(data, "earth_nav.dat", "earth_fix.dat").inspect().getMessages();
-
-        assertThat(messages.get(0).getMessage(), is("absent: Custom Data/earth_fix.dat"));
-        assertThat(messages.get(messages.size() - 1).getMessage(), is("OK — cycle 2610"));
-    }
-
-    @Test
     void consistentCycleIsTheOneSharedByTheExistingFiles() throws Exception {
         Path data = xplaneRoot.resolve("Custom Data");
         writeDat(data, "earth_nav.dat", "2610");
@@ -142,5 +127,48 @@ class NavDataSetTest {
         assertThat(NavDataItem.normalizeCycle("202610"), is("2610"));
         assertThat(NavDataItem.normalizeCycle("2610"), is("2610"));
         assertThat(NavDataItem.normalizeCycle(null), is(nullValue()));
+    }
+
+    @Test
+    void stateIsAbsentWhenNoFileIsInstalled() throws Exception {
+        assertThat(dataSet(xplaneRoot.resolve("Custom Data"), "earth_nav.dat").describeState(),
+                is("Absent"));
+    }
+
+    @Test
+    void stateIsNoDataWhenTheFileCarriesNoReadableCycle() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeArinc424(data, "earth_424.dat");
+
+        assertThat(dataSet(data, "earth_424.dat").describeState(), is("No data"));
+    }
+
+    @Test
+    void stateNamesTheSingleCycle() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2610");
+
+        assertThat(dataSet(data, "earth_nav.dat", "earth_fix.dat").describeState(), is("Cycle 2610"));
+    }
+
+    @Test
+    void stateIsMixedCyclesWhenTheFilesDisagree() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2507");
+
+        assertThat(dataSet(data, "earth_nav.dat", "earth_fix.dat").describeState(), is("Mixed cycles"));
+    }
+
+    @Test
+    void cyclesAreDistinctAndSorted() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2610");
+        writeDat(data, "earth_awy.dat", "2507");
+
+        assertThat(dataSet(data, "earth_nav.dat", "earth_fix.dat", "earth_awy.dat").getCycles(),
+                is(List.of("2507", "2610")));
     }
 }

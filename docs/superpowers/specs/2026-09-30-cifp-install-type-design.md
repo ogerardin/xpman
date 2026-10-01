@@ -39,7 +39,9 @@ use, and warns that the FAA dataset covers the US only.
 | Coverage detection | ARINC 424 `HDR01` record, cols 6–15 carry the dataset's own name. FAA datasets are named `FAACIFP*` |
 | Cycle detection | ARINC 424 `HDR04`, labelled `VOLUME nnnn` — the same AIRAC designator the XPNAV `data cycle` header uses |
 | Cycle consistency | Only the approaches layer: it must match the cycle of the layer it overrides, per X-Plane's documentation. The override replaces the global database and has no such requirement |
-| New UI | Four CSS rules. No FXML or controller wiring changes |
+| Status label | Short state only — `NavDataSet.describeState()`. Never an inspection message |
+| Severity | An icon built from `SeverityIconCellFactory`; full text in the dialog |
+| Inspection window | `WrappingCellFactory`, as the install wizard's page 2 already does |
 | Manager | **None.** The install is one extract and one copy |
 
 ## No converter
@@ -143,10 +145,12 @@ valid, it simply has no XPNAV cycle marker. Now: files present but unparseable �
   1-based index to each card. Cards below it get `ignored`.
 - `NavDataSetCardView` adds `.navdata-card-ignored` (50% opacity) plus an `ignored by layer N`
   badge; the overriding card gets an `overrides N layers` badge.
-- `buildStatusLabel()` now picks the **most severe** inspection message rather than the last
-  one. It previously assumed `inspect()` ends with the summary message, so appending a
-  coverage warning would have displaced the cycle display. Ranking keeps healthy layers on
-  their cycle and surfaces warnings where the eye already looks.
+- `buildStatusLabel()` shows `NavDataSet.describeState()` and nothing else: `Absent`, `No data`,
+  `Cycle 2610` or `Mixed cycles`. It used to pick the most severe `InspectionMessage`, which
+  put the coverage and cycle-consistency prose — up to 230 characters — into the card header.
+  Severity is signalled by an icon instead, built from the same
+  `SeverityIconCellFactory.getSeverityIcon` the wizard uses so the glyph and colour match.
+  The full text stays one hover-action away via the card's existing `inspect` button.
 
 ## Coverage detection, and its limits
 

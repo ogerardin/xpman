@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.ogerardin.xpman.diag.SeverityIconCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.cell_factory.ToolTipCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.WrappingCellFactory?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -30,7 +30,7 @@
                   <PropertyValueFactory property="message"/>
               </cellValueFactory>
               <cellFactory>
-                  <ToolTipCellFactory property="details"/>
+                  <WrappingCellFactory />
               </cellFactory>
           </TableColumn>
       </columns>

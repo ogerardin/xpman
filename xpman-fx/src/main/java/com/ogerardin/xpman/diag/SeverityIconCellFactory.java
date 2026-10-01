@@ -27,7 +27,7 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
         return new SeverityIconTableCell<>();
     }
 
-    private static FontIcon getSeverityIcon(Severity severity) {
+    public static FontIcon getSeverityIcon(Severity severity) {
         Feather icon = switch (severity) {
             case ERROR -> Feather.X_CIRCLE;
             case WARN -> Feather.ALERT_TRIANGLE;

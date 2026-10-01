@@ -29,6 +29,14 @@ public class UiNavDataItem {
         return navDataItem instanceof NavDataSet navDataSet && navDataSet.isOverriding();
     }
 
+    /**
+     * A short description of this layer's state for the card header, e.g. {@code Cycle 2610}.
+     * Empty for items that are not layers.
+     */
+    public String getState() {
+        return navDataItem instanceof NavDataSet navDataSet ? navDataSet.describeState() : "";
+    }
+
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     @EnabledIf("exists")
     public void reveal() {

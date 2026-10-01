@@ -41,8 +41,8 @@ public enum MissingReferencedTexturesInspection implements Inspection<SceneryPac
                     .map(texture -> InspectionMessage.builder()
                             .severity(Severity.ERROR)
                             .object(file.getFileName().toString())
-                            .message("Missing texture: " + texture.getReference())
-                            .details("Texture " + texture.getReference() + " is referenced in " + file + ", but the file does not exist")
+                            .message("Missing texture: " + texture.getReference()
+                                    + " (referenced by " + file.getFileName() + ")")
                             .build())
                     .toList();
             messages.addAll(inspectionMessages);
