@@ -61,8 +61,21 @@ public class NavDataController extends Controller {
     private void updateCards() {
         cardMenuFactory.clearCache();
         cardsPane.getChildren().clear();
+
+        // The highest-priority layer that is actually present and overrides the ones below
+        // it, as a 1-based layer index, or -1 when no layer overrides anything.
+        int overriding = -1;
         for (int i = 0; i < uiItems.size(); i++) {
-            cardsPane.getChildren().add(new NavDataSetCardView(uiItems.get(i), i + 1, uiItems.size(), this));
+            UiNavDataItem item = uiItems.get(i);
+            if (item.isOverriding() && item.getExists()) {
+                overriding = i + 1;
+                break;
+            }
+        }
+
+        for (int i = 0; i < uiItems.size(); i++) {
+            cardsPane.getChildren().add(new NavDataSetCardView(uiItems.get(i), i + 1, uiItems.size(),
+                    overriding, this));
         }
 
         boolean loading = uiItems.getLoadingProperty().get();

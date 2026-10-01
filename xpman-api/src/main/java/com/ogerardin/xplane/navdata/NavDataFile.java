@@ -87,7 +87,7 @@ public class NavDataFile implements NavDataItem {
         return Files.exists(getFullPath());
     }
 
-    private Path getFullPath() {
+    protected Path getFullPath() {
         return absolutePath != null ? absolutePath : navDataSet.getFolder().resolve(file);
     }
 

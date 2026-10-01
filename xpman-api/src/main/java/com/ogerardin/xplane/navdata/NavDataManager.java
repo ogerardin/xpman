@@ -85,7 +85,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<li>GBAS path points (PQ records)</li>\n" +
                         "</ul>\n" +
                         "<p>After this file has been read, X-Plane will not load any other information from other text files. It is assumed that when the installation is provided with a global 424 file, no data of any other format needs to be loaded. In particular, X-Plane will then NOT load any of the files described in the following as &#8220;Global data&#8221;.</p>\n",
-                xPlane, xPlane.getPaths().customData(), "earth_424.dat");
+                xPlane, xPlane.getPaths().customData(), true, "earth_424.dat");
     }
 
     private NavDataSet baseNavData() {
@@ -149,8 +149,11 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
     }
 
     private NavDataSet faaUpdatedApproaches() {
-        return new Arinc424DataSet("FAA updated approaches",
+        return new Arinc424DataSet("FAA updated approaches (legacy filename)",
                 "<h3><span id=\"The_updated_approaches_-_what_we_get_from_the_FAA_for_free\">The updated approaches &#8211; what we get from the FAA for free</span></h3>\n" +
+                        "<p><strong>This layer reflects the pre-11.50 filename. Current X-Plane versions look for " +
+                        "<code>earth_424.dat</code>, not <code>FAACIFP18</code>, so installing a current FAA cycle " +
+                        "populates the layer above and leaves this one empty.</strong></p>\n" +
                         "<p>The FAACIFP file is an ARINC424.18 file provided by the Federal Aviation Administration free of charge and can be downloaded from their website.</p>\n" +
                         "<p>In X-Plane 11/12, this file is used to replace P* records with the latest from the FAA. The following data is read from this file, and overrides data loaded from the global layer:</p>\n" +
                         "<ul>\n" +
@@ -177,7 +180,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
                         "<p>Note that no enroute waypoints, VHF enroute navaids, or enroute airways are loaded from this file. These cannot be replaced safely as it would affect the referential integrity of the airway network.</p>\n" +
                         "<p>Note that for integrity reasons, <span style=\"text-decoration: underline;\">the cycle number of the FAA data must always match the cycle number of the underlying layer</span>. Terminal procedures do reference waypoints out of the terminal area, therefore, the data source for global waypoints must be at the same cycle number.</p>\n" +
                         "<p>Note also that when FAACIFP is in effect, terminal procedures are overridden on a per-airport basis. No attempt is made to mix-match terminal procedures from global data with those loaded from FAACIFP. As terminal procedures reference terminal waypoints, trying to build terminal procedures from global data with points loaded from FACCIFP could lead to unpredictable results. Therefore, once FAACIFP is in effect, Custom Data/CIFP/$ICAO.dat is overridden for each $ICAO with PD/PE/PF records in FAACIFP.</p>\n",
-                xPlane, xPlane.getPaths().customData(),"FAACIFP18");
+                xPlane, xPlane.getPaths().customData(), false, "FAACIFP18");
     }
 
     private NavDataSet handPlacedLocalizers() {

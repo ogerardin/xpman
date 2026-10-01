@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -53,8 +54,16 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         this.files = Arrays.stream(fileNames)
 //                .map(folder::resolve)
                 .map(Paths::get)
-                .<NavDataItem>map((Path file) -> new NavDataFile(this, file))
+                .<NavDataItem>map(this::createFile)
                 .toList();
+    }
+
+    /**
+     * Creates the file item for one of this set's data files. Overridden by sets whose
+     * format needs its own file implementation.
+     */
+    protected NavDataItem createFile(Path file) {
+        return new NavDataFile(this, file);
     }
 
     /**
@@ -75,6 +84,25 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         extraChildren.add(child);
     }
 
+
+    /**
+     * True when the presence of this data set makes X-Plane ignore every lower-priority
+     * layer. Only meaningful when {@link #getExists()} is true.
+     *
+     * <p>The sim-wide ARINC 424 override is the only such layer: X-Plane does not load any
+     * other navdata text file once it has read {@code earth_424.dat}.</p>
+     */
+    public boolean isOverriding() {
+        return false;
+    }
+
+    /**
+     * An extra message describing the geographic coverage of this data set, when the format
+     * makes it detectable. Overridden by formats that carry coverage in their file header.
+     */
+    protected Optional<InspectionMessage> coverageMessage() {
+        return Optional.empty();
+    }
 
     /**
      * Inspects the data files of this set: reports missing files as errors, and warns
@@ -101,13 +129,15 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
         Severity severity = Severity.INFO;
         String message = switch (cycles.size()) {
             case 1 -> "OK — cycle " + cycles.get(0);
-            case 0 -> "No data present";
+            // files are present but carry no header we can read a cycle from, e.g. ARINC 424
+            case 0 -> getExists() ? "Present (AIRAC cycle unknown)" : "No data present";
             default -> {
                 severity = Severity.WARN;
                 yield "Mixed AIRAC cycles: " + String.join(", ", cycles);
             }
         };
         messages.add(InspectionMessage.builder().severity(severity).message(message).build());
+        coverageMessage().ifPresent(messages::add);
 
         return InspectionResult.of(messages);
     }

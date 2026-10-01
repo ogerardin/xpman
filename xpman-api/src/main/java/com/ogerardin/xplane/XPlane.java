@@ -2,7 +2,6 @@ package com.ogerardin.xplane;
 
 import com.ogerardin.xplane.aircraft.AircraftManager;
 import com.ogerardin.xplane.exception.InvalidConfig;
-import com.ogerardin.xplane.navdata.CifpManager;
 import com.ogerardin.xplane.navdata.NavDataManager;
 import com.ogerardin.xplane.plugins.PluginManager;
 import com.ogerardin.xplane.scenery.SceneryManager;
@@ -48,10 +47,6 @@ public class XPlane {
     @Getter(lazy = true)
     @ToString.Exclude
     private final NavDataManager navDataManager = new NavDataManager(this);
-
-    @Getter(lazy = true)
-    @ToString.Exclude
-    private final CifpManager cifpManager = new CifpManager(this);
 
     @Getter(lazy = true)
     @ToString.Exclude

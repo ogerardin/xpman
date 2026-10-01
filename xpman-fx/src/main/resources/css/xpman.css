@@ -707,6 +707,16 @@
     -fx-background-color: -color-accent-subtle;
 }
 
+/* A layer X-Plane ignores because a higher-priority overriding layer is installed */
+.navdata-card-ignored,
+.navdata-card-ignored:hover {
+    -fx-opacity: 0.5;
+}
+
+.navdata-card-badge-override {
+    -fx-font-weight: bold;
+}
+
 .navdata-card-header {
     -fx-spacing: 8px;
     -fx-alignment: center-left;

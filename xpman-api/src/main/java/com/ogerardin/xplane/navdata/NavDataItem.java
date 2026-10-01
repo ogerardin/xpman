@@ -28,6 +28,13 @@ public interface NavDataItem {
     default String getBuild() {
         return null;
     }
+    /**
+     * The name the dataset gives itself in its header, for formats that carry one
+     * (ARINC 424). Null for formats without a dataset name.
+     */
+    default String getDatasetName() {
+        return null;
+    }
 
     default List<? extends NavDataItem> getChildren() {
         return Collections.emptyList();

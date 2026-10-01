@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.util.platform;
 
-import com.ogerardin.xplane.XPlaneMajorVersion;
 import com.ogerardin.xplane.util.Urls;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -106,22 +105,6 @@ public interface Platform {
      * No-op on non-Mac platforms.
      */
     default void fixAppBundlePermissions(Path path) {}
-
-    /**
-     * The name of the folder holding the convert424toxplane binary inside the converter
-     * distribution archive, or null if this platform has no CIFP converter.
-     */
-    default String cifpConverterFolder() {
-        return null;
-    }
-
-    /**
-     * The name of the convert424toxplane executable for the given X-Plane version,
-     * or null if this platform has no CIFP converter.
-     */
-    default String cifpConverterName(XPlaneMajorVersion majorVersion) {
-        return null;
-    }
 
     default List<Path> getCandidateInstallBaseFolders(Path userHome) {
         return List.of(

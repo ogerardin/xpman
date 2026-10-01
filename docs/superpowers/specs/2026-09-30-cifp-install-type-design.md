@@ -1,28 +1,29 @@
 # FAA CIFP (ARINC 424) Installable Type
 
-**Date:** 2026-09-30
-**Status:** Design (approved)
+**Date:** 2026-09-30 (rewritten 2026-10-01 after implementation verification)
+**Status:** Implemented
 
 ## Goal
 
-Let XPman install free FAA CIFP (ARINC 424) navigation data. The user drops the FAA
-cycle ZIP on the existing install wizard; XPman extracts `FAACIFP18`, runs
-`convert424toxplane` to produce the X-Plane-specific data set, and writes the result
-into `Custom Data` as `earth_424.dat` plus the generated `CIFP` folder.
+Let XPman install free FAA CIFP (ARINC 424) navigation data. The user drops the FAA cycle
+ZIP on the existing install wizard; XPman extracts `FAACIFP18` and writes it into
+`Custom Data` as `earth_424.dat`, which X-Plane reads as a sim-wide ARINC 424 override.
+
+The navdata panel then states plainly that this layer makes X-Plane ignore every other
+navdata layer, and warns that the FAA dataset covers the US only.
 
 ## Motivations
 
-- FAA CIFP is free, current-cycle (28-day), and needs no Navigraph subscription, but the
-  manual procedure (see the X-Plane.org walkthrough) is ~8 non-obvious steps: find the
-  current cycle, rename `FAACIFP18` to `.dat`, run a third-party converter with a magic
-  `"FMS"` argument, then copy several generated files into the right `Custom Data`
-  subfolder and rename the source to `earth_424.dat`.
-- XPman already owns the `Custom Data` layout and the inspection/reporting UI, and already
-  runs third-party tools during install (ToolsFX). Driving the converter from the install
-  wizard removes every manual step.
+- FAA CIFP is free, current-cycle (28-day), and needs no Navigraph subscription. The
+  manual procedure is small but non-obvious: download the current cycle, find the
+  extensionless `FAACIFP18` inside it, and rename it to `earth_424.dat` in the right
+  `Custom Data` folder.
+- XPman already models `earth_424.dat` as the *Sim-wide ARINC424 override* navdata layer
+  (`NavDataManager.simWideOverride()`) and reports on it, but offered no way to install one.
 - The wizard is fully generic: `Page2Controller` builds a `GenericInstaller` over an
   `ArchiveInstallSource`, which resolves the concrete type by ClassGraph discovery. A new
-  `InstallableType` is therefore picked up with **zero UI changes**.
+  `InstallableType` is picked up with **zero UI changes**. `NavDataController.install()`
+  already launches that wizard.
 
 ## Decisions
 
@@ -30,156 +31,167 @@ into `Custom Data` as `earth_424.dat` plus the generated `CIFP` folder.
 |---|---|
 | Input | User-selected FAA cycle ZIP from `https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/`. XPman never discovers or downloads the cycle |
 | Recognition | Archive contains an entry whose **file name is exactly `FAACIFP18`** (FAA ships it extensionless). No overlap with `NavDataInstallableType`, which matches `earth_*.dat` |
-| Converter acquisition | Downloaded at install time from Philipp Münzel's public Dropbox folder, cached in `XPlane/Resources/tools` (`XplanePaths.tools()`), reused on later runs |
-| Cache location | `XPlane/Resources/tools/<os>/…`, so it survives both re-installs and X-Plane directory re-creation. This is the folder `ToolUtils` already targets for external tools |
-| Windows converter variant | XP11 → `convert424toxplane11.exe`; XP12 → `convert424toxplane.exe`, selected via the existing `XPlaneMajorVersion` |
-| Conversion failure | Non-zero exit is **not** fatal: log/warn with the converter's stdout+stderr, then continue and still install `FAACIFP18.dat` as `earth_424.dat` |
-| Partial install | `CIFP/**` is copied **only** when conversion succeeded; `earth_424.dat` is always installed |
-| New files | One class `CifpInstallableType` + one test. No changes to the wizard, FXML, or existing install types |
-| Utilities | Reuse `ToolUtils.installFromZip` (download → temp → selective extract), `CommandExecutor` (process + output capture), `Platform` (OS detection, runnability, macOS quarantine) |
+| Install target | `Custom Data/earth_424.dat` — the name X-Plane actually reads |
+| Conversion | **None.** See "No converter" below |
+| Coverage warning | `Severity.WARN` in `preconditions()`, so wizard page 2 shows it before the user commits; only `ERROR` blocks the Next button |
+| Coverage detection | ARINC 424 `HDR01` record, cols 6–15 carry the dataset's own name. FAA datasets are named `FAACIFP*` |
+| New UI | Four CSS rules. No FXML or controller wiring changes |
+| Manager | **None.** The install is one extract and one copy |
 
-### Converter resolution
+## No converter
 
-Under `xPlane.getPaths().tools()`:
+The original design of this feature ran Philipp Münzel's `convert424toxplane` over the
+source to generate `earth_nav/fix/awy.dat` and a `CIFP/` folder for `Custom Data`. Manual
+verification showed this is wrong, on the authority of X-Plane's own documentation:
 
-| Platform | Entries required |
-|---|---|
-| Windows, X-Plane 11 | `windows/convert424toxplane11.exe` |
-| Windows, X-Plane 12 | `windows/convert424toxplane.exe` and `windows/geoids/**` |
-| macOS | `mac/convert424toxplane` |
-| Linux | `linux/convert424toxplane` |
+- <https://developer.x-plane.com/article/navdata-in-x-plane-11/>: *"After this file has been
+  read, X-Plane will not load any other information from other text files… In particular,
+  X-Plane will then NOT load any of the files described in the following as 'Global data'."*
+  `earth_nav/fix/awy.dat` and `CIFP/` are exactly those other files, so the converter's
+  output is ignored whenever `earth_424.dat` is present.
+- The same page names `convert424toxplane` a tool for **data providers** converting a master
+  `.dat` into X-Plane-native XPNAV1200 for distribution. Its signature is
+  `convert424toxplane <masterfile> "<copyright>" <path to apt.dat>` — the third argument is an
+  airport database we do not have, and the forum procedures that "work" pass a meaningless
+  placeholder for the copyright string.
+- Its output covers the US only, so copying it into `Custom Data` would *replace* the global
+  base layer and delete navdata for the rest of the world.
 
-`geoids` ships only under `windows/` and must stay adjacent to the executable, so on
-Windows the whole `windows/` subtree is extracted as one unit.
+Deleting the converter removed: a 233-line `CifpManager`, two `Platform` hooks spread over
+four platform classes plus the `XPlane` wiring, a 26 MB third-party download, a subprocess
+call, a cached `geoids/` dependency that the archive ships only under `windows/` but which
+macOS and Linux equally require, and an executable-permission problem on extracted binaries.
+
+Net cost of the whole feature against `main`: **409 production lines** (391 net) plus 319
+test lines. Of the production lines, the installer itself is 84; the rest is the navdata
+panel and coverage reporting.
 
 ## Components
 
 ### `CifpInstallableType` (`com.ogerardin.xplane.install.types`)
 
 Public no-arg constructor (required by `IntrospectionHelper.findAllSubclasses`). Mirrors
-`NavDataInstallableType`'s shape: matches on `Archive`, delegates filesystem work to a
-dedicated manager (below) rather than doing it inline.
+`NavDataInstallableType`'s shape: matches on `Archive`, does its own filesystem work.
 
-- `String description()` → `"FAA CIFP (ARINC 424)"`
-- `boolean recognizes(Archive archive)` → true if any entry's file name equals `FAACIFP18`
-- `InspectionResult preconditions(XPlane xPlane, Archive archive)` → empty result. Nothing
-  can be validated before install, because the converter is fetched on demand and X-Plane
-  paths are only read during the install itself
-- `void install(XPlane xPlane, Archive archive, ProgressListener progress)` → delegates to
-  `CifpManager.install(...)`, wrapping any `IOException`/`InterruptedException` in
-  `InstallationException`
+`install()` locates the `FAACIFP18` entry, extracts **only** that entry into a temp
+directory via the existing `Archive.extract(folder, Predicate, progress)` overload, copies it
+to `Custom Data/earth_424.dat`, and reloads the navdata manager.
 
-`xpman-fx` requires no change: `IntrospectionHelper` scans `com.ogerardin.xplane.**` and the
-wizard resolves the type at runtime.
+Two deliberate choices:
 
-### `CifpManager` (`com.ogerardin.xplane.navdata`)
+- **Extract to a temp directory** rather than straight into `Custom Data`. The real FAA ZIP
+  has `FAACIFP18` at the root, but a nested entry would otherwise leave a stray
+  `Custom Data/CIFP/<date>/` tree. `FileUtils.deleteQuietly` in a `finally` is the existing
+  idiom.
+- **`Files.copy`, not `Files.move`.** A temp directory and the X-Plane install can sit on
+  different volumes on Windows, where `move` throws `AtomicMoveNotSupportedException`.
 
-Owns the filesystem work so the install type stays a thin adapter, matching how
-`NavDataInstallableType` delegates to `NavDataManager`.
+### `Arinc424Header` (`com.ogerardin.xplane.file.data.dat`)
 
-**Converter resolution**
+A record of the dataset's self-declared name and its originator, read from the first five
+lines in fixed-width columns:
 
-1. `Path toolsFolder = xPlane.getPaths().tools()`
-2. Expected entry = the platform/version row above. If `Files.isExecutable(...)`, reuse it.
-3. Otherwise download once and extract:
-   - Source is the Dropbox folder root, fetched as a single ZIP by appending `dl=1`:
-     `https://www.dropbox.com/scl/fo/mnw9cufqcxgmkzpx35269/AG84gKEZWlR1Sk5Vld0csGk?rlkey=udqtjnhsdo0c7cnhbe2o0ft6o&dl=1`
-   - The ZIP nests under an unknown top-level directory name, so the extraction root is
-     **resolved by scanning entry names for one ending in `<os>/convert424toxplane*`** and
-     using that entry's parent directory as the filter root passed to
-     `ToolUtils.installFromZip`. This avoids hardcoding Dropbox's internal prefix.
-   - Extracting the whole `<os>` subtree keeps `geoids` alongside the Windows executable.
-4. macOS only: if `platform.isQuarantined(binary)`, call `platform.removeQuarantine(binary)`.
-5. Verify `platform.isRunnable(binary)`; if false after download, report an error for that
-   platform/version combination rather than running a known-broken binary.
+| Field | Columns | Carried by |
+|---|---|---|
+| Record identifier | 1–5 | all records (`HDR01`…`HDR05`) |
+| Dataset name | 6–15 | `HDR01` only |
+| Free text | 39– | `HDR02`…`HDR05` |
 
-### Install flow
+`HDR01` is *not* used for the originator: from column 36 it carries a structured preamble
+(`2610  09-SEP-2026…  U.S.A. DOT FAA  …  113023A4`), so taking its col-39 substring yields
+the preamble rather than a name. `HDR02` holds the originator's plain name.
 
-1. Create a temporary working directory.
-2. Extract the single `FAACIFP18` entry into it; rename to `FAACIFP18.dat`.
-3. Resolve the converter as above.
-4. Run via `CommandExecutor.builder()`, piping stdout and stderr to the progress listener:
-   `<binary> FAACIFP18.dat "FMS"` with `dir` set to the working directory.
-5. On non-zero exit, emit a **warning** containing the exit value and captured output, then
-   continue to step 7.
-6. On success, copy `CIFP/**` from the working directory into
-   `xPlane.getPaths().customData().resolve("CIFP")`, overwriting existing entries.
-7. Copy `FAACIFP18.dat` to `xPlane.getPaths().customData().resolve("earth_424.dat")`.
-8. `xPlane.getNavDataManager().reload()`.
-9. Delete the working directory in a `finally` block.
+These files run to **50 MB and more**, so the parser reads five lines with a `BufferedReader`
+and nothing else. Measured against a real FAA cycle: 55 ms to read the header, 3 ms for a
+full `inspect()`. `DatFile` / `DatFileParser` could not be reused here — `XPlaneFile` reads
+the whole URI into a `String` before parsing, and `DatFileParser` only understands the
+X-Plane-native XPNAV header (`I` / `1100 version` / `data cycle …`), so on an ARINC 424 file
+it yields null and never a cycle.
 
-`earth_424.dat` is already the `simWideOverride()` layer in `NavDataManager`, so the
-installed file is immediately visible in the redesigned navdata screen.
+### `Arinc424NavDataFile` (`com.ogerardin.xplane.navdata`)
+
+A `NavDataFile` that answers `getAiracCycle()`, `getMetadata()`, `getBuild()` and
+`getDatasetName()` from `Arinc424Header` instead of from `DatFile`. Overriding all of them is
+what keeps the 50 MB file from being slurped into a `String`: the inherited implementations
+route through `getData()`, which parses the entire file to reach a header.
+
+Selected polymorphically by `NavDataSet.createFile(Path)`, which `Arinc424DataSet` overrides.
+
+### `NavDataSet` / `Arinc424DataSet`
+
+Two hooks, both overridable rather than branched on:
+
+- `isOverriding()` — false by default. True only for the sim-wide override. It is a
+  **per-instance flag**, not a per-type one, because `simWideOverride()` and
+  `faaUpdatedApproaches()` are both `Arinc424DataSet`.
+- `coverageMessage()` — `Optional<InspectionMessage>`, empty by default, overridden by
+  `Arinc424DataSet` to warn when the present file is an FAA dataset.
+
+`inspect()` gained a third summary case. It previously reported `No data present` whenever
+no cycle could be parsed, which is wrong for ARINC 424: the file is present and perfectly
+valid, it simply has no XPNAV cycle marker. Now: files present but unparseable →
+`Present (AIRAC cycle unknown)`; no files → `No data present`.
+
+### Panel changes (`xpman-fx`)
+
+- `NavDataController.updateCards()` finds the highest present overriding layer and passes its
+  1-based index to each card. Cards below it get `ignored`.
+- `NavDataSetCardView` adds `.navdata-card-ignored` (50% opacity) plus an `ignored by layer N`
+  badge; the overriding card gets an `overrides N layers` badge.
+- `buildStatusLabel()` now picks the **most severe** inspection message rather than the last
+  one. It previously assumed `inspect()` ends with the summary message, so appending a
+  coverage warning would have displaced the cycle display. Ranking keeps healthy layers on
+  their cycle and surfaces warnings where the eye already looks.
+
+## Coverage detection, and its limits
+
+Only the FAA dataset is recognized as partial. Its header names itself `FAACIFP18`; a
+commercial 424 master says nothing about its coverage area, so we make no claim rather than
+guess.
+
+General partial-coverage detection is possible but was scoped out: region identifiers live in
+per-record-type fixed-width fields and are frequently `UNKUNK` even in FAA data, so it needs
+per-record-type parsing plus a maintained list of region codes, over a 50 MB file.
+
+ARINC 424 carries no XPNAV cycle marker, so the override's AIRAC cycle stays unknown. The
+FAA header does carry an unambiguous effective date (`EFFECTIVE 01 OCT 2026`) and a volume
+number, which would be a genuine improvement — left as future work rather than guessed at
+now.
 
 ## Error handling
 
-`InstallableType.install` declares `throws InstallationException`, and
-`GenericInstaller.install` propagates it. That is the **abort** channel.
-`ProgressListener` has no severity channel (only `progress(ratio, message)` and
-`output(message)`), so **non-fatal** problems are reported through the class logger
-(`@Slf4j`) *and* mirrored to `progress.output(...)`.
-
-| Condition | Behaviour |
-|---|---|
-| Converter exits non-zero | **Non-fatal.** `log.warn` + `progress.output` with the exit value and captured stdout/stderr; `CIFP/` skipped; `earth_424.dat` still installed |
-| Converter cannot be downloaded | **Abort** — `InstallationException`. This is an environment/network failure, not a data-conversion outcome, and the user would otherwise silently get no FMS data |
-| Downloaded binary not runnable | **Abort** — `InstallationException` naming the platform and X-Plane version (signals a wrong converter variant) |
-| `FAACIFP18` missing from archive | **Abort** — `InstallationException`. Cannot happen via the wizard because `recognizes()` gates it; still guarded so `install()` is safe to call directly |
-| `CIFP/` not produced despite a zero exit | **Non-fatal** — `log.warn` + `progress.output`; `earth_424.dat` still installed |
-
-Downloading and executing a third-party binary is a trust boundary, so the download is
-restricted to the single hardcoded HTTPS URL, reuses the existing
-`FileUtils.copyURLToFile` path, and its output is never silently discarded — every process
-failure reaches the user through the logger and the progress listener.
+- Missing `FAACIFP18` → `InstallationException`. Cannot happen after `recognizes()`, which
+  checks the same condition.
+- I/O failure → wrapped in `InstallationException`.
+- Unparseable ARINC 424 header → coverage warning is simply omitted; installation still
+  succeeds, since the header is not needed to install.
+- `NavDataManager.reload()` is asynchronous and runs on a background thread; a failure there
+  cannot fail an install that already wrote the file.
 
 ## Testing
 
-`recognizes()` is the only pure, platform-independent logic, so it is the only part that
-gets a real test.
+`mvn -B clean test -pl xpman-api` — **144 tests, 0 failures, 10 pre-existing skips**
+(was 131 before this feature).
 
-`CifpInstallableTypeTest` — one test method, two assertions against in-memory ZIPs:
+- `CifpInstallableTypeTest` (8): recognition positive/negative including the `FAACIFP18.dat`
+  near-miss, ClassGraph discovery, install of both flat and nested entries to `earth_424.dat`,
+  absence of leaked folders, and the US-only warning.
+- `Arinc424HeaderTest` (4): real HDR records in their true column layout; a commercial
+  publisher; a non-ARINC file; an empty file.
+- `Arinc424DataSetTest` (5): the overriding flag per instance, the coverage warning, and no
+  coverage claim for a commercial publisher or an absent file.
+- `NavDataSetTest` (4): added `reportsPresentWhenCycleCannotBeRead`; the existing
+  `infoWhenNoData` still passes because an empty set has no files at all.
 
-- a ZIP containing an entry named `FAACIFP18` → `recognizes()` is true
-- a ZIP containing an `earth_424.dat` entry → `recognizes()` is false (guards against
-  overlapping `NavDataInstallableType`)
-
-Everything else (download, converter execution, copy) needs a live X-Plane and a real
-network, matching how the existing `InstallableType` implementations are verified. Per the
-repository's testing conventions it will be exercised manually against a local X-Plane
-install, annotated `@EnableOnLocalXPlane` where useful.
-
-## Verification to perform during implementation
-
-These are concrete checks, not deferred design questions:
-
-1. **Dropbox ZIP layout** — fetch the folder once and log the entry names. Confirms the
-   `<os>/convert424toxplane*` suffix rule and whether `geoids` sits under `windows/`.
-2. **Converter output shape** — run the mac binary on a sample `FAACIFP18.dat` and list the
-   working directory. Confirms that `CIFP/` is written into the working directory (step 6
-   assumes it is) and records the exact generated file names.
-3. **macOS binary architecture** — check whether `mac/convert424toxplane` is a universal
-   binary. If it is arm64-only, Intel Macs need a separate path and `Platform.getCpuType()`
-   becomes a factor in converter resolution.
-
-If (2) shows the converter does not write `CIFP/` into the working directory, step 6 is
-adjusted to point at the actual output location; nothing else in the design changes.
-
-## Files
-
-| Action | File |
-|---|---|
-| **Create** | `xpman-api/.../install/types/CifpInstallableType.java` — `InstallableType` adapter: `recognizes()` on `FAACIFP18`, empty `preconditions()`, delegates `install()` |
-| **Create** | `xpman-api/.../navdata/CifpManager.java` — converter resolution, download, execution, and `Custom Data` copy |
-| **Modify** | `xpman-api/.../XPlane.java` — add `private final CifpManager cifpManager = new CifpManager(this);` beside `navDataManager` (line 49), matching the existing manager-ownership pattern |
-| **Create** | `xpman-api/src/test/java/com/ogerardin/xplane/test/install/CifpInstallableTypeTest.java` — recognition test over in-memory ZIPs |
-
-No `xpman-fx` changes: the wizard resolves install types at runtime via
-`IntrospectionHelper`, so no FXML, controller, or registration edits are required.
+Verified against a **real** downloaded cycle (`CIFP_261001.zip`, 9.1 MB) outside the suite:
+recognized, installed to a 50,317,816-byte `earth_424.dat`, nothing else appearing under
+`Custom Data`, and the override layer reporting `US-only coverage (FAACIFP18)`.
 
 ## Out of scope
 
-- Downloading or version-checking the FAA cycle itself — the user supplies the ZIP.
-- Navigraph subscriptions (already handled by `NavigraphCycleVersion`).
-- Caching the *converted output* — only the converter binary is cached; conversion runs on
-  every install so a newer FAA cycle always produces fresh data.
-- Any wizard, FXML, or `xpman-fx` change.
+- Downloading or discovering cycles.
+- Installing the legacy `FAACIFP18` filename (pre-11.50). The panel labels that layer as
+  legacy and leaves it empty, which is correct for current X-Plane.
+- General partial-coverage detection for non-FAA publishers.
+- Extracting an AIRAC 424 effective date or cycle number for display.
+- Uninstall (removing `earth_424.dat`) — the wizard installs, it does not uninstall.

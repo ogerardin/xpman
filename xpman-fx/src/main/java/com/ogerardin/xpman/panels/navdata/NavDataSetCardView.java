@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +47,7 @@ public class NavDataSetCardView extends VBox {
             "Sim-wide ARINC424 override", Feather.GLOBE,
             "Base (shipped with X-Plane)", Feather.DATABASE,
             "Updated base (supplied by third-parties)", Feather.REFRESH_CW,
-            "FAA updated approaches", Feather.FLAG,
+            "FAA updated approaches (legacy filename)", Feather.FLAG,
             "Hand-placed localizers", Feather.MAP_PIN,
             "User data", Feather.USER);
 
@@ -73,11 +73,20 @@ public class NavDataSetCardView extends VBox {
     private VBox filesBox;
     private FontIcon filesChevron;
 
-    public NavDataSetCardView(UiNavDataItem uiItem, int layerIndex, int layerCount, NavDataController controller) {
+    public NavDataSetCardView(UiNavDataItem uiItem, int layerIndex, int layerCount, int overriding,
+                               NavDataController controller) {
         this.controller = controller;
         this.menuFactory = controller.getCardMenuFactory();
 
         getStyleClass().add("navdata-card");
+
+        // X-Plane loads no other navdata text file once an overriding layer is present,
+        // so everything below it is dead weight and is shown greyed out.
+        boolean ignored = overriding > 0 && layerIndex > overriding;
+        int suppressed = layerIndex == overriding ? layerCount - layerIndex : 0;
+        if (ignored) {
+            getStyleClass().add("navdata-card-ignored");
+        }
 
         Label nameLabel = new Label(uiItem.getName(), icon(SET_ICONS.getOrDefault(uiItem.getName(), Feather.DATABASE)));
         nameLabel.getStyleClass().add("navdata-card-name");
@@ -96,6 +105,15 @@ public class NavDataSetCardView extends VBox {
         HBox header = new HBox(8, nameLabel, layerBadge, statusLabel, helpButton);
         header.getStyleClass().add("navdata-card-header");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
+
+        if (ignored || suppressed > 0) {
+            Label overrideBadge = new Label(ignored
+                    ? "ignored by layer " + overriding
+                    : "overrides " + suppressed + (suppressed == 1 ? " layer" : " layers"));
+            overrideBadge.getStyleClass().add("navdata-card-badge");
+            overrideBadge.getStyleClass().add("navdata-card-badge-override");
+            header.getChildren().add(overrideBadge);
+        }
 
         Button filesToggle = new Button(uiItem.getChildren().size() + " files");
         filesChevron = new FontIcon(Feather.CHEVRON_DOWN);
@@ -118,14 +136,26 @@ public class NavDataSetCardView extends VBox {
         }
     }
 
+    /**
+     * Builds the status label from the most severe inspection message, so a warning such as
+     * partial coverage is visible at a glance instead of being buried under the cycle summary.
+     */
     private static Label buildStatusLabel(UiNavDataItem uiItem) {
-        List<InspectionMessage> messages = uiItem.inspect().getMessages();
-        // NavDataSet.inspect() always appends the summary message last
-        InspectionMessage summary = messages.get(messages.size() - 1);
-        Label statusLabel = new Label(summary.getMessage());
+        InspectionMessage message = uiItem.inspect().getMessages().stream()
+                .max(Comparator.comparingInt(NavDataSetCardView::severityRank))
+                .orElseThrow(() -> new IllegalStateException("nav data set reported no inspection message"));
+        Label statusLabel = new Label(message.getMessage());
         statusLabel.getStyleClass().add("navdata-status-"
-                + summary.getSeverity().toString().toLowerCase(Locale.ROOT));
+                + message.getSeverity().toString().toLowerCase(Locale.ROOT));
         return statusLabel;
+    }
+
+    private static int severityRank(InspectionMessage message) {
+        return switch (message.getSeverity()) {
+            case INFO -> 0;
+            case WARN -> 1;
+            case ERROR -> 2;
+        };
     }
 
     private HBox buildHoverActions(UiNavDataItem uiItem) {

@@ -21,6 +21,11 @@ class NavDataSetTest {
 
     private static final String DAT_WITH_CYCLE = "I\n1100 version - data cycle %s\n";
 
+    /** Header of an FAA ARINC 424 cycle, in the column layout the parser relies on. */
+    private static final String FAA_HEADER =
+            "HDR01FAACIFP18      001P013203969192610  09-SEP-202612:03:55  U.S.A. DOT FAA                    \n" +
+                    "HDR02                                 FEDERAL AVIATION ADMINISTRATION              \n";
+
     @TempDir
     Path xplaneRoot;
 
@@ -31,6 +36,11 @@ class NavDataSetTest {
     private static void writeDat(Path folder, String fileName, String cycle) throws Exception {
         Files.createDirectories(folder);
         Files.writeString(folder.resolve(fileName), DAT_WITH_CYCLE.formatted(cycle));
+    }
+
+    private static void writeArinc424(Path folder, String fileName) throws Exception {
+        Files.createDirectories(folder);
+        Files.writeString(folder.resolve(fileName), FAA_HEADER);
     }
 
     @Test
@@ -66,5 +76,17 @@ class NavDataSetTest {
         assertThat(result.getMessages(), hasItem(allOf(
                 hasProperty("severity", is(Severity.INFO)),
                 hasProperty("message", is("No data present")))));
+    }
+
+    @Test
+    void reportsPresentWhenCycleCannotBeRead() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeArinc424(data, "earth_424.dat");
+
+        InspectionResult result = dataSet(data, "earth_424.dat").inspect();
+
+        assertThat(result.getMessages(), hasItem(allOf(
+                hasProperty("severity", is(Severity.INFO)),
+                hasProperty("message", is("Present (AIRAC cycle unknown)")))));
     }
 }

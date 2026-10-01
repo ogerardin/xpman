@@ -3,6 +3,7 @@ package com.ogerardin.xpman.panels.navdata;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.navdata.NavDataItem;
+import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
@@ -19,6 +20,14 @@ public class UiNavDataItem {
 
     @Delegate
     final NavDataItem navDataItem;
+
+    /**
+     * True when this layer, once installed, makes X-Plane ignore every layer below it.
+     * Only layers (as opposed to files) can override.
+     */
+    public boolean isOverriding() {
+        return navDataItem instanceof NavDataSet navDataSet && navDataSet.isOverriding();
+    }
 
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     @EnabledIf("exists")

@@ -1,7 +1,11 @@
 package com.ogerardin.xplane.test.install;
 
+import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.InspectionResult;
+import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.ArchiveInstallSource;
 import com.ogerardin.xplane.install.types.CifpInstallableType;
+import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.ZipArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -13,12 +17,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Tests recognition of FAA CIFP cycle archives by CifpInstallableType.
+ * Tests recognition and installation of FAA CIFP cycle archives by CifpInstallableType.
  */
 class CifpInstallableTypeTest {
+
+    private static final String CONTENT = "HDR01FAACIFP18      001P013203969192610\n";
+
+    private static final ProgressListener NO_PROGRESS = (ratio, message) -> {};
 
     @TempDir
     Path tempFolder;
@@ -60,6 +73,43 @@ class CifpInstallableTypeTest {
         assertThat(source.getInstallableType().isPresent(), is(true));
     }
 
+    @Test
+    void installsSourceAsEarth424() throws Exception {
+        Path zip = zipNamed("FAACIFP18");
+        XPlane xPlane = new XPlane(tempFolder);
+
+        new CifpInstallableType().install(xPlane, new ZipArchive(zip), NO_PROGRESS);
+
+        Path installed = xPlane.getPaths().customData().resolve("earth_424.dat");
+        assertThat(Files.exists(installed), is(true));
+        assertThat(Files.readString(installed), is(CONTENT));
+    }
+
+    @Test
+    void installsNestedSourceAsEarth424() throws Exception {
+        Path zip = zipNamed("CIFP/2026-09-30/FAACIFP18");
+        XPlane xPlane = new XPlane(tempFolder);
+
+        new CifpInstallableType().install(xPlane, new ZipArchive(zip), NO_PROGRESS);
+
+        Path installed = xPlane.getPaths().customData().resolve("earth_424.dat");
+        assertThat(Files.readString(installed), is(CONTENT));
+        // the nested folders of the source entry must not leak into Custom Data
+        assertThat(Files.exists(xPlane.getPaths().customData().resolve("CIFP")), is(false));
+    }
+
+    @Test
+    void warnsThatOnlyUsNavDataRemainsAvailable() throws Exception {
+        Path zip = zipNamed("FAACIFP18");
+
+        InspectionResult result = new CifpInstallableType().preconditions(new XPlane(tempFolder), new ZipArchive(zip));
+
+        assertThat(result.getMessages(), hasSize(1));
+        assertThat(result.getMessages(), hasItem(allOf(
+                hasProperty("severity", is(Severity.WARN)),
+                hasProperty("message", containsString("Only US navdata will be available")))));
+    }
+
     /**
      * Creates a zip whose single entry has the specified name and dummy content.
      */
@@ -67,7 +117,7 @@ class CifpInstallableTypeTest {
         Path zip = Files.createTempFile(tempFolder, "test", ".zip");
         try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
             out.putNextEntry(new ZipEntry(entryName));
-            out.write("test content".getBytes());
+            out.write(CONTENT.getBytes());
             out.closeEntry();
         }
         return zip;
