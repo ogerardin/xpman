@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.test.navdata;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.navdata.NavDataItem;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,8 +55,9 @@ class NavDataSetTest {
 
         InspectionResult result = dataSet(data, "earth_nav.dat", "earth_fix.dat").inspect();
 
-        assertThat(result.getMessages(), hasItem(hasProperty("message",
-                is("File not found: Custom Data/earth_fix.dat"))));
+        assertThat(result.getMessages(), hasItem(allOf(
+                hasProperty("severity", is(Severity.INFO)),
+                hasProperty("message", is("absent: Custom Data/earth_fix.dat")))));
         assertThat(result.getMessages(), hasItem(hasProperty("message",
                 is("OK — cycle 2004"))));
     }
@@ -91,6 +94,21 @@ class NavDataSetTest {
         assertThat(result.getMessages(), hasItem(allOf(
                 hasProperty("severity", is(Severity.INFO)),
                 hasProperty("message", is("Present (AIRAC cycle unknown)")))));
+    }
+
+    @Test
+    void listsAbsentFilesBeforeTheSummary() throws Exception {
+        // NavDataSetCardView breaks severity ties in favour of the last message, so the
+        // header line prefers the cycle over the per-file absence notes. That only holds
+        // while inspect() appends the summary last.
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+
+        List<InspectionMessage> messages =
+                dataSet(data, "earth_nav.dat", "earth_fix.dat").inspect().getMessages();
+
+        assertThat(messages.get(0).getMessage(), is("absent: Custom Data/earth_fix.dat"));
+        assertThat(messages.get(messages.size() - 1).getMessage(), is("OK — cycle 2610"));
     }
 
     @Test

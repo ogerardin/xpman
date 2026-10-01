@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -140,10 +139,14 @@ public class NavDataSetCardView extends VBox {
     /**
      * Builds the status label from the most severe inspection message, so a warning such as
      * partial coverage is visible at a glance instead of being buried under the cycle summary.
+     *
+     * <p>On equal severity the later message wins, because NavDataSet.inspect() appends the
+     * per-file "absent" notes first and the summary, coverage and consistency messages after
+     * them: those are the ones worth showing on the header line.</p>
      */
     private static Label buildStatusLabel(UiNavDataItem uiItem) {
         InspectionMessage message = uiItem.inspect().getMessages().stream()
-                .max(Comparator.comparingInt(NavDataSetCardView::severityRank))
+                .reduce((first, next) -> severityRank(next) >= severityRank(first) ? next : first)
                 .orElseThrow(() -> new IllegalStateException("nav data set reported no inspection message"));
         Label statusLabel = new Label(message.getMessage());
         statusLabel.getStyleClass().add("navdata-status-"
@@ -209,8 +212,8 @@ public class NavDataSetCardView extends VBox {
 
         if (!item.getExists()) {
             nameLabel.getStyleClass().add("navdata-card-file-missing");
-            Label missing = new Label("not found");
-            missing.getStyleClass().add("navdata-status-error");
+            Label missing = new Label("absent");
+            missing.getStyleClass().add("navdata-status-info");
             row.getChildren().add(missing);
         } else {
             Optional.ofNullable(item.getAiracCycle()).ifPresent(cycle -> {

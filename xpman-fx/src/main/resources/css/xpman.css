@@ -763,11 +763,6 @@
     -fx-font-weight: bold;
 }
 
-.navdata-status-error {
-    -fx-text-fill: -color-danger-fg;
-    -fx-font-weight: bold;
-}
-
 .navdata-card-files-toggle {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -799,7 +794,7 @@
 }
 
 .navdata-card-file-missing {
-    -fx-text-fill: -color-danger-fg;
+    -fx-text-fill: -color-fg-muted;
     -fx-font-style: italic;
 }
 

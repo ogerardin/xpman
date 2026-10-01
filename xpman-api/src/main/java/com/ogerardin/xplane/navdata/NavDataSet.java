@@ -130,16 +130,20 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     }
 
     /**
-     * Inspects the data files of this set: reports missing files as errors, and warns
-     * when the existing files carry inconsistent AIRAC cycles.
-     */
+ * Inspects the data files of this set: notes which are absent, and warns when the existing
+ * files carry inconsistent AIRAC cycles.
+ *
+ * <p>Absence is reported as INFO rather than as an error because it is the normal state for
+ * most of these files: {@code user_fix.dat} does not exist until a waypoint is stored, and
+ * {@code earth_hold.dat}/{@code earth_mora.dat} postdate some X-Plane versions.</p>
+ */
     @Override
     public InspectionResult inspect() {
         List<InspectionMessage> messages = getChildren().stream()
                 .filter(item -> !item.getExists())
                 .map(item -> InspectionMessage.builder()
-                        .severity(Severity.ERROR)
-                        .message("File not found: " + item.getName())
+                        .severity(Severity.INFO)
+                        .message("absent: " + item.getName())
                         .build())
                 .collect(Collectors.toCollection(ArrayList::new));
 
