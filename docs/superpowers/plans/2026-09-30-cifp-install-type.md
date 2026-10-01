@@ -56,7 +56,7 @@ bugs:
   architecture branch was needed.
 - `ZipArchive.extract` does not preserve POSIX executable permissions; the macOS binary
   needed a manual `chmod +x` before it would run.
-- `DatFileParser` cannot parse ARINC 424 at all, so an installed `earth_424.dat` was
+- `DatFileParser` cannot parse ARINC 424 at all, so an installed CIFP file was
   reported as *"No data present"*. Worse, `XPlaneFile` reads the whole URI into a `String`
   before parsing, so the panel was pulling a 50 MB file into memory to look at a header.
 - Both are fixed: `Arinc424Header` reads five lines (55 ms on a 50 MB file) and
@@ -66,7 +66,7 @@ bugs:
 
 | Concern | Implementation |
 |---|---|
-| Install | `CifpInstallableType` alone: extract the one `FAACIFP18` entry to a temp dir, copy to `Custom Data/earth_424.dat`, reload. 84 lines |
+| Install | `CifpInstallableType` alone: extract the one `FAACIFP18` entry to a temp dir, copy to `Custom Data/FAACIFP18`, reload. 84 lines |
 | US-only warning | `Severity.WARN` from `preconditions()`, surfaced by wizard page 2 |
 | Overriding layer | `NavDataSet.isOverriding()`, per-instance on `Arinc424DataSet` |
 | Coverage detection | `Arinc424Header` reads `HDR01` cols 6–15; `FAACIFP*` means FAA means US-only |

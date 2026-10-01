@@ -74,32 +74,32 @@ class CifpInstallableTypeTest {
     }
 
     @Test
-    void installsSourceAsEarth424() throws Exception {
+    void installsSourceAsFaacifp18() throws Exception {
         Path zip = zipNamed("FAACIFP18");
         XPlane xPlane = new XPlane(tempFolder);
 
         new CifpInstallableType().install(xPlane, new ZipArchive(zip), NO_PROGRESS);
 
-        Path installed = xPlane.getPaths().customData().resolve("earth_424.dat");
+        Path installed = xPlane.getPaths().customData().resolve("FAACIFP18");
         assertThat(Files.exists(installed), is(true));
         assertThat(Files.readString(installed), is(CONTENT));
     }
 
     @Test
-    void installsNestedSourceAsEarth424() throws Exception {
+    void installsNestedSourceAsFaacifp18() throws Exception {
         Path zip = zipNamed("CIFP/2026-09-30/FAACIFP18");
         XPlane xPlane = new XPlane(tempFolder);
 
         new CifpInstallableType().install(xPlane, new ZipArchive(zip), NO_PROGRESS);
 
-        Path installed = xPlane.getPaths().customData().resolve("earth_424.dat");
+        Path installed = xPlane.getPaths().customData().resolve("FAACIFP18");
         assertThat(Files.readString(installed), is(CONTENT));
         // the nested folders of the source entry must not leak into Custom Data
         assertThat(Files.exists(xPlane.getPaths().customData().resolve("CIFP")), is(false));
     }
 
     @Test
-    void warnsThatOnlyUsNavDataRemainsAvailable() throws Exception {
+    void warnsThatOnlyUsAirportsAreAffected() throws Exception {
         Path zip = zipNamed("FAACIFP18");
 
         InspectionResult result = new CifpInstallableType().preconditions(new XPlane(tempFolder), new ZipArchive(zip));
@@ -107,7 +107,32 @@ class CifpInstallableTypeTest {
         assertThat(result.getMessages(), hasSize(1));
         assertThat(result.getMessages(), hasItem(allOf(
                 hasProperty("severity", is(Severity.WARN)),
-                hasProperty("message", containsString("Only US navdata will be available")))));
+                hasProperty("message", containsString("Only US airports are affected")))));
+    }
+
+    @Test
+    void warnsThatASimWideOverrideWouldMakeTheInstallUseless() throws Exception {
+        Path zip = zipNamed("FAACIFP18");
+        Path customData = tempFolder.resolve("Custom Data");
+        Files.createDirectories(customData);
+        Files.writeString(customData.resolve("earth_424.dat"), CONTENT);
+        XPlane xPlane = new XPlane(tempFolder);
+
+        InspectionResult result = new CifpInstallableType().preconditions(xPlane, new ZipArchive(zip));
+
+        assertThat(result.getMessages(), hasSize(2));
+        assertThat(result.getMessages(), hasItem(allOf(
+                hasProperty("severity", is(Severity.WARN)),
+                hasProperty("message", containsString("this will have no effect")))));
+    }
+
+    @Test
+    void doesNotWarnAboutAnOverrideWhenNoneIsInstalled() throws Exception {
+        Path zip = zipNamed("FAACIFP18");
+
+        InspectionResult result = new CifpInstallableType().preconditions(new XPlane(tempFolder), new ZipArchive(zip));
+
+        assertThat(result.getMessages(), hasSize(1));
     }
 
     /**

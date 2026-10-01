@@ -73,9 +73,8 @@ public class Arinc424DataSet extends NavDataSet {
                 .findFirst()
                 .map(dataset -> InspectionMessage.builder()
                         .severity(Severity.WARN)
-                        .message("US-only coverage (" + dataset + "): navaids, airways and procedures outside the "
-                                + "United States are not in this dataset, and X-Plane ignores all other navdata "
-                                + "layers once it is installed.")
+                        .message("US-only coverage (" + dataset + "): approaches, terminal fixes and navaids "
+                                + "outside the United States are not in this dataset.")
                         .build());
     }
 

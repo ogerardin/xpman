@@ -7,19 +7,21 @@
 
 Let XPman install free FAA CIFP (ARINC 424) navigation data. The user drops the FAA cycle
 ZIP on the existing install wizard; XPman extracts `FAACIFP18` and writes it into
-`Custom Data` as `earth_424.dat`, which X-Plane reads as a sim-wide ARINC 424 override.
+`Custom Data` under its own name, which is the slot X-Plane documents for this file: it
+overrides approach, airport and terminal data for US airports on top of whatever global
+navdata is installed, and leaves the rest of the world alone.
 
-The navdata panel then states plainly that this layer makes X-Plane ignore every other
-navdata layer, and warns that the FAA dataset covers the US only.
+The install warns that only US airports are affected and that X-Plane applies the file only
+when the AIRAC cycles match. The navdata panel then reports whether the layer is actually in
+use, and warns that the FAA dataset covers the US only.
 
 ## Motivations
 
 - FAA CIFP is free, current-cycle (28-day), and needs no Navigraph subscription. The
-  manual procedure is small but non-obvious: download the current cycle, find the
-  extensionless `FAACIFP18` inside it, and rename it to `earth_424.dat` in the right
-  `Custom Data` folder.
-- XPman already models `earth_424.dat` as the *Sim-wide ARINC424 override* navdata layer
-  (`NavDataManager.simWideOverride()`) and reports on it, but offered no way to install one.
+  manual procedure is small but non-obvious: download the current cycle, extract it, find the
+  extensionless `FAACIFP18` among the PDFs, and drop it into `Custom Data` under its own name.
+- XPman already models `FAACIFP18` as the *FAA updated approaches* navdata layer
+  (`NavDataManager.faaUpdatedApproaches()`) and reports on it, but offered no way to install one.
 - The wizard is fully generic: `Page2Controller` builds a `GenericInstaller` over an
   `ArchiveInstallSource`, which resolves the concrete type by ClassGraph discovery. A new
   `InstallableType` is picked up with **zero UI changes**. `NavDataController.install()`
@@ -31,7 +33,7 @@ navdata layer, and warns that the FAA dataset covers the US only.
 |---|---|
 | Input | User-selected FAA cycle ZIP from `https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/`. XPman never discovers or downloads the cycle |
 | Recognition | Archive contains an entry whose **file name is exactly `FAACIFP18`** (FAA ships it extensionless). No overlap with `NavDataInstallableType`, which matches `earth_*.dat` |
-| Install target | `Custom Data/earth_424.dat` — the name X-Plane actually reads |
+| Install target | `Custom Data/FAACIFP18` — the layer X-Plane documents for this file. Never `earth_424.dat`, which is for *global* 424 masters |
 | Conversion | **None.** See "No converter" below |
 | Coverage warning | `Severity.WARN` in `preconditions()`, so wizard page 2 shows it before the user commits; only `ERROR` blocks the Next button |
 | Coverage detection | ARINC 424 `HDR01` record, cols 6–15 carry the dataset's own name. FAA datasets are named `FAACIFP*` |
@@ -77,7 +79,8 @@ Public no-arg constructor (required by `IntrospectionHelper.findAllSubclasses`).
 
 `install()` locates the `FAACIFP18` entry, extracts **only** that entry into a temp
 directory via the existing `Archive.extract(folder, Predicate, progress)` overload, copies it
-to `Custom Data/earth_424.dat`, and reloads the navdata manager.
+to `Custom Data/FAACIFP18`, and reloads the navdata manager. The filter is also what keeps the
+archive's three readme PDFs, `IN_CIFP.txt` and `Not_In_CIFP.xlsx` out of `Custom Data`.
 
 Two deliberate choices:
 
@@ -226,7 +229,7 @@ distinguishes the two roles, since both layers are the same class and the reason
 (was 131 before this feature).
 
 - `CifpInstallableTypeTest` (8): recognition positive/negative including the `FAACIFP18.dat`
-  near-miss, ClassGraph discovery, install of both flat and nested entries to `earth_424.dat`,
+  near-miss, ClassGraph discovery, install of both flat and nested entries to `Custom Data/FAACIFP18`,
   absence of leaked folders, and the US-only warning.
 - `Arinc424HeaderTest` (5): real HDR records in their true column layout; the `VOLUME 2610`
   cycle; a header with no `VOLUME`; a commercial publisher; a non-ARINC file; an empty file.
@@ -238,9 +241,10 @@ distinguishes the two roles, since both layers are the same class and the reason
   the existing `infoWhenNoData` still passes because an empty set has no files at all.
 
 Verified against a **real** downloaded cycle (`CIFP_261001.zip`, 9.1 MB) outside the suite:
-recognized, installed to a 50,317,816-byte `earth_424.dat`, nothing else appearing under
-`Custom Data`, and the override layer reporting `OK — cycle 2610` together with
-`US-only coverage (FAACIFP18)` in 3 ms.
+recognized, and installed to a 53,187,816-byte `Custom Data/FAACIFP18` — with
+`Custom Data` containing *exactly* that one file afterwards: no `earth_424.dat`, no PDF, no
+spreadsheet. The layer reports `OK — cycle 2610` together with `US-only coverage (FAACIFP18)`
+in 3 ms.
 
 ## Two ARINC 424 layers, not two names for one
 
@@ -259,29 +263,43 @@ describes them as two distinct layers, both live in XP11 and XP12:
 `isOverriding()` is therefore false for the approaches set because it overrides *content
 within* the global layers rather than *suppressing* them — not because it is obsolete.
 
-## Why `earth_424.dat` is the install target
+## Why `FAACIFP18`, and never `earth_424.dat`
 
-The `FAACIFP18` layer only takes effect when its AIRAC cycle matches the underlying global
-navdata. X-Plane ships a base layer whose cycle *"will remain the same over the lifetime of
-X-Plane 12"*, so a current FAA cycle can essentially never match it — that layer only helps
-someone who already runs same-cycle Navigraph or Aerosoft data.
+The two filenames are not interchangeable. `earth_424.dat` is documented for *"professional
+customers with access to 424 master files"* — a **global** master — and once X-Plane reads it
+it loads no other navdata text file at all. The FAA publishes US-only cycles: its download
+page offers `CIFP 260903` and `261001`, with no world variant. So installing the FAA file as
+`earth_424.dat` puts a partial dataset in the global slot and deletes navdata for the rest of
+the world — which is why every tutorial that does it is caveated *"THIS IS ONLY FOR USERS WHO
+ONLY FLY X-Plane IN THE USA"*.
 
-`earth_424.dat` is therefore the only option that works for the free user this feature
-targets, and it is what the community actually does on both versions (the 2017 XP11
-walkthrough and 2024 XP12 reports both rename `FAACIFP18` to `earth_424.dat`).
+`FAACIFP18` is the slot built for this exact file, and it composes: it overrides terminal data
+for US airports while everything outside the US keeps coming from the installed global layers.
 
-The consequence is exactly the warning we show: outside FAA-authority airspace the map goes
-empty, and *"if you want to fly outside the USA, you would need to remove or rename
-earth_424.dat to enable X-Plane to use the worldwide default navdata"*. A user who already
-pays for Navigraph or Aerosoft data will lose it to this override, so the install warning
-says so explicitly.
+The trade-off is the cycle requirement, which the docs state explicitly for this layer only:
+
+> *"for integrity reasons, the cycle number of the FAA data must always match the cycle number
+> of the underlying layer. Terminal procedures do reference waypoints out of the terminal area,
+> therefore, the data source for global waypoints must be at the same cycle number."*
+
+X-Plane ships a base layer whose cycle *"will remain the same over the lifetime of X-Plane
+12"*, so a current FAA cycle cannot match it. The honest consequence: **for a user on the
+shipped base data this file does not take effect.** It applies once same-cycle third-party
+navdata is installed, which is the correct outcome — the file is not silently reshaped to
+destroy the rest of the world's data in order to appear to work.
+
+That is what the warnings carry. `preconditions()` always states that only US airports are
+affected and that the cycles must match, and adds a second warning when
+`Custom Data/earth_424.dat` is present, since X-Plane would ignore this file entirely. After
+install, `consistencyMessage()` gives the verdict on the panel: cycle mismatch, or "not used"
+while an override is installed.
 
 ## Out of scope
 
 - Downloading or discovering cycles.
-- Installing as `FAACIFP18`. It is a real, supported layer rather than a legacy filename, and
-  it is the better choice for a subscriber with same-cycle global data — but XPman cannot
-  detect that setup, and it does nothing for the free user. Worth offering later, if ever.
 - General partial-coverage detection for non-FAA publishers.
 - Extracting the ARINC 424 effective date for display. The cycle is read; the date is not.
-- Uninstall (removing `earth_424.dat`) — the wizard installs, it does not uninstall.
+- Uninstall (removing `Custom Data/FAACIFP18`) — the wizard installs, it does not uninstall.
+- Extracting the readme PDFs and spreadsheet the FAA archive also carries. They stay out of `Custom Data`:
+  only the `FAACIFP18` entry is extracted, so the three PDFs, `IN_CIFP.txt` and `Not_In_CIFP.xlsx`
+  never land there. The user still has them in the ZIP they downloaded.
