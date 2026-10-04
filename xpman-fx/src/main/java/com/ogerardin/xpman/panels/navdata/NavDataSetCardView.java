@@ -1,10 +1,10 @@
 package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xpman.diag.SeverityIconCellFactory;
 import com.ogerardin.xplane.navdata.NavDataItem;
-import com.ogerardin.xplane.navdata.NavDataManager;
+import com.ogerardin.xplane.navdata.NavDataSetStatus;
 import com.ogerardin.xpman.util.SizeFormat;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
@@ -16,11 +16,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -30,28 +32,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * Card for one nav data set: header with layer badge, help button and inspection
- * status, plus an expandable per-file list. Hover actions and the context menu come
- * from the annotation-driven action framework (see AircraftCardView).
+ * Card for one nav data set: header with a four-state status ball, layer badge, help
+ * button and short state, plus an expandable per-file list. Hover actions and the context
+ * menu come from the annotation-driven action framework (see AircraftCardView).
  */
 public class NavDataSetCardView extends VBox {
 
     private static final int ICON_SIZE = 14;
+    private static final double BALL_RADIUS = 7;
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    /** Icon per nav data set, keyed by display name (see NavDataManager). */
-    private static final Map<String, Feather> SET_ICONS = Map.of(
-            NavDataManager.SIM_WIDE_OVERRIDE, Feather.GLOBE,
-            NavDataManager.BASE, Feather.DATABASE,
-            NavDataManager.UPDATED_BASE, Feather.REFRESH_CW,
-            NavDataManager.FAA_APPROACHES, Feather.FLAG,
-            NavDataManager.HAND_PLACED_LOCALIZERS, Feather.MAP_PIN,
-            NavDataManager.USER_DATA, Feather.USER);
 
     /** Icon per data file, keyed by leaf name ("CIFP" = directory of CIFPSummary). */
     private static final Map<String, Feather> FILE_ICONS = Map.ofEntries(
@@ -90,7 +85,10 @@ public class NavDataSetCardView extends VBox {
             getStyleClass().add("navdata-card-ignored");
         }
 
-        Label nameLabel = new Label(uiItem.getName(), icon(SET_ICONS.getOrDefault(uiItem.getName(), Feather.DATABASE)));
+        InspectionResult inspection = uiItem.inspect();
+
+        Label nameLabel = new Label(uiItem.getName(),
+                buildStatusBall(uiItem, ignored, overriding, inspection));
         nameLabel.getStyleClass().add("navdata-card-name");
         nameLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -107,11 +105,6 @@ public class NavDataSetCardView extends VBox {
         HBox header = new HBox(8, nameLabel, layerBadge, statusLabel, helpButton);
         header.getStyleClass().add("navdata-card-header");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
-
-        FontIcon severityIcon = buildSeverityIcon(uiItem);
-        if (severityIcon != null) {
-            header.getChildren().add(severityIcon);
-        }
 
         if (ignored || suppressed > 0) {
             Label overrideBadge = new Label(ignored
@@ -146,7 +139,7 @@ public class NavDataSetCardView extends VBox {
     /**
      * The card header shows a short state only — see {@code NavDataSet.describeState()}.
      * Anything more than a dozen characters belongs in the inspection dialog, so coverage
-     * and cycle-consistency messages reach the header as an icon instead of as prose.
+     * and cycle-consistency messages reach the header in the status ball's tooltip instead.
      */
     private static Label buildStatusLabel(UiNavDataItem uiItem) {
         Label statusLabel = new Label(uiItem.getState());
@@ -155,30 +148,38 @@ public class NavDataSetCardView extends VBox {
     }
 
     /**
-     * An icon for the most severe warning or error this layer carries, or null when it has
-     * none. Reuses the severity cell factory's icons and colours, so it matches the icons
-     * the wizard and the inspection dialog show. Not clickable: the existing "inspect"
-     * hover action opens the full text.
+     * The four-state status ball that stands in for the layer's icon: grey when X-Plane
+     * reads none of the files, green when they are clean, orange on warnings, red on errors.
+     * Carries the reasons in its tooltip, so the card header itself stays scannable.
      */
-    private static FontIcon buildSeverityIcon(UiNavDataItem uiItem) {
-        return uiItem.inspect().getMessages().stream()
-                .map(InspectionMessage::getSeverity)
-                .filter(severity -> severity == Severity.WARN || severity == Severity.ERROR)
-                .max(Comparator.comparingInt(NavDataSetCardView::severityRank))
-                .map(SeverityIconCellFactory::getSeverityIcon)
-                .map(icon -> {
-                    icon.setIconSize(ICON_SIZE);
-                    return icon;
-                })
-                .orElse(null);
+    private static Circle buildStatusBall(UiNavDataItem uiItem, boolean ignored, int overriding,
+                                          InspectionResult inspection) {
+        NavDataSetStatus status = NavDataSetStatus.of(uiItem.getExists(), ignored, inspection);
+        Circle ball = new Circle(BALL_RADIUS);
+        ball.getStyleClass().add(switch (status) {
+            case INACTIVE -> "navdata-ball-inactive";
+            case OK -> "navdata-ball-ok";
+            case WARNING -> "navdata-ball-warning";
+            case ERROR -> "navdata-ball-error";
+        });
+        Tooltip.install(ball, new Tooltip(tooltipText(ignored, overriding, status, inspection)));
+        return ball;
     }
 
-    private static int severityRank(Severity severity) {
-        return switch (severity) {
-            case INFO -> 0;
-            case WARN -> 1;
-            case ERROR -> 2;
-        };
+    private static String tooltipText(boolean ignored, int overriding, NavDataSetStatus status,
+                                      InspectionResult inspection) {
+        List<String> lines = new ArrayList<>();
+        lines.add(switch (status) {
+            case INACTIVE -> ignored ? "Ignored by layer " + overriding : "All files absent";
+            case OK -> "OK";
+            case WARNING -> "Warnings";
+            case ERROR -> "Errors";
+        });
+        inspection.getMessages().stream()
+                .filter(message -> message.getSeverity() != Severity.INFO)
+                .map(InspectionMessage::getMessage)
+                .forEach(lines::add);
+        return String.join("\n", lines);
     }
 
     private HBox buildHoverActions(UiNavDataItem uiItem) {

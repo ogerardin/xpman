@@ -713,6 +713,23 @@
     -fx-opacity: 0.5;
 }
 
+/* --- Nav data layer status ball --- */
+.navdata-ball-inactive {
+    -fx-fill: -color-fg-muted;
+}
+
+.navdata-ball-ok {
+    -fx-fill: -color-success-emphasis;
+}
+
+.navdata-ball-warning {
+    -fx-fill: -color-warning-emphasis;
+}
+
+.navdata-ball-error {
+    -fx-fill: -color-danger-emphasis;
+}
+
 .navdata-card-badge-override {
     -fx-font-weight: bold;
 }
