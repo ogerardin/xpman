@@ -93,20 +93,20 @@
                             <PropertyValueFactory property="version"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="hasAirportColumn" editable="false" prefWidth="68.0" sortable="false" text="Has airport?">
+                    <TableColumn fx:id="hasAirportColumn" editable="false" prefWidth="80.0" sortable="false" text="Has airport?">
                         <cellValueFactory>
                             <PropertyValueFactory property="hasAirport"/>
                         </cellValueFactory>
                         <cellFactory>
-                            <BooleanCellFactory/>
+                            <PillCellFactory text="Airport" styleClass="pill-success"/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn fx:id="libraryColumn" editable="false" prefWidth="70.0" sortable="false" text="Library?">
+                    <TableColumn fx:id="libraryColumn" editable="false" prefWidth="80.0" sortable="false" text="Library?">
                         <cellValueFactory>
                             <PropertyValueFactory property="library"/>
                         </cellValueFactory>
                         <cellFactory>
-                            <BooleanCellFactory/>
+                            <PillCellFactory text="Library" styleClass="pill-accent"/>
                         </cellFactory>
                     </TableColumn>
                     <TableColumn fx:id="tileCountColumn" editable="false" prefWidth="70.0" sortable="false" text="Tile count" styleClass="numeric-column">

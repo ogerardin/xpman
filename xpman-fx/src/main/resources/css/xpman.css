@@ -92,6 +92,25 @@
     -fx-text-fill: -color-fg-muted;
 }
 
+/* --- Scenery table: boolean indicator pills --- */
+.pill-success {
+    -fx-font-size: 0.85em;
+    -fx-font-weight: bold;
+    -fx-background-color: -color-success-subtle;
+    -fx-text-fill: -color-success-fg;
+    -fx-background-radius: 10px;
+    -fx-padding: 1px 8px;
+}
+
+.pill-accent {
+    -fx-font-size: 0.85em;
+    -fx-font-weight: bold;
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-accent-fg;
+    -fx-background-radius: 10px;
+    -fx-padding: 1px 8px;
+}
+
 .unsaved-indicator {
     -fx-text-fill: -color-warning-emphasis;
     -fx-font-weight: bold;
