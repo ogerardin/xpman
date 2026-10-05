@@ -108,10 +108,20 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
         return manuals;
     }
 
-    // ponytail: always returns true, doesn't sync with X-Plane runtime state.
-    // Add persistence and toggle when user demands it.
     public boolean isEnabled() {
-        return true;
+        return !getBaseFolder().startsWith(getXPlane().getPaths().disabledPlugins());
+    }
+
+    public void setEnabled(boolean enabled) throws IOException {
+        if (enabled == isEnabled()) return;
+        Path source = getBaseFolder();
+        Path targetBase = enabled ? getXPlane().getPaths().plugins() : getXPlane().getPaths().disabledPlugins();
+        Path target = targetBase.resolve(source.getFileName());
+        Files.createDirectories(targetBase);
+        if (Files.exists(target)) {
+            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(target.toFile());
+        }
+        Files.move(source, target);
     }
 
     // referenced by com.ogerardin.xpman.panels.plugins.UiPlugin.removeQuarantine

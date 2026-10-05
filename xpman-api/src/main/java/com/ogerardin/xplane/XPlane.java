@@ -107,6 +107,10 @@ public class XPlane {
         public Path plugins() {
             return resources().resolve("plugins");
         }
+        /** Custom disabled plugins folder (not X-Plane standard) */
+        public Path disabledPlugins() {
+            return plugins().resolveSibling(plugins().getFileName() + " (disabled)");
+        }
         /** Custom tools folder (not X-Plane standard) */
         public Path tools() { return resources().resolve("tools"); }
         public Path handPlacedLocalizers() {

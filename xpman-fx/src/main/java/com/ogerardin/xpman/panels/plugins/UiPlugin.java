@@ -15,6 +15,7 @@ import javafx.scene.control.Alert;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -44,6 +45,20 @@ public class UiPlugin implements PluginRow {
     @EnabledIf("quarantined")
     public void removeQuarantine() {
         Platforms.getCurrent().removeQuarantine(plugin.getBaseFolder());
+    }
+
+    @Label("'Enable plugin'")
+    @EnabledIf("! enabled")
+    @OnSuccess("reload()")
+    public void enablePlugin() throws IOException {
+        plugin.setEnabled(true);
+    }
+
+    @Label("'Disable plugin'")
+    @EnabledIf("enabled && ! system")
+    @OnSuccess("reload()")
+    public void disablePlugin() throws IOException {
+        plugin.setEnabled(false);
     }
 
     @SuppressWarnings("unused")

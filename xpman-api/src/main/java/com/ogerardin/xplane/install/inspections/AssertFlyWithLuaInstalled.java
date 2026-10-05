@@ -25,7 +25,9 @@ public class AssertFlyWithLuaInstalled implements Inspection<Archive> {
         }
         
         boolean flyWithLuaInstalled = xPlane.getPluginManager().getPlugins().stream()
-            .anyMatch(FlyWithLua.class::isInstance);
+            .filter(FlyWithLua.class::isInstance)
+            .map(FlyWithLua.class::cast)
+            .anyMatch(FlyWithLua::isEnabled);
         
         if (!flyWithLuaInstalled) {
             return InspectionResult.of(InspectionMessage.builder()

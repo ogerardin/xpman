@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +43,13 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     @Getter
     private final Path pluginsFolder;
 
+    @Getter
+    private final Path disabledPluginsFolder;
+
     public PluginManager(@NonNull XPlane xPlane) {
         super(xPlane);
         this.pluginsFolder = xPlane.getPaths().plugins();
+        this.disabledPluginsFolder = xPlane.getPaths().disabledPlugins();
     }
 
     public List<Plugin> getPlugins() {
@@ -70,7 +75,10 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         log.info("Loading plugins...");
         fireEvent(ManagerEvent.<Plugin>builder().type(LOADING).source(this).build());
 
-        List<Path> xplFiles = FileUtils.findFiles(pluginsFolder, path -> path.getFileName().toString().endsWith(".xpl"));
+        List<Path> xplFiles = new ArrayList<>();
+        for (Path folder : List.of(pluginsFolder, disabledPluginsFolder)) {
+            xplFiles.addAll(FileUtils.findFiles(folder, path -> path.getFileName().toString().endsWith(".xpl")));
+        }
         log.debug("Found {} .xpl files: {}", xplFiles.size(), xplFiles);
         
         items = xplFiles.stream()
