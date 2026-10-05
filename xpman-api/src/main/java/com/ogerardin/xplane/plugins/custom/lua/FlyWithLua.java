@@ -16,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
@@ -50,33 +52,31 @@ public class FlyWithLua extends XPlaneOrgPlugin {
 
     private List<FlyWithLuaScript> loadScripts() {
         Path scriptsFolder = getBaseFolder().resolve("Scripts");
-        if (!scriptsFolder.toFile().exists()) {
-            log.debug("FlyWithLua Scripts folder not found: {}", scriptsFolder);
-            return List.of();
+        List<Path> folders = FlyWithLuaScript.scriptFolders(scriptsFolder);
+        List<Path> luaFiles = new ArrayList<>();
+        for (Path folder : folders) {
+            if (!Files.isDirectory(folder)) continue;
+            try (Stream<Path> stream = Files.list(folder)) {
+                stream.filter(p -> p.getFileName().toString().endsWith(".lua"))
+                      .forEach(luaFiles::add);
+            } catch (java.io.IOException e) {
+                log.warn("Failed to list FlyWithLua scripts in {}", folder, e);
+            }
         }
         
-        try {
-            List<Path> luaFiles = Files.list(scriptsFolder)
-                .filter(path -> path.getFileName().toString().endsWith(".lua"))
-                .toList();
-            
-            log.debug("Found {} Lua scripts in {}", luaFiles.size(), scriptsFolder);
-            
-            return luaFiles.stream()
-                .map(f -> {
-                    try {
-                        return getBestSubclassInstance(FlyWithLuaScript.class, getXPlane(), f);
-                    } catch (InstantiationException e) {
-                        log.warn("Failed to instantiate script for {}", f, e);
-                        return null;
-                    }
-                })
-                .filter(java.util.Objects::nonNull)
-                .toList();
-        } catch (java.io.IOException e) {
-            log.warn("Failed to load FlyWithLua scripts from {}", scriptsFolder, e);
-            return List.of();
-        }
+        log.debug("Found {} Lua scripts across {}", luaFiles.size(), folders);
+        
+        return luaFiles.stream()
+            .map(f -> {
+                try {
+                    return getBestSubclassInstance(FlyWithLuaScript.class, getXPlane(), f);
+                } catch (InstantiationException e) {
+                    log.warn("Failed to instantiate script for {}", f, e);
+                    return null;
+                }
+            })
+            .filter(java.util.Objects::nonNull)
+            .toList();
     }
 
     @SneakyThrows

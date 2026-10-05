@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +25,9 @@ import java.util.Map;
 @Slf4j
 @Getter
 public class FlyWithLuaScript implements Inspectable, Uninstallable {
+    
+    static final String DISABLED_SUFFIX = " (disabled)";
+    static final String QUARANTINE_SUFFIX = " (Quarantine)";
     
     private final XPlane xPlane;
     private final Path luaFile;
@@ -42,10 +48,57 @@ public class FlyWithLuaScript implements Inspectable, Uninstallable {
     }
     
     /**
-     * Returns the base folder containing this script (Scripts/).
+     * Returns the base folder containing this script (Scripts/, Scripts (disabled)/, or Scripts (Quarantine)/).
      */
     public Path getBaseFolder() {
         return luaFile.getParent();
+    }
+    
+    /** The active Scripts folder, regardless of which sibling folder the script currently sits in. */
+    Path activeScriptsFolder() {
+        Path base = getBaseFolder();
+        String name = base.getFileName().toString();
+        if (name.endsWith(DISABLED_SUFFIX)) return base.resolveSibling(name.substring(0, name.length() - DISABLED_SUFFIX.length()));
+        if (name.endsWith(QUARANTINE_SUFFIX)) return base.resolveSibling(name.substring(0, name.length() - QUARANTINE_SUFFIX.length()));
+        return base;
+    }
+    
+    /** The three folders a script can live in: active Scripts, disabled, and quarantined siblings. */
+    static List<Path> scriptFolders(Path scriptsFolder) {
+        String name = scriptsFolder.getFileName().toString();
+        return List.of(
+                scriptsFolder,
+                scriptsFolder.resolveSibling(name + DISABLED_SUFFIX),
+                scriptsFolder.resolveSibling(name + QUARANTINE_SUFFIX));
+    }
+    
+    public boolean isDisabled() {
+        return getBaseFolder().getFileName().toString().endsWith(DISABLED_SUFFIX);
+    }
+    
+    public boolean isQuarantined() {
+        return getBaseFolder().getFileName().toString().endsWith(QUARANTINE_SUFFIX);
+    }
+    
+    public boolean isEnabled() {
+        return !isDisabled() && !isQuarantined();
+    }
+    
+    private void moveTo(String suffix) throws IOException {
+        Path scriptsFolder = activeScriptsFolder();
+        Path targetFolder = suffix == null ? scriptsFolder : scriptsFolder.resolveSibling(scriptsFolder.getFileName() + suffix);
+        Files.createDirectories(targetFolder);
+        Files.move(luaFile, targetFolder.resolve(luaFile.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+    }
+    
+    public void setEnabled(boolean enabled) throws IOException {
+        if (enabled == isEnabled()) return;
+        moveTo(enabled ? null : DISABLED_SUFFIX);
+    }
+    
+    public void setQuarantined(boolean quarantined) throws IOException {
+        if (quarantined == isQuarantined()) return;
+        moveTo(quarantined ? QUARANTINE_SUFFIX : null);
     }
 
     /**

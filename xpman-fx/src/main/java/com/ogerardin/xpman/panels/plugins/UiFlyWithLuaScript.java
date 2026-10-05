@@ -5,13 +5,16 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
+import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
+import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Value;
 import javafx.scene.control.Alert;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -21,11 +24,6 @@ public class UiFlyWithLuaScript implements PluginRow {
 
     @Delegate(excludes = {Inspectable.class, Uninstallable.class})
     final FlyWithLuaScript script;
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     @Override
     public boolean getSystem() {
@@ -45,6 +43,34 @@ public class UiFlyWithLuaScript implements PluginRow {
     @Override
     public String getLatestVersion() {
         return null;
+    }
+
+    @Label("'Enable script'")
+    @EnabledIf("disabled")
+    @OnSuccess("reload()")
+    public void enableScript() throws IOException {
+        script.setEnabled(true);
+    }
+
+    @Label("'Disable script'")
+    @EnabledIf("enabled")
+    @OnSuccess("reload()")
+    public void disableScript() throws IOException {
+        script.setEnabled(false);
+    }
+
+    @Label("'Quarantine script'")
+    @EnabledIf("enabled")
+    @OnSuccess("reload()")
+    public void quarantineScript() throws IOException {
+        script.setQuarantined(true);
+    }
+
+    @Label("'Unquarantine script'")
+    @EnabledIf("quarantined")
+    @OnSuccess("reload()")
+    public void unquarantineScript() throws IOException {
+        script.setQuarantined(false);
     }
 
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")

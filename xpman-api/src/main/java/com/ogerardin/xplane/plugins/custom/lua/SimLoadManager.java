@@ -91,11 +91,12 @@ public class SimLoadManager extends FlyWithLuaScript {
         public InspectionResult preconditions(XPlane xPlane, Archive archive) {
             InspectionResult result = super.preconditions(xPlane, archive);
 
-            // Check for SGES script (warning, not error)
+            // Check for SGES script (warning, not error) — only enabled scripts count
             boolean sgesInstalled = xPlane.getPluginManager().getPlugins().stream()
                 .filter(p -> p instanceof FlyWithLua)
                 .map(FlyWithLua.class::cast)
                 .flatMap(fwl -> fwl.getScripts().stream())
+                .filter(FlyWithLuaScript::isEnabled)
                 .anyMatch(s -> s instanceof Sges);
 
             if (!sgesInstalled) {

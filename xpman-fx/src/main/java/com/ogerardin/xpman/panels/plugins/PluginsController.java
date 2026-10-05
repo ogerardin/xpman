@@ -84,9 +84,20 @@ public class PluginsController extends Controller {
 
             if (plugin instanceof FlyWithLua flyWithLua) {
                 List<FlyWithLuaScript> scripts = flyWithLua.getScripts();
-                for (FlyWithLuaScript script : scripts) {
+                List<FlyWithLuaScript> enabled = scripts.stream().filter(FlyWithLuaScript::isEnabled).toList();
+                List<FlyWithLuaScript> disabled = scripts.stream().filter(FlyWithLuaScript::isDisabled).toList();
+                List<FlyWithLuaScript> quarantined = scripts.stream().filter(FlyWithLuaScript::isQuarantined).toList();
+
+                for (FlyWithLuaScript script : enabled) {
                     pluginItem.getChildren().add(new TreeItem<>(new UiFlyWithLuaScript(script)));
                 }
+                if (!disabled.isEmpty()) {
+                    pluginItem.getChildren().add(scriptGroup("Disabled scripts", disabled));
+                }
+                if (!quarantined.isEmpty()) {
+                    pluginItem.getChildren().add(scriptGroup("Quarantined scripts", quarantined));
+                }
+
                 pluginItem.setExpanded(true);
                 pluginItem.expandedProperty().addListener(__ -> Platform.runLater(pluginTable::refresh));
             }
@@ -95,6 +106,26 @@ public class PluginsController extends Controller {
         }
 
         pluginTable.getRoot().getChildren().setAll(items);
+    }
+
+    private TreeItem<PluginRow> scriptGroup(String label, List<FlyWithLuaScript> scripts) {
+        TreeItem<PluginRow> header = new TreeItem<>(new ScriptGroupHeader(label + " (" + scripts.size() + ")"));
+        for (FlyWithLuaScript script : scripts) {
+            header.getChildren().add(new TreeItem<>(new UiFlyWithLuaScript(script)));
+        }
+        header.expandedProperty().addListener(__ -> Platform.runLater(pluginTable::refresh));
+        return header;
+    }
+
+    public record ScriptGroupHeader(String name) implements PluginRow {
+        @Override public String getName() { return name; }
+        @Override public String getDesc() { return null; }
+        @Override public String getVersion() { return null; }
+        @Override public String getLatestVersion() { return null; }
+        @Override public boolean isUpdateAvailable() { return false; }
+        @Override public boolean isEnabled() { return false; }
+        @Override public boolean getSystem() { return false; }
+        @Override public boolean isScript() { return false; }
     }
 
     public void reload() {
