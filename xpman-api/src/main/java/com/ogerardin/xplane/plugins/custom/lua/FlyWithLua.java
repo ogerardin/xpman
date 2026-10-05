@@ -2,22 +2,17 @@ package com.ogerardin.xplane.plugins.custom.lua;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.SystemLibraryRequirement;
-import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.install.inspections.MissingSystemLibrariesInspection;
 import com.ogerardin.xplane.install.types.PluginInstallableType;
 import com.ogerardin.xplane.plugins.XPlaneOrgPlugin;
-import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xplane.util.Urls;
 import com.ogerardin.xplane.util.platform.Platforms;
-import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -118,9 +113,9 @@ public class FlyWithLua extends XPlaneOrgPlugin {
         public InspectionResult preconditions(XPlane xPlane, Archive archive) {
             return super.preconditions(xPlane, archive).append(
                 new MissingSystemLibrariesInspection(List.of(
-                    new SystemLibraryRequirement(Platforms.LINUX, "libglut.so",
+                    new MissingSystemLibrariesInspection.SystemLibraryRequirement(Platforms.LINUX, "libglut.so",
                             "sudo apt-get install -y freeglut3 (if freeglut3 is unavailable, try freeglut3-dev)"),
-                    new SystemLibraryRequirement(Platforms.LINUX, "libopenal.so",
+                    new MissingSystemLibrariesInspection.SystemLibraryRequirement(Platforms.LINUX, "libopenal.so",
                             "sudo apt-get install -y libopenal1")
                 )).inspect(archive));
         }

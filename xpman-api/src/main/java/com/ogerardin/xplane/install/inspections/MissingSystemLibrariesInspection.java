@@ -4,7 +4,6 @@ import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.inspection.SystemLibraryRequirement;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
@@ -35,4 +34,12 @@ public class MissingSystemLibrariesInspection implements Inspection<Archive> {
                         .build())
                 .toList());
     }
+
+    /**
+     * A shared library that must be installed on the system for an add-on to run.
+     * @param platform the platform the requirement applies to
+     * @param soname the library name prefix to look for, e.g. {@code libopenal.so}
+     * @param installHint how to install the library on that platform
+     */
+    public record SystemLibraryRequirement(Platforms platform, String soname, String installHint) {}
 }
