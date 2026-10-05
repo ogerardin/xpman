@@ -4,9 +4,8 @@ import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
@@ -25,7 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -81,10 +79,6 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     @Getter(lazy = true)
     private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
 
-    public String getLatestVersion() {
-        return getSkunkcraftsLatestVersion();
-    }
-
     @Override
     public Path getSkunkcraftsFolder() {
         return getBaseFolder();
@@ -132,18 +126,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     @Override
     public InspectionResult inspect() {
-        String version = getVersion();
-        String latestVersion = getLatestVersion();
-        if (latestVersion != null && !Objects.equals(version, latestVersion)) {
-            return InspectionResult.of(
-                    InspectionMessage.builder()
-                            .severity(Severity.WARN)
-                            .object(getName())
-                            .message("Update available: " + latestVersion)
-                            .build()
-            );
-        }
-        return InspectionResult.empty();
+        return UpdateAvailableInspection.INSTANCE.inspect(this);
     }
 
     @Override

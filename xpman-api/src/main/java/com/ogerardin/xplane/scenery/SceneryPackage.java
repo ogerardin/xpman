@@ -2,10 +2,10 @@ package com.ogerardin.xplane.scenery;
 
 import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
+import com.ogerardin.xplane.inspection.impl.MissingSceneryDataInspection;
+import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
@@ -19,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 @Data
 @Slf4j
@@ -86,10 +85,6 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
         return null;
     }
 
-    public String getLatestVersion() {
-        return getSkunkcraftsLatestVersion();
-    }
-
     @Getter(lazy = true)
     private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
 
@@ -115,18 +110,10 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
 
     @Override
     public InspectionResult inspect() {
-        InspectionResult result = MissingReferencedTexturesInspection.INSTANCE.inspect(this);
-        String latest = getLatestVersion();
-        if (latest != null && !Objects.equals(getVersion(), latest)) {
-            result = result.append(InspectionResult.of(
-                    InspectionMessage.builder()
-                            .severity(Severity.WARN)
-                            .object(getName())
-                            .message("Update available: " + latest)
-                            .build()
-            ));
-        }
-        return result;
+        return MissingSceneryDataInspection.INSTANCE
+                .and(MissingReferencedTexturesInspection.INSTANCE)
+                .inspect(this)
+                .append(UpdateAvailableInspection.INSTANCE.inspect(this));
     }
 
     @Override

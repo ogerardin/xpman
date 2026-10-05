@@ -5,10 +5,9 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspectable;
-import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
+import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
@@ -103,10 +102,6 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
 
     public String getVersion() {
         return getProperty("acf/_version");
-    }
-
-    public String getLatestVersion() {
-        return getSkunkcraftsLatestVersion();
     }
 
     @Getter(lazy = true)
@@ -212,18 +207,8 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
 
     @Override
     public InspectionResult inspect() {
-        InspectionResult result = AircraftSpecInspection.INSTANCE.inspect(this);
-        String latest = getLatestVersion();
-        if (latest != null && !Objects.equals(getVersion(), latest)) {
-            result = result.append(InspectionResult.of(
-                    InspectionMessage.builder()
-                            .severity(Severity.WARN)
-                            .object(getName())
-                            .message("Update available: " + latest)
-                            .build()
-            ));
-        }
-        return result;
+        return AircraftSpecInspection.INSTANCE.inspect(this)
+                .append(UpdateAvailableInspection.INSTANCE.inspect(this));
     }
 
     @Override

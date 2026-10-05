@@ -27,6 +27,14 @@ public interface SkunkcraftsUpdatable {
     /** Returns the lazily-fetched remote version, or null if not updatable. */
     String getSkunkcraftsLatestVersion();
 
+    /**
+     * Returns the latest available version (from the Skunkcrafts config by default,
+     * or from a custom publication channel when overridden), or null if unknown.
+     */
+    default String getLatestVersion() {
+        return getSkunkcraftsLatestVersion();
+    }
+
     /** Whether this addon has a valid, enabled, non-locked Skunkcrafts config. */
     default boolean isSkunkcraftsUpdatable() {
         SkunkcraftsConfig cfg = getSkunkcraftsConfig();
