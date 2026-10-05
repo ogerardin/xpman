@@ -126,6 +126,32 @@ public class LinuxPlatform implements Platform {
         return m.find() ? m.group(1) : null;
     }
 
+    /** Lazily-populated cache of soname prefixes known to ldconfig, or null if ldconfig is unavailable. */
+    @Getter(lazy = true)
+    private final List<String> installedLibraries = readLdcacheNames();
+
+    @Override
+    public boolean isSharedLibraryPresent(String soname) {
+        return isPresent(getInstalledLibraries(), soname);
+    }
+
+    private static List<String> readLdcacheNames() {
+        try {
+            return CommandExecutor.exec("ldconfig", "-p").outputLines().stream()
+                    .map(line -> line.strip().split("\\s+")[0])
+                    .toList();
+        } catch (Exception e) {
+            // ldconfig missing or unreadable: skip checks rather than reporting everything missing
+            log.warn("ldconfig unavailable, cannot verify shared libraries", e);
+            return null;
+        }
+    }
+
+// null (probe unavailable) means "unknown": report present so we skip the warning
+    public static boolean isPresent(List<String> installedLibraries, String soname) {
+        return installedLibraries == null || installedLibraries.stream().anyMatch(n -> n.startsWith(soname));
+    }
+
     @Override
     public List<Path> getCandidateInstallBaseFolders(Path userHome) {
         List<Path> bases = new ArrayList<>();

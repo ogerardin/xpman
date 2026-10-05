@@ -106,6 +106,12 @@ public interface Platform {
      */
     default void fixAppBundlePermissions(Path path) {}
 
+    /**
+     * Whether a shared library whose soname starts with the given prefix is installed.
+     * Returns true on platforms that don't do system library checks.
+     */
+    default boolean isSharedLibraryPresent(String soname) { return true; }
+
     default List<Path> getCandidateInstallBaseFolders(Path userHome) {
         return List.of(
                 userHome.resolve("Applications"),
