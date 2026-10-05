@@ -290,9 +290,8 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     }
 
     @Override
-    public void install(Archive archive, ProgressListener progressListener) throws IOException {
+    public void unpack(Archive archive, ProgressListener progressListener) throws IOException {
         archive.extract(getSceneryFolder(), progressListener);
-        reload();
     }
 
 }

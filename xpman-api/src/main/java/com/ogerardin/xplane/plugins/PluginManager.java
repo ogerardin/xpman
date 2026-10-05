@@ -102,12 +102,9 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
     }
 
     @Override
-    public void install(Archive archive, ProgressListener progressListener) throws IOException {
-        PluginRoot pluginRoot = findPluginRoot(archive);
-
-        if (pluginRoot == null) {
-            throw new IOException("Invalid plugin archive: could not determine plugin root folder");
-        }
+    public void unpack(Archive archive, ProgressListener progressListener) throws IOException {
+        PluginRoot pluginRoot = findPluginRoot(archive)
+                .orElseThrow(() -> new IOException("Invalid plugin archive: could not determine plugin root folder"));
 
         Path targetFolder = pluginsFolder.resolve(pluginRoot.name());
 
@@ -116,8 +113,6 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         } else {
             archive.extract(targetFolder, pluginRoot.path(), progressListener);
         }
-
-        reload();
     }
 
     /**
@@ -125,46 +120,31 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
      * platform-specific subdirectories (64, mac_x64, win_x64, lin_x64, etc.).
      *
      * @param archive the archive to analyze
-     * @return a PluginRoot containing the path and name, or null if not found
+     * @return a PluginRoot containing the path and name, or empty if not found
      */
-    private PluginRoot findPluginRoot(Archive archive) {
-        List<Path> paths = archive.getPaths();
-        
-        // Find all .xpl files
-        List<Path> xplFiles = paths.stream()
-                .filter(p -> p.toString().toLowerCase().endsWith(".xpl"))
-                .toList();
-        
-        if (xplFiles.isEmpty()) {
-            return null;
-        }
-        
+    private Optional<PluginRoot> findPluginRoot(Archive archive) {
         // Check the first .xpl file to determine the root
-        Path firstXpl = xplFiles.get(0);
-        Path parent = firstXpl.getParent();
-        
-        if (parent == null) {
-            return null;
-        }
-        
-        String parentName = parent.getFileName().toString();
-        
-        // Check if parent matches platform patterns
-        if (isPlatformFolder(parentName)) {
-            // Parent is a platform folder, so root is grandparent
-            Path grandparent = parent.getParent();
-            if (grandparent == null || grandparent.getNameCount() == 0) {
-                // Grandparent is archive root - use archive filename as name
-                String name = deriveNameFromArchive(archive);
-                return new PluginRoot(grandparent != null ? grandparent : Path.of(""), name);
-            } else {
-                // Grandparent is a named folder
-                return new PluginRoot(grandparent, grandparent.getFileName().toString());
-            }
-        } else {
-            // Parent is the plugin root
-            return new PluginRoot(parent, parentName);
-        }
+        return archive.getPaths().stream()
+                .filter(p -> p.toString().toLowerCase().endsWith(".xpl"))
+                .findFirst()
+                .map(Path::getParent)
+                .map(parent -> {
+                    String parentName = parent.getFileName().toString();
+
+                    // Check if parent matches platform patterns
+                    if (!isPlatformFolder(parentName)) {
+                        // Parent is the plugin root
+                        return new PluginRoot(parent, parentName);
+                    }
+                    // Parent is a platform folder, so root is grandparent
+                    Path grandparent = parent.getParent();
+                    if (grandparent == null || grandparent.getNameCount() == 0) {
+                        // Grandparent is archive root - use archive filename as name
+                        return new PluginRoot(grandparent != null ? grandparent : Path.of(""), deriveNameFromArchive(archive));
+                    }
+                    // Grandparent is a named folder
+                    return new PluginRoot(grandparent, grandparent.getFileName().toString());
+                });
     }
     
     // ponytail: uses archive filename as plugin name when root is archive root

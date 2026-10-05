@@ -15,7 +15,7 @@
 | Liveries  | List/delete aircraft liveries                                              | In progress                                               |
 | Liveries  | Install livery from ZIP                                                    |                                                           |
 | Plugins   | list global plugins                                                        | Done                                                      |
-| Plugins   | install plugin from zip                                                    |                                                           |
+| Plugins   | install plugin from zip                                                    | Done                                                      |
 | Plugins   | recognise specific plugin -> requirements, check update, home page, etc.   |                                                           |
 | Plugins   | Skunkcrafts Updater integration (detect, check, apply updates)             | Done                                                      |
 | Nav data  | list recognized navdata sets                                               | Done                                                      |

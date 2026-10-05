@@ -1,10 +1,12 @@
 package com.ogerardin.xplane.install.types;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallableType;
 import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.install.inspections.AssertHasSingleRootFolder;
+import com.ogerardin.xplane.install.inspections.WouldOverwriteInspection;
 import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
@@ -35,6 +37,7 @@ public class AircraftInstallableType implements InstallableType {
     public InspectionResult preconditions(XPlane xPlane, Archive archive) {
         return AssertHasSingleRootFolder.INSTANCE
                 .and(SkunkcraftsUpdatableInspection.INSTANCE)
+                .and(xPlane == null ? Inspection.empty() : new WouldOverwriteInspection(xPlane.getAircraftManager()))
                 .inspectable(archive)
                 .inspect();
     }
