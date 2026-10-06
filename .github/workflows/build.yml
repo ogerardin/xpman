@@ -218,34 +218,42 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "${IS_SNAPSHOT:-0}" = "1" ]; then
-            # Pre-release: dedup same-day titles, then create
-            gh release list --json tagName,name,isPrerelease --jq \
-              '.[] | select(.isPrerelease and .name == "'"$VERSION ($DATE)"'") | .tagName' | \
-              xargs -r gh release delete --yes --cleanup-tag
-            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
-            if [ -n "$PREV_TAG" ]; then
-              git log --format='- %s' "$PREV_TAG"..HEAD > "${RUNNER_TEMP}/release-notes.md"
-            else
-              git log --format='- %s' -30 HEAD > "${RUNNER_TEMP}/release-notes.md"
-            fi
-            gh release create "$GH_VERSION" artifacts/* \
-              --target "$GITHUB_SHA" \
-              --title "$VERSION ($DATE)" \
-              --notes-file "${RUNNER_TEMP}/release-notes.md" \
-              --prerelease
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          if [ -n "$PREV_TAG" ]; then
+            git log --format='- %s' "$PREV_TAG"..HEAD > "${RUNNER_TEMP}/release-notes.md"
           else
-            # Full release: clean up all pre-releases, then publish
-            gh release list --prerelease --json tagName --jq '.[].tagName' | \
-              xargs -r gh release delete --yes --cleanup-tag
-            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
-            if [ -n "$PREV_TAG" ]; then
-              git log --format='- %s' "$PREV_TAG"..HEAD > "${RUNNER_TEMP}/release-notes.md"
-            else
-              git log --format='- %s' -30 HEAD > "${RUNNER_TEMP}/release-notes.md"
-            fi
-            gh release create "$VERSION" artifacts/* \
-              --target "$GITHUB_SHA" \
-              --title "$VERSION ($DATE)" \
-              --notes-file "${RUNNER_TEMP}/release-notes.md"
+            git log --format='- %s' -30 HEAD > "${RUNNER_TEMP}/release-notes.md"
           fi
+
+          for attempt in 1 2 3; do
+            if [ "${IS_SNAPSHOT:-0}" = "1" ]; then
+              # Pre-release: dedup same-day titles, then create
+              gh release list --json tagName,name,isPrerelease --jq \
+                '.[] | select(.isPrerelease and .name == "'"$VERSION ($DATE)"'") | .tagName' | \
+                xargs -r gh release delete --yes --cleanup-tag
+              if gh release create "$GH_VERSION" artifacts/* \
+                  --target "$GITHUB_SHA" \
+                  --title "$VERSION ($DATE)" \
+                  --notes-file "${RUNNER_TEMP}/release-notes.md" \
+                  --prerelease; then
+                break
+              fi
+            else
+              # Full release: clean up all pre-releases, then publish
+              gh release list --prerelease --json tagName --jq '.[].tagName' | \
+                xargs -r gh release delete --yes --cleanup-tag
+              if gh release create "$VERSION" artifacts/* \
+                  --target "$GITHUB_SHA" \
+                  --title "$VERSION ($DATE)" \
+                  --notes-file "${RUNNER_TEMP}/release-notes.md"; then
+                break
+              fi
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "::warning::Release attempt $attempt failed; retrying in 20s..."
+              sleep 20
+            else
+              echo "::error::Release create failed after 3 attempts" >&2
+              exit 1
+            fi
+          done
