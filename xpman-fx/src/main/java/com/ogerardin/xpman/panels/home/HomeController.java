@@ -22,15 +22,21 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -344,9 +350,13 @@ public class HomeController {
     }
 
     private HBox createXPlaneUpdateRow(String label, String currentVersion, String latestVersion,
-                                        XPlaneReleaseInfo releaseInfo, XPlane xPlane) {
+                                         XPlaneReleaseInfo releaseInfo, XPlane xPlane) {
+        boolean isBeta = label.equals("Beta");
         HBox row = createUpdateRow(label, currentVersion, latestVersion, "Run Installer",
                 () -> {
+                    if (isBeta && !confirmBetaInstall()) {
+                        return;
+                    }
                     var xPlaneInstaller = xPlane.getToolsManager().getTool("xplane-installer");
                     UiToolUtil.runTool(xPlane, xPlaneInstaller);
                 });
@@ -356,6 +366,24 @@ public class HomeController {
             row.getChildren().add(link);
         });
         return row;
+    }
+
+    /**
+     * Shows a hint explaining how to make the X-Plane installer offer the beta release.
+     * @return true if the user chose to proceed.
+     */
+    private static boolean confirmBetaInstall() {
+        ButtonType proceed = new ButtonType("Proceed", ButtonBar.ButtonData.OK_DONE);
+        Image image = new Image(Objects.requireNonNull(
+                HomeController.class.getResource("/img/screenshot_beta.png")).toExternalForm());
+        Label message = new Label("To install a beta release, check the box that says " +
+                "'Check for new betas as well as updates' on the first step of the wizard ('Welcome')");
+        message.setWrapText(true);
+        message.maxWidthProperty().bind(image.widthProperty());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, null, ButtonType.CANCEL, proceed);
+        alert.setHeaderText("Installing a beta release");
+        alert.getDialogPane().setContent(new VBox(8, message, new ImageView(image)));
+        return alert.showAndWait().filter(proceed::equals).isPresent();
     }
 
     /**
