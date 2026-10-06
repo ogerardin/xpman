@@ -49,6 +49,11 @@ class PluginTest {
         assertThat(Files.exists(disabledXpl), is(true));
         assertThat(Files.exists(xplFile), is(false));
 
+        // the same object stays truthful after the move (enabled state, reveal, uninstall act on the new path)
+        assertThat(plugin.isEnabled(), is(false));
+        assertThat(plugin.getXplFile(), is(disabledXpl));
+        assertThat(plugin.getBaseFolder(), is(tempDir.resolve("Resources/plugins (disabled)/Foo")));
+
         Plugin reloaded = new Plugin(newXPlane(), disabledXpl);
         assertThat(reloaded.isEnabled(), is(false));
     }

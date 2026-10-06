@@ -50,6 +50,10 @@ class FlyWithLuaScriptTest {
         assertThat(Files.exists(disabledFile), is(true));
         assertThat(Files.exists(luaFile), is(false));
 
+        // the same object stays truthful after the move (menus, reveal, uninstall act on the new path)
+        assertThat(script.isEnabled(), is(false));
+        assertThat(script.getLuaFile(), is(disabledFile));
+
         FlyWithLuaScript reloaded = new FlyWithLuaScript(newXPlane(), disabledFile);
         assertThat(reloaded.isEnabled(), is(false));
     }
@@ -135,6 +139,10 @@ class FlyWithLuaScriptTest {
         Path quarantinedFile = tempDir.resolve("Resources/plugins/FlyWithLua/Scripts (Quarantine)/test.lua");
         assertThat(Files.exists(quarantinedFile), is(true));
         assertThat(Files.exists(luaFile), is(false));
+
+        // the same object stays truthful after the move
+        assertThat(script.isQuarantined(), is(true));
+        assertThat(script.getLuaFile(), is(quarantinedFile));
 
         FlyWithLuaScript reloaded = new FlyWithLuaScript(newXPlane(), quarantinedFile);
         assertThat(reloaded.isQuarantined(), is(true));

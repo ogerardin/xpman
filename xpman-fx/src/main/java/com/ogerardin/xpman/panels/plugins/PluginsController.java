@@ -10,6 +10,7 @@ import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.util.jfx.EmptyState;
+import com.ogerardin.xpman.util.jfx.cell_factory.SwitchTreeCellFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -18,6 +19,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ public class PluginsController extends Controller {
 
     @FXML
     private TreeTableView<PluginRow> pluginTable;
+
+    @FXML
+    private TreeTableColumn<PluginRow, Boolean> enabledColumn;
 
     private final IntrospectingContextMenuTreeTableRowFactory<PluginRow> pluginRowFactory =
             new IntrospectingContextMenuTreeTableRowFactory<>(this);
@@ -45,6 +50,7 @@ public class PluginsController extends Controller {
                 .then((Node) EmptyState.loading("Loading plugins..."))
                 .otherwise(new EmptyState("fth-package", "No plugins to show")));
         pluginTable.setRowFactory(pluginRowFactory);
+        enabledColumn.setCellFactory(new SwitchTreeCellFactory(this::reload));
 
         xPlaneProperty.addListener((__, ___, xPlane) -> {
             if (xPlane != null) {
@@ -62,10 +68,9 @@ public class PluginsController extends Controller {
     private void onPluginManagerEvent(ManagerEvent<Plugin> event) {
         Platform.runLater(() -> {
             switch (event.getType()) {
-                case LOADING -> {
-                    loading.set(true);
-                    pluginTable.getRoot().getChildren().clear();
-                }
+                // rows are kept until LOADED replaces them, so the tree doesn't flash
+                // (and an in-flight switch animation isn't cut short) during reloads
+                case LOADING -> loading.set(true);
                 case LOADED -> {
                     loading.set(false);
                     rebuildTree(event.getItems());
@@ -106,6 +111,10 @@ public class PluginsController extends Controller {
         }
 
         pluginTable.getRoot().getChildren().setAll(items);
+        // force cell re-population: cells at unchanged indices never re-query their cellValueFactory
+        // (TreeItemPropertyValueFactory on a plain getter returns a dead wrapper), so value changes
+        // at the same index would otherwise not re-render
+        pluginTable.refresh();
     }
 
     private TreeItem<PluginRow> scriptGroup(String label, List<FlyWithLuaScript> scripts) {
@@ -124,8 +133,10 @@ public class PluginsController extends Controller {
         @Override public String getLatestVersion() { return null; }
         @Override public boolean isUpdateAvailable() { return false; }
         @Override public boolean isEnabled() { return false; }
+        @Override public void setEnabled(boolean enabled) {}
         @Override public boolean getSystem() { return false; }
         @Override public boolean isScript() { return false; }
+        @Override public boolean isGroupHeader() { return true; }
     }
 
     public void reload() {

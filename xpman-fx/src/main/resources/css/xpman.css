@@ -877,3 +877,38 @@
     -fx-font-size: 0.9em;
     -fx-wrap-text: true;
 }
+
+/* --- ControlsFX ToggleSwitch (plugins panel Enabled column) ---
+ * ControlsFX's toggleswitch.css references modena lookups that AtlantaFX
+ * themes do not define (e.g. -fx-text-base-color, -fx-hover-base) and uses
+ * derive(), which JavaFX 25 fails to convert from a user-agent stylesheet.
+ * These scene-level rules override that stylesheet with AtlantaFX variables. */
+.toggle-switch .label {
+    -fx-text-fill: -color-fg-default;
+}
+
+.toggle-switch .thumb {
+    -fx-background-color: -color-fg-default;
+}
+
+.toggle-switch:hover .thumb {
+    -fx-color: -color-fg-emphasis;
+}
+
+.toggle-switch:focused .thumb {
+    -fx-background-color: -color-accent-muted, -color-fg-default;
+    -fx-background-insets: -2px, 0;
+}
+
+.toggle-switch .thumb-area {
+    -fx-background-color: -color-bg-inset;
+}
+
+.toggle-switch:selected .thumb-area {
+    -fx-background-color: -color-accent-emphasis;
+}
+
+.toggle-switch:selected:focused .thumb-area {
+    -fx-background-color: -color-accent-muted, -color-accent-emphasis;
+    -fx-background-insets: -2px, 0;
+}

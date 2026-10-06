@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -94,6 +95,9 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         items.forEach(p -> {
             p.getVersion();
             p.getLatestVersion();
+            // pre-warm FlyWithLua scripts here (async thread) so that the UI rebuild doesn't
+            // pay the lazy lua header parsing cost on the FX thread
+            if (p instanceof FlyWithLua fwl) fwl.getScripts();
         });
 
         log.info("Loaded {} plugins: {}", items.size(), items.stream().map(p -> p.getName() + " (" + p.getXplFile() + ")").toList());

@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Getter
 public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, SkunkcraftsUpdatable {
 
-    private final Path xplFile;
+    private Path xplFile;
 
     private final String name;
 
@@ -122,6 +122,9 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
             com.sun.jna.platform.FileUtils.getInstance().moveToTrash(target.toFile());
         }
         Files.move(source, target);
+        // keep this object truthful for consumers (enabled state, reveal, uninstall)
+        // until the reload replaces it with a fresh instance
+        this.xplFile = target.resolve(source.relativize(xplFile));
     }
 
     // referenced by com.ogerardin.xpman.panels.plugins.UiPlugin.removeQuarantine

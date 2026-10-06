@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import com.ogerardin.xpman.util.jfx.cell_factory.BooleanTreeCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.cell_factory.PluginIconTreeCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.cell_factory.PluginUpdateTreeCellFactory?>
 <?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
@@ -39,13 +38,10 @@
                   <PluginUpdateTreeCellFactory/>
               </cellFactory>
           </TreeTableColumn>
-          <TreeTableColumn editable="false" prefWidth="80.0" sortable="false" text="Enabled">
+          <TreeTableColumn fx:id="enabledColumn" editable="false" prefWidth="80.0" sortable="false" text="Enabled">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="enabled" />
               </cellValueFactory>
-              <cellFactory>
-                  <BooleanTreeCellFactory/>
-              </cellFactory>
           </TreeTableColumn>
           <TreeTableColumn editable="false" prefWidth="150.0" sortable="false" text="Name">
               <cellValueFactory>

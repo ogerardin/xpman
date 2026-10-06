@@ -40,7 +40,11 @@ public abstract class IntrospectingContextMenuFactory<T> {
     protected ContextMenu getContextMenu(T item) {
         ContextMenu menu = MENU_CACHE.computeIfAbsent(item, t -> {
             MenuItem[] menuItems = buildMenuItems(t, t.getClass());
-            return new ContextMenu(menuItems);
+            ContextMenu m = new ContextMenu(menuItems);
+            // re-evaluate @EnabledIf visibility whenever the menu is shown,
+            // so menus attached to rows whose state changed stay correct
+            m.setOnShowing(__ -> contextualize(m));
+            return m;
         });
         contextualize(menu);
         return menu;

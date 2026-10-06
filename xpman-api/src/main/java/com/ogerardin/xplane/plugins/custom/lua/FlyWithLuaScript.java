@@ -30,7 +30,7 @@ public class FlyWithLuaScript implements Inspectable, Uninstallable {
     static final String QUARANTINE_SUFFIX = " (Quarantine)";
     
     private final XPlane xPlane;
-    private final Path luaFile;
+    private Path luaFile;
     private final String name;
     private final String desc;
     private final String version;
@@ -88,7 +88,11 @@ public class FlyWithLuaScript implements Inspectable, Uninstallable {
         Path scriptsFolder = activeScriptsFolder();
         Path targetFolder = suffix == null ? scriptsFolder : scriptsFolder.resolveSibling(scriptsFolder.getFileName() + suffix);
         Files.createDirectories(targetFolder);
-        Files.move(luaFile, targetFolder.resolve(luaFile.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+        Path target = targetFolder.resolve(luaFile.getFileName());
+        Files.move(luaFile, target, StandardCopyOption.REPLACE_EXISTING);
+        // keep this object truthful for consumers (enabled state, reveal, uninstall)
+        // until the reload replaces it with a fresh instance
+        this.luaFile = target;
     }
     
     public void setEnabled(boolean enabled) throws IOException {
