@@ -3,17 +3,20 @@ package com.ogerardin.xpman.panels.scenery;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.scenery.SceneryEntry;
+import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.util.jfx.cell_factory.SwitchRow;
 import com.ogerardin.xpman.util.jfx.menu.annotation.*;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
+import java.io.IOException;
 import java.net.URL;
 
 @SuppressWarnings({"unused"})
 @Data
-public class UiSceneryEntry {
+public class UiSceneryEntry implements SwitchRow {
 
     @Delegate
     private final SceneryEntry sceneryEntry;
@@ -23,12 +26,27 @@ public class UiSceneryEntry {
     private final SceneryClass sceneryClass;
 
     public String getSceneryClassName() {
+        if (getStatus() == SceneryEntryStatus.FOLDER_MISSING) {
+            return "Folder missing";
+        }
         return sceneryClass.getName();
     }
 
     public boolean isUpdateAvailable() {
         return sceneryEntry.getSceneryPackage() != null
                 && sceneryEntry.getSceneryPackage().isSkunkcraftsUpdateAvailable();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) throws IOException {
+        var manager = xPlane.getSceneryManager();
+        if (enabled) manager.enable(getSceneryEntry());
+        else manager.disable(getSceneryEntry());
+    }
+
+    @Override
+    public boolean isSwitchLocked() {
+        return getIniItem() == null;
     }
 
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")

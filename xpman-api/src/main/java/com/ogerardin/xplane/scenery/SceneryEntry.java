@@ -39,7 +39,7 @@ public class SceneryEntry {
 
     public SceneryEntryStatus getStatus() {
         if (iniItem == null) {
-            return sceneryPackage.isSystem() ? SceneryEntryStatus.SYSTEM : SceneryEntryStatus.NOT_LISTED;
+            return SceneryEntryStatus.NOT_LISTED;
         }
         if (sceneryPackage == null) {
             return SceneryEntryStatus.FOLDER_MISSING;

@@ -53,14 +53,6 @@ class SceneryEntryTest {
     }
 
     @Test
-    void unlistedSystemPackageShouldHaveSystemStatus() {
-        var systemPackage = pkg("/xplane/Global Scenery/X-Plane 12 Demo Areas", true);
-        systemPackage.setSystem(true);
-        var entry = SceneryEntry.notListed(systemPackage);
-        assertEquals(SceneryEntryStatus.SYSTEM, entry.getStatus());
-    }
-
-    @Test
     void disabledInIniEntryShouldBeDisabled() {
         var entry = SceneryEntry.inIni(SceneryPackIniItem.of("Custom Scenery/Foo", true),
                 pkg("/xplane/Custom Scenery/Foo", true), 2);

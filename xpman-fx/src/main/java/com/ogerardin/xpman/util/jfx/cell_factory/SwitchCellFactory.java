@@ -1,28 +1,28 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.util.jfx.ErrorDialog;
-import javafx.scene.control.TreeTableCell;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import org.controlsfx.control.ToggleSwitch;
 
 /**
- * Factory for a {@code TreeTableCell<S, Boolean>} that displays the enabled state as an interactive
- * {@link ToggleSwitch}. Toggling it calls {@link SwitchRow#setEnabled(boolean)} followed by the
- * given callback (e.g. reload); the switch is locked for rows where {@link SwitchRow#isSwitchLocked()}
- * is true and hidden for rows where {@link SwitchRow#isSwitchHidden()} is true. On failure the switch
- * reverts and an error dialog is shown.
+ * Plain-table counterpart of {@link SwitchTreeCellFactory}: factory for a {@code TableCell<S, Boolean>}
+ * that displays the enabled state as an interactive {@link ToggleSwitch}. Toggling it calls
+ * {@link SwitchRow#setEnabled(boolean)} followed by the given callback (e.g. refresh); the switch is
+ * locked for rows where {@link SwitchRow#isSwitchLocked()} is true and hidden for rows where
+ * {@link SwitchRow#isSwitchHidden()} is true. On failure the switch reverts and an error dialog is shown.
  */
-public class SwitchTreeCellFactory<S extends SwitchRow> implements TreeTableCellFactory<S, Boolean> {
+public class SwitchCellFactory<S extends SwitchRow> implements TableCellFactory<S, Boolean> {
 
     private final Runnable onToggle;
 
-    public SwitchTreeCellFactory(Runnable onToggle) {
+    public SwitchCellFactory(Runnable onToggle) {
         this.onToggle = onToggle;
     }
 
     @Override
-    public TreeTableCell<S, Boolean> call(TreeTableColumn<S, Boolean> param) {
-        return new TreeTableCell<>() {
+    public TableCell<S, Boolean> call(TableColumn<S, Boolean> param) {
+        return new TableCell<>() {
 
             @Override
             protected void updateItem(Boolean value, boolean empty) {
@@ -35,11 +35,6 @@ public class SwitchTreeCellFactory<S extends SwitchRow> implements TreeTableCell
                 }
             }
 
-            /**
-             * Creates a fresh switch for the row assignment; its value is set before the control is
-             * in the scene graph (hence before its skin exists), so programmatic sets do not run
-             * the skin's thumb-move animation — only user clicks animate.
-             */
             private ToggleSwitch createToggle(S row, boolean value) {
                 ToggleSwitch toggle = new ToggleSwitch();
                 toggle.selectedProperty().addListener((__, old, selected) -> {
@@ -47,7 +42,7 @@ public class SwitchTreeCellFactory<S extends SwitchRow> implements TreeTableCell
                     try {
                         row.setEnabled(selected);
                     } catch (Exception e) {
-                        toggle.setSelected(old); // back to the row's state; listener no-ops on it
+                        toggle.setSelected(old);
                         ErrorDialog.showError(e, getScene() != null ? getScene().getWindow() : null);
                         return;
                     }

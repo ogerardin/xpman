@@ -133,9 +133,10 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
             }
         }
 
-        // append on-disk packages that are not listed in the ini
+        // append on-disk packages that are not listed in the ini (system/global scenery folders
+        // are intentionally excluded — they do not belong in scenery_packs.ini)
         packagesByFolder.forEach((folder, sceneryPackage) -> {
-            if (!resolvedFolders.contains(folder)) {
+            if (!resolvedFolders.contains(folder) && !sceneryPackage.isSystem()) {
                 entries.add(SceneryEntry.notListed(sceneryPackage));
             }
         });

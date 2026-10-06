@@ -1,7 +1,6 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.panels.scenery.UiSceneryEntry;
-import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -41,12 +40,7 @@ public class SceneryIconCellFactory<S extends UiSceneryEntry> implements TableCe
                 TableRow<S> row = getTableRow();
                 UiSceneryEntry entry = (row != null) ? row.getItem() : null;
 
-                if (entry != null && entry.getStatus() == SceneryEntryStatus.SYSTEM) {
-                    FontIcon icon = new FontIcon(Feather.SHIELD);
-                    icon.setIconSize((int) ICON_SIZE);
-                    setGraphic(icon);
-                    setTooltip(new Tooltip("System folder managed by X-Plane"));
-                } else if (entry != null && entry.isToken()) {
+                if (entry != null && entry.isToken()) {
                     // Show token icon with tooltip
                     FontIcon icon = new FontIcon(Feather.BOX);
                     icon.setIconSize((int) ICON_SIZE);

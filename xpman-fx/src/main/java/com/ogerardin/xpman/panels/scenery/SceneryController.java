@@ -15,6 +15,7 @@ import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
 import com.ogerardin.xpman.util.jfx.EmptyState;
+import com.ogerardin.xpman.util.jfx.cell_factory.SwitchCellFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
 import com.ogerardin.xplane.util.platform.Platforms;
 import javafx.beans.binding.Bindings;
@@ -65,6 +66,9 @@ public class SceneryController extends Controller {
     @FXML
     private TableColumn<UiSceneryEntry, Integer> rankColumn;
 
+    @FXML
+    private TableColumn<UiSceneryEntry, Boolean> enabledColumn;
+
     private final SceneryRowFactory rowFactory = new SceneryRowFactory(this);
 
     private ManagerItemsObservableList<SceneryEntry, UiSceneryEntry> uiItems;
@@ -80,6 +84,7 @@ public class SceneryController extends Controller {
     public void initialize() {
         // add context menu to table rows
         sceneryTable.setRowFactory(rowFactory);
+        enabledColumn.setCellFactory(new SwitchCellFactory<>(this::refreshTable));
 
         sceneryTable.setPlaceholder(new EmptyState("fth-map", "No scenery to show"));
 
@@ -91,14 +96,14 @@ public class SceneryController extends Controller {
         // set tooltip for each column header
         TableViewUtil.setColumnHeaderTooltips(sceneryTable, Map.of(
                 "rankColumn", "The rank of this scenery in scenery_packs.ini (entries listed first have higher priority)",
-                "statusColumn", "The status of this scenery with respect to scenery_packs.ini: Enabled, Disabled, Folder missing, Token, or blank if not listed",
+                "enabledColumn", "Whether this scenery is enabled in scenery_packs.ini; unlisted entries are on by default and cannot be toggled until added to the ini",
                 "nameColumn", "The scenery folder name; entries with no folder on disk show their ini path or token",
                 "versionColumn", "The scenery version, when the scenery type provides a way to determine it",
                 "hasAirportColumn", "Whether the scenery contains an airport (presence of an apt.dat file)",
                 "libraryColumn", "Whether the scenery is an object library (presence of a library.txt file)",
                 "tileCountColumn", "The number of terrain tiles (.dsf files) in the scenery",
                 "objCountColumn", "The number of object files (.obj files) in the scenery",
-                "classColumn", "The scenery class assigned by the scenery organizer rules"
+                "classColumn", "The scenery class assigned by the scenery organizer rules (entries with a missing folder show 'Folder missing' here)"
         ));
 
         // disable the toolbar if we don't have a current X-Plane instance
@@ -264,7 +269,6 @@ public class SceneryController extends Controller {
             List<SceneryEntry> entries = xPlane.getSceneryManager().getSceneryEntries();
             List<SceneryPackage> packages = entries.stream()
                     .filter(entry -> entry.getSceneryPackage() != null)
-                    .filter(entry -> entry.getIniItem() != null || !entry.getSceneryPackage().isSystem())
                     .map(SceneryEntry::getSceneryPackage)
                     .toList();
             List<SceneryPackage> ordered = sceneryOrganizer.apply(packages);

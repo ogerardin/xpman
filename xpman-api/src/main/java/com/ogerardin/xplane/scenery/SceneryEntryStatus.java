@@ -1,22 +1,13 @@
 package com.ogerardin.xplane.scenery;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /** Status of a scenery with respect to the scenery_packs.ini file. */
-@Getter
-@RequiredArgsConstructor
 public enum SceneryEntryStatus {
     /** Listed and enabled in scenery_packs.ini. */
-    IN_INI("Enabled"),
+    IN_INI,
     /** Listed but disabled in scenery_packs.ini. */
-    IN_INI_DISABLED("Disabled"),
+    IN_INI_DISABLED,
     /** Listed in scenery_packs.ini but the folder does not exist on disk. */
-    FOLDER_MISSING("Folder missing"),
-    /** System folder managed by X-Plane and intentionally absent from the ini. */
-    SYSTEM("System"),
+    FOLDER_MISSING,
     /** Folder exists on disk but is not listed in scenery_packs.ini. */
-    NOT_LISTED(null);
-
-    private final String label;
+    NOT_LISTED
 }

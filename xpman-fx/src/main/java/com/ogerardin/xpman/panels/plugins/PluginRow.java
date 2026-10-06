@@ -1,11 +1,11 @@
 package com.ogerardin.xpman.panels.plugins;
 
-import java.io.IOException;
+import com.ogerardin.xpman.util.jfx.cell_factory.SwitchRow;
 
 /**
  * Common interface for plugin table rows (plugins and scripts).
  */
-public interface PluginRow {
+public interface PluginRow extends SwitchRow {
     
     String getName();
     
@@ -17,15 +17,21 @@ public interface PluginRow {
     
     boolean isUpdateAvailable();
     
-    boolean isEnabled();
-
-    void setEnabled(boolean enabled) throws IOException;
-    
     boolean getSystem();
     
     boolean isScript();
 
     default boolean isGroupHeader() {
         return false;
+    }
+
+    @Override
+    default boolean isSwitchLocked() {
+        return getSystem();
+    }
+
+    @Override
+    default boolean isSwitchHidden() {
+        return isGroupHeader();
     }
 }

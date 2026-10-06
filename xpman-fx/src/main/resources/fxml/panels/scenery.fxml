@@ -75,13 +75,10 @@
                             <PropertyValueFactory property="rank"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="statusColumn" editable="false" prefWidth="120.0" sortable="false" text="Status">
+                    <TableColumn fx:id="enabledColumn" editable="false" prefWidth="80.0" sortable="false" text="Enabled">
                         <cellValueFactory>
-                            <PropertyValueFactory property="status"/>
+                            <PropertyValueFactory property="enabled"/>
                         </cellValueFactory>
-                        <cellFactory>
-                            <SceneryStatusCellFactory/>
-                        </cellFactory>
                     </TableColumn>
                     <TableColumn fx:id="nameColumn" editable="false" prefWidth="249.0" sortable="false" text="Name">
                         <cellValueFactory>
