@@ -196,4 +196,22 @@ class FlyWithLuaScriptTest {
         assertThat(scripts.stream().filter(FlyWithLuaScript::isDisabled).count(), is(1L));
         assertThat(scripts.stream().filter(FlyWithLuaScript::isQuarantined).count(), is(1L));
     }
+
+    @Test
+    void disabledFlyWithLuaHidesScripts() throws Exception {
+        Path fwlFolder = tempDir.resolve("Resources/plugins (disabled)/FlyWithLua");
+        Path scriptsFolder = fwlFolder.resolve("Scripts");
+        Files.createDirectories(scriptsFolder);
+        Files.writeString(scriptsFolder.resolve("ignored.lua"), "-- test\n");
+
+        Path xplFolder = fwlFolder.resolve("64");
+        Files.createDirectories(xplFolder);
+        Path xplFile = xplFolder.resolve("FlyWithLua.xpl");
+        Files.writeString(xplFile, "");
+
+        FlyWithLua flyWithLua = new FlyWithLua(newXPlane(), xplFile);
+
+        assertThat(flyWithLua.isEnabled(), is(false));
+        assertThat(flyWithLua.getScripts(), is(empty()));
+    }
 }

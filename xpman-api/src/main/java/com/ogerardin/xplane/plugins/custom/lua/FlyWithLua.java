@@ -51,6 +51,10 @@ public class FlyWithLua extends XPlaneOrgPlugin {
     }
 
     private List<FlyWithLuaScript> loadScripts() {
+        if (!isEnabled()) {
+            log.debug("FlyWithLua is disabled; hiding scripts");
+            return List.of();
+        }
         Path scriptsFolder = getBaseFolder().resolve("Scripts");
         List<Path> folders = FlyWithLuaScript.scriptFolders(scriptsFolder);
         List<Path> luaFiles = new ArrayList<>();
