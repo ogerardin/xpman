@@ -188,10 +188,60 @@ jobs:
           path: dist/artifacts
           if-no-files-found: error
 
+  docs:
+    name: Build manual (PDF + Wiki)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Compute version
+        shell: bash
+        run: |
+          source scripts/ci-version.sh "${GITHUB_REF_NAME:-}"
+          echo "REVISION=${REVISION}" >> "$GITHUB_ENV"
+
+      - name: Build manual (PDF + wiki tree)
+        run: scripts/build-manual.sh "$REVISION"
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p dist/manual
+          cp target/XPman-User-Manual*.pdf dist/manual/
+          ls -l dist/manual
+
+      - name: Upload manual artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: manual
+          path: dist/manual
+          if-no-files-found: error
+
+      - name: Publish wiki
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/ogerardin/xpman.wiki.git" target/wiki-repo
+          rsync -a --delete target/manual-wiki/ target/wiki-repo/
+          cd target/wiki-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No wiki changes to commit."
+          else
+            git commit -m "Update manual from ${GITHUB_SHA}"
+            git push
+          fi
+
   release:
     name: Publish GitHub Release
     runs-on: ubuntu-24.04
-    needs: [linux, windows, mac]
+    needs: [linux, windows, mac, docs]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     permissions:
       contents: write
