@@ -34,6 +34,24 @@ if [[ ! -x "$TYPST_BIN" ]]; then
 fi
 export PATH="$(dirname "$TYPST_BIN"):$PATH"
 
+PANDOC_VERSION="${PANDOC_VERSION:-3.12}"
+PANDOC_CACHE="$REPO_ROOT/.cache/pandoc"
+if ! command -v pandoc >/dev/null; then
+    case "$(uname -s)-$(uname -m)" in
+        Linux-x86_64)  PANDOC_ASSET="linux-amd64" ;;
+        Linux-aarch64) PANDOC_ASSET="linux-arm64" ;;
+        *) echo "pandoc not found; install it (e.g. brew install pandoc)" >&2; exit 1 ;;
+    esac
+    PANDOC_BIN="$PANDOC_CACHE/pandoc-${PANDOC_VERSION}/bin/pandoc"
+    if [[ ! -x "$PANDOC_BIN" ]]; then
+        mkdir -p "$PANDOC_CACHE"
+        URL="https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-${PANDOC_ASSET}.tar.gz"
+        echo "Downloading pandoc ${PANDOC_VERSION} (${PANDOC_ASSET})..."
+        curl -fsSL "$URL" | tar -xz -C "$PANDOC_CACHE"
+    fi
+    export PATH="$(dirname "$PANDOC_BIN"):$PATH"
+fi
+
 ARIMO_URL="https://raw.githubusercontent.com/google/fonts/main/ofl/arimo"
 if [[ ! -f "$FONT_DIR/Arimo[wght].ttf" ]]; then
     mkdir -p "$FONT_DIR"
