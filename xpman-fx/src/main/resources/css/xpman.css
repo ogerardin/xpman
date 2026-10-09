@@ -111,6 +111,15 @@
     -fx-padding: 1px 8px;
 }
 
+.pill-warning {
+    -fx-font-size: 0.9em;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-warning-fg;
+    -fx-background-color: -color-warning-subtle;
+    -fx-background-radius: 10px;
+    -fx-padding: 2px 8px;
+}
+
 .unsaved-indicator {
     -fx-text-fill: -color-warning-emphasis;
     -fx-font-weight: bold;

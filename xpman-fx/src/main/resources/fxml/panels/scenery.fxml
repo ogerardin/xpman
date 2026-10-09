@@ -62,14 +62,6 @@
                             <SceneryIconCellFactory/>
                         </cellFactory>
                     </TableColumn>
-                    <TableColumn editable="false" prefWidth="40.0" sortable="false" text="">
-                        <cellValueFactory>
-                            <PropertyValueFactory property="updateAvailable"/>
-                        </cellValueFactory>
-                        <cellFactory>
-                            <SceneryUpdateCellFactory/>
-                        </cellFactory>
-                    </TableColumn>
                     <TableColumn fx:id="rankColumn" editable="false" prefWidth="58.0" text="Rank">
                         <cellValueFactory>
                             <PropertyValueFactory property="rank"/>
@@ -85,10 +77,13 @@
                             <PropertyValueFactory property="name"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="versionColumn" editable="false" prefWidth="150.0" sortable="false" text="Version">
+                    <TableColumn fx:id="versionColumn" editable="false" prefWidth="230.0" sortable="false" text="Version">
                         <cellValueFactory>
                             <PropertyValueFactory property="version"/>
                         </cellValueFactory>
+                        <cellFactory>
+                            <SceneryVersionCellFactory/>
+                        </cellFactory>
                     </TableColumn>
                     <TableColumn fx:id="hasAirportColumn" editable="false" prefWidth="80.0" sortable="false" text="Has airport?">
                         <cellValueFactory>

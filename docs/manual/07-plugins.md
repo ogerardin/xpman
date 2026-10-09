@@ -15,12 +15,10 @@ Plugins are displayed as a tree. System plugins show a system icon. Columns:
 | Column | Description |
 |--------|-------------|
 | System icon | Shown for built-in/system plugins |
-| Update marker | Shown when an enabled plugin has a Skunkcrafts update available |
 | **Enabled** | Toggle switch |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version (extracted from native binary) |
-| **Latest version** | Latest available version |
+| **Version** | Installed version (extracted from native binary); an **Update available** pill appears when a Skunkcrafts update is available and shows the latest version on hover |
 
 ### FlyWithLua
 

@@ -61,6 +61,15 @@ class SceneryEntryTest {
     }
 
     @Test
+    void latestVersionShouldComeFromSceneryPackage() {
+        SceneryPackage pkg = new SceneryPackage(Path.of("/xplane/Custom Scenery/Foo")) {
+            @Override public String getLatestVersion() { return "2.0"; }
+        };
+
+        assertEquals("2.0", SceneryEntry.notListed(pkg).getLatestVersion());
+    }
+
+    @Test
     void disabledPackageInspectionOmitsUpdateWarning() {
         SceneryPackage pkg = new SceneryPackage(Path.of("/xplane/Custom Scenery/Foo")) {
             @Override public String getVersion() { return "1.0"; }
@@ -112,6 +121,7 @@ class SceneryEntryTest {
     void unresolvedEntryAccessorsShouldBeNullSafe() {
         var entry = SceneryEntry.unresolved(SceneryPackIniItem.of("Custom Scenery/Gone"), 1);
         assertNull(entry.getVersion());
+        assertNull(entry.getLatestVersion());
         assertNull(entry.getIconUrl());
         assertFalse(entry.getHasAirport());
         assertFalse(entry.isLibrary());

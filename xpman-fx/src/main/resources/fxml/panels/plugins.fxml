@@ -2,7 +2,7 @@
 
 
 <?import com.ogerardin.xpman.util.jfx.cell_factory.PluginIconTreeCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.cell_factory.PluginUpdateTreeCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.PluginVersionTreeCellFactory?>
 <?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -30,14 +30,6 @@
                   <PluginIconTreeCellFactory/>
               </cellFactory>
           </TreeTableColumn>
-          <TreeTableColumn editable="false" prefWidth="40.0" sortable="false" text="">
-              <cellValueFactory>
-                  <TreeItemPropertyValueFactory property="updateAvailable"/>
-              </cellValueFactory>
-              <cellFactory>
-                  <PluginUpdateTreeCellFactory/>
-              </cellFactory>
-          </TreeTableColumn>
           <TreeTableColumn fx:id="enabledColumn" editable="false" prefWidth="80.0" sortable="false" text="Enabled">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="enabled" />
@@ -53,15 +45,13 @@
                   <TreeItemPropertyValueFactory property="desc" />
               </cellValueFactory>
           </TreeTableColumn>
-          <TreeTableColumn editable="false" prefWidth="150.0" sortable="false" text="Version">
+          <TreeTableColumn editable="false" prefWidth="230.0" sortable="false" text="Version">
               <cellValueFactory>
                   <TreeItemPropertyValueFactory property="version" />
               </cellValueFactory>
-          </TreeTableColumn>
-          <TreeTableColumn editable="false" prefWidth="150.0" sortable="false" text="Latest version">
-              <cellValueFactory>
-                  <TreeItemPropertyValueFactory property="latestVersion" />
-              </cellValueFactory>
+              <cellFactory>
+                  <PluginVersionTreeCellFactory/>
+              </cellFactory>
           </TreeTableColumn>
       </columns>
     </TreeTableView>

@@ -25,11 +25,10 @@ The table lists all discovered scenery packages. Columns:
 | Column | Description |
 |--------|-------------|
 | Icon | Package type indicator |
-| Update marker | Shown when an enabled scenery package has a Skunkcrafts update available |
 | **Rank** | Position in `scenery_packs.ini` |
 | **Enabled** | Toggle switch (only for entries listed in `scenery_packs.ini`) |
 | **Name** | Package name |
-| **Version** | Package version |
+| **Version** | Package version (from the Skunkcrafts config when present); an **Update available** pill appears when an update is available and shows the latest version on hover |
 | **Has airport?** | Pill shown if the package contains an airport |
 | **Library?** | Pill shown if the package is a library |
 | **Tile count** | Number of terrain tiles |

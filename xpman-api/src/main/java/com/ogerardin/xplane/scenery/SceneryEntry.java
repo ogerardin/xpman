@@ -70,6 +70,10 @@ public class SceneryEntry {
         return sceneryPackage != null ? sceneryPackage.getVersion() : null;
     }
 
+    public String getLatestVersion() {
+        return sceneryPackage != null ? sceneryPackage.getLatestVersion() : null;
+    }
+
     public boolean getHasAirport() {
         return sceneryPackage != null && sceneryPackage.getHasAirport();
     }

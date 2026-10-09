@@ -80,10 +80,10 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
         return Files.exists(folder.resolve("library.txt"));
     }
 
-    /** The scenery version. As there is no standard way for a scenery to declare its version, this method
-     * should be overridden in specific scenery classes that provide a way to query the scenery version. */
+    /** The scenery version, falling back to its Skunkcrafts config when present. */
     public String getVersion() {
-        return null;
+        SkunkcraftsConfig config = getSkunkcraftsConfig();
+        return config != null ? config.version() : null;
     }
 
     @Getter(lazy = true)
