@@ -79,10 +79,12 @@ echo "Building PDF: $OUTPUT_DIR/$PDF_NAME"
 pandoc \
     --pdf-engine=typst \
     --pdf-engine-opt="--font-path=$FONT_DIR" \
+    -H "$MANUAL_DIR/pdf-header.typst" \
     --toc \
     --toc-depth=2 \
     --resource-path="$REPO_ROOT" \
     -V "mainfont=Arimo" \
+    -V "linkcolor=0969DA" \
     -M "title=XPman User Manual" \
     -M "subtitle=Version ${VERSION} (${DATE})" \
     -M "author=The XPman Team" \

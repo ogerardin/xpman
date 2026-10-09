@@ -46,7 +46,7 @@ Single script used by both CI and local dev. Responsibilities:
 - Accept an optional version argument (default `dev`); date is `$(date +%Y-%m-%d)`.
 - Download a pinned Typst binary into a local cache if absent (idempotent).
 - Prepare `target/manual-pdf/` copies with chapter IDs and intra-manual links rewritten to internal anchors; use those copies for the PDF.
-- Run `pandoc` with `--pdf-engine=typst`, `--toc`, title page metadata (`XPman User Manual`, subtitle with version + date), output PDF.
+- Run `pandoc` with `--pdf-engine=typst`, `--toc`, title page metadata (`XPman User Manual`, subtitle with version + date), and a Typst header that starts chapters on fresh pages and colors links.
 - Screenshots referenced via repo-relative paths (`../assets/screenshots/...`); pandoc resolves them from the repo root.
 - Produce a `target/manual-wiki/` tree containing:
   - Chapters copied with prefix stripped (`01-getting-started.md` → `getting-started.md`)
