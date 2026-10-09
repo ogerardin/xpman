@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -168,6 +169,15 @@ public class LinuxPlatform implements Platform {
         bases.add(userHome.resolve(".steam/steam/steamapps/common"));
         bases.add(userHome.resolve(".local/share/Steam/steamapps/common"));
         return bases;
+    }
+
+    @Override
+    public Path getLogDir(Path userHome) {
+        return Optional.ofNullable(System.getenv("XDG_STATE_HOME"))
+                .filter(path -> !path.isBlank())
+                .map(Path::of)
+                .orElseGet(() -> userHome.resolve(".local/state"))
+                .resolve("XPman/logs");
     }
 
     @Override

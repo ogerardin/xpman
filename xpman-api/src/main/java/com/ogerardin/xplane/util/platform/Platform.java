@@ -120,6 +120,10 @@ public interface Platform {
         );
     }
 
+    default Path getLogDir(Path userHome) {
+        return userHome.resolve(".xpman/logs");
+    }
+
     default boolean isMatchingPluginPath(Path xplFile) {
         String path = xplFile.toString().toLowerCase();
         String id = pluginPathIdentifier();

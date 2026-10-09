@@ -31,6 +31,9 @@
             <MenuItem mnemonicParsing="false" onAction="#help" text="? Help" />
             <MenuItem mnemonicParsing="false" onAction="#github" text="XPman on github" />
             <SeparatorMenuItem mnemonicParsing="false" />
+            <CheckMenuItem fx:id="debugLoggingItem" mnemonicParsing="false" onAction="#toggleDebugLogging" text="Debug logging" />
+            <MenuItem mnemonicParsing="false" onAction="#exportLogs" text="Export logs…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#newIssue" text="Submit issue…" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#about" text="About XPman" />

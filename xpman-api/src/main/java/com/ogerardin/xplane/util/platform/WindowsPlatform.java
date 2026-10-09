@@ -144,6 +144,15 @@ public class WindowsPlatform implements Platform {
     }
 
     @Override
+    public Path getLogDir(Path userHome) {
+        return Optional.ofNullable(System.getenv("LOCALAPPDATA"))
+                .filter(path -> !path.isBlank())
+                .map(Path::of)
+                .orElseGet(() -> userHome.resolve("AppData/Local"))
+                .resolve("XPman/logs");
+    }
+
+    @Override
     public String pluginPathIdentifier() {
         return "win";
     }

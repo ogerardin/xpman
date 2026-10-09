@@ -1,5 +1,7 @@
 package com.ogerardin.xpman;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.manager.ManagerEvent;
@@ -15,6 +17,7 @@ import com.ogerardin.xpman.settings.SettingsController;
 import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.shell.SidebarController;
 import com.ogerardin.xpman.util.JsonFileConfigPersister;
+import com.ogerardin.xpman.util.Logs;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import com.ogerardin.xpman.util.jfx.ThemeManager;
@@ -30,19 +33,24 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
@@ -58,6 +66,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @FXML
     private MenuItem manageToolsMenuItem;
+
+    @FXML
+    private CheckMenuItem debugLoggingItem;
 
     @FXML
     private SeparatorMenuItem toolsMenuSeparator;
@@ -321,6 +332,40 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     public void newIssue() throws MalformedURLException {
         Platforms.getCurrent().openUrl(new URL("https://github.com/ogerardin/xpman/issues/new"));
+    }
+
+    @FXML
+    private void toggleDebugLogging() {
+        Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        boolean enabled = debugLoggingItem.isSelected();
+        root.setLevel(enabled ? Level.DEBUG : Level.INFO);
+        log.info("Debug logging {}", enabled ? "enabled" : "disabled");
+    }
+
+    @FXML
+    private void exportLogs() {
+        Path logDir = Logs.logDir();
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Export XPman logs");
+        chooser.setInitialFileName("xpman-logs-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".zip");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("ZIP archives", "*.zip"));
+        if (Files.isDirectory(logDir)) {
+            chooser.setInitialDirectory(logDir.toFile());
+        }
+        File destination = chooser.showSaveDialog(primaryStage);
+        if (destination == null) {
+            return;
+        }
+        try {
+            Logs.zip(logDir, destination.toPath());
+            log.info("Exported logs to {}", destination);
+        } catch (IOException e) {
+            log.error("Failed to export logs", e);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Could not export XPman logs: " + e.getMessage());
+            alert.setHeaderText("Log export failed");
+            alert.initOwner(primaryStage);
+            alert.showAndWait();
+        }
     }
 
     @FXML

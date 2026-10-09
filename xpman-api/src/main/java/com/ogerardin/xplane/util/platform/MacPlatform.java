@@ -132,6 +132,11 @@ public class MacPlatform implements Platform {
         return bases;
     }
 
+    @Override
+    public Path getLogDir(Path userHome) {
+        return userHome.resolve("Library/Logs/XPman");
+    }
+
     @SneakyThrows
     @Override
     public String getCpuType() {

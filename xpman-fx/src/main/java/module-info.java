@@ -10,6 +10,7 @@ module xpman.fx {
     requires spring.expression;
     requires org.apache.commons.lang3;
     requires ch.qos.logback.classic;
+    requires ch.qos.logback.core;
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires java.desktop;
@@ -49,6 +50,7 @@ module xpman.fx {
     opens com.ogerardin.xpman.shell to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.tools to javafx.fxml, javafx.base;
     opens com.ogerardin.xpman.util.jfx to javafx.base, javafx.fxml, com.google.gson;
+    opens com.ogerardin.xpman.util to ch.qos.logback.core;
     opens com.ogerardin.xpman.util.jfx.console to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.util.jfx.menu to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.util.jfx.menu.annotation to javafx.base, javafx.fxml;

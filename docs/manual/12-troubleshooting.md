@@ -27,10 +27,21 @@ If you encounter a bug or unexpected behavior, use **Help → Submit issue…** 
 - Your X-Plane version
 - XPman version (from **Help → About XPman**)
 - Steps to reproduce the issue
+- An exported XPman log archive (**Help → Export logs…**)
 
 ## Logs
 
-XPman logs are written to the console. Use **Help → ? Help** to open the Wiki (this manual). The X-Plane log is accessible via the **Log file** hyperlink on the Home dashboard.
+XPman writes logs to a rotating file by default:
+
+- macOS: `~/Library/Logs/XPman/`
+- Windows: `%LOCALAPPDATA%\XPman\logs\` (usually under `AppData\Local`)
+- Linux: `$XDG_STATE_HOME/XPman/logs/`, or `~/.local/state/XPman/logs/` when `XDG_STATE_HOME` is not set
+
+Log files are limited to 10 MB each; XPman keeps up to seven days of history, capped at 50 MB total.
+
+To temporarily enable detailed logging for the current session, select **Help → Debug logging**. Debug logging resets to its default level the next time XPman starts.
+
+To share logs with support, choose **Help → Export logs…** and attach the resulting ZIP archive to your issue. The X-Plane log is accessible via the **Log file** hyperlink on the Home dashboard.
 
 ## About XPman
 

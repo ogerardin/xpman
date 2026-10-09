@@ -1,4 +1,5 @@
 <configuration debug="false">
+    <define name="LOG_DIR" class="com.ogerardin.xpman.util.LogDirDefiner" scope="context"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -6,27 +7,25 @@
         </encoder>
     </appender>
 
-<!--
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>xpman.log</file>
+        <file>${LOG_DIR}/xpman.log</file>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>xpman.%d.log</fileNamePattern>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/xpman.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>7</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
--->
 
-<!--    <logger name="com.ogerardin.xpman.tools" level="DEBUG" />-->
-<!--    <logger name="com.ogerardin.xplane.scenery" level="DEBUG" />-->
-<!--    <logger name="com.ogerardin.xplane.tools" level="DEBUG" />-->
     <logger name="com.ogerardin.xpman.util.SpelUtil" level="INFO" />
     <logger name="com.ogerardin.xpman.util.jfx.menu" level="INFO" />
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-<!--        <appender-ref ref="FILE" />-->
+        <appender-ref ref="FILE" />
     </root>
 </configuration>
