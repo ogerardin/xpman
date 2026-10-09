@@ -74,6 +74,18 @@ class SkunkcraftsUpdatableTest {
     }
 
     @Test
+    void noUpdateAvailableWhenNoLongerUpdatable() {
+        FakeAddon addon = new FakeAddon("Test", "1.0",
+                new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "2.0") {
+            @Override
+            public boolean isSkunkcraftsUpdatable() {
+                return false;
+            }
+        };
+        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
+    }
+
+    @Test
     void validConfigWithSameVersionMeansNoUpdate() {
         FakeAddon addon = new FakeAddon("Test", "1.0",
                 new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "1.0");

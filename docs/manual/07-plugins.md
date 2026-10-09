@@ -15,7 +15,7 @@ Plugins are displayed as a tree. System plugins show a system icon. Columns:
 | Column | Description |
 |--------|-------------|
 | System icon | Shown for built-in/system plugins |
-| Update marker | Shown when a Skunkcrafts update is available |
+| Update marker | Shown when an enabled plugin has a Skunkcrafts update available |
 | **Enabled** | Toggle switch |
 | **Name** | Plugin name |
 | **Description** | Short description |
@@ -35,7 +35,8 @@ Right-click a plugin for:
 - **Enable plugin** / **Disable plugin**
 - **Uninstall plugin** — Confirmation dialog with details.
 - **Inspect** — Opens Inspection results.
-- **Update via Skunkcrafts Updater** / **Skunkcrafts: Locked by developer**
+- **Update via Skunkcrafts Updater** — Available only for enabled plugins that support updates.
+- **Skunkcrafts: Locked by developer**
 - **Links** — Dynamic submenu.
 - **Manuals** — Dynamic submenu with PDF manuals.
 

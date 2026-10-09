@@ -9,6 +9,7 @@ from their repositories, without requiring installation of the Skunkcraft update
 - The Home dashboard shows an **Updates Available** section grouped by category.
 - Each panel (Aircraft, Scenery, Plugins) shows an update marker on addons with available updates.
 - Library tiles show **N updates** badges.
+- Disabled plugins and scenery are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
 
 ## Starting an Update
 

@@ -84,6 +84,11 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
         return getBaseFolder();
     }
 
+    @Override
+    public boolean isSkunkcraftsUpdatable() {
+        return isEnabled() && SkunkcraftsUpdatable.super.isSkunkcraftsUpdatable();
+    }
+
     @Getter(lazy = true)
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
@@ -139,7 +144,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     @Override
     public InspectionResult inspect() {
-        return UpdateAvailableInspection.INSTANCE.inspect(this);
+        return isEnabled() ? UpdateAvailableInspection.INSTANCE.inspect(this) : InspectionResult.empty();
     }
 
     @Override

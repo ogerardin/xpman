@@ -25,7 +25,7 @@ The table lists all discovered scenery packages. Columns:
 | Column | Description |
 |--------|-------------|
 | Icon | Package type indicator |
-| Update marker | Shown when a Skunkcrafts update is available |
+| Update marker | Shown when an enabled scenery package has a Skunkcrafts update available |
 | **Rank** | Position in `scenery_packs.ini` |
 | **Enabled** | Toggle switch (only for entries listed in `scenery_packs.ini`) |
 | **Name** | Package name |
@@ -55,7 +55,8 @@ Right-click a row for:
 - **Add to scenery_packs.ini** / **Remove from scenery_packs.ini**
 - **Uninstall** — Confirmation dialog with details.
 - **Inspect** — Opens Inspection results.
-- **Update via Skunkcrafts Updater** / **Skunkcrafts: Locked by developer**
+- **Update via Skunkcrafts Updater** — Available only for enabled packages that support updates.
+- **Skunkcrafts: Locked by developer**
 - **Links** — Dynamic submenu.
 
 ## Organize Workflow

@@ -85,6 +85,29 @@ class PluginTest {
     }
 
     @Test
+    void disabledPluginIsNotSkunkcraftsUpdatable() throws Exception {
+        Path xplFile = createPlugin("Foo", "Foo.xpl");
+        Files.writeString(xplFile.getParent().resolve("skunkcrafts_updater.cfg"), "module|https://example.com/\n");
+        Plugin plugin = new Plugin(newXPlane(), xplFile);
+
+        assertThat(plugin.isSkunkcraftsUpdatable(), is(true));
+        plugin.setEnabled(false);
+        assertThat(plugin.isSkunkcraftsUpdatable(), is(false));
+    }
+
+    @Test
+    void disabledPluginInspectionOmitsUpdateWarning() throws Exception {
+        Path xplFile = createPlugin("Foo", "Foo.xpl");
+        Files.writeString(xplFile.getParent().resolve("skunkcrafts_updater.cfg"), "module|https://example.com/\n");
+        Plugin plugin = new Plugin(newXPlane(), xplFile) {
+            @Override public String getLatestVersion() { return "2.0"; }
+        };
+        plugin.setEnabled(false);
+
+        assertThat(plugin.inspect().isEmpty(), is(true));
+    }
+
+    @Test
     void pluginManagerListsDisabledPlugins() throws Exception {
         createPlugin("Enabled", "Enabled.xpl");
         Path disabledFolder = tempDir.resolve("Resources/plugins (disabled)/Disabled");

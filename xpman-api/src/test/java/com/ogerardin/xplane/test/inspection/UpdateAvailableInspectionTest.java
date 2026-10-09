@@ -32,7 +32,7 @@ class UpdateAvailableInspectionTest {
 
             @Override
             public SkunkcraftsConfig getSkunkcraftsConfig() {
-                return null;
+                return new SkunkcraftsConfig(null, null, "https://example.com", null, false, false, true);
             }
 
             @Override
@@ -70,5 +70,18 @@ class UpdateAvailableInspectionTest {
         SkunkcraftsUpdatable target = updatable("MyAddon", "1.0.0", null);
         InspectionResult result = UpdateAvailableInspection.INSTANCE.inspect(target);
         assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    void customVersionSourceCanReportWithoutSkunkcraftsConfig() {
+        SkunkcraftsUpdatable target = new SkunkcraftsUpdatable() {
+            @Override public String getName() { return "MyAddon"; }
+            @Override public String getVersion() { return "1.0.0"; }
+            @Override public Path getSkunkcraftsFolder() { return null; }
+            @Override public SkunkcraftsConfig getSkunkcraftsConfig() { return null; }
+            @Override public String getSkunkcraftsLatestVersion() { return "2.0.0"; }
+            @Override public String getLatestVersion() { return "2.0.0"; }
+        };
+        assertThat(UpdateAvailableInspection.INSTANCE.inspect(target).size(), is(1));
     }
 }

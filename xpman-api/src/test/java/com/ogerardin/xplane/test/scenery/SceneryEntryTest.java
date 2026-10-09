@@ -61,6 +61,17 @@ class SceneryEntryTest {
     }
 
     @Test
+    void disabledPackageInspectionOmitsUpdateWarning() {
+        SceneryPackage pkg = new SceneryPackage(Path.of("/xplane/Custom Scenery/Foo")) {
+            @Override public String getVersion() { return "1.0"; }
+            @Override public String getLatestVersion() { return "2.0"; }
+        };
+        pkg.setEnabled(false);
+
+        assertTrue(pkg.inspect().stream().noneMatch(message -> message.getMessage().startsWith("Update available:")));
+    }
+
+    @Test
     void iniEnabledPackageInDisabledFolderShouldBeEnabled() {
         // The ini flag is authoritative; legacy folder placement is not.
         var entry = SceneryEntry.inIni(SceneryPackIniItem.of("Custom Scenery/Foo"),

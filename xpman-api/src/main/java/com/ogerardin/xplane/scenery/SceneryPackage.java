@@ -37,7 +37,8 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
     @Getter(lazy = true)
     private final int objCount = countObj();
 
-    private boolean enabled = false;
+    /** Whether this package is enabled according to its ini entry; unlisted packages are enabled by default. */
+    private boolean enabled = true;
 
     private boolean system = false;
 
@@ -93,6 +94,11 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
         return folder;
     }
 
+    @Override
+    public boolean isSkunkcraftsUpdatable() {
+        return isEnabled() && SkunkcraftsUpdatable.super.isSkunkcraftsUpdatable();
+    }
+
     @Getter(lazy = true)
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
@@ -113,7 +119,9 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
         return MissingSceneryDataInspection.INSTANCE
                 .and(MissingReferencedTexturesInspection.INSTANCE)
                 .inspect(this)
-                .append(UpdateAvailableInspection.INSTANCE.inspect(this));
+                .append(isEnabled()
+                        ? UpdateAvailableInspection.INSTANCE.inspect(this)
+                        : InspectionResult.empty());
     }
 
     @Override

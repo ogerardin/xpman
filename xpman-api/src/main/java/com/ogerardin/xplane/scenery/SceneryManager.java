@@ -136,6 +136,7 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
             if (Files.isDirectory(disabledFolder)) sceneryPackage = createSceneryPackage(disabledFolder);
         }
         if (sceneryPackage == null) return SceneryEntry.unresolved(item, rank);
+        if (item.isDisabled()) sceneryPackage.setEnabled(false);
         sceneryPackage.setRank(rank);
         return SceneryEntry.inIni(item, sceneryPackage, rank);
     }
@@ -170,13 +171,8 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     @SneakyThrows
     private SceneryPackage createSceneryPackage(Path folder) {
         SceneryPackage sceneryPackage = IntrospectionHelper.getBestSubclassInstance(SceneryPackage.class, folder);
-        sceneryPackage.setEnabled(isLocatedInAuthorizedBase(sceneryPackage.getFolder()));
         sceneryPackage.setSystem(folder.startsWith(globalSceneryFolder));
         return sceneryPackage;
-    }
-
-    private boolean isLocatedInAuthorizedBase(Path folder) {
-        return folder.startsWith(sceneryFolder) || folder.startsWith(globalSceneryFolder);
     }
 
     public boolean enable(SceneryEntry entry) {
@@ -190,6 +186,7 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     private boolean updateDisabled(SceneryEntry entry, boolean disabled) {
         if (entry.getIniItem() != null && entry.getIniItem().isDisabled() != disabled) {
             entry.getIniItem().setDisabled(disabled);
+            if (entry.getSceneryPackage() != null) entry.getSceneryPackage().setEnabled(!disabled);
             pendingChanges = true;
             return true;
         }

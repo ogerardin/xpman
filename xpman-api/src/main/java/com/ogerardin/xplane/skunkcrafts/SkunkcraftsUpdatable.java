@@ -49,6 +49,7 @@ public interface SkunkcraftsUpdatable {
 
     /** Whether a newer version is available remotely. */
     default boolean isSkunkcraftsUpdateAvailable() {
+        if (!isSkunkcraftsUpdatable()) return false;
         String latest = getSkunkcraftsLatestVersion();
         return latest != null && !Objects.equals(getVersion(), latest);
     }

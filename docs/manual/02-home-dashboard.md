@@ -23,8 +23,8 @@ A horizontal segmented bar shows disk space consumed by: Aircraft, Global scener
 
 ## Library Tiles
 
-Four clickable tiles let you jump to each management panel: **Aircraft**, **Scenery**, **Nav data**, **Plugins**. Each tile shows a badge with `N updates` when Skunkcrafts updates are available for that category.
+Four clickable tiles let you jump to each management panel: **Aircraft**, **Scenery**, **Nav data**, **Plugins**. Each tile shows a badge with `N updates` when Skunkcrafts updates are available for that category. Disabled plugins and scenery are excluded from the update count.
 
 ## Updates Available
 
-When addons support the Skunkcrafts Updater protocol and have updates pending, they are listed here grouped by **Aircraft**, **Scenery**, and **Plugins**. Each row shows the addon name, `current → latest`, and an **Update** button that opens the Skunkcrafts update wizard (see [Updating Add-ons](10-updating-addons.md)).
+When enabled addons support the Skunkcrafts Updater protocol and have updates pending, they are listed here grouped by **Aircraft**, **Scenery**, and **Plugins**. Disabled plugins and scenery are omitted. Each row shows the addon name, `current → latest`, and an **Update** button that opens the Skunkcrafts update wizard (see [Updating Add-ons](10-updating-addons.md)).
