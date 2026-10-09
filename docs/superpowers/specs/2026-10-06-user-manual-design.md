@@ -45,13 +45,15 @@ Numeric prefixes define PDF concatenation order. Each chapter maps 1:1 to a Wiki
 Single script used by both CI and local dev. Responsibilities:
 - Accept an optional version argument (default `dev`); date is `$(date +%Y-%m-%d)`.
 - Download a pinned Typst binary into a local cache if absent (idempotent).
+- Prepare `target/manual-pdf/` copies with chapter IDs and intra-manual links rewritten to internal anchors; use those copies for the PDF.
 - Run `pandoc` with `--pdf-engine=typst`, `--toc`, title page metadata (`XPman User Manual`, subtitle with version + date), output PDF.
 - Screenshots referenced via repo-relative paths (`../assets/screenshots/...`); pandoc resolves them from the repo root.
 - Produce a `target/manual-wiki/` tree containing:
   - Chapters copied with prefix stripped (`01-getting-started.md` → `getting-started.md`)
   - `00-introduction.md` copied to `Home.md`
   - Generated `_Sidebar.md` listing the chapters in order
-  - Image paths rewritten from `../assets/` to `https://raw.githubusercontent.com/ogerardin/xpman/main/assets/` (one `sed`)
+  - Intra-manual links rewritten to the stripped wiki page names (`09-installing-addons.md` → `installing-addons`)
+  - Image paths rewritten from `../assets/` to `https://raw.githubusercontent.com/ogerardin/xpman/main/assets/`
 
 The script follows the existing `assets/mac/dmgbuild/build-dmg.sh` convention — CI calls it like any other asset script.
 

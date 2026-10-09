@@ -10,6 +10,7 @@ CACHE_DIR="$REPO_ROOT/.cache/typst"
 FONT_DIR="$REPO_ROOT/.cache/fonts/arimo"
 OUTPUT_DIR="$REPO_ROOT/target"
 MANUAL_DIR="$REPO_ROOT/docs/manual"
+PDF_SOURCE_DIR="$OUTPUT_DIR/manual-pdf"
 WIKI_DIR="$OUTPUT_DIR/manual-wiki"
 
 SNAP=""
@@ -61,6 +62,19 @@ if [[ ! -f "$FONT_DIR/Arimo[wght].ttf" ]]; then
 fi
 
 mkdir -p "$OUTPUT_DIR"
+rm -rf "$PDF_SOURCE_DIR"
+mkdir -p "$PDF_SOURCE_DIR"
+for f in "$MANUAL_DIR"/[0-9]*.md; do
+    base="$(basename "$f")"
+    page_id="${base#[0-9][0-9]-}"
+    page_id="${page_id%.md}"
+    sed -E \
+        -e "1s|^(# .*)$|\\1 {#${page_id}}|" \
+        -e 's|\]\([0-9]{2}-([^)/#]+)\.md#([^)]+)\)|](#\2)|g' \
+        -e 's|\]\([0-9]{2}-([^)/#]+)\.md\)|](#\1)|g' \
+        "$f" > "$PDF_SOURCE_DIR/$base"
+done
+
 echo "Building PDF: $OUTPUT_DIR/$PDF_NAME"
 pandoc \
     --pdf-engine=typst \
@@ -73,7 +87,7 @@ pandoc \
     -M "subtitle=Version ${VERSION} (${DATE})" \
     -M "author=The XPman Team" \
     -o "$OUTPUT_DIR/$PDF_NAME" \
-    "$MANUAL_DIR"/[0-9]*.md
+    "$PDF_SOURCE_DIR"/[0-9]*.md
 
 echo "PDF built: $OUTPUT_DIR/$PDF_NAME"
 
@@ -86,7 +100,12 @@ for f in "$MANUAL_DIR"/[0-9]*.md; do
     if [[ "$base" == "00-introduction.md" ]]; then
         stripped="Home.md"
     fi
-    sed "s|(assets/|(https://raw.githubusercontent.com/ogerardin/xpman/main/assets/|g" \
+    sed -E \
+        -e 's|\]\(00-introduction\.md#([^)]+)\)|](Home#\1)|g' \
+        -e 's|\]\(00-introduction\.md\)|](Home)|g' \
+        -e 's|\]\([0-9]{2}-([^)/#]+)\.md#([^)]+)\)|](\1#\2)|g' \
+        -e 's|\]\([0-9]{2}-([^)/#]+)\.md\)|](\1)|g' \
+        -e 's|\(assets/|(https://raw.githubusercontent.com/ogerardin/xpman/main/assets/|g' \
         "$f" > "$WIKI_DIR/$stripped"
 done
 
