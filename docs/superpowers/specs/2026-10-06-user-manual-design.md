@@ -70,13 +70,13 @@ docs:
       (matches installer convention: -SNAPSHOT inserted before extension)
     - wiki push (main pushes only):
         clone using secrets.WIKI_TOKEN into $RUNNER_TEMP/wiki-repo
-        rsync target/manual-wiki/ into the clone
-        commit and push the generated pages
+        rsync target/manual-wiki/ into the clone, excluding /.git/
+        commit and push using git -C $RUNNER_TEMP/wiki-repo
 ```
 
 `release` job's `needs:` extended with `docs` so the PDF ships with every GitHub Release (the existing `download-artifact` with `merge-multiple: true` picks it up automatically).
 
-The wiki is a separate Git repository, so the docs job uses the `WIKI_TOKEN` repository secret with a classic PAT (`repo` scope). The clone lives under `$RUNNER_TEMP`, outside the checkout; if cloning fails, Git cannot fall back to the main repository. Wiki publication errors fail the docs job rather than silently skipping publication.
+The wiki is a separate Git repository, so the docs job uses the `WIKI_TOKEN` repository secret with a classic PAT (`repo` scope). The clone lives under `$RUNNER_TEMP`, outside the checkout. Rsync must exclude `/.git/` when using `--delete`, or it erases the wiki clone's Git metadata; Git commands use `git -C` so they never fall back to the main checkout. Wiki publication errors fail the docs job rather than silently skipping publication.
 
 ## Manual steps (one-time, out-of-band)
 

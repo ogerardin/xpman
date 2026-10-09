@@ -226,16 +226,15 @@ jobs:
         run: |
           wiki_repo="${RUNNER_TEMP}/xpman-wiki"
           git clone --depth 1 "https://x-access-token:${WIKI_TOKEN}@github.com/ogerardin/xpman.wiki.git" "$wiki_repo"
-          rsync -a --delete target/manual-wiki/ "$wiki_repo/"
-          cd "$wiki_repo"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
+          rsync -a --delete --exclude='/.git/' target/manual-wiki/ "$wiki_repo/"
+          git -C "$wiki_repo" config user.name "github-actions[bot]"
+          git -C "$wiki_repo" config user.email "github-actions[bot]@users.noreply.github.com"
+          git -C "$wiki_repo" add -A
+          if git -C "$wiki_repo" diff --cached --quiet; then
             echo "No wiki changes to commit."
           else
-            git commit -m "Update manual from ${GITHUB_SHA}"
-            git push
+            git -C "$wiki_repo" commit -m "Update manual from ${GITHUB_SHA}"
+            git -C "$wiki_repo" push
           fi
 
   release:
