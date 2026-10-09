@@ -1,6 +1,6 @@
 # Tools
 
-![Tools](assets/screenshots/Screenshot%202026-09-17%20at%2023.53.58.png)
+![Tools](assets/screenshots/tools.png)
 *The Tools panel.*
 
 Tools are applications that provide additional X-Plane related functionalities, such as:
@@ -41,4 +41,3 @@ Buttons: **Cancel** (during the operation) or **Close** (after completion).
 Each installed tool appears as an item in the **Tools** menu. Clicking a tool launches it.
 
 If you try to run a tool that is not installed, XPman asks: *"{tool} is not installed. Do you want to install and run it now?"*
-

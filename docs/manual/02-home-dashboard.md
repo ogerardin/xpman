@@ -1,6 +1,6 @@
 # Home Dashboard
 
-![Main window](assets/screenshots/Screenshot%202026-09-17%20at%2023.50.17.png)
+![Main window](assets/screenshots/home.png)
 *The Home dashboard.*
 
 ## X-Plane Header

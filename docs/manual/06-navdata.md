@@ -1,6 +1,6 @@
 # Nav Data
 
-![Nav data](assets/screenshots/Screenshot%202026-09-17%20at%2023.52.45.png)
+![Nav data](assets/screenshots/navdata.png)
 *The Nav data panel.*
 
 ## Toolbar

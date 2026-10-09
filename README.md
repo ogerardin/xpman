@@ -23,22 +23,22 @@ A cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 1
 
 ## Screenshots
 ### Main Window
-![Main window](assets/screenshots/Screenshot%202026-09-17%20at%2023.50.17.png)
+![Main window](assets/screenshots/home.png)
 
 ### Aircrat management
-![Aircraft management](assets/screenshots/Screenshot%202026-09-17%20at%2023.51.12.png)
+![Aircraft management](assets/screenshots/aircraft.png)
 
 ### Scenery management
-![Scenery management](assets/screenshots/Screenshot%202026-09-17%20at%2023.52.27.png)
+![Scenery management](assets/screenshots/scenery.png)
 
 ### Nav data
-![Nav data](assets/screenshots/Screenshot%202026-09-17%20at%2023.52.45.png)
+![Nav data](assets/screenshots/navdata.png)
 
 ### Plugin management
-![Plugins](assets/screenshots/Screenshot%202026-09-17%20at%2023.53.36.png)
+![Plugins](assets/screenshots/plugins.png)
 
 ### Tools
-![Tools](assets/screenshots/Screenshot%202026-09-17%20at%2023.53.58.png)
+![Tools](assets/screenshots/tools.png)
 
 ## Installation
 

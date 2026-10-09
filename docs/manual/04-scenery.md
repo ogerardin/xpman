@@ -1,6 +1,6 @@
 # Scenery
 
-![Scenery management](assets/screenshots/Screenshot%202026-09-17%20at%2023.52.27.png)
+![Scenery management](assets/screenshots/scenery.png)
 *The Scenery panel.*
 
 The scenery panel allows you to view sceneries and manage the entries of your `scenery_packs.ini` file. 

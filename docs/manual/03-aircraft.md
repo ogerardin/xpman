@@ -1,6 +1,6 @@
 # Aircraft
 
-![Aircraft management](assets/screenshots/Screenshot%202026-09-17%20at%2023.51.12.png)
+![Aircraft management](assets/screenshots/aircraft.png)
 *The Aircraft panel.*
 
 ## Toolbar
@@ -34,4 +34,3 @@ Right-click a card or livery for additional actions:
 - **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
 - **Links** — Dynamic submenu with links from the addon's manifest.
 - **Manuals** — Dynamic submenu listing PDF manuals bundled with the aircraft.
-

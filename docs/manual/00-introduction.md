@@ -3,7 +3,7 @@
 XPman is a cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 11 and 12. It lets you browse, install, update, and 
 organize your aircraft, scenery, plugins, and tools from a single desktop application.
 
-![Main window](assets/screenshots/Screenshot%202026-09-17%20at%2023.50.17.png)
+![Main window](assets/screenshots/home.png)
 *The XPman main window.*
 
 ## Features

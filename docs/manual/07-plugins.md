@@ -1,6 +1,6 @@
 # Plugins
 
-![Plugin management](assets/screenshots/Screenshot%202026-09-17%20at%2023.53.36.png)
+![Plugin management](assets/screenshots/plugins.png)
 *The Plugins panel.*
 
 ## Toolbar
