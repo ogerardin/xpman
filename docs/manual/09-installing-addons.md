@@ -11,6 +11,8 @@ XPman can install aircraft, scenery, plugins, and tools from `.zip` or `.7z` arc
 
 *"Please select source archive (.zip or .7z file)."*
 
+> XPman will automatically detect the archive contents (aircraft, scenery, plugin, nav data, or tool) and let you review what will be installed before anything is written.
+
 - **Source file:** text field + **Browse...** button (file chooser filters for `Archives *.zip *.7z`).
 - **Next** is enabled only when the file exists. If the file does not exist, the validation message **"File does not exist!"** is shown.
 

@@ -9,6 +9,7 @@
     <headerText>Please select source archive (.zip or .7z file)</headerText>
     <content>
         <Pane>
+            <Label layoutX="16.0" layoutY="30.0" prefWidth="568.0" text="XPman will automatically detect the archive contents (aircraft, scenery, plugin, nav data, or tool) and let you review what will be installed before anything is written." wrapText="true" />
             <Button layoutX="426.0" layoutY="142.0" mnemonicParsing="false" onAction="#selectFile" text="Browse..." />
             <Label layoutX="16.0" layoutY="125.0" text="Source file:" />
             <TextField fx:id="sourcePathField" layoutX="16.0" layoutY="142.0" prefHeight="27.0" prefWidth="400.0" />
