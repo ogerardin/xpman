@@ -1,5 +1,6 @@
 /.idea/
 target/
+/dist/
 .cache/
 *.iml
 *.log

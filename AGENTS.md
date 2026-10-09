@@ -96,5 +96,5 @@ mvn test -pl xpman-api -Dtest=ParserTest
 
 ## User Manual
 
-- The user manual lives in `docs/manual/` (Markdown chapters `00-*.md` … `12-*.md`). It is rendered to a PDF by `scripts/build-manual.sh` (pandoc + pinned Typst + pinned pandoc, Arimo font) and published via the CI `docs` job as a release artifact; on every `main` push the same script also syncs the chapters to the GitHub Wiki (`ogerardin/xpman.wiki`).
+- The user manual lives in `docs/manual/` (Markdown chapters `00-*.md` … `12-*.md`). It is rendered to a PDF by `scripts/build-manual.sh` (pandoc + pinned Typst + pinned pandoc, Arimo font) and published via the CI `docs` job as a release artifact; on every `main` push the same script also syncs the chapters to the GitHub Wiki (`ogerardin/xpman.wiki`) using the `WIKI_TOKEN` Actions secret.
 - **After completing any work that affects documented features (UI changes, renamed commands, new options, changed behavior, bug fixes to documented flows), update the affected manual chapter(s) in the same commit.** Run `./scripts/build-manual.sh <version>` locally to verify the PDF still builds before committing.

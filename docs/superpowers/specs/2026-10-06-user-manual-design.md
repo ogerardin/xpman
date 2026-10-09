@@ -13,7 +13,7 @@ Source-of-truth is Markdown checked into the repo; CI derives both artifacts fro
 | Question | Answer |
 |---|---|
 | PDF engine | Typst (via pandoc `--pdf-engine=typst`) |
-| Wiki auth | `GITHUB_TOKEN`, with a one-line escape hatch to switch to a PAT secret later |
+| Wiki auth | `WIKI_TOKEN` repository secret containing a classic PAT with `repo` scope |
 | Wiki update cadence | Every `main` push (never PRs) |
 | Screenshots | Reuse existing `assets/screenshots/*.png` |
 | Manual location | `docs/manual/` |
@@ -69,24 +69,21 @@ docs:
       artifact file renamed to XPman-User-Manual[-SNAPSHOT].pdf
       (matches installer convention: -SNAPSHOT inserted before extension)
     - wiki push (main pushes only):
-        git clone https://x-access-token:${{ github.token }}@github.com/ogerardin/xpman.wiki.git target/wiki-repo
-        rsync -a --delete target/manual-wiki/ target/wiki-repo/
-        git -C target/wiki-repo add -A
-        git -C target/wiki-repo commit -m "Update manual from ${GITHUB_SHA}"
-        git -C target/wiki-repo push
-        continue-on-error: true  ← during GITHUB_TOKEN trial
+        clone using secrets.WIKI_TOKEN into $RUNNER_TEMP/wiki-repo
+        rsync target/manual-wiki/ into the clone
+        commit and push the generated pages
 ```
 
 `release` job's `needs:` extended with `docs` so the PDF ships with every GitHub Release (the existing `download-artifact` with `merge-multiple: true` picks it up automatically).
 
-The wiki step's `continue-on-error: true` is a deliberate, temporary escape hatch. If GITHUB_TOKEN cannot push to `.wiki.git` (expected), the job surfaces a warning but does not block releases. The fix is a one-line swap to `secrets.WIKI_TOKEN` (classic PAT, `repo` scope, or fine-grained PAT with Contents read/write), after which `continue-on-error` is removed.
+The wiki is a separate Git repository, so the docs job uses the `WIKI_TOKEN` repository secret with a classic PAT (`repo` scope). The clone lives under `$RUNNER_TEMP`, outside the checkout; if cloning fails, Git cannot fall back to the main repository. Wiki publication errors fail the docs job rather than silently skipping publication.
 
 ## Manual steps (one-time, out-of-band)
 
-1. Open `https://github.com/ogerardin/xpman/wiki` in a browser.
-2. Create the Home page with any placeholder content. (The `.wiki.git` repo is not reachable until the wiki has been initialized via the web UI; CI cannot create it.)
+1. Create a classic GitHub personal access token with `repo` scope.
+2. Add it as the repository Actions secret `WIKI_TOKEN`.
 
-After this, CI push/pull works on the wiki repo.
+The wiki must be initialized through the GitHub UI once before its Git repository is available.
 
 ## Chapter content
 
@@ -112,5 +109,5 @@ Screenshots are embedded where they add clarity (main window, each major panel, 
 
 - **Local**: run `scripts/build-manual.sh` without args → produces `XPman-User-Manual-dev.pdf` and `target/manual-wiki/`. Open PDF, verify title page, TOC, screenshots, chapter order.
 - **CI (PR)**: `docs` job produces artifact; download and spot-check PDF.
-- **CI (main push, first run)**: watch the wiki step. If it fails with a push error, swap `github.token` for `secrets.WIKI_TOKEN` and retry — then remove `continue-on-error`.
+- **CI (main push)**: verify the `Publish wiki` step pushes the generated tree to `ogerardin/xpman.wiki.git` and that the wiki renders the updated pages.
 - **Release**: confirm the PDF is present in the GitHub Release alongside installers.
