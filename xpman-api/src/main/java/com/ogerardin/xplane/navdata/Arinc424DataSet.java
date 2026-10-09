@@ -89,7 +89,7 @@ public class Arinc424DataSet extends NavDataSet {
      */
     @Override
     protected Optional<InspectionMessage> consistencyMessage() {
-        if (role != Role.FAA_APPROACHES || !getExists()) {
+        if (role != Role.FAA_APPROACHES || !getExists().booleanValue()) {
             return Optional.empty();
         }
         NavDataManager navData = getXPlane().getNavDataManager();

@@ -49,10 +49,10 @@ public class SidebarController {
             button.setMaxWidth(Double.MAX_VALUE);
             button.setToggleGroup(toggleGroup);
             button.setUserData(section);
-            button.setOnAction(__ -> setSelectedSection(section));
+            button.setOnAction(_ -> setSelectedSection(section));
             navBox.getChildren().add(button);
         }
-        toggleGroup.selectedToggleProperty().addListener((__, ___, toggle) -> {
+        toggleGroup.selectedToggleProperty().addListener((_, _, toggle) -> {
             if (toggle == null && selectedSection.get() != null) {
                 // keep a section selected at all times: restore the toggle for the current section
                 select(selectedSection.get());
@@ -63,7 +63,7 @@ public class SidebarController {
         versionLabel.setText(version != null ? "v" + version : "dev");
 
         updateThemeButton();
-        xpmanFX.getThemeManager().darkProperty().addListener((__, ___, dark) -> updateThemeButton());
+        xpmanFX.getThemeManager().darkProperty().addListener((_, _, dark) -> updateThemeButton());
     }
 
     public ObjectProperty<Section> selectedSectionProperty() {

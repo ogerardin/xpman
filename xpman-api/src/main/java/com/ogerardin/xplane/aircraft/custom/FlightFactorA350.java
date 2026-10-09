@@ -48,7 +48,7 @@ public class FlightFactorA350 extends Aircraft {
         try {
             List<String> lines = Files.readAllLines(iniFile);
             String versionLine = lines.get(0);
-            Pattern pattern = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})");
+            Pattern pattern = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
             Matcher matcher = pattern.matcher(versionLine);
             if (matcher.matches()) {
                 return String.format("%d.%d.%d",

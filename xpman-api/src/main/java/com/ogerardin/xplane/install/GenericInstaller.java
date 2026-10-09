@@ -23,6 +23,7 @@ public class GenericInstaller {
         return installSource.inspect();
     }
 
+    @SuppressWarnings("java:S1130") // ArchiveInstallSource uses Lombok @SneakyThrows for its installable-specific checked exception.
     public void install(ProgressListener progressListener) throws InstallationException {
         // assumes that inspect() has been called and returned no error
         installSource.install(xPlane, progressListener);

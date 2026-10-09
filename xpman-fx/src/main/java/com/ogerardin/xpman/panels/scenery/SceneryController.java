@@ -264,7 +264,7 @@ public class SceneryController extends Controller {
                 """
                         This will add unlisted scenery packages, remove invalid entries, and sort scenery packages by class rank.
                         No change will be saved until you click on the "Save" button\s""");
-        confirmation.showAndWait().filter(ButtonType.OK::equals).ifPresent(__ -> {
+        confirmation.showAndWait().filter(ButtonType.OK::equals).ifPresent(_ -> {
             XPlane xPlane = xPlaneProperty.get();
             List<SceneryEntry> entries = xPlane.getSceneryManager().getSceneryEntries();
             List<SceneryPackage> packages = entries.stream()
@@ -336,7 +336,7 @@ public class SceneryController extends Controller {
         @Override
         public TableRow<UiSceneryEntry> call(TableView<UiSceneryEntry> tableView) {
             TableRow<UiSceneryEntry> row = new TableRow<>();
-            row.itemProperty().addListener((__, ___, newItem) -> {
+            row.itemProperty().addListener((_, _, newItem) -> {
                 if (newItem == null) {
                     row.setContextMenu(null);
                     row.getStyleClass().remove(FOLDER_MISSING_STYLE);

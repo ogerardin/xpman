@@ -56,7 +56,7 @@ public class XIvAp extends Plugin {
     public String getLatestVersion() {
         Document doc = Jsoup.connect(IVAP_HOME_URL).get();
 
-        Pattern pattern = Pattern.compile("v([0-9.]+).+Current");
+        Pattern pattern = Pattern.compile("v([0-9.]++)[^\\r\\n]+Current");
         String platformName = PLATFORM_NAME_MAP.get(getXPlane().getVariant());
         return doc.select("div#dl td:matches(X-IvAp for X-Plane.*\\(" + platformName + "\\))").stream()
                 .findFirst()

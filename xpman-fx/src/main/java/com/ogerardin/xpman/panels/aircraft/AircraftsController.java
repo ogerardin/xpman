@@ -84,18 +84,18 @@ public class AircraftsController extends Controller {
                 XPlane::getAircraftManager,
                 UiAircraft::new
         );
-        uiItems.getLoadingProperty().addListener(__ -> updateCards());
+        uiItems.getLoadingProperty().addListener(_ -> updateCards());
         filteredUiItems = new FilteredList<>(uiItems);
         filteredUiItems.predicateProperty().bind(
                 Bindings.createObjectBinding(this::combinedPredicate, filterCombo.valueProperty(), searchText));
 
         // debounce search input: rebuilding the card grid on every keystroke is too costly
         PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
-        searchDebounce.setOnFinished(__ -> searchText.set(searchField.getText() == null ? "" : searchField.getText()));
-        searchField.textProperty().addListener((__, ___, ____) -> searchDebounce.playFromStart());
+        searchDebounce.setOnFinished(_ -> searchText.set(searchField.getText() == null ? "" : searchField.getText()));
+        searchField.textProperty().addListener((_, _, _) -> searchDebounce.playFromStart());
 
         // rebuild the card grid whenever the filtered list changes
-        filteredUiItems.addListener((ListChangeListener<UiAircraft>) __ -> Platform.runLater(this::updateCards));
+        filteredUiItems.addListener((ListChangeListener<UiAircraft>) _ -> Platform.runLater(this::updateCards));
 
         // disable toolbar whenever xPlaneProperty is null
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));

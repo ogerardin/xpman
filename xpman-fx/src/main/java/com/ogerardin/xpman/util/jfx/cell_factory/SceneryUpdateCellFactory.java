@@ -20,7 +20,7 @@ public class SceneryUpdateCellFactory implements TableCellFactory<UiSceneryEntry
             @Override
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || !item) {
+                if (empty || item == null || !item.booleanValue()) {
                     setGraphic(null);
                     setTooltip(null);
                     setContentDisplay(ContentDisplay.TEXT_ONLY);

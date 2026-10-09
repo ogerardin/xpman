@@ -66,7 +66,7 @@ public non-sealed class InstalledTool extends Tool {
         return true;
     }
 
-    // ponytail: placeholder versions shipped by tools with unset metadata (e.g. SkunkcraftsUpdater's 0.0.1);
+    // ponytail: placeholder versions shipped by tools with unset metadata (e.g. SkunkcraftsUpdater's 0.0.1); NOSONAR - explanatory debt note, not commented-out code
     // extend as encountered — a genuine 0.0.1 tool would display no version.
     private static final Set<String> PLACEHOLDER_VERSIONS = Set.of("0.0.0", "0.0.1");
 
@@ -76,10 +76,10 @@ public non-sealed class InstalledTool extends Tool {
             return null;
         }
         Pattern versionRegex = manifest.versionRegex();
-        String version = versionRegex != null
+        String detectedVersion = versionRegex != null
                 ? manifest.platform().extractVersion(app, versionRegex)
                 : manifest.platform().getVersion(app);
-        return isPlaceholder(version) ? null : version;
+        return isPlaceholder(detectedVersion) ? null : detectedVersion;
     }
 
     private static boolean isPlaceholder(String version) {

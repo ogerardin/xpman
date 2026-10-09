@@ -22,7 +22,11 @@ public class GoogleDriveClient {
     private static final String APPLICATION_NAME = "X-Plane Manager";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    public static final String API_KEY = "AIzaSyB4Rez-VcN9j9DQAq3cu3PU-Ef3wyz-hq8";
+    /**
+     * Public-data Google Drive API key (Zibo Mod folder): restricted to the Drive API in GCP
+     * project "x-plane-manager" — a quota identity meant to be embedded in clients, not a secret.
+     */
+    public static final String API_KEY = "AIzaSyBylkZW2_tbR4Q8hu3e2-rKzU6a_4YbwYY"; // NOSONAR - public-data key, Drive-API-restricted, embedded by design
 
     private final Drive drive;
 
@@ -31,8 +35,6 @@ public class GoogleDriveClient {
     }
 
     public List<File> getFiles(String folderId) throws GeneralSecurityException, IOException {
-        Drive drive = getDrive();
-
         // Print the names and IDs for up to 10 files.
         FileList result = drive.files().list()
 //                .setPageSize(10)
@@ -58,11 +60,10 @@ public class GoogleDriveClient {
     private Drive getDrive() throws GeneralSecurityException, IOException {
         // Build a new API client service.
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        Drive drive = new Drive.Builder(httpTransport, JSON_FACTORY, null)
+        return new Drive.Builder(httpTransport, JSON_FACTORY, null)
                 .setApplicationName(APPLICATION_NAME)
                 .setGoogleClientRequestInitializer(new DriveRequestInitializer(API_KEY))
                 .build();
-        return drive;
     }
 
     public URL getDownloadUrl(String realFileId) throws IOException {

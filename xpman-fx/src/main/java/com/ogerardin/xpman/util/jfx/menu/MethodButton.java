@@ -28,7 +28,7 @@ public class MethodButton<T> extends Button implements Refreshable {
 
         MethodAction<T, ?> action = configurer.getMethodAction();
 
-        setOnAction(__ -> action.run());
+        setOnAction(_ -> action.run());
     }
 
 

@@ -2,6 +2,7 @@ module xpman.api.test {
     requires lombok;
     requires xpman.api;
     requires org.junit.jupiter.api;
+    requires org.junit.jupiter.params;
     requires org.hamcrest;
     requires org.slf4j;
     requires petitparser.core;

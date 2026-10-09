@@ -108,7 +108,7 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         try {
             final Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xPlane, xplFile);
             return Optional.of(plugin);
-        } catch (InstantiationException e) {
+        } catch (InstantiationException _) {
             return Optional.empty();
         }
     }

@@ -35,25 +35,21 @@ public class ErrorDialog {
         e.printStackTrace(printWriter);
         String exceptionText = stringWriter.toString();
 
-        {
-            GridPane gridPane = new GridPane();
-            gridPane.setMaxWidth(Double.MAX_VALUE);
-            {
-                Label label = new Label("Stack trace:");
-                gridPane.add(label, 0, 0);
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+        Label label = new Label("Stack trace:");
+        gridPane.add(label, 0, 0);
 
-                TextArea textArea = new TextArea(exceptionText);
-                textArea.setEditable(false);
-                textArea.setWrapText(false);
-                textArea.setMaxWidth(Double.MAX_VALUE);
-                textArea.setMaxHeight(Double.MAX_VALUE);
-                GridPane.setVgrow(textArea, Priority.ALWAYS);
-                GridPane.setHgrow(textArea, Priority.ALWAYS);
-                gridPane.add(textArea, 0, 1);
-            }
-            alert.getDialogPane().setExpandableContent(gridPane);
-            alert.getDialogPane().setExpanded(false);
-        }
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(false);
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+        gridPane.add(textArea, 0, 1);
+        alert.getDialogPane().setExpandableContent(gridPane);
+        alert.getDialogPane().setExpanded(false);
 
         alert.initOwner(owner);
         alert.showAndWait();

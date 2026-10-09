@@ -25,7 +25,7 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 @SuppressWarnings("unused")
 public class XpfrScenery extends SceneryPackage {
 
-    private final Pattern FILE_PATTERN = Pattern.compile("(([A-Z]{4})\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
+    private static final Pattern filePattern = Pattern.compile("(([A-Z]{4})\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
 
     @Getter(lazy = true)
     private final String version = loadVersion();
@@ -40,7 +40,7 @@ public class XpfrScenery extends SceneryPackage {
         try (Stream<Path> pathStream = Files.list(folder)) {
             return pathStream
                     .map(path -> path.getFileName().toString())
-                    .map(FILE_PATTERN::matcher)
+                    .map(filePattern::matcher)
                     .anyMatch(Matcher::matches);
         }
     }
@@ -51,7 +51,7 @@ public class XpfrScenery extends SceneryPackage {
         try (Stream<Path> pathStream = Files.list(folder)) {
             return pathStream
                     .map(path -> path.getFileName().toString())
-                    .map(FILE_PATTERN::matcher)
+                    .map(filePattern::matcher)
                     .filter(Matcher::matches)
                     .findAny()
                     .map(matcher -> matcher.group(1))

@@ -22,41 +22,39 @@ public class SwitchTreeCellFactory<S extends SwitchRow> implements TreeTableCell
 
     @Override
     public TreeTableCell<S, Boolean> call(TreeTableColumn<S, Boolean> param) {
-        return new TreeTableCell<>() {
+        return new SwitchTreeTableCell();
+    }
 
-            @Override
-            protected void updateItem(Boolean value, boolean empty) {
-                super.updateItem(value, empty);
-                S row = empty || getTableRow() == null ? null : getTableRow().getItem();
-                if (empty || value == null || row == null || row.isSwitchHidden()) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(createToggle(row, value));
+    private class SwitchTreeTableCell extends TreeTableCell<S, Boolean> {
+
+        @Override
+        protected void updateItem(Boolean value, boolean empty) {
+            super.updateItem(value, empty);
+            S row = empty || getTableRow() == null ? null : getTableRow().getItem();
+            if (empty || value == null || row == null || row.isSwitchHidden()) {
+                setGraphic(null);
+            } else {
+                setGraphic(createToggle(row, value));
+            }
+        }
+
+        /** Sets the initial value before the skin exists, so only user clicks animate. */
+        private ToggleSwitch createToggle(S row, boolean value) {
+            ToggleSwitch toggle = new ToggleSwitch();
+            toggle.selectedProperty().addListener((_, old, selected) -> {
+                if (row.isEnabled() == selected.booleanValue()) return; // programmatic set, nothing to do
+                try {
+                    row.setEnabled(selected);
+                } catch (Exception e) {
+                    toggle.setSelected(old); // back to the row's state; listener no-ops on it
+                    ErrorDialog.showError(e, getScene() != null ? getScene().getWindow() : null);
+                    return;
                 }
-            }
-
-            /**
-             * Creates a fresh switch for the row assignment; its value is set before the control is
-             * in the scene graph (hence before its skin exists), so programmatic sets do not run
-             * the skin's thumb-move animation — only user clicks animate.
-             */
-            private ToggleSwitch createToggle(S row, boolean value) {
-                ToggleSwitch toggle = new ToggleSwitch();
-                toggle.selectedProperty().addListener((__, old, selected) -> {
-                    if (row.isEnabled() == selected) return; // programmatic set, nothing to do
-                    try {
-                        row.setEnabled(selected);
-                    } catch (Exception e) {
-                        toggle.setSelected(old); // back to the row's state; listener no-ops on it
-                        ErrorDialog.showError(e, getScene() != null ? getScene().getWindow() : null);
-                        return;
-                    }
-                    onToggle.run();
-                });
-                toggle.setDisable(row.isSwitchLocked());
-                toggle.setSelected(value);
-                return toggle;
-            }
-        };
+                onToggle.run();
+            });
+            toggle.setDisable(row.isSwitchLocked());
+            toggle.setSelected(value);
+            return toggle;
+        }
     }
 }

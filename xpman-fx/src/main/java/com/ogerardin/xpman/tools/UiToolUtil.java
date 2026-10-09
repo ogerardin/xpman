@@ -50,11 +50,7 @@ public class UiToolUtil {
     }
 
     private static void uninstallWithConsole(ConsoleController consoleController, ToolsManager toolsManager, InstalledTool tool) {
-        try {
-            toolsManager.uninstall(tool, consoleController);
-        } catch (ToolsException e) {
-            new Alert(Alert.AlertType.ERROR, "Error uninstalling " + tool.getName() + ": " + e).showAndWait();
-        }
+        toolsManager.uninstall(tool, consoleController);
     }
 
     /**

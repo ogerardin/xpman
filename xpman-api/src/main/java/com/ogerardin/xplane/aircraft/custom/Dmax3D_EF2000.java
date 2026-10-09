@@ -18,7 +18,7 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
 public class Dmax3D_EF2000 extends Aircraft {
 
-    private final Pattern FILE_PATTERN = Pattern.compile("ef2000_v(\\d)(\\d)");
+    private static final Pattern filePattern = Pattern.compile("ef2000_v(\\d)(\\d)");
 
     @Getter(lazy = true)
     private final String version = loadVersion();
@@ -26,7 +26,7 @@ public class Dmax3D_EF2000 extends Aircraft {
     @SneakyThrows
     private String loadVersion() {
         String folder = getAcfFile().getFile().getParent().getFileName().toString();
-        Matcher m = FILE_PATTERN.matcher(folder);
+        Matcher m = filePattern.matcher(folder);
         return m.matches() ? m.group(1) + "." + m.group(2) : null;
     }
 
@@ -36,6 +36,7 @@ public class Dmax3D_EF2000 extends Aircraft {
     }
 
     @SneakyThrows
+    @Override
     public Map<String, URL> getLinks() {
         return Maps.merge(super.getLinks(),
                 Maps.mapOf("Eurofighter Typhoon on dmax3d.com", Urls.url("http://www.dmax3d.com/dmax3d/eurofighter.html")

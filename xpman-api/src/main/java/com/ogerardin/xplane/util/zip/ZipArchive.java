@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
@@ -20,9 +19,6 @@ import java.util.zip.ZipFile;
 @Slf4j
 @Data
 public class ZipArchive implements Archive {
-
-    private static final int BUFFER_SIZE = 8192;
-    private static final long PROGRESS_REPORT_INTERVAL = 64 * 1024;
 
     public final Path zipFile;
 
@@ -106,64 +102,11 @@ public class ZipArchive implements Archive {
     }
 
     private void extractEntries(ZipFile zip, Path targetFolder, ProgressListener progressListener, Path subpath, Predicate<Path> filter) throws IOException {
-        Files.createDirectories(targetFolder);
-        final Path normalizedTarget = targetFolder.toAbsolutePath().normalize();
-        final List<? extends ZipEntry> entries = zip.stream().toList();
-        final long totalBytes = entries.stream().mapToLong(e -> Math.max(0, e.getSize())).sum();
-
-        long copiedBytes = 0;
-        long nextReport = 0;
-        for (ZipEntry entry : entries) {
-            if (progressListener != null && copiedBytes >= nextReport) {
-                progressListener.progress((double) copiedBytes / Math.max(1, totalBytes), "Extracting " + entry.getName());
-                nextReport = copiedBytes + PROGRESS_REPORT_INTERVAL;
-            }
-            
-            Path entryPath = Paths.get(entry.getName());
-            
-            // If subpath is specified, only extract entries under that subpath
-            if (subpath != null) {
-                if (!entryPath.startsWith(subpath)) {
-                    continue;
-                }
-                // Strip the subpath prefix
-                if (entryPath.getNameCount() <= subpath.getNameCount()) {
-                    // This is the subpath folder itself, skip it
-                    continue;
-                }
-                entryPath = entryPath.subpath(subpath.getNameCount(), entryPath.getNameCount());
-            }
-
-            if (!filter.test(entryPath)) {
-                continue;
-            }
-
-            final Path target = normalizedTarget.resolve(entryPath.toString()).normalize();
-            // protect against "zip slip" (entries with path traversal outside the target folder)
-            if (!target.startsWith(normalizedTarget)) {
-                throw new IOException("Blocked potentially malicious zip entry: " + entry.getName());
-            }
-            if (entry.isDirectory()) {
-                Files.createDirectories(target);
-                continue;
-            }
-            if (target.getParent() != null) {
-                Files.createDirectories(target.getParent());
-            }
-            try (InputStream is = zip.getInputStream(entry)) {
-                try (OutputStream os = new BufferedOutputStream(Files.newOutputStream(target))) {
-                    final byte[] buffer = new byte[BUFFER_SIZE];
-                    int read;
-                    while ((read = is.read(buffer)) != -1) {
-                        os.write(buffer, 0, read);
-                        copiedBytes += read;
-                    }
-                }
-            }
-        }
-        if (progressListener != null) {
-            progressListener.progress(1.00, "Done!");
-        }
+        List<ArchiveExtractor.Entry> entries = zip.stream()
+                .map(entry -> new ArchiveExtractor.Entry(entry.getName(), entry.getSize(), entry.isDirectory(),
+                        () -> zip.getInputStream(entry)))
+                .toList();
+        ArchiveExtractor.extractEntries(entries, targetFolder, progressListener, subpath, filter, "zip");
     }
 
 }

@@ -30,6 +30,7 @@ public class SceneryClassesAdapter extends TypeAdapter<List<SceneryClass>> {
     }
 
     @Override
+    @SuppressWarnings("java:S1168") // Preserve JSON null distinctly from an explicitly empty class list.
     public List<SceneryClass> read(JsonReader in) throws IOException {
         if (in.peek() == JsonToken.NULL) {
             in.nextNull();

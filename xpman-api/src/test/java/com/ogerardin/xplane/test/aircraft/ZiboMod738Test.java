@@ -73,4 +73,10 @@ class ZiboMod738Test {
         );
         assertThat(ZiboMod738.GoogleDriveChannel.extractLatestVersion(files), is("4.05"));
     }
+
+    @Test
+    void extractVersionFromNotes() {
+        assertThat(ZiboMod738.extractVersionFromNotes("ZIBOmod B737-800X v4.05.35"), is("4.05.35"));
+        assertThat(ZiboMod738.extractVersionFromNotes("ZIBOmod with no version"), is(nullValue()));
+    }
 }

@@ -40,6 +40,7 @@ public interface StringParser<R> {
      * @return the parsed result
      * @throws Exception if parsing fails
      */
+    @SuppressWarnings("java:S112") // Parser implementations may propagate checked exceptions from their parsing libraries.
     R parse(String contents) throws Exception;
 
 }

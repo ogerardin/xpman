@@ -33,6 +33,7 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * @see ObjFileData
  */
 @Slf4j
+@SuppressWarnings("java:S100") // Parser rule names intentionally mirror X-Plane grammar productions.
 public class ObjFileParser extends XPlaneFileParserBase<ObjFileData> {
 
     /**

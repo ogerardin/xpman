@@ -1,4 +1,4 @@
 package com.ogerardin.xplane.file.data.obj;
 
-public class ObjCommand extends ObjItem {
+public class ObjCommand implements ObjItem {
 }

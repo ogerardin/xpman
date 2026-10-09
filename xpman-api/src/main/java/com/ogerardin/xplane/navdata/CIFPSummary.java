@@ -35,7 +35,7 @@ public class CIFPSummary implements NavDataItem {
                     .filter(p -> p.toString().endsWith(".dat"))
                     .sorted()
                     .toList();
-        } catch (IOException e) {
+        } catch (IOException _) {
             return Collections.emptyList();
         }
     }

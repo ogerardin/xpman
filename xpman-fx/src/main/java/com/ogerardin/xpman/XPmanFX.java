@@ -48,7 +48,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -163,9 +162,9 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         }
         xPlaneProperty.set(xplane);
 
-        XPManPrefs config = getConfig();
-        config.setLastXPlanePath(folder.toString());
-        config.getRecentPaths().add(folder.toString());
+        XPManPrefs prefs = getConfig();
+        prefs.setLastXPlanePath(folder.toString());
+        prefs.getRecentPaths().add(folder.toString());
         saveConfig();
 
         updateRecent();
@@ -185,7 +184,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
                     .filter(InstalledTool.class::isInstance)
                     .map(InstalledTool.class::cast)
                     .map(this::newToolMenuItem)
-                    .collect(Collectors.toList());
+                    .toList();
             Platform.runLater(() -> toolsMenu.getItems().setAll(
                     Stream.concat(Stream.of(manageToolsMenuItem, toolsMenuSeparator), menuItems.stream()).toList()));
         }
@@ -208,7 +207,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
             // if the controller class has a constructor that takes a XPmanFX parameter, use it
             Constructor<C> constructor = type.getConstructor(XPmanFX.class);
             return constructor.newInstance(this);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException _) {
             // otherwise use no-arg constructor
             return type.getConstructor().newInstance();
         }
@@ -227,12 +226,12 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void initialize() {
         updateRecent();
-        sidebarController.selectedSectionProperty().addListener((__, ___, section) ->
+        sidebarController.selectedSectionProperty().addListener((_, _, section) ->
                 Optional.ofNullable(section).ifPresent(this::showSection));
         sidebarController.select(Section.HOME);
-        XPManPrefs config = getConfig();
-        if (config.getLastXPlanePath() != null) {
-            Platform.runLater(() -> openXPlane(Paths.get(config.getLastXPlanePath()).toFile()));
+        XPManPrefs prefs = getConfig();
+        if (prefs.getLastXPlanePath() != null) {
+            Platform.runLater(() -> openXPlane(Paths.get(prefs.getLastXPlanePath()).toFile()));
         } else {
             Platform.runLater(this::open);
         }
@@ -277,8 +276,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     }
 
     private void updateRecent() {
-        final XPManPrefs config = getConfig();
-        List<? extends MenuItem> menuItems = config.getRecentPaths().stream()
+        List<? extends MenuItem> menuItems = getConfig().getRecentPaths().stream()
                 .map(RecentMenuItem::new)
                 .toList();
         recentMenu.getItems().setAll(menuItems);
@@ -360,7 +358,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         stage.initOwner(primaryStage);
         stage.initModality(Modality.APPLICATION_MODAL);
         applyWindowPosition(stage, getConfig().getSettingsPosition());
-        stage.setOnHidden(__ -> {
+        stage.setOnHidden(_ -> {
             getConfig().setSettingsPosition(new JfxAppPrefs.WindowPosition(
                     stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()));
             saveConfig();

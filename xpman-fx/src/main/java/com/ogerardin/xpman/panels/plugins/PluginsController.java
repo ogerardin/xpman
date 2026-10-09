@@ -47,12 +47,12 @@ public class PluginsController extends Controller {
     public void initialize() {
         pluginTable.setRoot(new TreeItem<>());
         pluginTable.placeholderProperty().bind(Bindings.when(loading)
-                .then((Node) EmptyState.loading("Loading plugins..."))
+                .then(EmptyState.loading("Loading plugins..."))
                 .otherwise(new EmptyState("fth-package", "No plugins to show")));
         pluginTable.setRowFactory(pluginRowFactory);
         enabledColumn.setCellFactory(new SwitchTreeCellFactory(this::reload));
 
-        xPlaneProperty.addListener((__, ___, xPlane) -> {
+        xPlaneProperty.addListener((_, _, xPlane) -> {
             if (xPlane != null) {
                 xPlane.getPluginManager().registerListener(this::onPluginManagerEvent);
             }
@@ -104,7 +104,7 @@ public class PluginsController extends Controller {
                 }
 
                 pluginItem.setExpanded(true);
-                pluginItem.expandedProperty().addListener(__ -> Platform.runLater(pluginTable::refresh));
+                pluginItem.expandedProperty().addListener(_ -> Platform.runLater(pluginTable::refresh));
             }
 
             items.add(pluginItem);
@@ -122,7 +122,7 @@ public class PluginsController extends Controller {
         for (FlyWithLuaScript script : scripts) {
             header.getChildren().add(new TreeItem<>(new UiFlyWithLuaScript(script)));
         }
-        header.expandedProperty().addListener(__ -> Platform.runLater(pluginTable::refresh));
+        header.expandedProperty().addListener(_ -> Platform.runLater(pluginTable::refresh));
         return header;
     }
 
@@ -133,7 +133,7 @@ public class PluginsController extends Controller {
         @Override public String getLatestVersion() { return null; }
         @Override public boolean isUpdateAvailable() { return false; }
         @Override public boolean isEnabled() { return false; }
-        @Override public void setEnabled(boolean enabled) {}
+        @Override public void setEnabled(boolean enabled) { /* Group headers are not enableable. */ }
         @Override public boolean getSystem() { return false; }
         @Override public boolean isScript() { return false; }
         @Override public boolean isGroupHeader() { return true; }

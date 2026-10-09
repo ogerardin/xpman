@@ -25,7 +25,7 @@ public record ExecResults(Process process, String command, List<String> outputLi
      * If this represents the results of a command that failed, throws an exception obtained from the specified supplier.
      */
     public ExecResults orThrow(Supplier<? extends RuntimeException> exceptionSupplier) {
-        return or((results) -> {
+        return or(results -> {
             throw exceptionSupplier.get();
         });
     }

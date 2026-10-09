@@ -55,7 +55,7 @@ public class SceneryIconCellFactory<S extends UiSceneryEntry> implements TableCe
                         imageView.setPreserveRatio(true);
                         setGraphic(imageView);
                         setTooltip(null);
-                    } catch (Exception e) {
+                    } catch (Exception _) {
                         setGraphic(null);
                         setTooltip(null);
                     }

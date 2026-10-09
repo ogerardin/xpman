@@ -93,8 +93,12 @@ public class UiFlyWithLuaScript implements PluginRow {
     }
 
     @Label("'Uninstall script'")
-    @Confirm(value = "'The script \"' + script.luaFile.fileName + '\" will be uninstalled.' " +
-            "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
+    @Confirm(value = """
+            'The script "' + script.luaFile.fileName + '" will be uninstalled.' +
+            '
+
+Press OK to continue.'
+            """, alertType = Alert.AlertType.WARNING)
     public void uninstallScript() {
         try {
             script.uninstall();

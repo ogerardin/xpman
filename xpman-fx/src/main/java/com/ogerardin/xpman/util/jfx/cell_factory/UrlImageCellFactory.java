@@ -18,6 +18,7 @@ import java.net.URL;
 @Slf4j
 public record UrlImageCellFactory<S>(Double height) implements TableCellFactory<S, URL> {
 
+    @SuppressWarnings("java:S6207") // JavaFX FXML injection requires @NamedArg on this explicit canonical constructor.
     public UrlImageCellFactory(@NamedArg("height") Double height) {
         this.height = height;
     }
@@ -34,9 +35,7 @@ public record UrlImageCellFactory<S>(Double height) implements TableCellFactory<
                         imageView = new ImageView(image);
                         imageView.setFitHeight(height);
                         imageView.setPreserveRatio(true);
-//                    imageView.setSmooth(true);
-//                    imageView.setCache(true);
-                    } catch (IOException e) {
+                    } catch (IOException _) {
                         log.warn("Failed to load image: {}", url);
                     }
                 }

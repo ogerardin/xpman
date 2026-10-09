@@ -3,18 +3,19 @@ package com.ogerardin.xplane.tools;
 import com.ogerardin.xplane.util.exec.CommandExecutor;
 import com.ogerardin.xplane.util.exec.ExecResults;
 import com.ogerardin.xplane.util.platform.MacPlatform;
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.progress.SubProgressListener;
 import com.ogerardin.xplane.util.zip.ZipArchive;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Predicate;
@@ -30,6 +31,13 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ToolUtils {
 
+    private static final String MSG_CAUGHT_EXCEPTION = "Caught exception: ";
+    private static final String MSG_DELETING = "Deleting ";
+    private static final String MSG_DONE = "Done!";
+    private static final String MSG_FAILED = "Failed";
+    private static final String MSG_COMPLETED = "Completed";
+
+    @SuppressWarnings("java:S1130") // Platform helpers use @SneakyThrows for interruptible process execution; callers handle interruption.
     public static void install(@NonNull URL url, @NonNull Path toolsFolder, @NonNull Path file, @NonNull ProgressListener progressListener) throws IOException, InterruptedException {
         String path = url.getPath();
         String ref = url.getRef();
@@ -54,6 +62,7 @@ public class ToolUtils {
      *     <li>unmount the DMG and delete the temporary file</li>
      * </ol>
      */
+    @SuppressWarnings("java:S5443") // Short-lived installer temp file; deleted after the app has been copied.
     public static void installFromDmg(URL url, Path toolsFolder, ProgressListener progressListener) throws IOException {
         Path tempFile = null;
         String mountPoint = null;
@@ -67,7 +76,7 @@ public class ToolUtils {
             progressListener.progress(0.50, "Mounting DMG");
             progressListener.output("Attaching " + tempFile);
             ExecResults results = exec(progressListener, "hdiutil", "attach", tempFile.toString()).orThrow();
-            Pattern pattern = Pattern.compile("(.+)\\t(.+)\\t(.+)");
+            Pattern pattern = Pattern.compile("([^\\t]+)\\t([^\\t]+)\\t(.+)");
             mountPoint = results.outputLines().stream()
                     .map(pattern::matcher)
                     .filter(Matcher::matches)
@@ -76,10 +85,13 @@ public class ToolUtils {
                     .orElseThrow(() -> new RuntimeException("Failed to parse hdiutil output"));
             progressListener.output("  mounted on " + mountPoint);
 
-            Path app = Files.list(Path.of(mountPoint))
-                    .filter(MacPlatform.AppBundle::isAppBundle)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("No .app found in DMG!"));
+            Path app;
+            try (var stream = Files.list(Path.of(mountPoint))) {
+                app = stream
+                        .filter(MacPlatform.AppBundle::isAppBundle)
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No .app found in DMG!"));
+            }
             progressListener.output("Found app: " + app);
 
             progressListener.progress(0.70, "Copying app to tools folder");
@@ -87,9 +99,14 @@ public class ToolUtils {
             FileUtils.copyDirectoryToDirectory(app.toFile(), toolsFolder.toFile());
 
         }
+        catch (InterruptedException e) {
+            exception = e;
+            Thread.currentThread().interrupt();
+            progressListener.output(MSG_CAUGHT_EXCEPTION + e);
+        }
         catch (Exception e) {
             exception = e;
-            progressListener.output("Caught exception: " + e);
+            progressListener.output(MSG_CAUGHT_EXCEPTION + e);
         }
         finally {
             if (mountPoint != null) {
@@ -98,24 +115,26 @@ public class ToolUtils {
                     String finalMountPoint = mountPoint;
                     exec(progressListener, "hdiutil", "detach", "-force", mountPoint)
                             .or(res -> progressListener.output("Failed to unmount image from " + finalMountPoint));
-                } catch (InterruptedException ignore) {
+                } catch (InterruptedException _) {
+                    Thread.currentThread().interrupt();
                 }
             }
             if (tempFile != null) {
-                progressListener.output("Deleting " + tempFile);
+                progressListener.output(MSG_DELETING + tempFile);
                 try {
                     Files.deleteIfExists(tempFile);
-                } catch (IOException e) {
+                } catch (IOException _) {
                     progressListener.output("Failed to delete temporary file " + tempFile);
                 }
             }
 
-            progressListener.output("Done!");
-            progressListener.progress(1.00, exception!= null ? "Failed" : "Completed");
+            progressListener.output(MSG_DONE);
+            progressListener.progress(1.00, exception!= null ? MSG_FAILED : MSG_COMPLETED);
         }
 
     }
 
+    @SuppressWarnings("java:S5443") // Short-lived installer temp file; deleted after extraction.
     public static void installFromZip(URL url, Path toolsFoder, Path file, ProgressListener progressListener) throws IOException {
         Path tempFile = null;
         Exception exception = null;
@@ -134,27 +153,26 @@ public class ToolUtils {
         }
         catch (Exception e) {
             exception = e;
-            progressListener.output("Caught exception: " + e);
+            progressListener.output(MSG_CAUGHT_EXCEPTION + e);
         }
         finally {
             if (tempFile != null) {
-                progressListener.output("Deleting " + tempFile);
+                progressListener.output(MSG_DELETING + tempFile);
                 Files.deleteIfExists(tempFile);
             }
 
-            progressListener.output("Done!");
-            progressListener.progress(1.00, exception!= null ? "Failed" : "Completed");
+            progressListener.output(MSG_DONE);
+            progressListener.progress(1.00, exception!= null ? MSG_FAILED : MSG_COMPLETED);
         }
     }
 
     static Predicate<Path> hasString(String s) {
         return path -> {
             try {
-                //FIXME make it work for non-Mac platforms
-                Path executable = new MacPlatform.AppBundle(path).executable();
-                return CommandExecutor.exec("fgrep", s, executable.toString()).getExitValue() == 0;
-            } catch (IOException | InterruptedException | ConfigurationException e) {
-                log.warn("fgrep failed: {}", e.toString());
+                String binary = new String(Files.readAllBytes(Platforms.getCurrent().getBinary(path)), StandardCharsets.ISO_8859_1);
+                return binary.contains(s);
+            } catch (IOException e) {
+                log.warn("Failed to read binary {}: {}", path, e.toString());
                 return false;
             }
         };
@@ -170,15 +188,15 @@ public class ToolUtils {
             progressListener.progress( "Deleting...");
 
             File appFile = tool.getApp().toFile();
-            progressListener.output("Deleting " + appFile);
+            progressListener.output(MSG_DELETING + appFile);
             var fileUtils = com.sun.jna.platform.FileUtils.getInstance();
             fileUtils.moveToTrash(appFile);
         } catch (Exception e) {
             exception = e;
-            progressListener.output("Caught exception: " + e);
+            progressListener.output(MSG_CAUGHT_EXCEPTION + e);
         } finally {
-            progressListener.output("Done!");
-            progressListener.progress(1.00, exception!= null ? "Failed" : "Completed");
+            progressListener.output(MSG_DONE);
+            progressListener.progress(1.00, exception!= null ? MSG_FAILED : MSG_COMPLETED);
         }
     }
 
@@ -194,8 +212,7 @@ public class ToolUtils {
                 .outLineHandler(progressListener::output)
                 .errLineHandler(progressListener::output)
                 .build();
-        ExecResults results = executor.exec();
-        return results;
+        return executor.exec();
     }
 
 }

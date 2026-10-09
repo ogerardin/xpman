@@ -19,7 +19,6 @@ class DatFileTest {
         Path objPath = XPlaneTestUtil.getDefaultXPRootFolder().resolve("Resources/default data/earth_fix.dat");
 
         DatFile objFile = new DatFile(objPath);
-        DatHeader header = objFile.getData().getHeader();
         assertThat(objFile.getFileSpecVersion(), is("1200"));
     }
 

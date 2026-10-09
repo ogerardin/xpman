@@ -17,7 +17,7 @@ import java.net.URL;
 @Slf4j
 public class UpdateInformation {
 
-    private final static XPlaneReleaseInfo NO_VERSION = new XPlaneReleaseInfo("n/a", null);
+    private static final XPlaneReleaseInfo NO_VERSION = new XPlaneReleaseInfo("n/a", null);
 
     @NonNull
     private final XPlaneMajorVersion majorVersion;

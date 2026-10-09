@@ -47,7 +47,7 @@ public class ActionsCellFactory<S, T> implements TableCellFactory<S, T> {
     protected Style style = Style.BUTTON;
 
     @Getter(AccessLevel.NONE)
-    private final Map<T, Pane> MENU_CACHE = new HashMap<>();
+    private final Map<T, Pane> menuCache = new HashMap<>();
 
     @SuppressWarnings("unused")
     public ActionsCellFactory() {
@@ -72,7 +72,7 @@ public class ActionsCellFactory<S, T> implements TableCellFactory<S, T> {
     }
 
     private Pane getActionsComponent(T item) {
-        Pane pane = MENU_CACHE.computeIfAbsent(item, t -> {
+        Pane pane = menuCache.computeIfAbsent(item, t -> {
             Control[] buttons = buildActionControls(t, t.getClass(), style);
             HBox container = new HBox();
             container.getChildren().setAll(buttons);

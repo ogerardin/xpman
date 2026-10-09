@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +37,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 @Slf4j
 public class ZiboMod738 extends Aircraft implements Versioned {
+
+    private static final Pattern NOTES_VERSION_PATTERN = Pattern.compile("v(\\d[0-9a-zA-Z.]*+)$");
 
     public static final RecommendedPluginsInspection RECOMMENDED_PLUGINS_INSPECTION
             = new RecommendedPluginsInspection(AviTab.class, TerrainRadar.class);
@@ -68,7 +71,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         try {
             Path versionFile = getAcfFile().getFile().resolveSibling("version.txt");
             return Files.readAllLines(versionFile).get(0);
-        } catch (IOException e) {
+        } catch (IOException _) {
             return loadVersionFromNotes();
         }
 
@@ -78,13 +81,13 @@ public class ZiboMod738 extends Aircraft implements Versioned {
      * Apparently less reliable than version.txt file
      */
     private String loadVersionFromNotes() {
-        String notes = getNotes();
-        Pattern pattern = Pattern.compile(".+v([0-9a-zA-Z.]+)$");
-        Matcher matcher = pattern.matcher(notes);
-        if (! matcher.matches()) {
-            return super.getVersion();
-        }
-        return matcher.group(2);
+        return Optional.ofNullable(extractVersionFromNotes(getNotes())).orElseGet(super::getVersion);
+    }
+
+    public static String extractVersionFromNotes(String notes) {
+        if (notes == null) return null;
+        Matcher matcher = NOTES_VERSION_PATTERN.matcher(notes);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
     @SneakyThrows
@@ -127,7 +130,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
             return "Google Drive";
         }
 
-        public String getLatestVersion() throws Exception {
+        public String getLatestVersion() throws IOException, GeneralSecurityException {
             // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
             // Patches are published as incremental files B738X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
             // Since the Drive folder was reorganized into XP11/XP12 subfolders, release files live inside the
@@ -162,7 +165,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
          */
         public static String extractLatestVersion(List<File> files) {
             // full version pattern: B737-800X_[XP\d+_]<version>_full.zip
-            Pattern versionPattern = Pattern.compile("B737-800X_(?:XP\\d+_)?([a-zA-Z0-9_]+)_full\\.zip");
+            Pattern versionPattern = Pattern.compile("B737-800X_(?:XP\\d++_)?(\\w+?)_full\\.zip");
             Optional<String> maybeVersion = files.stream()
                     .map(File::getName)
                     .map(versionPattern::matcher)
@@ -176,7 +179,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
 
             // patch pattern: B738X_[XP\d+_]<version>_<patch>.zip — keep the highest patch number
             String version = maybeVersion.get();
-            Pattern patchPattern = Pattern.compile("B738X_(?:XP\\d+_)?([a-zA-Z0-9_]+)_(\\d+)\\.zip");
+            Pattern patchPattern = Pattern.compile("B738X_(?:XP\\d++_)?(\\w+?)_(\\d++)\\.zip");
             OptionalInt maybePatch = files.stream()
                     .map(File::getName)
                     .map(patchPattern::matcher)

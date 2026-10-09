@@ -5,20 +5,20 @@ import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
 import com.ogerardin.xplane.util.zip.Archive;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class SkunkcraftsUpdatableInspectionTest {
 
     @Test
     void testInspectReturnsInfoWhenConfigPresent() {
-        Archive mockArchive = Mockito.mock(Archive.class);
+        Archive mockArchive = mock(Archive.class);
         when(mockArchive.getPaths()).thenReturn(List.of(
                 Path.of("root/"),
                 Path.of("root/skunkcrafts_updater.cfg"),
@@ -34,7 +34,7 @@ class SkunkcraftsUpdatableInspectionTest {
 
     @Test
     void testInspectReturnsEmptyWhenNoConfig() {
-        Archive mockArchive = Mockito.mock(Archive.class);
+        Archive mockArchive = mock(Archive.class);
         when(mockArchive.getPaths()).thenReturn(List.of(
                 Path.of("root/"),
                 Path.of("root/plugin.xpl")
@@ -47,7 +47,7 @@ class SkunkcraftsUpdatableInspectionTest {
 
     @Test
     void testInspectReturnsInfoWhenConfigInSubdirectory() {
-        Archive mockArchive = Mockito.mock(Archive.class);
+        Archive mockArchive = mock(Archive.class);
         when(mockArchive.getPaths()).thenReturn(List.of(
                 Path.of("root/"),
                 Path.of("root/subdir/"),
@@ -63,7 +63,7 @@ class SkunkcraftsUpdatableInspectionTest {
 
     @Test
     void testInspectDoesNotMatchPartialFilename() {
-        Archive mockArchive = Mockito.mock(Archive.class);
+        Archive mockArchive = mock(Archive.class);
         when(mockArchive.getPaths()).thenReturn(List.of(
                 Path.of("root/"),
                 Path.of("root/skunkcrafts_updater.cfg.bak"),

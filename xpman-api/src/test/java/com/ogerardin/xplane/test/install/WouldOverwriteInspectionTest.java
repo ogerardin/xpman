@@ -26,10 +26,12 @@ class WouldOverwriteInspectionTest {
         return new InstallTarget() {
             @Override
             public void unpack(Archive archive, ProgressListener progressListener) {
+                // Dry-run stub: this test only exercises overwrittenFiles().
             }
 
             @Override
             public void reload() {
+                // Dry-run stub: this test only exercises overwrittenFiles().
             }
 
             @Override

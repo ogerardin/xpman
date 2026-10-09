@@ -37,31 +37,15 @@ public class UiAircraft {
         Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile());
     }
 
-//    @SuppressWarnings("unused")
-//    @Label("'Enable Aircraft'")
-//    @EnabledIf("! enabled")
-//    @OnSuccess("tableView.refresh()")
-//    public void enable() {
-//        xPlane.getAircraftManager().enableAircraft(aircraft);
-//    }
-
-//    @SuppressWarnings("unused")
-//    @Label("'Disable Aircraft'")
-//    @EnabledIf("enabled")
-//    @Confirm("'The entire folder <' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) " +
-//            "+ '> will be moved to <' + xPlane.baseFolder.relativize(xPlane.aircraftManager.disabledAircraftFolder) " +
-//            "+ '>\nThis will impact other aircraft contained in the same folder (if there are).'" +
-//            "+ '\n\nPress OK to continue.'")
-//    @OnSuccess("tableView.refresh()")
-//    public void disable() {
-//        xPlane.getAircraftManager().disableAircraft(aircraft);
-//    }
-
     @SuppressWarnings("unused")
     @Label("'Uninstall aircraft'")
-    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '\" will be uninstalled. '" +
-            "+ 'This will impact the following aircraft: ' + xPlane.aircraftManager.getAircraftByFolder(aircraft.acfFile.file.parent) " +
-            "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
+    @Confirm(value = """
+            'The entire folder "' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '" will be uninstalled. ' +
+            'This will impact the following aircraft: ' + xPlane.aircraftManager.getAircraftByFolder(aircraft.acfFile.file.parent) +
+            '
+
+Press OK to continue.'
+            """, alertType = Alert.AlertType.WARNING)
     public void uninstall() {
         getXPlane().getAircraftManager().uninstallAircraft(aircraft);
     }

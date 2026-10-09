@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
-public class ParserTest<T> {
+public abstract class ParserTest<T> {
 
     protected T runParser(String fileContents, Parser parser, boolean trace) {
         if (trace) {

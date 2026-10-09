@@ -85,7 +85,7 @@ public abstract class XPlaneFile<R> implements StringParser<R> {
      * @param parser the parser to use
      * @throws NullPointerException if file or parser is null
      */
-    public XPlaneFile(@NonNull Path file, StringParser<R> parser) {
+    protected XPlaneFile(@NonNull Path file, StringParser<R> parser) {
         this(file.toUri(), parser);
     }
 
@@ -97,7 +97,7 @@ public abstract class XPlaneFile<R> implements StringParser<R> {
      * @throws URISyntaxException if the URL cannot be converted to a URI
      * @throws NullPointerException if url or parser is null
      */
-    public XPlaneFile(@NonNull URL url, StringParser<R> parser) throws URISyntaxException {
+    protected XPlaneFile(@NonNull URL url, StringParser<R> parser) throws URISyntaxException {
         this(url.toURI(), parser);
     }
 

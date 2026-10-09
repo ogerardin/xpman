@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 class ManifestTest {
 
     @Test
-    public void testGsonDeserialize() throws URISyntaxException {
+    void testGsonDeserialize() throws URISyntaxException {
         Path manifestFile = Paths.get(Objects.requireNonNull(getClass().getResource("/test/tools/x-updater.json")).toURI());
 
         Manifest manifest = JsonManifestLoader.loadManifest(manifestFile);
@@ -27,7 +27,7 @@ class ManifestTest {
     }
 
     @Test
-    public void testUnfoldManifest() throws URISyntaxException {
+    void testUnfoldManifest() throws URISyntaxException {
         Path manifestFile = Paths.get(Objects.requireNonNull(getClass().getResource("/test/tools/x-updater.json")).toURI());
         Manifest manifest = JsonManifestLoader.loadManifest(manifestFile);
 

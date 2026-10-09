@@ -21,6 +21,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
  */
 public class ToolDetailView extends VBox {
 
+    private static final String STYLE_ICON = "tool-detail-icon";
+
     private static final int LARGE_ICON_SIZE = 64;
     private static final int LARGE_ICON_FONT_SIZE = 40;
 
@@ -75,7 +77,7 @@ public class ToolDetailView extends VBox {
             ImageView imageView = new ImageView(new Image(url.toExternalForm(), LARGE_ICON_SIZE, LARGE_ICON_SIZE, true, true));
             imageView.setFitWidth(LARGE_ICON_SIZE);
             imageView.setFitHeight(LARGE_ICON_SIZE);
-            imageView.getStyleClass().add("tool-detail-icon");
+            imageView.getStyleClass().add(STYLE_ICON);
             return imageView;
         } else if (toolIcon instanceof ToolIcon.Resource(var path)) {
             var resourceUrl = getClass().getResource(path);
@@ -83,19 +85,19 @@ public class ToolDetailView extends VBox {
                 ImageView imageView = new ImageView(new Image(resourceUrl.toExternalForm(), LARGE_ICON_SIZE, LARGE_ICON_SIZE, true, true));
                 imageView.setFitWidth(LARGE_ICON_SIZE);
                 imageView.setFitHeight(LARGE_ICON_SIZE);
-                imageView.getStyleClass().add("tool-detail-icon");
+                imageView.getStyleClass().add(STYLE_ICON);
                 return imageView;
             }
         } else if (toolIcon instanceof ToolIcon.IconFont(var literal)) {
             FontIcon fontIcon = new FontIcon(literal);
             fontIcon.setIconSize(LARGE_ICON_FONT_SIZE);
-            fontIcon.getStyleClass().add("tool-detail-icon");
+            fontIcon.getStyleClass().add(STYLE_ICON);
             return fontIcon;
         }
 
         FontIcon defaultIcon = new FontIcon(Feather.TOOL);
         defaultIcon.setIconSize(LARGE_ICON_FONT_SIZE);
-        defaultIcon.getStyleClass().add("tool-detail-icon");
+        defaultIcon.getStyleClass().add(STYLE_ICON);
         return defaultIcon;
     }
 
@@ -137,7 +139,7 @@ public class ToolDetailView extends VBox {
         }
         Hyperlink hyperlink = new Hyperlink("Tool homepage");
         hyperlink.getStyleClass().add("tool-detail-homepage");
-        hyperlink.setOnAction(__ -> Platforms.getCurrent().openUrl(manifest.homepage()));
+        hyperlink.setOnAction(_ -> Platforms.getCurrent().openUrl(manifest.homepage()));
         return hyperlink;
     }
 }

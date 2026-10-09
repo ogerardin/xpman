@@ -47,8 +47,8 @@ class JsonFileConfigPersisterTest {
         Path file = Files.createTempFile("XPManPrefs", ".json");
         try {
             Files.writeString(file, "{\"lastXPlanePath\":\"/X-Plane 12\"}");
-            JsonFileConfigPersister<XPManPrefs> prefsManager = new JsonFileConfigPersister<>(XPManPrefs.class, file);
-            XPManPrefs config = prefsManager.getConfig();
+            JsonFileConfigPersister<XPManPrefs> filePrefsManager = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            XPManPrefs config = filePrefsManager.getConfig();
             assertThat(config.getTheme(), is("dark"));
         } finally {
             Files.deleteIfExists(file);
@@ -60,8 +60,8 @@ class JsonFileConfigPersisterTest {
         Path file = Files.createTempFile("XPManPrefs", ".json");
         try {
             Files.writeString(file, "{\"lastXPlanePath\":\"/X-Plane 12\"}");
-            JsonFileConfigPersister<XPManPrefs> prefsManager = new JsonFileConfigPersister<>(XPManPrefs.class, file);
-            assertThat(prefsManager.getConfig().isConfirmQuit(), is(true));
+            JsonFileConfigPersister<XPManPrefs> filePrefsManager = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            assertThat(filePrefsManager.getConfig().isConfirmQuit(), is(true));
         } finally {
             Files.deleteIfExists(file);
         }

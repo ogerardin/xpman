@@ -9,6 +9,7 @@ import java.nio.file.Path;
 @Getter
 public class UnknownPlatform implements Platform {
 
+    @SuppressWarnings("java:S1170") // Platform.getOsType() is an instance method by interface contract.
     public final int osType = com.sun.jna.Platform.UNSPECIFIED;
 
     @Override

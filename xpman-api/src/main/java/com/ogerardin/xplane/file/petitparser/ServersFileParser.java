@@ -33,6 +33,7 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * @author Olivier G.
  * @see ServersFileData
  */
+@SuppressWarnings("java:S100") // Parser rule names intentionally mirror X-Plane grammar productions.
 public class ServersFileParser extends XPlaneFileParserBase<ServersFileData> {
 
     /**

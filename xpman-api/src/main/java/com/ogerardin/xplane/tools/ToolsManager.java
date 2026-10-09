@@ -129,13 +129,16 @@ public class ToolsManager extends Manager<Tool> {
             // The reload process will load the newly installed tool at some point in the future,
             // but in case the caller wants to use it right away we return a corresponding InstalledTool instance immediately.
             return InstalledTool.ofInstallable(tool, installDir);
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ToolsException(e);
+        } catch (IOException e) {
             throw new ToolsException(e);
         }
     }
 
     @SneakyThrows
-    public void uninstall(InstalledTool tool, ProgressListener consoleController) throws ToolsException {
+    public void uninstall(InstalledTool tool, ProgressListener consoleController) {
         ToolUtils.defaultUninstaller(tool, consoleController);
         reload();
     }
@@ -158,7 +161,7 @@ public class ToolsManager extends Manager<Tool> {
     private static Manifest loadFromResource(Resource resource) {
         try (InputStream is = resource.open()) {
             return JsonManifestLoader.loadManifest(is, resource.getPath());
-        } catch (IOException e) {
+        } catch (IOException _) {
             log.warn("Failed to loadFromResource manifest from {}", resource.getPath());
             return null;
         }
@@ -169,11 +172,10 @@ public class ToolsManager extends Manager<Tool> {
         // we can't assume /tools is a directory and iterate on files because that won't work
         // from a jar file, so we use ClassGraph to find matching resources
         try (ScanResult scanResult = new ClassGraph().acceptPathsNonRecursive("/tools").scan()) {
-            List<Manifest> manifests = scanResult.getResourcesWithExtension("json").stream()
+            return scanResult.getResourcesWithExtension("json").stream()
                     .map(ToolsManager::loadFromResource)
                     .filter(Objects::nonNull)
                     .toList();
-            return manifests;
         }
     }
 

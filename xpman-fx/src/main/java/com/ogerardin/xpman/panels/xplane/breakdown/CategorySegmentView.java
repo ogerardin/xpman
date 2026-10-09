@@ -17,14 +17,14 @@ import java.util.Objects;
  */
 class CategorySegmentView extends StackPane {
 
-    private final ImageView LOADING_ANIMATION = new ImageView(new Image(Objects.requireNonNull(CategorySegmentView.class.getResource("/img/dots.gif")).toExternalForm()));
+    private final ImageView loadingAnimation = new ImageView(new Image(Objects.requireNonNull(CategorySegmentView.class.getResource("/img/dots.gif")).toExternalForm()));
 
     public CategorySegmentView(CategorySegment segment) {
         Label label = new Label();
         label.textProperty().bind(segment.textProperty());
         label.graphicProperty().bind(Bindings
                 .when(segment.computingProperty())
-                        .then(LOADING_ANIMATION)
+                        .then(loadingAnimation)
                         .otherwise((ImageView) null)
                 );
         label.getStyleClass().add("segment-label");

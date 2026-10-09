@@ -134,10 +134,12 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
         if (! Files.isDirectory(liveriesFolder)) {
             return Collections.emptyList();
         }
-        return Files.list(liveriesFolder)
-                .filter(Files::isDirectory)
-                .map(path -> new Livery(this, acfFile.getFile().relativize(path)))
-                .toList();
+        try (var stream = Files.list(liveriesFolder)) {
+            return stream
+                    .filter(Files::isDirectory)
+                    .map(path -> new Livery(this, acfFile.getFile().relativize(path)))
+                    .toList();
+        }
     }
 
     public Path getLiveriesFolder() {

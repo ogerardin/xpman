@@ -70,6 +70,7 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * @author Olivier G.
  * @see StringParser
  */
+@SuppressWarnings("java:S100") // Parser rule names intentionally mirror X-Plane grammar productions.
 abstract class XPlaneFileParserBase<R> implements StringParser<R> {
 
     /**
@@ -90,8 +91,8 @@ abstract class XPlaneFileParserBase<R> implements StringParser<R> {
      * @throws RuntimeException if parsing fails
      */
     public R parse(String contents) {
-        final Parser parser = getParser();
-        final Result result = parser.parse(contents);
+        final Parser activeParser = getParser();
+        final Result result = activeParser.parse(contents);
         return result.get();
     }
 
@@ -219,10 +220,6 @@ abstract class XPlaneFileParserBase<R> implements StringParser<R> {
         return Spacechar().plus();
     }
 
-//    Parser Version() {
-//        return digit().plus().flatten();
-//    }
-
     /**
      * Parse a letter (a-z or A-Z).
      *
@@ -231,10 +228,6 @@ abstract class XPlaneFileParserBase<R> implements StringParser<R> {
     Parser Letter() {
         return CharacterParser.range('a','z').or(range('A','Z'));
     }
-
-//    Parser Digit() {
-//        return CharRange('0', '9');
-//    }
 
     /**
      * Parse the file origin ("I" or "A").

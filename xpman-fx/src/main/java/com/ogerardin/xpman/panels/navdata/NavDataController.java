@@ -52,8 +52,8 @@ public class NavDataController extends Controller {
                 XPlane::getNavDataManager,
                 UiNavDataItem::new
         );
-        uiItems.getLoadingProperty().addListener(__ -> updateCards());
-        uiItems.addListener((ListChangeListener<UiNavDataItem>) __ -> Platform.runLater(this::updateCards));
+        uiItems.getLoadingProperty().addListener(_ -> updateCards());
+        uiItems.addListener((ListChangeListener<UiNavDataItem>) _ -> Platform.runLater(this::updateCards));
         toolbar.disableProperty().bind(Bindings.isNull(xPlaneProperty));
         updateCards();
     }

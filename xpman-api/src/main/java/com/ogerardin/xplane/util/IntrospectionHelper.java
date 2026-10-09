@@ -72,12 +72,11 @@ public class IntrospectionHelper {
                 // constructor of a subclass succeeded, return the result
                 log.debug("Matched {}({})", candidateClass.getSimpleName(), constructorParams);
                 return instance;
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // failed to instantiate candidate class: just ignore
             }
         }
         // no candidate matched, instantiate base class
-//        log.debug("Instantiating base class {} for {}", baseClass.getSimpleName(), constructorParams);
         return newInstance(baseClass, constructorParams);
     }
 
@@ -87,7 +86,7 @@ public class IntrospectionHelper {
         for (Constructor<?> constructor : baseClass.getDeclaredConstructors()) {
             try {
                 return (C) constructor.newInstance(constructorParams);
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // constructor failed: just ignore
             }
         }

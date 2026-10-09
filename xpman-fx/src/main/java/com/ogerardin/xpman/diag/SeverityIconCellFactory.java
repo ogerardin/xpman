@@ -45,10 +45,6 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
     }
 
     private class SeverityIconTableCell<S> extends TableCell<S, Severity> {
-
-        public SeverityIconTableCell() {
-        }
-
         @Override
         protected void updateItem(Severity item, boolean empty) {
             super.updateItem(item, empty);

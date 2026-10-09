@@ -26,7 +26,7 @@ public class UsageBreakdownController {
     @FXML private SegmentedBar<CategorySegment> breakdown;
 
     public UsageBreakdownController(XPmanFX mainController) {
-        mainController.xPlaneProperty().addListener((__, ___, xPlane) -> updateDisplay(xPlane));
+        mainController.xPlaneProperty().addListener((_, _, xPlane) -> updateDisplay(xPlane));
     }
 
     private void updateDisplay(XPlane xPlane) {
@@ -65,7 +65,7 @@ public class UsageBreakdownController {
         Platform.runLater(() -> results.forEach((category, result) -> {
             CategorySegment seg = segmentFor(category);
             seg.setFolderPaths(result.folderPaths());
-            seg.setValue((double) result.size());
+            seg.setValue(result.size());
         }));
     }
 

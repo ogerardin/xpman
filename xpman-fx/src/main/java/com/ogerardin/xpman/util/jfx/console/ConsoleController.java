@@ -24,9 +24,6 @@ public class ConsoleController implements ProgressListener {
     @FXML
     private ProgressBar progressBar;
 
-    public ConsoleController() {
-    }
-
     @FXML
     public void initialize() {
         textArea.clear();
@@ -53,8 +50,5 @@ public class ConsoleController implements ProgressListener {
     public void output(@NonNull String message) {
         log.debug(">> {}", message);
         Platform.runLater(() -> textArea.appendText(message + "\n"));
-    }
-
-    public void close() {
     }
 }

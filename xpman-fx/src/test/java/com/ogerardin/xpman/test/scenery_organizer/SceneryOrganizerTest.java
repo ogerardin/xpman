@@ -1,7 +1,5 @@
 package com.ogerardin.xpman.test.scenery_organizer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ogerardin.xpman.scenery_organizer.BuiltinSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;

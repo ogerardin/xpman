@@ -44,7 +44,7 @@ public class ArchiveInstallSource implements InstallSource, Archive {
             log.debug("Found {} InstallableType implementations", allTypes.size());
             
             List<InstallableType> matches = allTypes.stream()
-                .map(cls -> instantiate(cls))
+                .map(this::instantiate)
                 .filter(type -> type != null && type.recognizes(archive))
                 .toList();
             
@@ -67,7 +67,7 @@ public class ArchiveInstallSource implements InstallSource, Archive {
         try {
             // Try no-arg constructor first
             return (InstallableType) cls.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.debug("Could not instantiate {} with no-arg constructor", cls.getName());
             return null;
         }
@@ -130,24 +130,24 @@ public class ArchiveInstallSource implements InstallSource, Archive {
             );
         }
         
-        InstallableType installableType = type.get();
+        InstallableType detectedType = type.get();
         
         InspectionResult typeMessage = InspectionResult.of(
             com.ogerardin.xplane.inspection.InspectionMessage.builder()
                 .severity(com.ogerardin.xplane.inspection.Severity.INFO)
-                .message("Archive type identified as: " + installableType.description())
+                .message("Archive type identified as: " + detectedType.description())
                 .build()
         );
         
-        return typeMessage.append(installableType.preconditions(xPlane, archive));
+        return typeMessage.append(detectedType.preconditions(xPlane, archive));
     }
 
     @SneakyThrows
     @Override
     public void install(XPlane xPlane, ProgressListener progressListener) {
-        InstallableType installableType = getInstallableType()
+        InstallableType detectedType = getInstallableType()
             .orElseThrow(() -> new IllegalStateException("No installable type identified"));
-        installableType.install(xPlane, archive, progressListener);
+        detectedType.install(xPlane, archive, progressListener);
     }
 
 }

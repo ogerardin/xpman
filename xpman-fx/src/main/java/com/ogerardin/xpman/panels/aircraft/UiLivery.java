@@ -47,15 +47,21 @@ public class UiLivery extends UiAircraft {
 
     @SuppressWarnings("unused")
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
+    @Override
     public void reveal() {
         Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile().resolve(livery.getFolder()).normalize());
     }
 
     @SuppressWarnings("unused")
     @Label("'Uninstall livery'")
-    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(aircraft.liveriesFolder.resolve(livery.path)) + '\" will be uninstalled. '" +
-            "+ 'This will impact all aircraft contained in the same aircraft folder.'" +
-            "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
+    @Confirm(value = """
+            'The entire folder "' + xPlane.baseFolder.relativize(aircraft.liveriesFolder.resolve(livery.path)) + '" will be uninstalled. ' +
+            'This will impact all aircraft contained in the same aircraft folder.' +
+            '
+
+Press OK to continue.'
+            """, alertType = Alert.AlertType.WARNING)
+    @Override
     public void uninstall() {
         getXPlane().getAircraftManager().uninstallLivery(livery);
     }

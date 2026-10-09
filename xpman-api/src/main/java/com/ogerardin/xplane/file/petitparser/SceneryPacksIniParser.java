@@ -39,6 +39,7 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * @see SceneryPackIniData
  */
 @Slf4j
+@SuppressWarnings("java:S100") // Parser rule names intentionally mirror X-Plane grammar productions.
 public class SceneryPacksIniParser extends XPlaneFileParserBase<SceneryPackIniData> {
 
     /**
@@ -116,9 +117,10 @@ public class SceneryPacksIniParser extends XPlaneFileParserBase<SceneryPackIniDa
     /**
      * Parse any unrecognized line (comments, blank lines); yields null so it can be filtered out.
      */
+    @Override
     Parser JunkLine() {
-        return Newline().map(ignored -> (SceneryPackIniItem) null)
-                .or(noneOf("\r\n").plus().seq(Newline()).map(ignored -> (SceneryPackIniItem) null))
+        return Newline().map(ignored -> null)
+                .or(noneOf("\r\n").plus().seq(Newline()).map(ignored -> null))
                 ;
     }
 

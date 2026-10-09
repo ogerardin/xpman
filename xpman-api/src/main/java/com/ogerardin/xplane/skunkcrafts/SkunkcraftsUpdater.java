@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.CRC32;
 
@@ -39,10 +40,13 @@ public class SkunkcraftsUpdater {
     private static final String WHITELIST_FILENAME = "skunkcrafts_updater_whitelist.txt";
     private static final String BLACKLIST_FILENAME = "skunkcrafts_updater_blacklist.txt";
     private static final String IGNORE_FILENAME = "skunkcrafts_updater_ignore.txt";
+    private static final String KEY_VERSION = "version";
+    private static final String KEY_LIVERIES = "liveries";
+    private static final String LINE_SPLIT = "\\r?\\n";
 
     private static final Set<String> METADATA_KEYS = Set.of(
-            "name", "version", "build", "url", "manifest_url", "base_url", "module",
-            "disabled", "locked", "zone", "liveries"
+            "name", KEY_VERSION, "build", "url", "manifest_url", "base_url", "module",
+            "disabled", "locked", "zone", KEY_LIVERIES
     );
 
     private static final long CRC_SENTINEL_MISSING = 0xFFFFFFFFL;
@@ -87,9 +91,9 @@ public class SkunkcraftsUpdater {
         String cfgUrl = normalizeBaseUrl(moduleUrl) + CFG_FILENAME;
         try {
             String content = fetchText(cfgUrl);
-            for (String line : content.split("\\r?\\n")) {
+            for (String line : content.split(LINE_SPLIT)) {
                 String[] parts = line.trim().split("\\|", 2);
-                if (parts.length >= 2 && "version".equalsIgnoreCase(parts[0].trim())) {
+                if (parts.length >= 2 && KEY_VERSION.equalsIgnoreCase(parts[0].trim())) {
                     return parts[1].trim();
                 }
             }
@@ -123,35 +127,37 @@ public class SkunkcraftsUpdater {
      */
     public List<WhitelistEntry> parseWhitelist(String content) {
         List<WhitelistEntry> entries = new ArrayList<>();
-        for (String line : content.split("\\r?\\n")) {
-            String trimmed = line.trim();
-            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith(";")) continue;
-
-            String[] parts = trimmed.split("\\|");
-            if (parts.length == 0) continue;
-
-            String firstPart = parts[0].trim();
-            if (METADATA_KEYS.contains(firstPart.toLowerCase())) continue;
-
-            String path = firstPart.replace("\\", "/");
-            while (path.startsWith("/")) path = path.substring(1);
-            if (path.isEmpty()) continue;
-
-            Long crc = null;
-            Long size = null;
-
-            if (parts.length >= 2 && !parts[1].trim().isEmpty()) {
-                crc = parseCRC(parts[1].trim());
-            }
-            if (parts.length >= 3 && !parts[2].trim().isEmpty()) {
-                try {
-                    size = Long.parseLong(parts[2].trim());
-                } catch (NumberFormatException ignored) {}
-            }
-
-            entries.add(new WhitelistEntry(path, crc, size));
+        for (String line : content.split(LINE_SPLIT)) {
+            parseWhitelistLine(line).ifPresent(entries::add);
         }
         return entries;
+    }
+
+    private Optional<WhitelistEntry> parseWhitelistLine(String line) {
+        String trimmed = line.trim();
+        if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith(";")) return Optional.empty();
+
+        String[] parts = trimmed.split("\\|");
+        if (parts.length == 0) return Optional.empty();
+        String path = parts[0].trim();
+        if (METADATA_KEYS.contains(path.toLowerCase())) return Optional.empty();
+
+        path = path.replace("\\", "/");
+        while (path.startsWith("/")) path = path.substring(1);
+        if (path.isEmpty()) return Optional.empty();
+
+        Long crc = parts.length >= 2 && !parts[1].trim().isEmpty() ? parseCRC(parts[1].trim()) : null;
+        Long size = parseSize(parts);
+        return Optional.of(new WhitelistEntry(path, crc, size));
+    }
+
+    private static Long parseSize(String[] parts) {
+        if (parts.length < 3 || parts[2].trim().isEmpty()) return null;
+        try {
+            return Long.parseLong(parts[2].trim());
+        } catch (NumberFormatException _) {
+            return null;
+        }
     }
 
     /**
@@ -176,7 +182,7 @@ public class SkunkcraftsUpdater {
      */
     public Set<String> parseBlacklist(String content) {
         Set<String> paths = new HashSet<>();
-        for (String line : content.split("\\r?\\n")) {
+        for (String line : content.split(LINE_SPLIT)) {
             String trimmed = line.trim();
             if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith(";")) continue;
             String normalized = trimmed.replace("\\", "/");
@@ -245,33 +251,21 @@ public class SkunkcraftsUpdater {
         List<WhitelistEntry> toUpdate = new ArrayList<>();
 
         for (WhitelistEntry entry : whitelist) {
-            if (isIgnored(entry.relativePath(), ignoreSet)) continue;
-
-            Path localFile = baseFolder.resolve(entry.relativePath());
-
-            if (!Files.exists(localFile)) {
-                toUpdate.add(entry);
-                continue;
-            }
-
-            if (entry.expectedCRC() != null) {
-                long remoteCRC = entry.expectedCRC();
-                if (remoteCRC == CRC_SENTINEL_MISSING || remoteCRC == CRC_SENTINEL_SKIP) {
-                    continue;
-                }
-                long localCRC = computeCRC32(localFile);
-                if (localCRC != remoteCRC) {
-                    toUpdate.add(entry);
-                }
-            } else if (entry.expectedSize() != null) {
-                long localSize = Files.size(localFile);
-                if (localSize != entry.expectedSize()) {
-                    toUpdate.add(entry);
-                }
-            }
+            if (!isIgnored(entry.relativePath(), ignoreSet)
+                    && needsUpdate(entry, baseFolder.resolve(entry.relativePath()))) toUpdate.add(entry);
         }
 
         return toUpdate;
+    }
+
+    private boolean needsUpdate(WhitelistEntry entry, Path localFile) throws IOException {
+        if (!Files.exists(localFile)) return true;
+        if (entry.expectedCRC() != null) {
+            long remoteCRC = entry.expectedCRC();
+            if (remoteCRC == CRC_SENTINEL_MISSING || remoteCRC == CRC_SENTINEL_SKIP) return false;
+            return computeCRC32(localFile) != remoteCRC;
+        }
+        return entry.expectedSize() != null && Files.size(localFile) != entry.expectedSize();
     }
 
     /**
@@ -319,7 +313,7 @@ public class SkunkcraftsUpdater {
             ignoreSet.addAll(fetchRemoteBlacklist(config.moduleUrl()));
             ignoreSet.addAll(parseLocalIgnore(baseFolder));
             if (!config.liveries()) {
-                ignoreSet.add("liveries");
+                ignoreSet.add(KEY_LIVERIES);
             }
             return computeFilesToUpdate(baseFolder, whitelist, ignoreSet);
         } catch (Exception e) {
@@ -393,7 +387,7 @@ public class SkunkcraftsUpdater {
         ignoreSet.addAll(parseLocalIgnore(baseFolder));
 
         if (!config.liveries()) {
-            ignoreSet.add("liveries");
+            ignoreSet.add(KEY_LIVERIES);
         }
 
         progress.progress(-1.0, "Computing files to update...");
@@ -420,7 +414,7 @@ public class SkunkcraftsUpdater {
         boolean found = false;
         for (int i = 0; i < lines.size(); i++) {
             String[] parts = lines.get(i).trim().split("\\|", 2);
-            if (parts.length >= 2 && "version".equalsIgnoreCase(parts[0].trim())) {
+            if (parts.length >= 2 && KEY_VERSION.equalsIgnoreCase(parts[0].trim())) {
                 lines.set(i, "version|" + newVersion);
                 found = true;
                 break;
@@ -508,11 +502,11 @@ public class SkunkcraftsUpdater {
             }
             // Normalize to 32 bits (CRC32 is inherently 32-bit)
             return value & 0xFFFFFFFFL;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             try {
                 long value = Long.parseUnsignedLong(s, 16);
                 return value & 0xFFFFFFFFL;
-            } catch (NumberFormatException e2) {
+            } catch (NumberFormatException _) {
                 return null;
             }
         }

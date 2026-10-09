@@ -21,12 +21,6 @@ public final class ThemeManager {
     private static final String DARK = "dark";
     private static final String LIGHT = "light";
 
-    /**
-     * Tracks which theme is currently applied, so that non-JavaFX surfaces (e.g. WebView HTML)
-     * can match the active appearance without an app reference.
-     */
-    private static volatile boolean currentThemeDark = true;
-
     private final XPManPrefs prefs;
     private final Runnable saver;
 
@@ -40,20 +34,12 @@ public final class ThemeManager {
         return !LIGHT.equals(prefs.getTheme());
     }
 
-    /**
-     * @return whether the currently applied user agent stylesheet is the dark theme
-     */
-    public static boolean isCurrentThemeDark() {
-        return currentThemeDark;
-    }
-
     public BooleanProperty darkProperty() {
         return darkProperty;
     }
 
     public void applySavedTheme() {
         boolean dark = isDark();
-        currentThemeDark = dark;
         darkProperty.set(dark);
         Theme theme = dark ? new PrimerDark() : new PrimerLight();
         Application.setUserAgentStylesheet(theme.getUserAgentStylesheet());

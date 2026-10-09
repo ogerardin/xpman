@@ -20,7 +20,7 @@ import java.nio.file.Path;
  */
 @Slf4j
 @Data
-public abstract class PathImageCell<S> {
+public abstract class PathImageCell {
 
     protected Double fitHeight;
     protected Double fitWidth;
@@ -49,14 +49,14 @@ public abstract class PathImageCell<S> {
                 if (cache != null) {
                     imageView.setCache(cache);
                 }
-            } catch (IOException e) {
+            } catch (IOException _) {
                 log.warn("Failed to load thumbnail: {}", imagePath);
             }
         }
         cell.setGraphic(imageView);
     }
 
-    public static class TableCellFactory<S> extends PathImageCell<S> implements com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory<S, Path> {
+    public static class TableCellFactory<S> extends PathImageCell implements com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory<S, Path> {
         @Override
         public TableCell<S, Path> call(TableColumn<S, Path> param) {
             return new TableCell<>() {
@@ -68,7 +68,7 @@ public abstract class PathImageCell<S> {
         }
     }
 
-    public static class TreeTableCellFactory<S> extends PathImageCell<S> implements com.ogerardin.xpman.util.jfx.cell_factory.TreeTableCellFactory<S, Path> {
+    public static class TreeTableCellFactory<S> extends PathImageCell implements com.ogerardin.xpman.util.jfx.cell_factory.TreeTableCellFactory<S, Path> {
         @Override
         public TreeTableCell<S, Path> call(TreeTableColumn<S, Path> param) {
             return new TreeTableCell<>() {

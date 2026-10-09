@@ -57,9 +57,9 @@ public class FlyWithLuaScript implements Inspectable, Uninstallable {
     /** The active Scripts folder, regardless of which sibling folder the script currently sits in. */
     Path activeScriptsFolder() {
         Path base = getBaseFolder();
-        String name = base.getFileName().toString();
-        if (name.endsWith(DISABLED_SUFFIX)) return base.resolveSibling(name.substring(0, name.length() - DISABLED_SUFFIX.length()));
-        if (name.endsWith(QUARANTINE_SUFFIX)) return base.resolveSibling(name.substring(0, name.length() - QUARANTINE_SUFFIX.length()));
+        String folderName = base.getFileName().toString();
+        if (folderName.endsWith(DISABLED_SUFFIX)) return base.resolveSibling(folderName.substring(0, folderName.length() - DISABLED_SUFFIX.length()));
+        if (folderName.endsWith(QUARANTINE_SUFFIX)) return base.resolveSibling(folderName.substring(0, folderName.length() - QUARANTINE_SUFFIX.length()));
         return base;
     }
     

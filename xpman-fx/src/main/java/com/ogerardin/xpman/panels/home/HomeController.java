@@ -93,21 +93,20 @@ public class HomeController {
 
     @FXML
     public void initialize() {
-        mainController.xPlaneProperty().addListener((__, ___, xPlane) -> {
-            this.xPlane = xPlane;
-            updateDisplay(xPlane);
-            AsyncHelper.runAsync(() -> checkUpdates(xPlane));
+        mainController.xPlaneProperty().addListener((_, _, newXPlane) -> {
+            this.xPlane = newXPlane;
+            updateDisplay(newXPlane);
+            AsyncHelper.runAsync(() -> checkUpdates(newXPlane));
         });
         
-        // Bind badge visibility and text to update counts
-        aircraftUpdateBadge.textProperty().bind(aircraftUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
-        aircraftUpdateBadge.visibleProperty().bind(aircraftUpdateCount.greaterThan(0));
-        
-        sceneryUpdateBadge.textProperty().bind(sceneryUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
-        sceneryUpdateBadge.visibleProperty().bind(sceneryUpdateCount.greaterThan(0));
-        
-        pluginsUpdateBadge.textProperty().bind(pluginsUpdateCount.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
-        pluginsUpdateBadge.visibleProperty().bind(pluginsUpdateCount.greaterThan(0));
+        bindUpdateBadge(aircraftUpdateBadge, aircraftUpdateCount);
+        bindUpdateBadge(sceneryUpdateBadge, sceneryUpdateCount);
+        bindUpdateBadge(pluginsUpdateBadge, pluginsUpdateCount);
+    }
+
+    private static void bindUpdateBadge(Label badge, IntegerProperty count) {
+        badge.textProperty().bind(count.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
+        badge.visibleProperty().bind(count.greaterThan(0));
     }
 
     private void updateDisplay(XPlane xPlane) {
@@ -152,8 +151,7 @@ public class HomeController {
                             AsyncHelper.runAsync(updateChecker);
                         }
                 });
-                default -> {
-                }
+                default -> { /* No update count for unrelated manager events. */ }
             }
         });
         manager.reload();
@@ -248,13 +246,13 @@ public class HomeController {
         
         // Group by category
         List<SkunkcraftsUpdatable> aircraftUpdates = updates.stream()
-                .filter(u -> u instanceof Aircraft)
+                .filter(Aircraft.class::isInstance)
                 .toList();
         List<SkunkcraftsUpdatable> sceneryUpdates = updates.stream()
-                .filter(u -> u instanceof SceneryPackage)
+                .filter(SceneryPackage.class::isInstance)
                 .toList();
         List<SkunkcraftsUpdatable> pluginUpdates = updates.stream()
-                .filter(u -> u instanceof Plugin)
+                .filter(Plugin.class::isInstance)
                 .toList();
         
         if (!aircraftUpdates.isEmpty()) {
@@ -314,7 +312,7 @@ public class HomeController {
 
         Button updateButton = new Button(buttonLabel);
         updateButton.getStyleClass().add("updates-item-button");
-        updateButton.setOnAction(__ -> action.run());
+        updateButton.setOnAction(_ -> action.run());
 
         item.getChildren().addAll(nameLabel, versionLabel, updateButton);
         return item;
@@ -362,7 +360,7 @@ public class HomeController {
                 });
         releaseInfo.releaseNotesUrl().ifPresent(url -> {
             Hyperlink link = new Hyperlink("Release notes");
-            link.setOnAction(__ -> Platforms.getCurrent().openUrl(url));
+            link.setOnAction(_ -> Platforms.getCurrent().openUrl(url));
             row.getChildren().add(link);
         });
         return row;

@@ -91,6 +91,7 @@ public class NavDataFile implements NavDataItem {
         return absolutePath != null ? absolutePath : navDataSet.getFolder().resolve(file);
     }
 
+    @Override
     public String getAiracCycle() {
         return Optional.ofNullable(getData())
                 .map(DatFileData::getHeader)
@@ -99,6 +100,7 @@ public class NavDataFile implements NavDataItem {
                 .orElse(null);
     }
 
+    @Override
     public String getMetadata() {
         return Optional.ofNullable(getData())
                 .map(DatFileData::getHeader)
@@ -106,6 +108,7 @@ public class NavDataFile implements NavDataItem {
                 .orElse(null);
     }
 
+    @Override
     public String getBuild() {
         return Optional.ofNullable(getData())
                 .map(DatFileData::getHeader)

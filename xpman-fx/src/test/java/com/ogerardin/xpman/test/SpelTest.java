@@ -28,12 +28,8 @@ class SpelTest {
 
         XPlane xPlane = new XPlane(defaultXPRootFolder);
         Aircraft aircraft = new Aircraft(xPlane, acfFile);
-//        aircraft.setEnabled(true);
-
         assertThat(eval("true", aircraft), is(TRUE));
         assertThat(eval("name", aircraft), is("Boeing 737-800"));
-//        assertThat(eval("enabled", aircraft), is(TRUE));
-//        assertThat(eval("! enabled", aircraft), is(FALSE));
     }
 
     @Test

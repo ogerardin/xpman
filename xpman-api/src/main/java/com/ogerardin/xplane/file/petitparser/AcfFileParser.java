@@ -39,6 +39,7 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * @see AcfFileData
  */
 @Slf4j
+@SuppressWarnings("java:S100") // Parser rule names intentionally mirror X-Plane grammar productions.
 public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
 
     /**

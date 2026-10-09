@@ -64,9 +64,13 @@ public class UiPlugin implements PluginRow {
     @SuppressWarnings("unused")
     @Label("'Uninstall plugin'")
     @EnabledIf("! system")
-    @Confirm(value = "'The entire folder \"' + xPlane.baseFolder.relativize(plugin.baseFolder) + '\" will be uninstalled.' " +
-            "+ plugin.uninstallWarningDetails " +
-            "+ '\n\nPress OK to continue.'", alertType = Alert.AlertType.WARNING)
+    @Confirm(value = """
+            'The entire folder "' + xPlane.baseFolder.relativize(plugin.baseFolder) + '" will be uninstalled.' +
+            plugin.uninstallWarningDetails +
+            '
+
+Press OK to continue.'
+            """, alertType = Alert.AlertType.WARNING)
     public void uninstall() {
         getXPlane().getPluginManager().uninstallPlugin(plugin);
     }

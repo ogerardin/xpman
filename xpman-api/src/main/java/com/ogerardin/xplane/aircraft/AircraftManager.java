@@ -81,10 +81,8 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         log.debug("Found {} acf files", acfFiles.size());
 
         // build Aircraft object for each applicable file
-        Predicate<AcfFile> isVersion11 = acf -> acf.getFileSpecVersion().matches("11(\\d\\d)");
         items = acfFiles.parallelStream()
                 .map(AcfFile::new)
-//                .filter(isVersion11)
                 .map(this::getAircraft)
                 .toList();
 

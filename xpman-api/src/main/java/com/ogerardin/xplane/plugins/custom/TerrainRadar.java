@@ -36,10 +36,10 @@ public class TerrainRadar extends XPlaneOrgPlugin {
         String firstLine;
         try (Stream<String> lines = Files.lines(readme)) {
             firstLine = lines.findFirst().orElse("");
-        } catch (IOException e) {
+        } catch (IOException _) {
             return super.getVersion();
         }
-        Pattern pattern = Pattern.compile("Terrain radar plugin v([\\d\\.]+).*");
+        Pattern pattern = Pattern.compile("Terrain radar plugin v([\\d\\.]++).*");
         Matcher matcher = pattern.matcher(firstLine);
         if (! matcher.matches()) {
             return super.getVersion();

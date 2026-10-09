@@ -26,24 +26,24 @@ import java.util.Map;
 public abstract class IntrospectingContextMenuFactory<T> {
 
     @Getter(AccessLevel.NONE)
-    private final Map<T, ContextMenu> MENU_CACHE = new IdentityHashMap<>();
+    private final Map<T, ContextMenu> menuCache = new IdentityHashMap<>();
 
     /**
      * Evicts all cached menus. Call when the item set is (re)loaded.
      */
     public void clearCache() {
-        MENU_CACHE.clear();
+        menuCache.clear();
     }
 
     private final Object evaluationContextRoot;
 
     protected ContextMenu getContextMenu(T item) {
-        ContextMenu menu = MENU_CACHE.computeIfAbsent(item, t -> {
+        ContextMenu menu = menuCache.computeIfAbsent(item, t -> {
             MenuItem[] menuItems = buildMenuItems(t, t.getClass());
             ContextMenu m = new ContextMenu(menuItems);
             // re-evaluate @EnabledIf visibility whenever the menu is shown,
             // so menus attached to rows whose state changed stay correct
-            m.setOnShowing(__ -> contextualize(m));
+            m.setOnShowing(_ -> contextualize(m));
             return m;
         });
         contextualize(menu);

@@ -62,13 +62,13 @@ public class JsonManifestLoader {
 
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Path.class,
-                    (JsonDeserializer<Path>) (json, __, ___) -> Path.of(json.getAsString()))
+                    (JsonDeserializer<Path>) (json, _, _) -> Path.of(json.getAsString()))
             .registerTypeAdapter(Platform.class,
-                    (JsonDeserializer<Platform>) (json, __, ___) -> Platforms.valueOf(json.getAsString()))
+                    (JsonDeserializer<Platform>) (json, _, _) -> Platforms.valueOf(json.getAsString()))
             .registerTypeAdapter(XPlaneMajorVersion.class,
-                    (JsonDeserializer<XPlaneMajorVersion>) (json, __, ___) -> XPlaneMajorVersion.of(json.getAsString()))
+                    (JsonDeserializer<XPlaneMajorVersion>) (json, _, _) -> XPlaneMajorVersion.of(json.getAsString()))
             .registerTypeAdapter(Predicate.class, PredicateAdapter.INSTANCE)
-            .registerTypeAdapter(ToolIcon.class, (JsonDeserializer<ToolIcon>) (json, __, ___) -> {
+            .registerTypeAdapter(ToolIcon.class, (JsonDeserializer<ToolIcon>) (json, _, _) -> {
                 String value = json.getAsString();
                 if (value.startsWith("http://") || value.startsWith("https://")) {
                     try {
@@ -83,7 +83,7 @@ public class JsonManifestLoader {
                 }
             })
             .registerTypeAdapter(Pattern.class,
-                    (JsonDeserializer<Pattern>) (json, __, ___) -> Pattern.compile(json.getAsString()))
+                    (JsonDeserializer<Pattern>) (json, _, _) -> Pattern.compile(json.getAsString()))
             .create();
 
     /**

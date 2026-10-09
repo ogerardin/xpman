@@ -3,7 +3,6 @@ package com.ogerardin.xpman.util.jfx.menu;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xpman.util.SpelUtil;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
-import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -32,9 +31,6 @@ public class MethodActionConfigurer<T, R> {
     private final MethodAction<T, R> methodAction = buildMethodAction();
 
     private MethodAction<T, R> buildMethodAction() {
-
-        EnabledIf enabledIf = method.getAnnotation(EnabledIf.class);
-        String enabledIfExpr = (enabledIf != null) ? enabledIf.value() : null;
 
         var builder = new MethodAction.MethodActionBuilder<T, R>()
                 .method(method)

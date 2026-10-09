@@ -50,6 +50,7 @@ public interface NavDataItem {
         return null;
     }
 
+    @SuppressWarnings("java:S1452") // Covariant child lists let implementations expose their concrete node type.
     default List<? extends NavDataItem> getChildren() {
         return Collections.emptyList();
     }

@@ -11,7 +11,6 @@ import com.ogerardin.xplane.navdata.NavDataSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +19,7 @@ import java.util.function.Predicate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.mockito.Mockito.mock;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
@@ -34,11 +34,13 @@ import static org.mockito.Mockito.when;
 class Arinc424DataSetTest {
 
     /** Header of an FAA ARINC 424 cycle, in the column layout the parser relies on. */
+    @SuppressWarnings("java:S6126") // Fixed-column fixture; text-block whitespace would shift parser columns.
     private static final String FAA_HEADER =
             "HDR01FAACIFP18      001P013203969192610  09-SEP-202612:03:55  U.S.A. DOT FAA                \n" +
                     "HDR02                                 FEDERAL AVIATION ADMINISTRATION          \n" +
                     "HDR04                                 CODED INSTRUMENT FLIGHT PROCEDURES VOLUME 2610  EFFECTIVE 01 OCT 2026\n";
 
+    @SuppressWarnings("java:S6126") // Fixed-column fixture; text-block whitespace would shift parser columns.
     private static final String COMMERCIAL_HEADER =
             "HDR01NAVDAT48       001P013203969192610  09-SEP-202612:03:55  NAVDATA (AIRAC 424)            \n" +
                     "HDR02                                 GLOBAL NAVIGATION DATA                 \n";
@@ -64,7 +66,7 @@ class Arinc424DataSetTest {
     void setUp() {
         // A real XPlane reads its version out of an app bundle; stub what the navdata
         // layers actually ask it for.
-        xPlane = Mockito.mock(XPlane.class);
+        xPlane = mock(XPlane.class);
         when(xPlane.getBaseFolder()).thenReturn(xplaneRoot);
         when(xPlane.getMajorVersion()).thenReturn(XPlaneMajorVersion.XP12);
         when(xPlane.getPaths()).thenReturn(xPlane.new XplanePaths());

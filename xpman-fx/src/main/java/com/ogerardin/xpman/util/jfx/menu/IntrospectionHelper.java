@@ -39,7 +39,7 @@ public class IntrospectionHelper {
         try {
             Object.class.getMethod(method.getName(), method.getParameterTypes());
             return false;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return true;
         }
     }

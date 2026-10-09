@@ -44,19 +44,17 @@ public class DryRunArchive implements Archive {
 
     @Override
     public void extract(Path folder, Predicate<Path> filter, ProgressListener progressListener) {
-        record(folder, entry -> Optional.of(entry).filter(filter));
+        recordOverwrites(folder, entry -> ArchiveExtractor.resolveEntryPath(entry, null, filter));
     }
 
     // mirrors the subpath handling of ZipArchive/SevenZArchive.extractEntries
     @Override
     public void extract(Path folder, Path subpath, ProgressListener progressListener) {
-        record(folder, entry -> Optional.of(entry)
-                .filter(path -> path.startsWith(subpath) && path.getNameCount() > subpath.getNameCount())
-                .map(path -> path.subpath(subpath.getNameCount(), path.getNameCount())));
+        recordOverwrites(folder, entry -> ArchiveExtractor.resolveEntryPath(entry, subpath, path -> true));
     }
 
     /** Records the targets of the entries selected by {@code relativeTarget} that already exist as files. */
-    private void record(Path folder, Function<Path, Optional<Path>> relativeTarget) {
+    private void recordOverwrites(Path folder, Function<Path, Optional<Path>> relativeTarget) {
         archive.getPaths().stream()
                 .map(relativeTarget)
                 .flatMap(Optional::stream)

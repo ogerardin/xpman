@@ -116,7 +116,6 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <!-- <finalName>XPman-${project.version}</finalName> -->
                             <mainClass>${app.mainClass}</mainClass>
                             <classifier>repackaged</classifier>
                         </configuration>

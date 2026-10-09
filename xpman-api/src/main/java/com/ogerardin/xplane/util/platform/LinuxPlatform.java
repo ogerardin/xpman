@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class LinuxPlatform implements Platform {
 
+    private static final String XDG_OPEN = "xdg-open";
+
+    @SuppressWarnings("java:S1170") // Platform.getOsType() is an instance method by interface contract.
     public final int osType = com.sun.jna.Platform.LINUX;
 
     @SneakyThrows
@@ -54,19 +57,19 @@ public class LinuxPlatform implements Platform {
     @SneakyThrows
     @Override
     public void openUrl(@NonNull URL url) {
-        CommandExecutor.exec("xdg-open", url.toString());
+        CommandExecutor.exec(XDG_OPEN, url.toString());
     }
 
     @SneakyThrows
     @Override
     public void openFile(@NonNull Path file) {
-        CommandExecutor.exec("xdg-open", file.toString()).orThrow();
+        CommandExecutor.exec(XDG_OPEN, file.toString()).orThrow();
     }
 
     @SneakyThrows
     @Override
     public void openInTextEditor(@NonNull Path file) {
-        CommandExecutor.exec("xdg-open", file.toString()).orThrow();
+        CommandExecutor.exec(XDG_OPEN, file.toString()).orThrow();
     }
 
     @SneakyThrows
@@ -135,11 +138,16 @@ public class LinuxPlatform implements Platform {
         return isPresent(getInstalledLibraries(), soname);
     }
 
+    @SuppressWarnings("java:S1168") // null means the ldconfig probe was unavailable; callers treat that as unknown/present.
     private static List<String> readLdcacheNames() {
         try {
             return CommandExecutor.exec("ldconfig", "-p").outputLines().stream()
                     .map(line -> line.strip().split("\\s+")[0])
                     .toList();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("ldconfig unavailable, cannot verify shared libraries", e);
+            return null;
         } catch (Exception e) {
             // ldconfig missing or unreadable: skip checks rather than reporting everything missing
             log.warn("ldconfig unavailable, cannot verify shared libraries", e);

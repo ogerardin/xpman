@@ -6,7 +6,6 @@ import one.util.streamex.StreamEx;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
 
 @Data
 public class InspectionResult {
@@ -28,10 +27,6 @@ public class InspectionResult {
 
     public static InspectionResult of(List<InspectionMessage> messages) {
         return new InspectionResult(messages);
-    }
-
-    public static Collector<? super InspectionResult, Object, Object> collector() {
-        return null;
     }
 
     /**

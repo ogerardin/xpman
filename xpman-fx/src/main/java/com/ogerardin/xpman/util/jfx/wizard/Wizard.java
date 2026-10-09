@@ -26,6 +26,7 @@ import java.util.stream.Stream;
  * </ul>
  */
 @Slf4j
+@SuppressWarnings("java:S2176") // Deliberately shadows ControlsFX Wizard to provide app-specific behavior.
 public class Wizard extends org.controlsfx.dialog.Wizard {
 
     public Wizard(String title) {
@@ -72,7 +73,7 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
             // if the controller class has a constructor that takes a Wizard parameter, use it
             Constructor<C> constructor = type.getConstructor(this.getClass());
             return constructor.newInstance(this);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException _) {
             // otherwise use no-arg constructor
             return type.getConstructor().newInstance();
         }

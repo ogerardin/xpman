@@ -27,6 +27,7 @@ public class ToolCardView extends HBox {
 
     private static final int ICON_SIZE = 32;
     private static final int ICON_FONT_SIZE = 20;
+    private static final String STYLE_ICON = "tool-card-icon";
 
     public ToolCardView(UiTool uiTool, Object evaluationContextRoot) {
         getStyleClass().add("tool-card");
@@ -49,7 +50,7 @@ public class ToolCardView extends HBox {
             ImageView imageView = new ImageView(new Image(url.toExternalForm(), ICON_SIZE, ICON_SIZE, true, true));
             imageView.setFitWidth(ICON_SIZE);
             imageView.setFitHeight(ICON_SIZE);
-            imageView.getStyleClass().add("tool-card-icon");
+            imageView.getStyleClass().add(STYLE_ICON);
             return imageView;
         } else if (toolIcon instanceof ToolIcon.Resource(var path)) {
             var resourceUrl = getClass().getResource(path);
@@ -57,19 +58,19 @@ public class ToolCardView extends HBox {
                 ImageView imageView = new ImageView(new Image(resourceUrl.toExternalForm(), ICON_SIZE, ICON_SIZE, true, true));
                 imageView.setFitWidth(ICON_SIZE);
                 imageView.setFitHeight(ICON_SIZE);
-                imageView.getStyleClass().add("tool-card-icon");
+                imageView.getStyleClass().add(STYLE_ICON);
                 return imageView;
             }
         } else if (toolIcon instanceof ToolIcon.IconFont(var literal)) {
             FontIcon fontIcon = new FontIcon(literal);
             fontIcon.setIconSize(ICON_FONT_SIZE);
-            fontIcon.getStyleClass().add("tool-card-icon");
+            fontIcon.getStyleClass().add(STYLE_ICON);
             return fontIcon;
         }
 
         FontIcon defaultIcon = new FontIcon(Feather.TOOL);
         defaultIcon.setIconSize(ICON_FONT_SIZE);
-        defaultIcon.getStyleClass().add("tool-card-icon");
+        defaultIcon.getStyleClass().add(STYLE_ICON);
         return defaultIcon;
     }
 

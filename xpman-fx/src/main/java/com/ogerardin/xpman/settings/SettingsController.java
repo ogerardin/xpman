@@ -47,7 +47,7 @@ public class SettingsController {
             root.getChildren().add(item);
         }
         categoryTree.setRoot(root);
-        categoryTree.getSelectionModel().selectedItemProperty().addListener((__, ___, item) ->
+        categoryTree.getSelectionModel().selectedItemProperty().addListener((_, _, item) ->
                 Optional.ofNullable(item).map(TreeItem::getValue).ifPresent(category -> {
                     showCategory(category);
                     mainController.getConfig().setSettingsCategory(category);

@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.nullValue;
 class Arinc424HeaderTest {
 
     /** Real HDR records from an FAA cycle, in the column layout the parser relies on. */
+    @SuppressWarnings("java:S6126") // Fixed-column fixture; text-block whitespace would shift parser columns.
     private static final String FAA_HEADER =
             "HDR01FAACIFP18      001P013203969192610  09-SEP-202612:03:55  U.S.A. DOT FAA                                                113023A4\n" +
             "HDR02                                 FEDERAL AVIATION ADMINISTRATION                                                               \n" +
@@ -41,6 +42,7 @@ class Arinc424HeaderTest {
     }
 
     @Test
+    @SuppressWarnings("java:S6126") // Fixed-column fixture; text-block whitespace would shift parser columns.
     void readsNullCycleWhenTheHeaderHasNoVolume() throws IOException {
         Path file = tempFolder.resolve("earth_424.dat");
         Files.writeString(file,
@@ -54,6 +56,7 @@ class Arinc424HeaderTest {
     }
 
     @Test
+    @SuppressWarnings("java:S6126") // Fixed-column fixture; text-block whitespace would shift parser columns.
     void readsHeaderOfACommercialPublisher() throws IOException {
         String header = "HDR01NAVDAT48       001P013203969192610  09-SEP-202612:03:55  NAVDATA (AIRAC 424)                        \n" +
                 "HDR02                                 GLOBAL NAVIGATION SERVICE                                           \n";

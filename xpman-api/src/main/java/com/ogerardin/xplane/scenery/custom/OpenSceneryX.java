@@ -28,10 +28,10 @@ public class OpenSceneryX extends SceneryPackage {
     }
 
     @SneakyThrows
+    @Override
     public String getVersion() {
         final Path versionFile = getFolder().resolve("version.txt");
-        final String version = Files.readAllLines(versionFile).get(0);
-        return version;
+        return Files.readAllLines(versionFile).get(0);
     }
 
     @SneakyThrows

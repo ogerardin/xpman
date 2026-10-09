@@ -25,7 +25,8 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 
-    private final Pattern FILE_PATTERN = Pattern.compile(".+-(([A-Z0-9\\-]+)\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
+    @SuppressWarnings("java:S8786") // Retain legacy hyphen matching; input is a single bounded local filename.
+    private static final Pattern filePattern = Pattern.compile(".+-(([A-Z0-9\\-]++)\\.v\\.(\\d++)-(\\d++)_\\((\\d++)\\))\\.txt");
 
     @Getter(lazy = true)
     private final String version = loadVersion();
@@ -41,7 +42,7 @@ public class XpfrAircraft extends Aircraft {
         Path folder = getAcfFile().getFile().getParent();
         try (Stream<Path> pathStream = Files.list(folder)) {
             return pathStream
-                    .map(path -> FILE_PATTERN.matcher(path.getFileName().toString()))
+                    .map(path -> filePattern.matcher(path.getFileName().toString()))
                     .filter(Matcher::matches)
                     .map(matcher -> matcher.group(1))
                     .max(Comparator.naturalOrder())

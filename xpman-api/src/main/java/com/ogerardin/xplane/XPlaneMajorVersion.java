@@ -49,21 +49,17 @@ public enum XPlaneMajorVersion {
     }
 
     private static Optional<String> xp12ReleaseNotes(String version) {
-        {
-            Matcher matcher = NEW_VERSION_PATTERN.matcher(version);
-            if (matcher.matches()) {
-                String minor = matcher.group(2);
-                String patch = matcher.group(3);
-                return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-%s-%s-release-notes",
-                        minor, patch));
-            }
+        Matcher newVersion = NEW_VERSION_PATTERN.matcher(version);
+        if (newVersion.matches()) {
+            String minor = newVersion.group(2);
+            String patch = newVersion.group(3);
+            return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-%s-%s-release-notes",
+                    minor, patch));
         }
-        {
-            Matcher matcher = LEGACY_VERSION_PATTERN.matcher(version);
-            if (matcher.matches()) {
-                return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-00-release-notes/#%s",
-                        version.replace(".", "")));
-            }
+        Matcher legacyVersion = LEGACY_VERSION_PATTERN.matcher(version);
+        if (legacyVersion.matches()) {
+            return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-00-release-notes/#%s",
+                    version.replace(".", "")));
         }
         return Optional.empty();
     }

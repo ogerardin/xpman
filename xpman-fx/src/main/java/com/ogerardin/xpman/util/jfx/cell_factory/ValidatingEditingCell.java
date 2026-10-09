@@ -31,7 +31,7 @@ public class ValidatingEditingCell<S> extends TableCell<S, String> {
 
         valid.bind(Bindings.createBooleanBinding(() -> textField.getText() != null && validator.test(textField.getText()),
                 textField.textProperty()));
-        valid.addListener((__, ___, isValid) -> setValidStyle(textField, isValid));
+        valid.addListener((_, _, isValid) -> setValidStyle(textField, isValid));
         setValidStyle(textField, valid.get());
 
         textField.addEventHandler(KeyEvent.KEY_PRESSED, e -> {

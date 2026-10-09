@@ -3,7 +3,6 @@ package com.ogerardin.xpman.util.jfx.cell_factory;
 import com.ogerardin.xpman.panels.plugins.UiPlugin;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.Tooltip;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;

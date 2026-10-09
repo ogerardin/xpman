@@ -24,6 +24,10 @@ public class ForEachMenuItem<T> extends Menu {
     private final ForEach forEach;
 
     public ForEachMenuItem(Object evalContextRoot, ForEach forEach, Method method, T target) {
+        Object exprValue = SpelUtil.eval(forEach.iterable(), target);
+        if (!(exprValue instanceof Iterable<?> iterable)) {
+            throw new IllegalArgumentException(String.format("Expected Iterable, got %s", exprValue));
+        }
         super(forEach.group());
         this.forEach = forEach;
 
@@ -44,10 +48,6 @@ public class ForEachMenuItem<T> extends Menu {
         // build submenu items
         log.debug("Contextualizing {} for {}", this, target);
         getItems().clear();
-        Object exprValue = SpelUtil.eval(this.forEach.iterable(), target);
-        if (! (exprValue instanceof Iterable iterable)) {
-            throw new IllegalArgumentException(String.format("Expected Iterable, got %s", exprValue));
-        }
         for (Object item : iterable) {
             MenuItem menuItem = buildMenuItem(method, target, item, evalContextRoot, paramValueExpr);
             log.debug("Adding item {}", menuItem);

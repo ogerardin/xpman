@@ -1,7 +1,6 @@
 package com.ogerardin.xplane.test.navdata;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.navdata.NavDataItem;
@@ -27,6 +26,7 @@ class NavDataSetTest {
     private static final String DAT_WITH_CYCLE = "I\n1100 version - data cycle %s\n";
 
     /** Header of an FAA ARINC 424 cycle, in the column layout the parser relies on. */
+    @SuppressWarnings("java:S6126") // Fixed-column fixture; text-block whitespace would shift parser columns.
     private static final String FAA_HEADER =
             "HDR01FAACIFP18      001P013203969192610  09-SEP-202612:03:55  U.S.A. DOT FAA                    \n" +
                     "HDR02                                 FEDERAL AVIATION ADMINISTRATION              \n";

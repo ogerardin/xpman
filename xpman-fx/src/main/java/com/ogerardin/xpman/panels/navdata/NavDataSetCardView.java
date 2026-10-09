@@ -44,6 +44,8 @@ import java.util.Optional;
  */
 public class NavDataSetCardView extends VBox {
 
+    private static final String STYLE_BADGE = "navdata-card-badge";
+
     private static final int ICON_SIZE = 14;
     private static final double BALL_RADIUS = 7;
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -93,24 +95,28 @@ public class NavDataSetCardView extends VBox {
         nameLabel.setMaxWidth(Double.MAX_VALUE);
 
         Label layerBadge = new Label("Layer " + layerIndex + "/" + layerCount);
-        layerBadge.getStyleClass().add("navdata-card-badge");
+        layerBadge.getStyleClass().add(STYLE_BADGE);
 
         Label statusLabel = buildStatusLabel(uiItem);
 
         Button helpButton = new Button();
         helpButton.setGraphic(icon(Feather.HELP_CIRCLE));
         helpButton.getStyleClass().add("navdata-card-help");
-        helpButton.setOnAction(__ -> NavDataInfoDialog.show(uiItem, this));
+        helpButton.setOnAction(_ -> NavDataInfoDialog.show(uiItem, this));
 
         HBox header = new HBox(8, nameLabel, layerBadge, statusLabel, helpButton);
         header.getStyleClass().add("navdata-card-header");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
         if (ignored || suppressed > 0) {
-            Label overrideBadge = new Label(ignored
-                    ? "ignored by layer " + overriding
-                    : "overrides " + suppressed + (suppressed == 1 ? " layer" : " layers"));
-            overrideBadge.getStyleClass().add("navdata-card-badge");
+            String overrideText;
+            if (ignored) {
+                overrideText = "ignored by layer " + overriding;
+            } else {
+                overrideText = "overrides " + suppressed + (suppressed == 1 ? " layer" : " layers");
+            }
+            Label overrideBadge = new Label(overrideText);
+            overrideBadge.getStyleClass().add(STYLE_BADGE);
             overrideBadge.getStyleClass().add("navdata-card-badge-override");
             header.getChildren().add(overrideBadge);
         }
@@ -120,7 +126,7 @@ public class NavDataSetCardView extends VBox {
         filesChevron.setIconSize(ICON_SIZE);
         filesToggle.setGraphic(filesChevron);
         filesToggle.getStyleClass().add("navdata-card-files-toggle");
-        filesToggle.setOnAction(__ -> toggleFiles(uiItem));
+        filesToggle.setOnAction(_ -> toggleFiles(uiItem));
 
         HBox actions = buildHoverActions(uiItem);
 
@@ -230,7 +236,7 @@ public class NavDataSetCardView extends VBox {
         row.getStyleClass().add("navdata-card-file-row");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        if (!item.getExists()) {
+        if (!item.getExists().booleanValue()) {
             nameLabel.getStyleClass().add("navdata-card-file-missing");
             Label missing = new Label("absent");
             missing.getStyleClass().add("navdata-status-info");
@@ -238,7 +244,7 @@ public class NavDataSetCardView extends VBox {
         } else {
             Optional.ofNullable(item.getAiracCycle()).ifPresent(cycle -> {
                 Label cycleBadge = new Label("AIRAC " + cycle);
-                cycleBadge.getStyleClass().add("navdata-card-badge");
+                cycleBadge.getStyleClass().add(STYLE_BADGE);
                 row.getChildren().add(cycleBadge);
             });
             Label meta = new Label(metaText(item));
@@ -260,7 +266,7 @@ public class NavDataSetCardView extends VBox {
             String modified = DATE_FORMAT.format(
                     Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault()));
             return size + " · " + modified;
-        } catch (IOException e) {
+        } catch (IOException _) {
             return "?";
         }
     }
@@ -284,8 +290,8 @@ public class NavDataSetCardView extends VBox {
         if (scene == null) {
             return;
         }
-        EventHandler<MouseEvent> outsidePressHandler = __ -> menu.hide();
+        EventHandler<MouseEvent> outsidePressHandler = _ -> menu.hide();
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler);
-        menu.setOnHidden(__ -> scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler));
+        menu.setOnHidden(_ -> scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler));
     }
 }

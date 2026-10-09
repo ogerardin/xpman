@@ -4,13 +4,20 @@ import com.ogerardin.xplane.tools.JsonManifestLoader;
 import com.ogerardin.xplane.tools.Manifest;
 import com.ogerardin.xplane.tools.ToolIcon;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonManifestLoaderTest {
+
+    @TempDir
+    Path tempDir;
 
     @Test
     void loadManifestWithIcon() throws Exception {
@@ -49,5 +56,17 @@ class JsonManifestLoaderTest {
             assertTrue(matcher.find());
             assertEquals("3.2e", matcher.group(1));
         }
+    }
+
+    @Test
+    void installCheckerFindsStringInBinaryFile() throws Exception {
+        String json = """
+                {"installChecker":{"string":"1.3.3"}}
+                """;
+        Manifest manifest = JsonManifestLoader.loadManifest(new ByteArrayInputStream(json.getBytes()), "test.json");
+        Path binary = tempDir.resolve("binary.exe");
+        Files.writeString(binary, "version 1.3.3", StandardCharsets.ISO_8859_1);
+
+        assertTrue(manifest.installChecker().test(binary));
     }
 }

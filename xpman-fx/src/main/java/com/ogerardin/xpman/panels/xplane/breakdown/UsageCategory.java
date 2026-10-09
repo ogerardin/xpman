@@ -38,7 +38,7 @@ enum UsageCategory {
                     long total = FileUtils.getFolderSize(xp.getBaseFolder());
                     long used = folderSizes.values().stream().mapToLong(Long::longValue).sum();
                     return new CategoryResult(total - used, List.of());
-                } catch (IOException e) {
+                } catch (IOException _) {
                     return new CategoryResult(0, List.of());
                 }
             });
@@ -50,14 +50,14 @@ enum UsageCategory {
 
     UsageCategory(String text, String styleClass, Function<XPlane, Path> pathResolver) {
         this(text, styleClass, pathResolver,
-                (xp, __) -> computeFolderPath(xp, pathResolver.apply(xp)));
+                (xp, _) -> computeFolderPath(xp, pathResolver.apply(xp)));
     }
 
     static CategoryResult computeFolderPath(XPlane xp, Path folder) {
         if (!Files.exists(folder)) return new CategoryResult(0, List.of());
         try {
             return new CategoryResult(FileUtils.getFolderSize(folder), List.of(xp.getBaseFolder().relativize(folder)));
-        } catch (IOException e) {
+        } catch (IOException _) {
             return new CategoryResult(0, List.of());
         }
     }

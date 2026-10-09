@@ -28,7 +28,7 @@ public class WrappingCellFactory<S> implements TableCellFactory<S, String> {
                     l.setWrapText(true);
                     VBox box = new VBox(l);
                     box.setAlignment(Pos.CENTER_LEFT);
-                    l.heightProperty().addListener((__, ___, newValue) -> {
+                    l.heightProperty().addListener((_, _, newValue) -> {
                         box.setPrefHeight(newValue.doubleValue() + 7);
                         Platform.runLater(() -> this.getTableRow().requestLayout());
                     });

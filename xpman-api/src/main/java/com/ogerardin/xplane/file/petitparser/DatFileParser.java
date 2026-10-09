@@ -33,6 +33,7 @@ import static org.petitparser.parser.primitive.StringParser.ofIgnoringCase;
  * @author Olivier G.
  * @see DatFileData
  */
+@SuppressWarnings("java:S100") // Parser rule names intentionally mirror X-Plane grammar productions.
 public class DatFileParser extends XPlaneFileParserBase<DatFileData> {
 
     /**

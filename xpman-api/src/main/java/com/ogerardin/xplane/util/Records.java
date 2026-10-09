@@ -27,12 +27,12 @@ public class Records {
         RecordComponent[] recordComponents = recordClass.getRecordComponents();
         Object[] values = new Object[recordComponents.length];
 
-        for (R record : records) {
+        for (R sourceRecord : records) {
             // overwrite the value of each component with the current record's value unless it is null
             for (int i = 0; i < recordComponents.length; i++) {
                 RecordComponent recordComponent = recordComponents[i];
                 Method accessor = recordComponent.getAccessor();
-                Object value = invokeSneaky(record, accessor);
+                Object value = invokeSneaky(sourceRecord, accessor);
                 if (value != null) {
                     values[i] = value;
                 }
@@ -42,9 +42,7 @@ public class Records {
         // create a new record instance with the coalesced values
         @SuppressWarnings("unchecked")
         Constructor<R> constructor = (Constructor<R>) recordClass.getDeclaredConstructors()[0];
-        constructor.setAccessible(true);
-        R clone = constructor.newInstance(values);
-        return clone;
+        return constructor.newInstance(values);
     }
 
 }

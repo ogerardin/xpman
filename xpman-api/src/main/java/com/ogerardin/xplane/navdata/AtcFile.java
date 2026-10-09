@@ -65,11 +65,11 @@ public class AtcFile implements NavDataItem {
 
     @Override
     public String getDescription() {
-        AtcFileData data = getData();
-        if (data == null) {
+        AtcFileData fileData = getData();
+        if (fileData == null) {
             return null;
         }
-        Header header = data.getHeader();
+        Header header = fileData.getHeader();
         return "<h3>" + getName() + "</h3><p><b>Origin:</b> " + header.getOrigin()
                 + "<br/><b>Spec version:</b> " + header.getSpecVersion()
                 + "<br/><b>File type:</b> " + header.getFileType() + "</p>";

@@ -14,87 +14,83 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class LuaHeaderParser {
+
+    private LuaHeaderParser() {}
     
     private static final int MAX_LINES = 50;
     
     private static final Pattern NAME_PATTERN = Pattern.compile(
-        "^\\s*--\\s*(?:@name|name|Name)[:\\s]+(.+)$", Pattern.CASE_INSENSITIVE
+        "^\\s*+--\\s*+@?name[:\\s]++(.++)$", Pattern.CASE_INSENSITIVE
     );
     
     private static final Pattern VERSION_PATTERN = Pattern.compile(
-        "^\\s*--\\s*(?:@version|version|Version)[:\\s]+(.+)$", Pattern.CASE_INSENSITIVE
+        "^\\s*+--\\s*+@?version[:\\s]++(.++)$", Pattern.CASE_INSENSITIVE
     );
     
     private static final Pattern DESC_PATTERN = Pattern.compile(
-        "^\\s*--\\s*(?:@description|description|Description)[:\\s]+(.+)$", Pattern.CASE_INSENSITIVE
+        "^\\s*+--\\s*+@?description[:\\s]++(.++)$", Pattern.CASE_INSENSITIVE
     );
     
-    private static final Pattern COMMENT_PATTERN = Pattern.compile("^\\s*--\\s*(.+)$");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("^\\s*+--\\s*+(.++)$");
     
     /**
      * Parses metadata from a Lua script file.
      * Reads the first 50 lines looking for metadata patterns.
      */
     public static LuaMetadata parse(Path luaFile) {
-        String name = null;
-        String version = null;
-        StringBuilder description = new StringBuilder();
+        HeaderMetadata metadata = new HeaderMetadata();
         
         try (Stream<String> lines = Files.lines(luaFile)) {
             int lineCount = 0;
             for (String line : lines.limit(MAX_LINES).toList()) {
-                lineCount++;
-                
-                if (name == null) {
-                    Matcher nameMatcher = NAME_PATTERN.matcher(line);
-                    if (nameMatcher.matches()) {
-                        name = nameMatcher.group(1).trim();
-                        continue;
-                    }
-                }
-                
-                if (version == null) {
-                    Matcher versionMatcher = VERSION_PATTERN.matcher(line);
-                    if (versionMatcher.matches()) {
-                        version = versionMatcher.group(1).trim();
-                        continue;
-                    }
-                }
-                
-                if (description.isEmpty()) {
-                    Matcher descMatcher = DESC_PATTERN.matcher(line);
-                    if (descMatcher.matches()) {
-                        description.append(descMatcher.group(1).trim());
-                        continue;
-                    }
-                }
-                
-                // Collect general comment lines for fallback description
-                if (description.isEmpty() && lineCount <= 10) {
-                    Matcher commentMatcher = COMMENT_PATTERN.matcher(line);
-                    if (commentMatcher.matches()) {
-                        String comment = commentMatcher.group(1).trim();
-                        if (!comment.isEmpty() && !comment.startsWith("@") && !comment.contains(":")) {
-                            if (description.length() > 0) {
-                                description.append(" ");
-                            }
-                            description.append(comment);
-                        }
-                    }
-                }
+                metadata.accept(line, ++lineCount);
             }
         } catch (IOException e) {
             log.warn("Failed to parse Lua header: {}", luaFile, e);
         }
-        
+
         // Fallback: derive name from filename
-        if (name == null) {
-            name = deriveNameFromFilename(luaFile);
+        String name = metadata.name == null ? deriveNameFromFilename(luaFile) : metadata.name;
+        return metadata.result(name);
+    }
+
+    private static class HeaderMetadata {
+        private String name;
+        private String version;
+        private final StringBuilder description = new StringBuilder();
+
+        private void accept(String line, int lineCount) {
+            if (name == null && (name = firstGroup(NAME_PATTERN, line)) != null) return;
+            if (version == null && (version = firstGroup(VERSION_PATTERN, line)) != null) return;
+            if (description.isEmpty()) {
+                String explicitDescription = firstGroup(DESC_PATTERN, line);
+                if (explicitDescription != null) {
+                    description.append(explicitDescription);
+                    return;
+                }
+            }
+            appendFallbackComment(description, line, lineCount);
         }
-        
-        String desc = description.length() > 0 ? description.toString() : null;
-        
-        return new LuaMetadata(name, desc, version);
+
+        private LuaMetadata result(String name) {
+            return new LuaMetadata(name, description.isEmpty() ? null : description.toString(), version);
+        }
+
+        private static String firstGroup(Pattern pattern, String line) {
+            Matcher matcher = pattern.matcher(line);
+            return matcher.matches() ? matcher.group(1).trim() : null;
+        }
+
+        private static void appendFallbackComment(StringBuilder description, String line, int lineCount) {
+            if (!description.isEmpty() || lineCount > 10) return;
+            Matcher matcher = COMMENT_PATTERN.matcher(line);
+            if (!matcher.matches()) return;
+            String comment = matcher.group(1).trim();
+            if (!comment.isEmpty() && !comment.startsWith("@") && !comment.contains(":")) {
+                if (!description.isEmpty()) description.append(" ");
+                description.append(comment);
+            }
+        }
     }
     
     /**

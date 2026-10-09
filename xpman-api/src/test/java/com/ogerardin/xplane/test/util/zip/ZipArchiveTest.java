@@ -123,4 +123,26 @@ class ZipArchiveTest {
         assertThat(Files.readString(target.resolve("file1.txt")), is("hello"));
         assertThat(Files.readString(target.resolve("sub/file2.txt")), is("world"));
     }
+
+    @Test
+    void testExtractFilter() throws IOException {
+        Path target = tempDir.resolve("target-filtered");
+
+        newArchive().extract(target, path -> path.endsWith("file1.txt"), null);
+
+        assertThat(Files.readString(target.resolve("root/file1.txt")), is("hello"));
+        assertThat(Files.exists(target.resolve("root/sub/file2.txt")), is(false));
+    }
+
+    @Test
+    void testExtractRejectsZipSlipEntry() throws IOException {
+        Path maliciousZip = tempDir.resolve("malicious.zip");
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(maliciousZip))) {
+            putEntry(zos, "../escape.txt", "outside");
+        }
+
+        Path target = tempDir.resolve("target-malicious");
+        assertThrows(IOException.class, () -> new ZipArchive(maliciousZip).extract(target, null));
+        assertThat(Files.exists(tempDir.resolve("escape.txt")), is(false));
+    }
 }

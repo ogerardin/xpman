@@ -18,10 +18,8 @@ import static org.hamcrest.Matchers.is;
 
 @Slf4j
 @ExtendWith(TimingExtension.class)
+@SuppressWarnings("java:S5976") // Each test has a distinct X-Plane version or aircraft-presence gate.
 class AcfFileParserTest extends ParserTest<AcfFileData> {
-
-    @SuppressWarnings("FieldCanBeLocal")
-    private final boolean TRACE = false;
 
     @Test
     @EnableOnLocalXPlane11

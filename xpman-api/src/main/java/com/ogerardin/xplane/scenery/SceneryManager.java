@@ -111,26 +111,7 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
 
         for (int i = 0; i < iniItems.size(); i++) {
             SceneryPackIniItem item = iniItems.get(i);
-            int rank = i + 1;
-            Path resolvedFolder = item.resolveFolder(xPlane.getBaseFolder(), xPlane.getPaths().globalAirports());
-            if (resolvedFolder != null) {
-                resolvedFolders.add(resolvedFolder);
-            }
-            SceneryPackage sceneryPackage = resolvedFolder == null ? null : packagesByFolder.get(resolvedFolder);
-            if (sceneryPackage == null && resolvedFolder != null) {
-                // fallback: legacy enable/disable moves the folder into the disabled scenery
-                // folder without touching the ini; look for it there
-                Path disabledFolder = disabledSceneryFolder.resolve(resolvedFolder.getFileName());
-                if (Files.isDirectory(disabledFolder)) {
-                    sceneryPackage = createSceneryPackage(disabledFolder);
-                }
-            }
-            if (sceneryPackage != null) {
-                sceneryPackage.setRank(rank);
-                entries.add(SceneryEntry.inIni(item, sceneryPackage, rank));
-            } else {
-                entries.add(SceneryEntry.unresolved(item, rank));
-            }
+            entries.add(buildEntry(item, i + 1, resolvedFolders));
         }
 
         // append on-disk packages that are not listed in the ini (system/global scenery folders
@@ -142,6 +123,21 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
         });
 
         return entries;
+    }
+
+    private SceneryEntry buildEntry(SceneryPackIniItem item, int rank, Set<Path> resolvedFolders) {
+        Path resolvedFolder = item.resolveFolder(xPlane.getBaseFolder(), xPlane.getPaths().globalAirports());
+        if (resolvedFolder != null) resolvedFolders.add(resolvedFolder);
+
+        SceneryPackage sceneryPackage = resolvedFolder == null ? null : packagesByFolder.get(resolvedFolder);
+        if (sceneryPackage == null && resolvedFolder != null) {
+            // Legacy enable/disable may move the folder without updating scenery_packs.ini.
+            Path disabledFolder = disabledSceneryFolder.resolve(resolvedFolder.getFileName());
+            if (Files.isDirectory(disabledFolder)) sceneryPackage = createSceneryPackage(disabledFolder);
+        }
+        if (sceneryPackage == null) return SceneryEntry.unresolved(item, rank);
+        sceneryPackage.setRank(rank);
+        return SceneryEntry.inIni(item, sceneryPackage, rank);
     }
 
     private SceneryPacksIniFile getSceneryPacksIniFile() {

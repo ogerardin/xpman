@@ -50,7 +50,7 @@ public class ToolsController extends Controller {
         );
 
         filteredList = new FilteredList<>(uiItems);
-        filteredList.addListener((ListChangeListener<UiTool>) __ -> updateCardList());
+        filteredList.addListener((ListChangeListener<UiTool>) _ -> updateCardList());
 
         // initially display available tools only (simulate click on "Available" button)
         availableButton.fire();
@@ -60,7 +60,7 @@ public class ToolsController extends Controller {
         cardListContainer.getChildren().clear();
         for (UiTool uiTool : filteredList) {
             ToolCardView card = new ToolCardView(uiTool, this);
-            card.setOnMouseClicked(__ -> detailView.setTool(uiTool));
+            card.setOnMouseClicked(_ -> detailView.setTool(uiTool));
             cardListContainer.getChildren().add(card);
         }
 

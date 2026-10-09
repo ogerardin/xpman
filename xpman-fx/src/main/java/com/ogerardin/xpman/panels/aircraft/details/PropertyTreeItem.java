@@ -7,6 +7,7 @@ public interface PropertyTreeItem {
 
     String getName();
 
+    @SuppressWarnings("java:S1452") // Covariant child lists let implementations expose their concrete node type.
     default List<? extends PropertyTreeItem> getChildren() {
         return Collections.emptyList();
     }

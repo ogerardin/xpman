@@ -99,13 +99,13 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     @SneakyThrows
     private Map<String, Path> computeManuals() {
-        Map<String, Path> manuals = new HashMap<>();
+        Map<String, Path> foundManuals = new HashMap<>();
         try (Stream<Path> paths = Files.walk(getBaseFolder())) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".pdf"))
-                    .forEach(p -> manuals.put(p.getFileName().toString(), p));
+                    .forEach(p -> foundManuals.put(p.getFileName().toString(), p));
         }
-        return manuals;
+        return foundManuals;
     }
 
     public boolean isEnabled() {

@@ -85,10 +85,11 @@ public class UiSceneryEntry implements SwitchRow {
 
     @Label("'Uninstall'")
     @EnabledIf("sceneryPackage != null && ! sceneryPackage.system && ! token")
-    @Confirm("'The entire folder \"' + xPlane.baseFolder.relativize(sceneryPackage.folder) " +
-            "+ '\" will be uninstalled.\n" +
-            "\n" +
-            "Press OK to continue.'")
+    @Confirm("""
+            'The entire folder "' + xPlane.baseFolder.relativize(sceneryPackage.folder) + '" will be uninstalled.
+
+Press OK to continue.'
+            """)
     public void uninstall() {
         xPlane.getSceneryManager().uninstallSceneryPackage(getSceneryPackage());
     }

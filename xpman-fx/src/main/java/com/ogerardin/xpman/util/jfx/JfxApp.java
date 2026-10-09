@@ -62,7 +62,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
         tk.setAppearanceMode(AppearanceMode.AUTO);
         if (stage.getScene().getRoot() instanceof Pane root) {
             root.getChildren().stream()
-                    .filter(child -> child instanceof MenuBar)
+                    .filter(MenuBar.class::isInstance)
                     .map(MenuBar.class::cast)
                     .findFirst()
                     .map(JfxApp::fixShortcuts)

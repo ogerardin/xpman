@@ -34,22 +34,23 @@ public record SkunkcraftsConfig(
 
         for (String line : lines) {
             String trimmed = line.trim();
-            if (trimmed.isEmpty() || trimmed.startsWith("#")) continue;
+            if (!trimmed.isEmpty() && !trimmed.startsWith("#")) {
+                String[] parts = trimmed.split("\\|", 2);
+                if (parts.length >= 2) {
+                    String key = parts[0].trim().toLowerCase();
+                    String value = parts[1].trim();
 
-            String[] parts = trimmed.split("\\|", 2);
-            if (parts.length < 2) continue;
-
-            String key = parts[0].trim().toLowerCase();
-            String value = parts[1].trim();
-
-            switch (key) {
-                case "name" -> name = value;
-                case "version" -> version = value;
-                case "module" -> moduleUrl = value;
-                case "zone" -> zone = value;
-                case "locked" -> locked = Boolean.parseBoolean(value);
-                case "disabled" -> disabled = Boolean.parseBoolean(value);
-                case "liveries" -> liveries = Boolean.parseBoolean(value);
+                    switch (key) {
+                        case "name" -> name = value;
+                        case "version" -> version = value;
+                        case "module" -> moduleUrl = value;
+                        case "zone" -> zone = value;
+                        case "locked" -> locked = Boolean.parseBoolean(value);
+                        case "disabled" -> disabled = Boolean.parseBoolean(value);
+                        case "liveries" -> liveries = Boolean.parseBoolean(value);
+                        default -> { /* ignore unknown keys */ }
+                    }
+                }
             }
         }
 

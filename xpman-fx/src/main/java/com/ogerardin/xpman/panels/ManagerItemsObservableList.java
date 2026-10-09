@@ -51,7 +51,7 @@ public class ManagerItemsObservableList<T, U>
     public ManagerItemsObservableList(XPlaneProperty xPlaneProperty, Function<XPlane, Manager<T>> managerGetter, Function<T, U> mapper) {
         this.managerGetter = managerGetter;
         this.mapper = mapper;
-        xPlaneProperty.addListener((__, ___, newValue) -> reload(newValue));
+        xPlaneProperty.addListener((_, _, newValue) -> reload(newValue));
         reload(xPlaneProperty.get());
     }
 
@@ -70,22 +70,18 @@ public class ManagerItemsObservableList<T, U>
         log.debug("Received event: {}", event);
 
         switch (event.getType()) {
-            case LOADING -> {
-                Platform.runLater(() -> {
-                    getLoadingProperty().set(true);
-                    observableList.clear();
-                });
-            }
-            case LOADED -> {
-                Platform.runLater(() -> {
+            case LOADING -> Platform.runLater(() -> {
+                getLoadingProperty().set(true);
+                observableList.clear();
+            });
+            case LOADED -> Platform.runLater(() -> {
                     getLoadingProperty().set(false);
                     final List<T> items = event.getItems();
                     // map items to UI items
                     final List<U> uiItems = items.stream().map(mapper).toList();
                     observableList.setAll(uiItems);
-                });
-            }
-            default -> {}
+            });
+            default -> { /* Ignore event kinds not represented by this list. */ }
         }
 
     }

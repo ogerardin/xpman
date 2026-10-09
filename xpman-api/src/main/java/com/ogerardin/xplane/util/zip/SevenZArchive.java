@@ -10,7 +10,6 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -20,9 +19,6 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Data
 public class SevenZArchive implements Archive {
-
-    private static final int BUFFER_SIZE = 8192;
-    private static final long PROGRESS_REPORT_INTERVAL = 64 * 1024;
 
     private final Path sevenZFile;
 
@@ -103,59 +99,10 @@ public class SevenZArchive implements Archive {
     }
 
     private void extractEntries(SevenZFile szf, Path targetFolder, ProgressListener progressListener, Path subpath, Predicate<Path> filter) throws IOException {
-        Files.createDirectories(targetFolder);
-        final Path normalizedTarget = targetFolder.toAbsolutePath().normalize();
-        final List<? extends SevenZArchiveEntry> entries = StreamSupport.stream(szf.getEntries().spliterator(), false).toList();
-        final long totalBytes = entries.stream().mapToLong(e -> Math.max(0, e.getSize())).sum();
-
-        long copiedBytes = 0;
-        long nextReport = 0;
-        for (SevenZArchiveEntry entry : entries) {
-            if (progressListener != null && copiedBytes >= nextReport) {
-                progressListener.progress((double) copiedBytes / Math.max(1, totalBytes), "Extracting " + entry.getName());
-                nextReport = copiedBytes + PROGRESS_REPORT_INTERVAL;
-            }
-
-            Path entryPath = Paths.get(entry.getName());
-
-            if (subpath != null) {
-                if (!entryPath.startsWith(subpath)) {
-                    continue;
-                }
-                if (entryPath.getNameCount() <= subpath.getNameCount()) {
-                    continue;
-                }
-                entryPath = entryPath.subpath(subpath.getNameCount(), entryPath.getNameCount());
-            }
-
-            if (!filter.test(entryPath)) {
-                continue;
-            }
-
-            final Path target = normalizedTarget.resolve(entryPath.toString()).normalize();
-            if (!target.startsWith(normalizedTarget)) {
-                throw new IOException("Blocked potentially malicious 7z entry: " + entry.getName());
-            }
-            if (entry.isDirectory()) {
-                Files.createDirectories(target);
-                continue;
-            }
-            if (target.getParent() != null) {
-                Files.createDirectories(target.getParent());
-            }
-            try (InputStream is = szf.getInputStream(entry)) {
-                try (OutputStream os = new BufferedOutputStream(Files.newOutputStream(target))) {
-                    final byte[] buffer = new byte[BUFFER_SIZE];
-                    int read;
-                    while ((read = is.read(buffer)) != -1) {
-                        os.write(buffer, 0, read);
-                        copiedBytes += read;
-                    }
-                }
-            }
-        }
-        if (progressListener != null) {
-            progressListener.progress(1.00, "Done!");
-        }
+        List<ArchiveExtractor.Entry> entries = StreamSupport.stream(szf.getEntries().spliterator(), false)
+                .map(entry -> new ArchiveExtractor.Entry(entry.getName(), entry.getSize(), entry.isDirectory(),
+                        () -> szf.getInputStream(entry)))
+                .toList();
+        ArchiveExtractor.extractEntries(entries, targetFolder, progressListener, subpath, filter, "7z");
     }
 }

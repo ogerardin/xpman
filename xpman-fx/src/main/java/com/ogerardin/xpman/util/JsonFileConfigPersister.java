@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 @Slf4j
 public class JsonFileConfigPersister<C> {
 
-    private final Gson GSON = new GsonBuilder()
+    private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
 
@@ -46,8 +46,8 @@ public class JsonFileConfigPersister<C> {
         try {
             //noinspection ConstantConditions
             String json = new String(Files.readAllBytes(file));
-            return GSON.fromJson(json, configClass);
-        } catch (NoSuchFileException e) {
+            return gson.fromJson(json, configClass);
+        } catch (NoSuchFileException _) {
             //noinspection ConstantConditions
             return configClass.getDeclaredConstructor().newInstance();
         }
@@ -58,7 +58,7 @@ public class JsonFileConfigPersister<C> {
         // we can't use the field config directly because Lombok's lazy mechanism messes up GSON's introspection
         C confToSave = getConfig();
         log.debug("Storing prefs for {} with value: {} to file {}", configClass, confToSave, file);
-        final String json = GSON.toJson(confToSave);
+        final String json = gson.toJson(confToSave);
         Files.write(file, json.getBytes());
     }
 

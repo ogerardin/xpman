@@ -30,6 +30,7 @@ import java.util.Optional;
 @Slf4j
 public class WindowsPlatform implements Platform {
 
+    @SuppressWarnings("java:S1170") // Platform.getOsType() is an instance method by interface contract.
     public final int osType = com.sun.jna.Platform.WINDOWS;
 
     @SneakyThrows

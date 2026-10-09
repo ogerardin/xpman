@@ -1,4 +1,4 @@
 package com.ogerardin.xplane.file.data.obj;
 
-public class ObjDatum extends ObjItem {
+public class ObjDatum implements ObjItem {
 }

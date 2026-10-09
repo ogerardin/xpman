@@ -20,7 +20,7 @@ class ToolIconTest {
     @BeforeAll
     static void setUp() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(ToolIcon.class, (JsonDeserializer<ToolIcon>) (json, __, ___) -> {
+                .registerTypeAdapter(ToolIcon.class, (JsonDeserializer<ToolIcon>) (json, _, _) -> {
                     String value = json.getAsString();
                     if (value.startsWith("http://") || value.startsWith("https://")) {
                         try {

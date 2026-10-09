@@ -27,15 +27,11 @@ class CategorySegment extends Segment {
         return computing;
     }
 
-    {
-        // reset the computing property to false whenever the value is changed
-        valueProperty().addListener((__, ___, ____) -> computing.setValue(false));
-    }
-
     public CategorySegment(UsageCategory category, double value) {
         super(value);
         this.category = category;
         setText(category.getText());
+        valueProperty().addListener((_, _, _) -> computing.setValue(false));
     }
 
     public CategorySegment(UsageCategory category) {

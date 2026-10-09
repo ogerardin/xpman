@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class MacPlatform implements Platform {
 
+    @SuppressWarnings("java:S1170") // Platform.getOsType() is an instance method by interface contract.
     public final int osType = com.sun.jna.Platform.MAC;
 
     @SneakyThrows
@@ -164,6 +165,7 @@ public class MacPlatform implements Platform {
     }
 
     @SneakyThrows
+    @Override
     public void fixAppBundlePermissions(Path path) {
         if (!AppBundle.isAppBundle(path)) {
             return;

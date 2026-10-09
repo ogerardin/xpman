@@ -28,7 +28,6 @@ public class RulesController {
     @FXML
     private Button downButton;
 
-    private SceneryOrganizer sceneryOrganizer;
     @FXML
     private TableColumn<SceneryClass, String> regexColumn;
     @FXML
@@ -56,7 +55,7 @@ public class RulesController {
 
         tableView.setRowFactory(tv -> {
             TableRow<SceneryClass> row = new TableRow<>();
-            row.itemProperty().addListener((__, ___, item) ->
+            row.itemProperty().addListener((_, _, item) ->
                     row.setStyle(item != null && item.isBuiltin() ? "-fx-font-style: italic; -fx-opacity: 0.8;" : null));
             return row;
         });
@@ -92,7 +91,7 @@ public class RulesController {
         try {
             Pattern.compile(s);
             return true;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
     }
@@ -131,13 +130,7 @@ public class RulesController {
 
     @FXML
     private void restoreDefaults() {
-        final SceneryOrganizer sceneryOrganizer = new SceneryOrganizer();
-        setItems(sceneryOrganizer.getOrderedSceneryClasses());
-    }
-
-    public void setSceneryOrganizer(SceneryOrganizer sceneryOrganizer) {
-        this.sceneryOrganizer = sceneryOrganizer;
-        setItems(sceneryOrganizer.getOrderedSceneryClasses());
+        setItems(new SceneryOrganizer().getOrderedSceneryClasses());
     }
 
     public List<SceneryClass> getItems() {

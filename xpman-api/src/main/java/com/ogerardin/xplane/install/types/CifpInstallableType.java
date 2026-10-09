@@ -80,6 +80,7 @@ public class CifpInstallableType implements InstallableType {
     }
 
     @Override
+    @SuppressWarnings("java:S5443") // Short-lived staging directory under the OS temp root; deleted in finally.
     public void install(XPlane xPlane, Archive archive, ProgressListener progress) throws InstallationException {
         Path entry = archive.getPaths().stream()
                 .filter(path -> FAACIFP18.equals(path.getFileName().toString()))

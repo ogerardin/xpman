@@ -88,6 +88,7 @@ public class ServersFileData extends XPlaneFileData {
         public static final String TYPE_FINAL = "FINAL";
 
         private final String type;
+        @SuppressWarnings("java:S1700") // A Version value necessarily carries a component named version.
         private final String version;
     }
 }

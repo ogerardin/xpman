@@ -58,7 +58,7 @@ public class NavDataInfoDialog extends Dialog<Void> {
         }
 
         Hyperlink docLink = new Hyperlink("X-Plane nav data documentation");
-        docLink.setOnAction(__ -> openUrl(DOC_URL));
+        docLink.setOnAction(_ -> openUrl(DOC_URL));
         content.getChildren().add(docLink);
 
         ScrollPane scrollPane = new ScrollPane(content);
@@ -94,76 +94,125 @@ public class NavDataInfoDialog extends Dialog<Void> {
         if (html == null || html.isBlank()) {
             return new Label("No description available.");
         }
+        return new HtmlRenderer().render(tokenizeHtml(html));
+    }
 
-        TextFlow flow = new TextFlow();
-        flow.setLineSpacing(4);
+    private static class HtmlRenderer {
+        private final TextFlow flow = new TextFlow();
+        private boolean inBold;
+        private boolean inHeading;
+        private boolean needBullet;
+        private String pendingHref;
 
-        List<String> tokens = tokenizeHtml(html);
-
-        boolean inBold = false;
-        boolean inHeading = false;
-        boolean needBullet = false;
-        String pendingHref = null;
-
-        for (String token : tokens) {
-            if (token.startsWith("<")) {
-                String tag = token.toLowerCase();
-                if (tag.equals("<h3>") || tag.startsWith("<h3 ")) {
-                    inHeading = true;
-                } else if (tag.equals("</h3>")) {
-                    inHeading = false;
-                    flow.getChildren().add(new Text("\n\n"));
-                } else if (tag.equals("<p>") || tag.startsWith("<p ")) {
-                    flow.getChildren().add(new Text("\n\n"));
-                } else if (tag.equals("<ul>") || tag.startsWith("<ul ")) {
-                    // enter list
-                } else if (tag.equals("</ul>")) {
-                    flow.getChildren().add(new Text("\n"));
-                } else if (tag.equals("<li>") || tag.startsWith("<li ")) {
-                    needBullet = true;
-                } else if (tag.equals("</li>")) {
-                    flow.getChildren().add(new Text("\n"));
-                } else if (tag.equals("<strong>") || tag.startsWith("<strong ")) {
-                    inBold = true;
-                } else if (tag.equals("</strong>")) {
-                    inBold = false;
-                } else if (tag.equals("<br/>") || tag.equals("<br>") || tag.startsWith("<br ")) {
-                    flow.getChildren().add(new Text("\n"));
-                } else if (tag.startsWith("<a ")) {
-                    pendingHref = extractHref(tag);
-                } else if (tag.equals("</a>")) {
-                    pendingHref = null;
-                }
-            } else {
-                String text = unescapeEntities(token).trim();
-                if (text.isEmpty()) continue;
-
-                if (needBullet) {
-                    flow.getChildren().add(new Text("  • "));
-                    needBullet = false;
-                }
-
-                if (pendingHref != null) {
-                    String href = pendingHref;
-                    Hyperlink link = new Hyperlink(text);
-                    link.setPadding(Insets.EMPTY);
-                    link.setOnAction(__ -> openUrl(href));
-                    flow.getChildren().add(link);
-                } else if (inHeading) {
-                    Text heading = new Text(text);
-                    heading.setStyle("-fx-font-weight: bold; -fx-font-size: 1.1em;");
-                    flow.getChildren().add(heading);
-                } else if (inBold) {
-                    Text bold = new Text(text);
-                    bold.setStyle("-fx-font-weight: bold;");
-                    flow.getChildren().add(bold);
-                } else {
-                    flow.getChildren().add(new Text(text));
-                }
-            }
+        private HtmlRenderer() {
+            flow.setLineSpacing(4);
         }
 
-        return flow;
+        private Node render(List<String> tokens) {
+            for (String token : tokens) {
+                if (token.startsWith("<")) handleTag(token.toLowerCase());
+                else handleText(token);
+            }
+            return flow;
+        }
+
+        private void handleTag(String tag) {
+            if (!handleHeadingTag(tag) && !handleListTag(tag) && !handleStyleTag(tag)
+                    && !handleBreakTag(tag)) handleLinkTag(tag);
+        }
+
+        private boolean handleHeadingTag(String tag) {
+            if (tag.equals("<h3>") || tag.startsWith("<h3 ")) {
+                inHeading = true;
+            } else if (tag.equals("</h3>")) {
+                inHeading = false;
+                flow.getChildren().add(new Text("\n\n"));
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        private boolean handleListTag(String tag) {
+            if (tag.equals("<p>") || tag.startsWith("<p ")) {
+                flow.getChildren().add(new Text("\n\n"));
+            } else if (tag.equals("<ul>") || tag.startsWith("<ul ")) {
+                // Enter list.
+            } else if (tag.equals("</ul>") || tag.equals("</li>")) {
+                flow.getChildren().add(new Text("\n"));
+            } else if (tag.equals("<li>") || tag.startsWith("<li ")) {
+                needBullet = true;
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        private boolean handleStyleTag(String tag) {
+            if (tag.equals("<strong>") || tag.startsWith("<strong ")) {
+                inBold = true;
+            } else if (tag.equals("</strong>")) {
+                inBold = false;
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        private boolean handleBreakTag(String tag) {
+            if (!tag.equals("<br/>") && !tag.equals("<br>") && !tag.startsWith("<br ")) return false;
+            flow.getChildren().add(new Text("\n"));
+            return true;
+        }
+
+        private boolean handleLinkTag(String tag) {
+            if (tag.startsWith("<a ")) {
+                pendingHref = extractHref(tag);
+            } else if (tag.equals("</a>")) {
+                pendingHref = null;
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        private static String extractHref(String tag) {
+            Matcher matcher = Pattern.compile("href=\"([^\"]*)\"").matcher(tag);
+            return matcher.find() ? matcher.group(1) : null;
+        }
+
+        private static String unescapeEntities(String text) {
+            return text
+                    .replace("&#8211;", "–")
+                    .replace("&#8220;", "“")
+                    .replace("&#8221;", "”");
+        }
+
+        private void handleText(String token) {
+            String text = unescapeEntities(token).trim();
+            if (text.isEmpty()) return;
+            if (needBullet) {
+                flow.getChildren().add(new Text("  • "));
+                needBullet = false;
+            }
+            if (pendingHref != null) {
+                String href = pendingHref;
+                Hyperlink link = new Hyperlink(text);
+                link.setPadding(Insets.EMPTY);
+                link.setOnAction(_ -> openUrl(href));
+                flow.getChildren().add(link);
+            } else if (inHeading) {
+                Text heading = new Text(text);
+                heading.setStyle("-fx-font-weight: bold; -fx-font-size: 1.1em;");
+                flow.getChildren().add(heading);
+            } else if (inBold) {
+                Text bold = new Text(text);
+                bold.setStyle("-fx-font-weight: bold;");
+                flow.getChildren().add(bold);
+            } else {
+                flow.getChildren().add(new Text(text));
+            }
+        }
     }
 
     private static List<String> tokenizeHtml(String html) {
@@ -183,15 +232,4 @@ public class NavDataInfoDialog extends Dialog<Void> {
         return tokens;
     }
 
-    private static String extractHref(String tag) {
-        Matcher matcher = Pattern.compile("href=\"([^\"]*)\"").matcher(tag);
-        return matcher.find() ? matcher.group(1) : null;
-    }
-
-    private static String unescapeEntities(String text) {
-        return text
-                .replaceAll("&#8211;", "–")
-                .replaceAll("&#8220;", "“")
-                .replaceAll("&#8221;", "”");
-    }
 }

@@ -82,7 +82,7 @@ public class AircraftCardView extends VBox {
             liveriesChevron = new FontIcon(Feather.CHEVRON_DOWN);
             liveriesChevron.setIconSize(ICON_SIZE);
             liveryButton.setGraphic(liveriesChevron);
-            liveryButton.setOnAction(__ -> toggleLiveries(uiAircraft));
+            liveryButton.setOnAction(_ -> toggleLiveries(uiAircraft));
             badges.getChildren().add(liveryButton);
         }
 
@@ -214,9 +214,9 @@ public class AircraftCardView extends VBox {
         if (scene == null) {
             return;
         }
-        EventHandler<MouseEvent> outsidePressHandler = __ -> menu.hide();
+        EventHandler<MouseEvent> outsidePressHandler = _ -> menu.hide();
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler);
-        menu.setOnHidden(__ -> scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler));
+        menu.setOnHidden(_ -> scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, outsidePressHandler));
     }
 
     private static Node loadThumbnail(Path path, double fitWidth, double fitHeight) {
