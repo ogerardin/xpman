@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -26,7 +27,10 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 public class XpfrAircraft extends Aircraft {
 
     @SuppressWarnings("java:S8786") // Retain legacy hyphen matching; input is a single bounded local filename.
-    private static final Pattern filePattern = Pattern.compile(".+-(([A-Z0-9\\-]++)\\.v\\.(\\d++)-(\\d++)_\\((\\d++)\\))\\.txt");
+    private static final Pattern filePattern = Pattern.compile(".+-(([A-Z0-9\\-]++)\\.v\\.(\\d++-\\d++_\\(\\d++\\)(?:_\\d++)?))\\.txt");
+
+    @Getter(lazy = true)
+    private final String id = loadId();
 
     @Getter(lazy = true)
     private final String version = loadVersion();
@@ -34,20 +38,26 @@ public class XpfrAircraft extends Aircraft {
     public XpfrAircraft(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile);
         // not all XPFR aircraft have "XPFR" as studio :(
-        require(getStudio().equals("XPFR") || getVersion() != null);
+        require(getStudio().equals("XPFR") || getId() != null);
     }
 
     @SneakyThrows
-    private String loadVersion() {
+    private Optional<Matcher> matchIdFile() {
         Path folder = getAcfFile().getFile().getParent();
         try (Stream<Path> pathStream = Files.list(folder)) {
             return pathStream
                     .map(path -> filePattern.matcher(path.getFileName().toString()))
                     .filter(Matcher::matches)
-                    .map(matcher -> matcher.group(1))
-                    .max(Comparator.naturalOrder())
-                    .orElse(null);
+                    .max(Comparator.comparing(matcher -> matcher.group(1)));
         }
+    }
+
+    private String loadId() {
+        return matchIdFile().map(matcher -> matcher.group(1)).orElse(null);
+    }
+
+    private String loadVersion() {
+        return matchIdFile().map(matcher -> matcher.group(3)).orElse(null);
     }
 
 
@@ -58,7 +68,7 @@ public class XpfrAircraft extends Aircraft {
                 super.getLinks(),
                 Maps.mapOf(
                         "Aircraft detailed sheet on xpfr.org",
-                        Urls.url(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getVersion(), StandardCharsets.UTF_8)))
+                        Urls.url(String.format("https://www.xpfr.org/?body=aero_accueil&seek=%s", URLEncoder.encode(getId(), StandardCharsets.UTF_8)))
                 )
         );
     }

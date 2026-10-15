@@ -6,6 +6,7 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.panels.aircraft.details.AcfTreeController;
+import com.ogerardin.xpman.util.jfx.PropertiesStage;
 import com.ogerardin.xpman.util.jfx.menu.annotation.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,8 +19,11 @@ import lombok.ToString;
 import lombok.experimental.Delegate;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -98,4 +102,24 @@ Press OK to continue.'
                 .showAndWait();
     }
 
+    @SuppressWarnings("unused")
+    @OnSuccess("reload()")
+    public void properties() {
+        Map<String, String> editableProperties = new HashMap<>(Map.of(
+                "name", "acf/_name",
+                "callsign", "acf/_callsign",
+                "tailNumber", "acf/_tailnum",
+                "icaoCode", "acf/_ICAO",
+                "description", "acf/_descrip",
+                "author", "acf/_author",
+                "studio", "acf/_studio",
+                "notes", "acf/_notes"
+        ));
+        if (!aircraft.canEditAcfName()) {
+            editableProperties.remove("name");
+        }
+        PropertiesStage.show("aircraft", getName(), aircraft, editableProperties,
+                changes -> aircraft.getAcfFile().save(changes)
+        );
+    }
 }

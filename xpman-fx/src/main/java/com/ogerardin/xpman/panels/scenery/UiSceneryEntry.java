@@ -6,6 +6,7 @@ import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
+import com.ogerardin.xpman.util.jfx.PropertiesStage;
 import com.ogerardin.xpman.util.jfx.cell_factory.SwitchRow;
 import com.ogerardin.xpman.util.jfx.menu.annotation.*;
 import lombok.Data;
@@ -123,4 +124,8 @@ Press OK to continue.'
                 .showAndWait();
     }
 
+    @SuppressWarnings("unused")
+    public void properties() {
+        PropertiesStage.show("scenery", getName(), sceneryEntry);
+    }
 }

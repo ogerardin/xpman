@@ -5,6 +5,7 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xpman.util.jfx.PropertiesStage;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
@@ -108,4 +109,8 @@ Press OK to continue.'
                 .showAndWait();
     }
 
+    @SuppressWarnings("unused")
+    public void properties() {
+        PropertiesStage.show("plugin", getName(), plugin);
+    }
 }

@@ -49,7 +49,7 @@ module xpman.fx {
     opens com.ogerardin.xpman.settings to javafx.base, javafx.fxml, com.google.gson;
     opens com.ogerardin.xpman.shell to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.tools to javafx.fxml, javafx.base;
-    opens com.ogerardin.xpman.util.jfx to javafx.base, javafx.fxml, com.google.gson;
+    opens com.ogerardin.xpman.util.jfx to javafx.base, javafx.fxml, com.google.gson, xpman.fx.test;
     opens com.ogerardin.xpman.util to ch.qos.logback.core;
     opens com.ogerardin.xpman.util.jfx.console to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.util.jfx.menu to javafx.base, javafx.fxml;

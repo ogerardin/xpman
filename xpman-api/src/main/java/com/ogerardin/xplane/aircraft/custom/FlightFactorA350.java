@@ -34,6 +34,11 @@ public class FlightFactorA350 extends Aircraft {
         );
     }
 
+    @Override
+    public boolean canEditAcfName() {
+        return false;
+    }
+
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {

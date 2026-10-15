@@ -64,6 +64,10 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
         return (name != null) ? name : getAcfName();
     }
 
+    public boolean canEditAcfName() {
+        return true;
+    }
+
     public String getAcfName() {
         String property = getProperty("acf/_name");
         if (property != null) {

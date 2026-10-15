@@ -35,6 +35,11 @@ public class Dmax3D_EF2000 extends Aircraft {
         require(getStudio().equals("dmax3d.com") && getAcfName().equals("Eurofighter Typhoon"));
     }
 
+    @Override
+    public boolean canEditAcfName() {
+        return false;
+    }
+
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {

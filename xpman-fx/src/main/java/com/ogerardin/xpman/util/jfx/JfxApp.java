@@ -25,11 +25,14 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 @Slf4j
 public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
+    private static JfxApp<?> instance;
+
     @Getter
     protected Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) {
+        instance = this;
         this.primaryStage = primaryStage;
 
         // catch-all exception handler (text version) for the startup phase: a GUI handler based on
@@ -109,6 +112,10 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     }
 
     protected abstract C getConfig();
+
+    static JfxApp<?> getInstance() {
+        return instance;
+    }
 
     public abstract void saveConfig();
 

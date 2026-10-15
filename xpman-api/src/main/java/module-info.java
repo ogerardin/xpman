@@ -32,11 +32,12 @@ module xpman.api {
     exports com.ogerardin.xplane.install;
     exports com.ogerardin.xplane.util.events;
     exports com.ogerardin.xplane.aircraft;
-    exports com.ogerardin.xplane.aircraft.custom to xpman.api.test;
+    exports com.ogerardin.xplane.aircraft.custom;
     exports com.ogerardin.xplane.file;
     exports com.ogerardin.xplane.scenery;
     exports com.ogerardin.xplane.plugins;
     exports com.ogerardin.xplane.plugins.custom;
+    exports com.ogerardin.xplane.scenery.custom;
     exports com.ogerardin.xplane.laminar;
     exports com.ogerardin.xplane.navdata;
     exports com.ogerardin.xplane.tools;

@@ -8,8 +8,10 @@ import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -21,6 +23,8 @@ public class XPManPrefs extends JfxAppPrefs {
     String theme = "dark";
 
     WindowPosition settingsPosition;
+
+    Map<String, WindowPosition> propertiesPositions = new HashMap<>();
 
     SettingsCategory settingsCategory;
 

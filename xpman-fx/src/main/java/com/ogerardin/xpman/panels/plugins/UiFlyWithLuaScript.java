@@ -4,6 +4,7 @@ import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xpman.util.jfx.PropertiesStage;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
@@ -106,5 +107,10 @@ Press OK to continue.'
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public void properties() {
+        PropertiesStage.show("script", script.getLuaFile().getFileName().toString(), script);
     }
 }

@@ -22,6 +22,25 @@
     -fx-font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
 }
 
+/* ControlsFX's PropertySheet search field uses Modena lookups; map them to AtlantaFX. */
+.property-sheet .custom-text-field {
+    -fx-text-inner-color: -color-fg-default;
+    -fx-control-inner-background: -color-bg-default;
+    -fx-text-box-border: -color-border-default;
+    -fx-highlight-fill: -color-accent-subtle;
+    -fx-highlight-text-fill: -color-fg-default;
+    -fx-prompt-text-fill: -color-fg-muted;
+    -fx-accent: -color-accent-emphasis;
+    -fx-focus-color: -color-accent-emphasis;
+    -fx-faint-focus-color: -color-accent-subtle;
+}
+
+/* ControlsFX PropertySheet uses a Modena lookup for these pane backgrounds. */
+.property-sheet .scroll-pane,
+.property-sheet .scroll-pane .property-pane {
+    -fx-background-color: -color-bg-default;
+}
+
 /* --- Warning icon (Ikonli FontIcon or other icon node) --- */
 .warning-icon {
     -fx-icon-color: -color-warning-emphasis;

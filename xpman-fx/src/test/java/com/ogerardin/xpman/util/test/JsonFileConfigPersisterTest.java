@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -94,6 +95,25 @@ class JsonFileConfigPersisterTest {
 
             JsonFileConfigPersister<XPManPrefs> loader = new JsonFileConfigPersister<>(XPManPrefs.class, file);
             assertThat(loader.getConfig().getSettingsCategory(), is(SettingsCategory.TOOLS));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    void propertiesWindowPositionsRoundTripPerKey() throws IOException {
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{}");
+            JsonFileConfigPersister<XPManPrefs> saver = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            saver.getConfig().setPropertiesPositions(Map.of(
+                    "aircraft", new JfxAppPrefs.WindowPosition(100, 200, 640, 480),
+                    "plugin", new JfxAppPrefs.WindowPosition(300, 400, 720, 540)));
+            saver.save();
+
+            XPManPrefs loaded = new JsonFileConfigPersister<>(XPManPrefs.class, file).getConfig();
+            assertThat(loaded.getPropertiesPositions().get("aircraft").getX(), is(100.0));
+            assertThat(loaded.getPropertiesPositions().get("plugin").getY(), is(400.0));
         } finally {
             Files.deleteIfExists(file);
         }

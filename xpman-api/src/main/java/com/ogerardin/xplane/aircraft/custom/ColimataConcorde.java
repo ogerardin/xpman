@@ -28,6 +28,11 @@ public class ColimataConcorde extends Aircraft {
     }
 
     @Override
+    public boolean canEditAcfName() {
+        return false;
+    }
+
+    @Override
     public String getVersion() {
         return getNotes();
     }

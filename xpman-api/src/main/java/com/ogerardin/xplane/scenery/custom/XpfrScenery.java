@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -25,38 +26,36 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 @SuppressWarnings("unused")
 public class XpfrScenery extends SceneryPackage {
 
-    private static final Pattern filePattern = Pattern.compile("(([A-Z]{4})\\.v\\.(\\d+)-(\\d+)_\\((\\d+)\\))\\.txt");
+    private static final Pattern filePattern = Pattern.compile("((.+)\\.v\\.(\\d+-\\d+_\\(\\d+\\)(?:_\\d+)?))\\.txt");
+
+    @Getter(lazy = true)
+    private final String id = loadId();
 
     @Getter(lazy = true)
     private final String version = loadVersion();
 
     public XpfrScenery(Path folder) throws InstantiationException {
         super(folder);
-        require(hasXprfIdFile(folder));
+        require(matchIdFile(folder).isPresent());
     }
 
     @SneakyThrows
-    private boolean hasXprfIdFile(Path folder) {
-        try (Stream<Path> pathStream = Files.list(folder)) {
-            return pathStream
-                    .map(path -> path.getFileName().toString())
-                    .map(filePattern::matcher)
-                    .anyMatch(Matcher::matches);
-        }
-    }
-
-    @SneakyThrows
-    private String loadVersion() {
-        Path folder = getFolder();
+    private Optional<Matcher> matchIdFile(Path folder) {
         try (Stream<Path> pathStream = Files.list(folder)) {
             return pathStream
                     .map(path -> path.getFileName().toString())
                     .map(filePattern::matcher)
                     .filter(Matcher::matches)
-                    .findAny()
-                    .map(matcher -> matcher.group(1))
-                    .orElse(null);
+                    .findAny();
         }
+    }
+
+    private String loadId() {
+        return matchIdFile(getFolder()).map(matcher -> matcher.group(1)).orElse(null);
+    }
+
+    private String loadVersion() {
+        return matchIdFile(getFolder()).map(matcher -> matcher.group(3)).orElse(null);
     }
 
 
@@ -67,7 +66,7 @@ public class XpfrScenery extends SceneryPackage {
                 super.getLinks(),
                 Maps.mapOf(
                         "Scenery detailed sheet on xpfr.org",
-                        Urls.url(String.format("https://www.xpfr.org/?body=scene_accueil&seek=%s", URLEncoder.encode(getVersion(), "UTF-8")))
+                        Urls.url(String.format("https://www.xpfr.org/?body=scene_accueil&seek=%s", URLEncoder.encode(getId(), "UTF-8")))
                 )
         );
     }

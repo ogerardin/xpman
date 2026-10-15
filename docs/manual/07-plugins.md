@@ -33,6 +33,7 @@ Right-click a plugin for:
 - **Enable plugin** / **Disable plugin**
 - **Uninstall plugin** — Confirmation dialog with details.
 - **Inspect** — Opens Inspection results.
+- **Properties** — Shows a read-only Properties window with all object properties.
 - **Update via Skunkcrafts Updater** — Available only for enabled plugins that support updates.
 - **Skunkcrafts: Locked by developer**
 - **Links** — Dynamic submenu.
@@ -48,6 +49,7 @@ Right-click a FlyWithLua script for:
 - **Open in text editor**
 - **Manuals** — Dynamic submenu.
 - **Links** — Dynamic submenu.
+- **Properties** — Shows a read-only Properties window with all object properties.
 - **Uninstall script** — Confirmation dialog.
 
 ## Empty States
