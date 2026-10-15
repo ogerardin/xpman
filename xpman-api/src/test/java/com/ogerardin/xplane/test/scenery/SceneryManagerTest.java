@@ -5,7 +5,7 @@ import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.test.util.XPlaneTestUtil;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.exception.InvalidConfig;
-import com.ogerardin.xplane.file.data.scenery.TokenSceneryPackIniItem;
+import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import com.ogerardin.xplane.scenery.SceneryManager;
@@ -59,7 +59,7 @@ class SceneryManagerTest {
 
         // *GLOBAL_AIRPORTS* resolves to the Global Airports folder when it exists on disk
         List<SceneryEntry> tokenEntries = iniEntries.stream()
-                .filter(e -> e.getIniItem() instanceof TokenSceneryPackIniItem)
+                .filter(e -> e.getIniItem() != null && e.getIniItem().isToken())
                 .toList();
         if (!tokenEntries.isEmpty() && Files.isDirectory(xPlane.getPaths().globalAirports())) {
             assertThat(tokenEntries, everyItem(hasProperty("status", is(SceneryEntryStatus.IN_INI))));

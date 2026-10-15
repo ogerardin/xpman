@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -58,6 +59,18 @@ public class SceneryEntry {
     /** Whether this entry is a special token (e.g., *GLOBAL_AIRPORTS*). */
     public boolean isToken() {
         return iniItem != null && iniItem.isToken();
+    }
+
+    /**
+     * Resolves the folder designated by an ini item: a path value against the base folder,
+     * the *GLOBAL_AIRPORTS* token to the global airports folder; null if it cannot be
+     * determined (unknown token). Static: the manager resolves items before entries exist.
+     */
+    public static Path resolveFolder(SceneryPackIniItem item, Path baseFolder, Path globalAirportsFolder) {
+        if (item.isToken()) {
+            return SceneryPackIniItem.GLOBAL_AIRPORTS_MARKER.equals(item.getIniValue()) ? globalAirportsFolder : null;
+        }
+        return baseFolder.resolve(item.getIniValue());
     }
 
     // null-safe accessors so that unresolved entries (no on-disk package) can still be displayed

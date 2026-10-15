@@ -126,7 +126,7 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     }
 
     private SceneryEntry buildEntry(SceneryPackIniItem item, int rank, Set<Path> resolvedFolders) {
-        Path resolvedFolder = item.resolveFolder(xPlane.getBaseFolder(), xPlane.getPaths().globalAirports());
+        Path resolvedFolder = SceneryEntry.resolveFolder(item, xPlane.getBaseFolder(), xPlane.getPaths().globalAirports());
         if (resolvedFolder != null) resolvedFolders.add(resolvedFolder);
 
         SceneryPackage sceneryPackage = resolvedFolder == null ? null : packagesByFolder.get(resolvedFolder);

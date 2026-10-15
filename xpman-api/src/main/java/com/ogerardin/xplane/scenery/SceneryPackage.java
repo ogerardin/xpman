@@ -37,15 +37,15 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
     @Getter(lazy = true)
     private final int objCount = countObj();
 
-    /** Whether this package is enabled according to its ini entry; unlisted packages are enabled by default. */
+    /** Whether this package is enabled; a stamp derived from its ini entry's disabled flag (authority lives on the entry) — unlisted packages are enabled by default. */
     private boolean enabled = true;
 
     private boolean system = false;
 
-    /** The rank of the scenery within scenery_packages.ini file (null if not listed) */
+    /** The rank of the scenery within scenery_packs.ini (null if not listed); a stamp derived from the entry's position — the authority lives on {@link SceneryEntry}. */
     private Integer rank = null;
 
-    /** The number of geo-tiles (*.dsf files) contained in the sceery */
+    /** The number of geo-tiles (*.dsf files) contained in the scenery */
     @SneakyThrows
     private int countTiles() {
         return FileUtils.countFilesBySuffix(getEarthNavDataFolder(), ".dsf");

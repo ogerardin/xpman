@@ -2,7 +2,6 @@ package com.ogerardin.xplane.test.scenery;
 
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
-import com.ogerardin.xplane.file.data.scenery.TokenSceneryPackIniItem;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryEntryStatus;
 import com.ogerardin.xplane.scenery.SceneryPackage;
@@ -12,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.nio.file.Path;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -98,14 +99,14 @@ class SceneryEntryTest {
 
     @Test
     void unresolvedTokenEntryShouldBeFolderMissing() {
-        var entry = SceneryEntry.unresolved(new TokenSceneryPackIniItem("*GLOBAL_AIRPORTS*"), 1);
+        var entry = SceneryEntry.unresolved(SceneryPackIniItem.of("*GLOBAL_AIRPORTS*"), 1);
         assertEquals(SceneryEntryStatus.FOLDER_MISSING, entry.getStatus());
         assertEquals("*GLOBAL_AIRPORTS*", entry.getName());
     }
 
     @Test
     void tokenEntryShouldBeDetected() {
-        var tokenItem = new TokenSceneryPackIniItem("*GLOBAL_AIRPORTS*");
+        var tokenItem = SceneryPackIniItem.of("*GLOBAL_AIRPORTS*");
         var entry = SceneryEntry.inIni(tokenItem, null, 1);
         assertTrue(entry.isToken());
     }
@@ -128,5 +129,25 @@ class SceneryEntryTest {
         assertNull(entry.getTileCount());
         assertNull(entry.getObjCount());
         assertTrue(entry.getLinks().isEmpty());
+    }
+
+    @Test
+    void resolveFolderShouldResolvePathValueAgainstBaseFolder() {
+        assertThat(SceneryEntry.resolveFolder(SceneryPackIniItem.of("Custom Scenery/KSEA"),
+                        Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")),
+                is(Path.of("/xplane/Custom Scenery/KSEA")));
+    }
+
+    @Test
+    void resolveFolderShouldResolveGlobalAirportsToken() {
+        assertThat(SceneryEntry.resolveFolder(SceneryPackIniItem.of(SceneryPackIniItem.GLOBAL_AIRPORTS_MARKER),
+                        Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")),
+                is(Path.of("/xplane/Global Scenery/Global Airports")));
+    }
+
+    @Test
+    void resolveFolderShouldReturnNullForUnknownToken() {
+        assertNull(SceneryEntry.resolveFolder(SceneryPackIniItem.of("*FOO*"),
+                Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")));
     }
 }

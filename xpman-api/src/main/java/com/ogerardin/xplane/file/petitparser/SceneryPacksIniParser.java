@@ -31,7 +31,7 @@ import static org.petitparser.parser.primitive.StringParser.of;
  * <pre>
  * I
  * 1100 version
- * SCENERY_PACK *GLOBAL AIRPORTS*
+ * SCENERY_PACK *GLOBAL_AIRPORTS*
  * SCENERY_PACK Custom Scenery/My Airport/
  * </pre>
  *
@@ -125,7 +125,7 @@ public class SceneryPacksIniParser extends XPlaneFileParserBase<SceneryPackIniDa
     }
 
     /**
-     * Parse a scenery folder name or token (e.g., "*GLOBAL AIRPORTS*").
+     * Parse a scenery folder name or token (e.g., "*GLOBAL_AIRPORTS*").
      * Upon successful match, pushes the value as a String.
      *
      * @return parser for folder names or tokens
