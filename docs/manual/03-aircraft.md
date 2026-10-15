@@ -18,7 +18,7 @@ Each aircraft is displayed as a card with:
 - **Name** and **studio / author**
 - **Badges**: version, `Update available` (when a Skunkcrafts update exists), `N liveries` (expandable to show livery mini-cards)
 
-Hover over a card to reveal icon buttons: **Explore properties**, **Inspect**, **Reveal**, **Uninstall**.
+Hover over a card to reveal icon buttons: **Explore ACF property tree**, **Inspect**, **Reveal**, **Uninstall**.
 
 Double-click a card to open the **Aircraft details** window — a Name/Value tree of the ACF file's properties.
 
@@ -29,7 +29,7 @@ Right-click a card or livery for additional actions:
 - **Reveal in Finder** / **Show in Explorer** / **Show in Files** (platform-dependent label)
 - **Uninstall aircraft** — Shows a confirmation dialog listing the aircraft that will be removed.
 - **Inspect** — Opens the Inspection results window showing the outcome of all inspections.
-- **Explore properties** — Opens the Aircraft details window (same as double-click).
+- **Explore ACF property tree** — Opens the Aircraft details window (same as double-click).
 - **Properties** — Shows aircraft properties; **Name**, **Callsign**, **Tail number**, **ICAO code**, **Description**, **Author**, **Studio**, and **Notes** can be edited and saved. The name is read-only for add-ons with a fixed display name. Closing with unsaved edits prompts to Save, Discard, or Cancel. After the dialog closes, cards refresh to show saved values.
 - **Update via Skunkcrafts Updater** — Opens the Skunkcrafts update wizard (when applicable).
 - **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.

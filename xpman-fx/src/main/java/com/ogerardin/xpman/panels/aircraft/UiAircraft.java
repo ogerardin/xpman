@@ -72,7 +72,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
-    @Label("'Explore properties'")
+    @Label("'Explore ACF property tree'")
     public void details() throws IOException {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/acftree.fxml"));
         Pane pane = loader.load();
