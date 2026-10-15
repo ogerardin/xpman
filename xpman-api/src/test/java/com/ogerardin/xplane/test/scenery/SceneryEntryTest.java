@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.test.scenery;
 
 import com.ogerardin.test.util.TimingExtension;
+import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.file.data.scenery.SceneryPackIniItem;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryEntryStatus;
@@ -8,7 +9,9 @@ import com.ogerardin.xplane.scenery.SceneryPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,6 +30,9 @@ class SceneryEntryTest {
         pkg.setEnabled(enabled);
         return pkg;
     }
+
+    @TempDir
+    Path tempDir;
 
     @Test
     void notListedEntryShouldBeEnabledWithoutRank() {
@@ -132,22 +138,33 @@ class SceneryEntryTest {
     }
 
     @Test
-    void resolveFolderShouldResolvePathValueAgainstBaseFolder() {
-        assertThat(SceneryEntry.resolveFolder(SceneryPackIniItem.of("Custom Scenery/KSEA"),
-                        Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")),
-                is(Path.of("/xplane/Custom Scenery/KSEA")));
+    void resolveFolderShouldResolvePathValueAgainstBaseFolder() throws Exception {
+        var xPlane = new XPlane(tempDir);
+        assertThat(SceneryEntry.resolveFolder(SceneryPackIniItem.of("Custom Scenery/KSEA"), xPlane),
+                is(tempDir.resolve("Custom Scenery/KSEA")));
     }
 
     @Test
-    void resolveFolderShouldResolveGlobalAirportsToken() {
-        assertThat(SceneryEntry.resolveFolder(SceneryPackIniItem.of(SceneryPackIniItem.GLOBAL_AIRPORTS_MARKER),
-                        Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")),
-                is(Path.of("/xplane/Global Scenery/Global Airports")));
+    void resolveFolderShouldResolveGlobalAirportsToken() throws Exception {
+        // fake XP12 install so the version-aware Global Airports folder is deterministic (Global Scenery variant)
+        Path infoPlist = tempDir.resolve("X-Plane.app/Contents/info.plist");
+        Files.createDirectories(infoPlist.getParent());
+        Files.writeString(infoPlist, """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+                <plist version="1.0"><dict>
+                <key>CFBundleShortVersionString</key><string>12.0</string>
+                <key>CFBundleExecutable</key><string>X-Plane</string>
+                </dict></plist>
+                """);
+        var xPlane = new XPlane(tempDir);
+        assertThat(SceneryEntry.resolveFolder(SceneryPackIniItem.of("*GLOBAL_AIRPORTS*"), xPlane),
+                is(tempDir.resolve("Global Scenery").resolve("Global Airports")));
     }
 
     @Test
-    void resolveFolderShouldReturnNullForUnknownToken() {
-        assertNull(SceneryEntry.resolveFolder(SceneryPackIniItem.of("*FOO*"),
-                Path.of("/xplane"), Path.of("/xplane/Global Scenery/Global Airports")));
+    void resolveFolderShouldReturnNullForUnknownToken() throws Exception {
+        var xPlane = new XPlane(tempDir);
+        assertNull(SceneryEntry.resolveFolder(SceneryPackIniItem.of("*FOO*"), xPlane));
     }
 }
