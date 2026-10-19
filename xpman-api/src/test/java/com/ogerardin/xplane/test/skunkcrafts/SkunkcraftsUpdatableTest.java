@@ -93,6 +93,41 @@ class SkunkcraftsUpdatableTest {
         assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
     }
 
+    /** SimLoad Manager scenario: cfg has its own version — use it, ignore the binary heuristic. */
+    @Test
+    void cfgVersionMatchesRemoteMeansNoUpdate() {
+        FakeAddon addon = new FakeAddon("Test", "99.0",
+                new SkunkcraftsConfig(null, "5.0.6", "http://example.com", null, false, false, true), "5.0.6");
+        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
+    }
+
+    @Test
+    void cfgVersionDiffersFromRemoteMeansUpdate() {
+        FakeAddon addon = new FakeAddon("Test", "99.0",
+                new SkunkcraftsConfig(null, "1.0", "http://example.com", null, false, false, true), "2.0");
+        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(true));
+    }
+
+    @Test
+    void getInstalledVersionUsesCfgVersionWhenPresent() {
+        FakeAddon addon = new FakeAddon("Test", "99.0",
+                new SkunkcraftsConfig(null, "1.5", "http://example.com", null, false, false, true), "2.0");
+        assertThat(addon.getInstalledVersion(), is("1.5"));
+    }
+
+    @Test
+    void getInstalledVersionFallsBackToGetVersionWhenCfgNull() {
+        FakeAddon addon = new FakeAddon("Test", "1.0", null, "2.0");
+        assertThat(addon.getInstalledVersion(), is("1.0"));
+    }
+
+    @Test
+    void getInstalledVersionFallsBackToGetVersionWhenCfgVersionNull() {
+        FakeAddon addon = new FakeAddon("Test", "1.0",
+                new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "2.0");
+        assertThat(addon.getInstalledVersion(), is("1.0"));
+    }
+
     @Test
     void applyUpdateThrowsWhenNotUpdatable() {
         FakeAddon addon = new FakeAddon("Test", "1.0", null, null);

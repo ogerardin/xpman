@@ -20,7 +20,7 @@ public enum UpdateAvailableInspection implements Inspection<SkunkcraftsUpdatable
     @Override
     public @NonNull InspectionResult inspect(@NonNull SkunkcraftsUpdatable target) {
         String latest = target.getLatestVersion();
-        if (latest == null || Objects.equals(target.getVersion(), latest)) {
+        if (latest == null || Objects.equals(target.getInstalledVersion(), latest)) {
             return InspectionResult.empty();
         }
         return InspectionResult.of(InspectionMessage.builder()

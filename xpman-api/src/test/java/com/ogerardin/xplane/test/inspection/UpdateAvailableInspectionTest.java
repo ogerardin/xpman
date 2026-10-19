@@ -84,4 +84,22 @@ class UpdateAvailableInspectionTest {
         };
         assertThat(UpdateAvailableInspection.INSTANCE.inspect(target).size(), is(1));
     }
+
+    @Test
+    void cfgVersionMatchesLatestButBinaryDiffersMeansNoWarn() {
+        // SimLoad-Manager scenario: cfg says "1.0.0", latest says "1.0.0", but binary heuristic says "99.0.0"
+        // Should NOT warn because cfg version (the authoritative source) matches latest
+        SkunkcraftsUpdatable target = new SkunkcraftsUpdatable() {
+            @Override public String getName() { return "MyAddon"; }
+            @Override public String getVersion() { return "99.0.0"; } // binary heuristic (wrong)
+            @Override public Path getSkunkcraftsFolder() { return null; }
+            @Override public SkunkcraftsConfig getSkunkcraftsConfig() {
+                return new SkunkcraftsConfig(null, "1.0.0", "https://example.com", null, false, false, true);
+            }
+            @Override public String getSkunkcraftsLatestVersion() { return "1.0.0"; }
+            @Override public String getLatestVersion() { return "1.0.0"; }
+        };
+        InspectionResult result = UpdateAvailableInspection.INSTANCE.inspect(target);
+        assertThat(result.isEmpty(), is(true));
+    }
 }

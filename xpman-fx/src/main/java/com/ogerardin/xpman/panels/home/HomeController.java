@@ -277,7 +277,7 @@ public class HomeController {
         for (SkunkcraftsUpdatable updatable : updates) {
             section.getChildren().add(createUpdateRow(
                     updatable.getName(),
-                    updatable.getVersion(),
+                    updatable.getInstalledVersion(),
                     updatable.getSkunkcraftsLatestVersion(),
                     "Update",
                     () -> {

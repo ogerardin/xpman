@@ -1,9 +1,6 @@
 package com.ogerardin.xplane.plugins.custom.lua;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
@@ -84,32 +81,9 @@ public class SimLoadManager extends FlyWithLuaScript {
         @Override
         public boolean recognizes(Archive archive) {
             return archive.getPaths().stream()
-                .anyMatch(path -> path.getFileName().toString().equals(SIM_LOAD_MANAGER_LUA));
-        }
-
-        @Override
-        public InspectionResult preconditions(XPlane xPlane, Archive archive) {
-            InspectionResult result = super.preconditions(xPlane, archive);
-
-            // Check for SGES script (warning, not error) — only enabled scripts count
-            boolean sgesInstalled = xPlane.getPluginManager().getPlugins().stream()
-                .filter(FlyWithLua.class::isInstance)
-                .map(FlyWithLua.class::cast)
-                .flatMap(fwl -> fwl.getScripts().stream())
-                .filter(FlyWithLuaScript::isEnabled)
-                .anyMatch(Sges.class::isInstance);
-
-            if (!sgesInstalled) {
-                result = result.append(InspectionResult.of(
-                    InspectionMessage.builder()
-                        .severity(Severity.ERROR)
-                        .message("Simple Ground Equipment & Services is required")
-                        .details("SimLoad Manager requires SGES to function properly")
-                        .build()
-                ));
-            }
-
-            return result;
+                .anyMatch(path -> path.getFileName().toString().equals(SIM_LOAD_MANAGER_LUA))
+                && archive.getPaths().stream()
+                .noneMatch(path -> path.getFileName().toString().endsWith(".xpl"));
         }
 
         @Override

@@ -24,6 +24,29 @@ Plugins are displayed as a tree. System plugins show a system icon. Columns:
 
 The FlyWithLua plugin node expands to show its Lua scripts, plus groups **Disabled scripts (n)** and **Quarantined scripts (n)**.
 
+### SimLoad Manager
+
+SimLoad Manager (v5+) is a standalone X-Plane plugin that simulates realistic passenger, cargo, and fuel loading operations with SimBrief integration.
+
+**Requirements:**
+- X-Plane 12.4.4 or later
+- SGES (optional) — for ground vehicle operations
+- FlyWithLua (optional) — only required if using SGES
+- Linux: `libcurl.so.4` for SimBrief integration
+
+**Installation:**
+Extract the archive and place the entire `SimLoadManager/` folder into `Resources/plugins/` (do not rename). The plugin will appear in the X-Plane menu under Plugins → SimLoad Manager. XPman enforces the minimum X-Plane version requirement (12.4.4) and will block installation if your X-Plane version is older.
+
+**Migration from v4 (FlyWithLua script):**
+No manual steps required. SimLoad Manager v5 automatically migrates v4 settings and moves the old script from `FlyWithLua/Scripts/` to `FlyWithLua/Scripts (disabled)/`.
+
+**Platform Notes:**
+- **macOS:** The plugin is not notarized by Apple. Use **Remove macOS quarantine** from the context menu if blocked.
+- **Linux:** SimBrief integration requires `libcurl.so.4` (install via package manager, e.g., `sudo apt install libcurl4`).
+
+**Automatic Updates:**
+SimLoad Manager supports Skunkcrafts Updater. Once installed, future versions can be updated directly via the **Update via Skunkcrafts Updater** context menu option.
+
 ## Plugin Context Menu
 
 Right-click a plugin for:
@@ -34,7 +57,7 @@ Right-click a plugin for:
 - **Uninstall plugin** — Confirmation dialog with details.
 - **Inspect** — Opens Inspection results.
 - **Properties** — Shows a read-only Properties window with all object properties.
-- **Update via Skunkcrafts Updater** — Available only for enabled plugins that support updates.
+- **Update via Skunkcrafts Updater** — Available only for enabled plugins that have an update available.
 - **Skunkcrafts: Locked by developer**
 - **Links** — Dynamic submenu.
 - **Manuals** — Dynamic submenu with PDF manuals.

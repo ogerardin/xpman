@@ -108,7 +108,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Label("'Update via Skunkcrafts Updater'")
-    @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsUpdatable")
+    @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(getSceneryPackage()).showAndWait();

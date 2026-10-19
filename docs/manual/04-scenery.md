@@ -55,7 +55,7 @@ Right-click a row for:
 - **Uninstall** — Confirmation dialog with details.
 - **Inspect** — Opens Inspection results.
 - **Properties** — Shows a read-only Properties window with all object properties.
-- **Update via Skunkcrafts Updater** — Available only for enabled packages that support updates.
+- **Update via Skunkcrafts Updater** — Available only for enabled packages that have an update available.
 - **Skunkcrafts: Locked by developer**
 - **Links** — Dynamic submenu.
 

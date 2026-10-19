@@ -86,7 +86,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Label("'Update via Skunkcrafts Updater'")
-    @EnabledIf("skunkcraftsUpdatable")
+    @EnabledIf("skunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(aircraft).showAndWait();

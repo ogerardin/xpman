@@ -14,7 +14,7 @@ from their repositories, without requiring installation of the Skunkcraft update
 ## Starting an Update
 
 - Click **Update** in the Home dashboard.
-- Or right-click the addon and choose **Update via Skunkcrafts Updater**.
+- Or right-click the addon and choose **Update via Skunkcrafts Updater** (shown only when an update is available).
 
 ## Skunkcrafts Update Wizard
 

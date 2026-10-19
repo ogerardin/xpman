@@ -3,6 +3,7 @@ package com.ogerardin.xplane.skunkcrafts;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.ogerardin.xplane.util.progress.ProgressListener;
 
@@ -47,11 +48,26 @@ public interface SkunkcraftsUpdatable {
         return cfg != null && cfg.locked();
     }
 
-    /** Whether a newer version is available remotely. */
+    /**
+     * Returns the version to compare against {@link #getLatestVersion()} when checking for updates:
+     * the local cfg's {@code version} line (the protocol's own installed-version record),
+     * falling back to {@link #getVersion()} (usually a binary heuristic) when the cfg has no version.
+     */
+    default String getInstalledVersion() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && cfg.version() != null ? cfg.version() : getVersion();
+    }
+
+    /**
+     * Whether a newer version is available remotely.
+     * Prefers the local cfg's {@code version} line (the protocol's own installed-version record);
+     * falls back to {@link #getVersion()} (usually a binary heuristic) when the cfg has no version.
+     */
     default boolean isSkunkcraftsUpdateAvailable() {
         if (!isSkunkcraftsUpdatable()) return false;
         String latest = getSkunkcraftsLatestVersion();
-        return latest != null && !Objects.equals(getVersion(), latest);
+        if (latest == null) return false;
+        return !Objects.equals(getInstalledVersion(), latest);
     }
 
     /**
