@@ -18,7 +18,7 @@ from their repositories, without requiring installation of the Skunkcraft update
 
 ## Skunkcrafts Update Wizard
 
-The wizard window is resizable, and remembers its size and position between sessions. The bounds are kept unchanged when navigating between pages.
+The wizard window is resizable, and remembers its size between sessions; it always opens centered. The bounds are kept unchanged when navigating between pages.
 
 ### Page 1 — Review
 

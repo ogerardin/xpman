@@ -24,9 +24,9 @@ public class XPManPrefs extends JfxAppPrefs {
 
     WindowPosition settingsPosition;
 
-    WindowPosition wizardPosition;
+    WindowSize wizardSize;
 
-    WindowPosition skunkcraftsWizardPosition;
+    WindowSize skunkcraftsWizardSize;
 
     Map<String, WindowPosition> propertiesPositions = new HashMap<>();
 

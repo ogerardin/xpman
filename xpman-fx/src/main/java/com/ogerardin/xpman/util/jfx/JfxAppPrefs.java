@@ -10,6 +10,9 @@ public class JfxAppPrefs {
 
     WindowPosition lastPosition;
 
+    /** Wizard windows always open centered (ControlsFX force-centers them on show), so only size is persisted. */
+    public record WindowSize(double width, double height) {}
+
     @Data
     @AllArgsConstructor
     public static class WindowPosition {

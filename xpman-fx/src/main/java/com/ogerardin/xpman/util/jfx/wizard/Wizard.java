@@ -12,6 +12,7 @@ import org.controlsfx.dialog.WizardPane;
 
 import java.lang.reflect.Constructor;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -27,8 +28,10 @@ import java.util.stream.Stream;
  *     <li>If the WizardPane is an instance of {@link ValidatingWizardPane} and its controller implements {@link PageListener},
  *     then the controller will be registered as a {@code PageListener}, which means that its {@link PageListener#onEnteringPage}
  *     and {@link PageListener#onExitingPage} methods will be called when the page is displayed/left.</li>
- *     <li>Wizard window is resizable, can persist its position and size between sessions,
- *     and keeps its window bounds stable when navigating between pages (ControlsFX's resize-on-page-change is neutralised)</li>
+ *     <li>Wizard window is resizable, can persist its size between sessions,
+ *     and keeps its window bounds stable when navigating between pages (ControlsFX's resize-on-page-change is neutralised).
+ *     The window position is not persisted: the dialog always opens centered (ControlsFX's dialog
+ *     force-centers it on every show, see HeavyweightDialog.showAndWait)</li>
  * </ul>
  */
 @Slf4j
@@ -52,56 +55,51 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
             scene.rootProperty().addListener((_, _, _) -> {
                 if (!(scene.getWindow() instanceof Stage stage)) return;
                 double x = stage.getX(), y = stage.getY(), w = stage.getWidth(), h = stage.getHeight();
+                // Pre-show pane swaps and hide teardown snapshot an unpositioned stage (NaN bounds);
+                // restoring those would poison the bounds — only restore real bounds (page changes).
+                if (Double.isNaN(x + y + w + h)) return;
                 Platform.runLater(() -> {
                     stage.setX(x); stage.setY(y); stage.setWidth(w); stage.setHeight(h);
                 });
             });
         }
     }
-    
+
     /**
-     * Sets up position persistence for this wizard.
-     * 
-     * @param positionLoader function to load the saved position (can return null)
-     * @param positionSaver function to save the current position
+     * Sets up size persistence for this wizard. Position is not persisted: the dialog always opens centered.
+     *
+     * @param sizeLoader function to load the saved size (can return null)
+     * @param sizeSaver function to save the current size
      */
-    public void setupPositionPersistence(
-            java.util.function.Supplier<JfxAppPrefs.WindowPosition> positionLoader,
-            java.util.function.Consumer<JfxAppPrefs.WindowPosition> positionSaver) {
-        
-        getDialog().setOnShown(event -> {
+    public void setupSizePersistence(Supplier<JfxAppPrefs.WindowSize> sizeLoader,
+                                     Consumer<JfxAppPrefs.WindowSize> sizeSaver) {
+
+        getDialog().setOnShowing(event -> {
             Stage stage = getStage();
             if (stage == null) return;
-            JfxAppPrefs.WindowPosition pos = positionLoader.get();
-            if (pos != null && !Double.isNaN(pos.getX() + pos.getY() + pos.getWidth() + pos.getHeight())) {
-                stage.setX(pos.getX());
-                stage.setY(pos.getY());
-                stage.setWidth(pos.getWidth());
-                stage.setHeight(pos.getHeight());
-            } else if (Double.isNaN(stage.getX()) || Double.isNaN(stage.getY())) {
-                // Window.x/y stay NaN until an actual window move backfills them from the peer,
-                // which makes localToScreen() return NaN and detail popups land at the screen corner.
-                stage.centerOnScreen();
+            JfxAppPrefs.WindowSize size = sizeLoader.get();
+            if (size != null && !Double.isNaN(size.width() + size.height())) {
+                stage.setWidth(size.width());
+                stage.setHeight(size.height());
             }
         });
 
-        getDialog().setOnHidden(event -> {
+        // save on HIDING, not HIDDEN: by then the dialog pane's scene is still attached (at
+        // HIDDEN getStage() returns null and nothing could ever be saved)
+        getDialog().setOnHiding(event -> {
             Stage stage = getStage();
-            // never persist a NaN position: it would poison the prefs file and make every
+            if (stage == null) return;
+            double w = stage.getWidth(), h = stage.getHeight();
+            // never persist a NaN size: it would poison the prefs file and make every
             // subsequent Gson save throw ("JSON forbids NaN and infinities")
-            if (stage == null || Double.isNaN(stage.getX() + stage.getY() + stage.getWidth() + stage.getHeight())) {
-                return;
-            }
-            positionSaver.accept(new JfxAppPrefs.WindowPosition(
-                    stage.getX(), stage.getY(),
-                    stage.getWidth(), stage.getHeight()
-            ));
+            if (Double.isNaN(w + h)) return;
+            sizeSaver.accept(new JfxAppPrefs.WindowSize(w, h));
         });
     }
-    
+
     private Stage getStage() {
-        if (getDialog().getDialogPane() != null && 
-            getDialog().getDialogPane().getScene() != null && 
+        if (getDialog().getDialogPane() != null &&
+            getDialog().getDialogPane().getScene() != null &&
             getDialog().getDialogPane().getScene().getWindow() instanceof Stage) {
             return (Stage) getDialog().getDialogPane().getScene().getWindow();
         }

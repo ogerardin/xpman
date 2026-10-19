@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.util.jfx;
 
 import com.ogerardin.xpman.config.XPManPrefs;
+import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 
 /**
  * Utility class for managing window position persistence.
@@ -41,39 +42,14 @@ public class WindowPositionHelper {
     }
 
     /**
-     * Applies a saved window position to a stage.
+     * Sets up size persistence for the install wizard.
      */
-    public static void applyPosition(javafx.stage.Stage stage, XPManPrefs.WindowPosition position) {
-        if (position != null && stage != null) {
-            stage.setX(position.getX());
-            stage.setY(position.getY());
-            stage.setWidth(position.getWidth());
-            stage.setHeight(position.getHeight());
-        }
-    }
-
-    /**
-     * Creates a WindowPosition from a stage's current bounds.
-     */
-    public static XPManPrefs.WindowPosition fromStage(javafx.stage.Stage stage) {
-        if (stage != null) {
-            return new XPManPrefs.WindowPosition(
-                    stage.getX(), stage.getY(),
-                    stage.getWidth(), stage.getHeight()
-            );
-        }
-        return null;
-    }
-
-    /**
-     * Sets up position persistence for the install wizard.
-     */
-    public static void setupInstallWizard(com.ogerardin.xpman.util.jfx.wizard.Wizard wizard) {
-        wizard.setupPositionPersistence(
-                () -> isInitialized() ? config().getWizardPosition() : null,
-                pos -> {
+    public static void setupInstallWizard(Wizard wizard) {
+        wizard.setupSizePersistence(
+                () -> isInitialized() ? config().getWizardSize() : null,
+                size -> {
                     if (isInitialized()) {
-                        config().setWizardPosition(pos);
+                        config().setWizardSize(size);
                         save();
                     }
                 }
@@ -81,14 +57,14 @@ public class WindowPositionHelper {
     }
 
     /**
-     * Sets up position persistence for the Skunkcrafts update wizard.
+     * Sets up size persistence for the Skunkcrafts update wizard.
      */
-    public static void setupSkunkcraftsWizard(com.ogerardin.xpman.util.jfx.wizard.Wizard wizard) {
-        wizard.setupPositionPersistence(
-                () -> isInitialized() ? config().getSkunkcraftsWizardPosition() : null,
-                pos -> {
+    public static void setupSkunkcraftsWizard(Wizard wizard) {
+        wizard.setupSizePersistence(
+                () -> isInitialized() ? config().getSkunkcraftsWizardSize() : null,
+                size -> {
                     if (isInitialized()) {
-                        config().setSkunkcraftsWizardPosition(pos);
+                        config().setSkunkcraftsWizardSize(size);
                         save();
                     }
                 }
