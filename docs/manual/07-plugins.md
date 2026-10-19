@@ -24,6 +24,8 @@ Plugins are displayed as a tree. System plugins show a system icon. Columns:
 
 The FlyWithLua plugin node expands to show its Lua scripts, plus groups **Disabled scripts (n)** and **Quarantined scripts (n)**.
 
+**SGES updates:** The SGES archive ships a Skunkcrafts updater config next to its `Scripts/` folder; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the Skunkcrafts protocol expects. SGES updates therefore appear on the **FlyWithLua plugin row** (right-click → **Update via Skunkcrafts Updater**), not on the script itself. Uninstalling SGES removes the config.
+
 ### SimLoad Manager
 
 SimLoad Manager (v5+) is a standalone X-Plane plugin that simulates realistic passenger, cargo, and fuel loading operations with SimBrief integration.

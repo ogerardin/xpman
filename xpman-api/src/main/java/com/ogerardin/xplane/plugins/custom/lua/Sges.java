@@ -16,7 +16,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -34,6 +36,9 @@ public class Sges extends FlyWithLuaScript {
     private static final String SCRIPT_FILENAME = "Simple_Ground_Equipment_and_Services.lua";
     private static final String DATA_FOLDER = "Simple_Ground_Equipment_and_Services";
     private static final String DOCS_FOLDER = "Simple_Ground_Equipment_and_Services_expanded_documentation";
+    // the Skunkcrafts protocol ships the updater cfg next to Scripts/; it belongs in the
+    // FlyWithLua folder, which becomes the addon base folder for updates
+    static final List<String> UPDATER_CFG_FILES = List.of("skunkcrafts_updater.cfg", "skunkcrafts_updater_beta.cfg");
 
     public Sges(XPlane xPlane, Path luaFile) throws InstantiationException {
         super(xPlane, luaFile);
@@ -72,6 +77,17 @@ public class Sges extends FlyWithLuaScript {
         if (Files.exists(docsFolder)) {
             log.debug("Deleting SGES documentation folder: {}", docsFolder);
             com.sun.jna.platform.FileUtils.getInstance().moveToTrash(docsFolder.toFile());
+        }
+
+        // remove the updater cfg files from the FlyWithLua folder, otherwise the plugin
+        // would stay Skunkcrafts-managed after SGES is gone
+        Path flyWithLuaFolder = activeScriptsFolder().getParent();
+        for (String cfgName : UPDATER_CFG_FILES) {
+            Path cfg = flyWithLuaFolder.resolve(cfgName);
+            if (Files.exists(cfg)) {
+                log.debug("Deleting Skunkcrafts updater config: {}", cfg);
+                com.sun.jna.platform.FileUtils.getInstance().moveToTrash(cfg.toFile());
+            }
         }
     }
 
@@ -133,8 +149,10 @@ public class Sges extends FlyWithLuaScript {
                 if (archiveScriptsFolder != null) {
                     archive.extract(scriptsFolder, archiveScriptsFolder, progress);
                 } else {
-                    archive.extract(scriptsFolder, progress);
+                    // flat archive: keep the updater cfg files out of Scripts/, they go to the FlyWithLua folder
+                    archive.extract(scriptsFolder, path -> !isUpdaterCfg(path.getFileName().toString()), progress);
                 }
+                extractUpdaterCfg(archive, scriptsFolder.getParent());
                 xPlane.getPluginManager().reload();
 
             } catch (IOException e) {
@@ -146,8 +164,26 @@ public class Sges extends FlyWithLuaScript {
             return archive.getPaths().stream()
                     .filter(path -> path.getFileName().toString().equals(SCRIPT_FILENAME))
                     .map(Path::getParent)
+                    .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
+        }
+
+        /**
+         * Writes the updater cfg files (shipped next to Scripts/ in the archive) into the FlyWithLua
+         * folder, which is the addon base folder the Skunkcrafts protocol resolves updates against.
+         */
+        private void extractUpdaterCfg(Archive archive, Path flyWithLuaFolder) throws IOException {
+            for (Path path : archive.getPaths()) {
+                if (isUpdaterCfg(path.getFileName().toString())) {
+                    Files.createDirectories(flyWithLuaFolder);
+                    Files.writeString(flyWithLuaFolder.resolve(path.getFileName()), archive.getAsText(path));
+                }
+            }
+        }
+
+        private static boolean isUpdaterCfg(String fileName) {
+            return UPDATER_CFG_FILES.contains(fileName);
         }
 
         private void deleteOldFiles(XPlane xPlane) throws IOException {
