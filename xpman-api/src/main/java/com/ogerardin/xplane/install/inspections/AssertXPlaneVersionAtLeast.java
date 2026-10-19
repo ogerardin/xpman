@@ -43,7 +43,7 @@ public class AssertXPlaneVersionAtLeast implements Inspection<Archive> {
             InspectionMessage.builder()
                 .severity(com.ogerardin.xplane.inspection.Severity.ERROR)
                 .object("X-Plane " + installedVersion)
-                .message("X-Plane version too old")
+                .message("X-Plane " + minimumVersion + " required")
                 .details("This add-on requires X-Plane " + minimumVersion + " or later, " +
                          "but the installation is version " + installedVersion + ".")
                 .abort(true)

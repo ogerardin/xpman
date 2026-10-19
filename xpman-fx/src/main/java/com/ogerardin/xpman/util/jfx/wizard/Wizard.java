@@ -1,19 +1,23 @@
 package com.ogerardin.xpman.util.jfx.wizard;
 
+import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
 
 import java.lang.reflect.Constructor;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
  * An improved wizard based on controlfx's {@link org.controlsfx.dialog.Wizard}. Main differences are:
  * <ul>
- *     <li>Method {@link #setFlow(String...)} available to set a simple linear flow from a list of FXML pages</li
+ *     <li>Method {@link #setFlow(String...)} available to set a simple linear flow from a list of FXML pages</li>
  *     <li>When loading a page, if the page's controller class has a constructor that takes a {@link Wizard} parameter,
  *     then use it (passing this) instead of the no-args constructor.</li>
  *     <li>If the WizardPane is an instance of {@link ValidatingWizardPane} and its controller implements {@link Validating},
@@ -23,6 +27,8 @@ import java.util.stream.Stream;
  *     <li>If the WizardPane is an instance of {@link ValidatingWizardPane} and its controller implements {@link PageListener},
  *     then the controller will be registered as a {@code PageListener}, which means that its {@link PageListener#onEnteringPage}
  *     and {@link PageListener#onExitingPage} methods will be called when the page is displayed/left.</li>
+ *     <li>Wizard window is resizable, can persist its position and size between sessions,
+ *     and keeps its window bounds stable when navigating between pages (ControlsFX's resize-on-page-change is neutralised)</li>
  * </ul>
  */
 @Slf4j
@@ -31,6 +37,75 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
 
     public Wizard(String title) {
         setTitle(title);
+        getDialog().setResizable(true);
+
+        // Neutralise the resize+recenter applied on every page change: keep the window bounds the user sees.
+        // Page swap sequence: ControlsFX updatePage → Dialog.setDialogPane(next) → dialogPaneProperty.invalidated()
+        // → HeavyweightDialog.setDialogPane → scene.setRoot(next) [fires root listeners HERE, before the resize]
+        // → dialogPane.autosize() + stage.sizeToScene() [RESIZE #1] → back in ControlsFX: sizeToScene() [RESIZE #2]
+        // + recenter. External dialogPaneProperty listeners fire only AFTER invalidated() (ObjectPropertyBase
+        // semantics), i.e. after RESIZE #1 — too late. The scene's root listener is the one hook that fires
+        // BEFORE the resize: snapshot the pre-change bounds here and restore them via runLater after the whole
+        // synchronous page-change handler (resizes + recenter) completes.
+        Scene scene = getDialog().getDialogPane().getScene();
+        if (scene != null) {
+            scene.rootProperty().addListener((_, _, _) -> {
+                if (!(scene.getWindow() instanceof Stage stage)) return;
+                double x = stage.getX(), y = stage.getY(), w = stage.getWidth(), h = stage.getHeight();
+                Platform.runLater(() -> {
+                    stage.setX(x); stage.setY(y); stage.setWidth(w); stage.setHeight(h);
+                });
+            });
+        }
+    }
+    
+    /**
+     * Sets up position persistence for this wizard.
+     * 
+     * @param positionLoader function to load the saved position (can return null)
+     * @param positionSaver function to save the current position
+     */
+    public void setupPositionPersistence(
+            java.util.function.Supplier<JfxAppPrefs.WindowPosition> positionLoader,
+            java.util.function.Consumer<JfxAppPrefs.WindowPosition> positionSaver) {
+        
+        getDialog().setOnShown(event -> {
+            Stage stage = getStage();
+            if (stage == null) return;
+            JfxAppPrefs.WindowPosition pos = positionLoader.get();
+            if (pos != null && !Double.isNaN(pos.getX() + pos.getY() + pos.getWidth() + pos.getHeight())) {
+                stage.setX(pos.getX());
+                stage.setY(pos.getY());
+                stage.setWidth(pos.getWidth());
+                stage.setHeight(pos.getHeight());
+            } else if (Double.isNaN(stage.getX()) || Double.isNaN(stage.getY())) {
+                // Window.x/y stay NaN until an actual window move backfills them from the peer,
+                // which makes localToScreen() return NaN and detail popups land at the screen corner.
+                stage.centerOnScreen();
+            }
+        });
+
+        getDialog().setOnHidden(event -> {
+            Stage stage = getStage();
+            // never persist a NaN position: it would poison the prefs file and make every
+            // subsequent Gson save throw ("JSON forbids NaN and infinities")
+            if (stage == null || Double.isNaN(stage.getX() + stage.getY() + stage.getWidth() + stage.getHeight())) {
+                return;
+            }
+            positionSaver.accept(new JfxAppPrefs.WindowPosition(
+                    stage.getX(), stage.getY(),
+                    stage.getWidth(), stage.getHeight()
+            ));
+        });
+    }
+    
+    private Stage getStage() {
+        if (getDialog().getDialogPane() != null && 
+            getDialog().getDialogPane().getScene() != null && 
+            getDialog().getDialogPane().getScene().getWindow() instanceof Stage) {
+            return (Stage) getDialog().getDialogPane().getScene().getWindow();
+        }
+        return null;
     }
 
     /**

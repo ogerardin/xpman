@@ -8,7 +8,7 @@ import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
 /**
- * Inspired by  https://github.com/controlsfx/controlsfx/issues/604#issuecomment-450456446
+ * Inspired by  <a href="https://github.com/controlsfx/controlsfx/issues/604#issuecomment-450456446">...</a>
  */
 @Slf4j
 public class ValidatingWizardPane extends WizardPane implements Validating {

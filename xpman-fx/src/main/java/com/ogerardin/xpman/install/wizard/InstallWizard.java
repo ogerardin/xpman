@@ -2,6 +2,7 @@ package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.install.GenericInstaller;
+import com.ogerardin.xpman.util.jfx.WindowPositionHelper;
 import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,5 +22,6 @@ public class InstallWizard extends Wizard {
         this.setFlow("/fxml/install_wizard/page1.fxml",
                 "/fxml/install_wizard/page2.fxml",
                 "/fxml/install_wizard/page3.fxml");
+        WindowPositionHelper.setupInstallWizard(this);
     }
 }

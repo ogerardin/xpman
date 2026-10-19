@@ -21,6 +21,7 @@ import com.ogerardin.xpman.util.Logs;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
 import com.ogerardin.xpman.util.jfx.ThemeManager;
+import com.ogerardin.xpman.util.jfx.WindowPositionHelper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -237,6 +238,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @FXML
     private void initialize() {
         updateRecent();
+        WindowPositionHelper.initialize(getConfig(), this::saveConfig);
         sidebarController.selectedSectionProperty().addListener((_, _, section) ->
                 Optional.ofNullable(section).ifPresent(this::showSection));
         sidebarController.select(Section.HOME);

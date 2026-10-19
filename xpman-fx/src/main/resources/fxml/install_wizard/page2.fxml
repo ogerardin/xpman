@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.ogerardin.xpman.diag.SeverityIconCellFactory?>
+<?import com.ogerardin.xpman.util.jfx.cell_factory.DetailsIconCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.cell_factory.WrappingCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.wizard.ValidatingWizardPane?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
@@ -20,12 +21,20 @@
                         <SeverityIconCellFactory showText="false"/>
                     </cellFactory>
                 </TableColumn>
-                <TableColumn prefWidth="400.0" text="Message">
+                <TableColumn prefWidth="380.0" text="Message">
                     <cellValueFactory>
                         <PropertyValueFactory property="message" />
                     </cellValueFactory>
                     <cellFactory>
                         <WrappingCellFactory />
+                    </cellFactory>
+                </TableColumn>
+                <TableColumn prefWidth="20.0" text="Details">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="details" />
+                    </cellValueFactory>
+                    <cellFactory>
+                        <DetailsIconCellFactory />
                     </cellFactory>
                 </TableColumn>
             </columns>

@@ -24,6 +24,8 @@ XPman saves your preferences to `~/.xpman` (JSON format). The following settings
 | `confirmQuit` | `true` (default) — show quit confirmation dialog |
 | `lastPosition` | Main window position and size |
 | `settingsPosition` | Settings dialog position |
+| `wizardPosition` | Install wizard position and size |
+| `skunkcraftsWizardPosition` | Skunkcrafts update wizard position and size |
 | `settingsCategory` | Last selected settings category |
 | `sceneryClasses` | User-defined scenery organizer rules |
 

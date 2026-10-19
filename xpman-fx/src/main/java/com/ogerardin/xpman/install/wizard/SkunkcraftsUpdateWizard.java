@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xpman.util.jfx.WindowPositionHelper;
 import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import lombok.Getter;
 
@@ -20,5 +21,6 @@ public class SkunkcraftsUpdateWizard extends Wizard {
             "/fxml/install_wizard/skunkcrafts_page1.fxml",
             "/fxml/install_wizard/skunkcrafts_page2.fxml"
         );
+        WindowPositionHelper.setupSkunkcraftsWizard(this);
     }
 }

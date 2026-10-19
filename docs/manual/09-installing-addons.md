@@ -7,6 +7,8 @@ XPman can install aircraft, scenery, plugins, and tools from `.zip` or `.7z` arc
 - **File → Universal installer...**
 - Or click **Install...** in any panel's toolbar.
 
+The wizard window is resizable, and remembers its size and position between sessions. The bounds are kept unchanged when navigating between pages.
+
 ## Page 1 — Source Archive
 
 *"Please select source archive (.zip or .7z file)."*
