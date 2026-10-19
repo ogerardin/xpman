@@ -3,6 +3,8 @@ package com.ogerardin.xplane.plugins.custom.lua;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallationException;
+import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,10 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 /**
  * Specialized FlyWithLua script for Simple Ground Equipment & Services (SGES).
  * Recognizes Simple_Ground_Equipment_and_Services.lua and provides custom deletion logic.
+ *
+ * <p>SGES ships a Skunkcrafts updater config next to its Scripts/ folder; it is installed into
+ * the FlyWithLua folder (the addon base folder the protocol resolves updates against) and
+ * removed again on uninstall.
  */
 @SuppressWarnings("unused")
 @Slf4j
@@ -38,7 +44,7 @@ public class Sges extends FlyWithLuaScript {
     private static final String DOCS_FOLDER = "Simple_Ground_Equipment_and_Services_expanded_documentation";
     // the Skunkcrafts protocol ships the updater cfg next to Scripts/; it belongs in the
     // FlyWithLua folder, which becomes the addon base folder for updates
-    static final List<String> UPDATER_CFG_FILES = List.of("skunkcrafts_updater.cfg", "skunkcrafts_updater_beta.cfg");
+    private static final List<String> UPDATER_CFG_FILES = List.of("skunkcrafts_updater.cfg", "skunkcrafts_updater_beta.cfg");
 
     public Sges(XPlane xPlane, Path luaFile) throws InstantiationException {
         super(xPlane, luaFile);
@@ -70,24 +76,45 @@ public class Sges extends FlyWithLuaScript {
         Path dataFolder = scriptsFolder.resolve(DATA_FOLDER);
         if (Files.exists(dataFolder)) {
             log.debug("Deleting SGES data folder: {}", dataFolder);
-            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(dataFolder.toFile());
+            moveToTrash(dataFolder);
         }
 
         Path docsFolder = scriptsFolder.resolve(DOCS_FOLDER);
         if (Files.exists(docsFolder)) {
             log.debug("Deleting SGES documentation folder: {}", docsFolder);
-            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(docsFolder.toFile());
+            moveToTrash(docsFolder);
         }
 
-        // remove the updater cfg files from the FlyWithLua folder, otherwise the plugin
-        // would stay Skunkcrafts-managed after SGES is gone
+        // Remove the updater cfg files from the FlyWithLua folder, otherwise the plugin would
+        // stay Skunkcrafts-managed after SGES is gone. That folder is the addon base folder of
+        // every FlyWithLua addon, so only delete a config that identifies itself as SGES.
         Path flyWithLuaFolder = activeScriptsFolder().getParent();
         for (String cfgName : UPDATER_CFG_FILES) {
             Path cfg = flyWithLuaFolder.resolve(cfgName);
-            if (Files.exists(cfg)) {
-                log.debug("Deleting Skunkcrafts updater config: {}", cfg);
-                com.sun.jna.platform.FileUtils.getInstance().moveToTrash(cfg.toFile());
+            if (!Files.exists(cfg)) {
+                continue;
             }
+            if (isSgesConfig(cfg)) {
+                log.debug("Deleting Skunkcrafts updater config: {}", cfg);
+                moveToTrash(cfg);
+            } else {
+                log.warn("Leaving Skunkcrafts updater config {} in place: it does not look like SGES", cfg);
+            }
+        }
+    }
+
+    /**
+     * True if the given updater config belongs to SGES, so that a config belonging to another
+     * FlyWithLua addon sharing the same base folder is left alone.
+     */
+    private static boolean isSgesConfig(Path cfg) {
+        try {
+            SkunkcraftsConfig config = SkunkcraftsConfig.parse(cfg);
+            String identity = (config.name() + " " + config.moduleUrl()).toLowerCase();
+            return identity.contains("sges") || identity.contains("ground equip");
+        } catch (IOException e) {
+            log.warn("Could not read Skunkcrafts config {}, leaving it in place", cfg, e);
+            return false;
         }
     }
 
@@ -127,6 +154,12 @@ public class Sges extends FlyWithLuaScript {
         @Override
         public String description() {
             return "Simple Ground Equipment & Services";
+        }
+
+        @Override
+        public InspectionResult preconditions(XPlane xPlane, Archive archive) {
+            return super.preconditions(xPlane, archive)
+                    .append(SkunkcraftsUpdatableInspection.INSTANCE.inspect(archive));
         }
 
         @Override
@@ -174,6 +207,8 @@ public class Sges extends FlyWithLuaScript {
          * folder, which is the addon base folder the Skunkcrafts protocol resolves updates against.
          */
         private void extractUpdaterCfg(Archive archive, Path flyWithLuaFolder) throws IOException {
+            // shortcut: the cfg is copied as text (UTF-8), which is fine while SGES ships ASCII
+            // pipe-delimited cfgs; switch to a byte-level copy if a non-UTF-8 cfg ever appears
             for (Path path : archive.getPaths()) {
                 if (isUpdaterCfg(path.getFileName().toString())) {
                     Files.createDirectories(flyWithLuaFolder);

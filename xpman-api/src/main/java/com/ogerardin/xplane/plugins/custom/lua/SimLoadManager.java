@@ -41,7 +41,7 @@ public class SimLoadManager extends FlyWithLuaScript {
         Path dataFolder = getLuaFile().getParent().resolve(SLM_DATA_FOLDER);
         if (dataFolder.toFile().exists()) {
             log.debug("Deleting SimLoad Manager data folder: {}", dataFolder);
-            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(dataFolder.toFile());
+            moveToTrash(dataFolder);
         }
     }
 

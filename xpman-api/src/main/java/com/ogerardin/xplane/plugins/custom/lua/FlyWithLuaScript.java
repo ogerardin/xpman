@@ -124,7 +124,12 @@ public class FlyWithLuaScript implements Inspectable, Uninstallable {
 
     @Override
     public void uninstall() throws IOException {
-        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(luaFile.toFile());
+        moveToTrash(luaFile);
+    }
+
+    /** Moves a file or folder to the OS trash. Overridable so tests don't touch the real trash. */
+    protected void moveToTrash(Path path) throws IOException {
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(path.toFile());
     }
 
     /**
