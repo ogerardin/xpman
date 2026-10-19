@@ -45,6 +45,7 @@ class SgesInstallableTypeTest {
         Path flyWithLuaFolder = tempFolder.resolve("Resources/plugins/FlyWithLua");
         // the cfg must land in the FlyWithLua folder (the Skunkcrafts addon base folder)...
         assertThat(Files.readString(flyWithLuaFolder.resolve(CFG)), containsString("version|80.1"));
+        assertThat(Files.exists(flyWithLuaFolder.resolve(BETA_CFG)), is(true));
         // ...while the Scripts subtree lands in the Scripts folder as before
         assertThat(Files.exists(flyWithLuaFolder.resolve("Scripts/" + SCRIPT)), is(true));
         assertThat(Files.exists(flyWithLuaFolder.resolve("Scripts/Simple_Ground_Equipment_and_Services")), is(true));
@@ -68,6 +69,8 @@ class SgesInstallableTypeTest {
         Path flyWithLuaFolder = tempFolder.resolve("Resources/plugins/FlyWithLua");
         assertThat(Files.readString(flyWithLuaFolder.resolve(CFG)), containsString("version|80.1"));
         assertThat(Files.exists(flyWithLuaFolder.resolve("Scripts/" + SCRIPT)), is(true));
+        // the cfg must not be duplicated into Scripts/ by the flat-archive extraction
+        assertThat(Files.exists(flyWithLuaFolder.resolve("Scripts/" + CFG)), is(false));
     }
 
     @Test

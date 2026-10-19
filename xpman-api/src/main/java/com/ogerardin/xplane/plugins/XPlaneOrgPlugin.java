@@ -39,6 +39,11 @@ public class XPlaneOrgPlugin extends Plugin {
     }
 
     private String loadlatestVersion() {
+        // a Skunkcrafts-managed addon is versioned by its Skunkcrafts module; the x-plane.org page
+        // version is an unrelated namespace and would misreport the update the UI offers
+        if (isSkunkcraftsUpdatable()) {
+            return getSkunkcraftsLatestVersion();
+        }
         // not optimal, but works: we fetch the whole HTML page and regex the version out of it
         // TODO: improve this
         try {

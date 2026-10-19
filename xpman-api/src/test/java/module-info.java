@@ -1,5 +1,6 @@
 module xpman.api.test {
     requires lombok;
+    requires jdk.httpserver;
     requires xpman.api;
     requires org.junit.jupiter.api;
     requires org.junit.jupiter.params;
