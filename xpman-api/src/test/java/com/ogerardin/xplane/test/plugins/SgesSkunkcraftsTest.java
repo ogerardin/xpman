@@ -35,7 +35,7 @@ class SgesSkunkcraftsTest {
         HttpServer server = httpServer("81.2");
         server.start();
         try {
-            Path luaFile = installedSges(sgesCfg("http://127.0.0.1:" + port(server) + "/sges"));
+            Path luaFile = installedSges("Scripts", sgesCfg("http://127.0.0.1:" + port(server) + "/sges"));
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
 
             assertThat(sges.isSkunkcraftsUpdatable(), is(true));
@@ -56,7 +56,7 @@ class SgesSkunkcraftsTest {
         server.start();
         try {
             Sges sges = new Sges(new XPlane(tempDir),
-                    installedSges(sgesCfg("http://127.0.0.1:" + port(server) + "/sges")));
+                    installedSges("Scripts", sgesCfg("http://127.0.0.1:" + port(server) + "/sges")));
 
             assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
         } finally {
@@ -68,8 +68,19 @@ class SgesSkunkcraftsTest {
     void sgesDoesNotClaimAForeignUpdaterCfg() throws Exception {
         // the FlyWithLua folder is the addon base folder of every FlyWithLua addon:
         // a config belonging to another one is not SGES's to claim
-        Sges sges = new Sges(new XPlane(tempDir), installedSges(
+        Sges sges = new Sges(new XPlane(tempDir), installedSges("Scripts",
                 "disabled|false\nzone|custom\nname|BetterPushback\nmodule|https://example.com/betterpushback\nversion|1.6.2\nlocked|false\n"));
+
+        assertThat(sges.isSkunkcraftsUpdatable(), is(false));
+        assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
+    }
+
+    @Test
+    void disabledSgesIsNotUpdatable() throws Exception {
+        // applying an update while SGES sits in Scripts (disabled)/ would download the
+        // whitelist into the active Scripts folder, duplicating the script
+        Sges sges = new Sges(new XPlane(tempDir),
+                installedSges("Scripts (disabled)", sgesCfg("https://example.com/sges")));
 
         assertThat(sges.isSkunkcraftsUpdatable(), is(false));
         assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
@@ -78,7 +89,7 @@ class SgesSkunkcraftsTest {
     @Test
     void flyWithLuaPluginDoesNotClaimTheSgesUpdaterCfg() throws Exception {
         // with the SGES cfg sitting in its base folder, the plugin must not offer the update
-        installedSges(sgesCfg("https://example.com/sges"));
+        installedSges("Scripts", sgesCfg("https://example.com/sges"));
         Path xplFile = tempDir.resolve("Resources/plugins/FlyWithLua/64/FlyWithLua.xpl");
         Files.createDirectories(xplFile.getParent());
         Files.writeString(xplFile, "");
@@ -90,10 +101,10 @@ class SgesSkunkcraftsTest {
 
     // Fixture helpers
 
-    /** Installs SGES (script + updater cfg in the FlyWithLua folder) without going through install(). */
-    private Path installedSges(String cfgContent) throws IOException {
+    /** Installs SGES (script in the given Scripts folder + updater cfg in the FlyWithLua folder). */
+    private Path installedSges(String scriptsFolder, String cfgContent) throws IOException {
         Path flyWithLuaFolder = tempDir.resolve("Resources/plugins/FlyWithLua");
-        Path luaFile = flyWithLuaFolder.resolve("Scripts/" + SCRIPT);
+        Path luaFile = flyWithLuaFolder.resolve(scriptsFolder + "/" + SCRIPT);
         Files.createDirectories(luaFile.getParent());
         Files.writeString(luaFile, "-- SGES test stub\n");
         Files.writeString(flyWithLuaFolder.resolve("skunkcrafts_updater.cfg"), cfgContent);
