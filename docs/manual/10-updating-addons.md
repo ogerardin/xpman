@@ -1,7 +1,7 @@
 # Updating Add-ons
 
 XPman integrates with the **Skunkcrafts Updater** protocol.
-Plugins, aircraft, and scenery packages that include a `skunkcrafts_updater.cfg` file can be updated directly 
+Plugins, aircraft, scenery packages, and Skunkcrafts-managed FlyWithLua scripts (e.g. SGES) that include a `skunkcrafts_updater.cfg` file can be updated directly 
 from their repositories, without requiring installation of the Skunkcraft updater application.
 
 ## Detecting Updates
@@ -9,7 +9,7 @@ from their repositories, without requiring installation of the Skunkcraft update
 - The Home dashboard shows an **Updates Available** section grouped by category.
 - Each panel (Aircraft, Scenery, Plugins) shows an update marker on addons with available updates.
 - Library tiles show **N updates** badges.
-- Disabled plugins and scenery are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
+- Disabled plugins, scenery, and FlyWithLua scripts are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
 
 ## Starting an Update
 

@@ -5,8 +5,11 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.ogerardin.xplane.util.Maps;
@@ -33,22 +36,56 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
  *
  * <p>SGES ships a Skunkcrafts updater config next to its Scripts/ folder; it is installed into
  * the FlyWithLua folder (the addon base folder the protocol resolves updates against) and
- * removed again on uninstall.
+ * removed again on uninstall. SGES is therefore the {@link SkunkcraftsUpdatable} addon — the
+ * FlyWithLua plugin hosting it is not.
  */
 @SuppressWarnings("unused")
 @Slf4j
-public class Sges extends FlyWithLuaScript {
+public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
 
     private static final String SCRIPT_FILENAME = "Simple_Ground_Equipment_and_Services.lua";
     private static final String DATA_FOLDER = "Simple_Ground_Equipment_and_Services";
     private static final String DOCS_FOLDER = "Simple_Ground_Equipment_and_Services_expanded_documentation";
     // the Skunkcrafts protocol ships the updater cfg next to Scripts/; it belongs in the
     // FlyWithLua folder, which becomes the addon base folder for updates
+    // shortcut: the beta cfg is installed but never read; add a main/beta channel selector
+    // (like the native Skunkcrafts updater) when a user ever needs the beta channel
     private static final List<String> UPDATER_CFG_FILES = List.of("skunkcrafts_updater.cfg", "skunkcrafts_updater_beta.cfg");
 
     public Sges(XPlane xPlane, Path luaFile) throws InstantiationException {
         super(xPlane, luaFile);
         require(luaFile.getFileName().toString().equals(SCRIPT_FILENAME));
+    }
+
+    /** The updater cfg of the addon base folder, but only if it identifies itself as SGES. */
+    @Getter(lazy = true)
+    private final SkunkcraftsConfig skunkcraftsConfig = ownUpdaterCfg();
+
+    @Override
+    public Path getSkunkcraftsFolder() {
+        // the cfg lives in the FlyWithLua folder: the addon base folder the whitelist paths resolve against
+        return activeScriptsFolder().getParent();
+    }
+
+    @Override
+    public boolean isSkunkcraftsUpdatable() {
+        // gate on enabled like Plugin: applying an update while SGES sits in Scripts (disabled)/
+        // would download the whitelist into the active Scripts folder, duplicating the script
+        return isEnabled() && SkunkcraftsUpdatable.super.isSkunkcraftsUpdatable();
+    }
+
+    @Getter(lazy = true)
+    private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
+            ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
+            : null;
+
+    /**
+     * The updater cfg of the addon base folder, or null if there is none or if it belongs to
+     * another FlyWithLua addon sharing that folder.
+     */
+    private SkunkcraftsConfig ownUpdaterCfg() {
+        SkunkcraftsConfig cfg = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
+        return cfg != null && identifiesAsSges(cfg) ? cfg : null;
     }
 
     @Override
@@ -109,13 +146,17 @@ public class Sges extends FlyWithLuaScript {
      */
     private static boolean isSgesConfig(Path cfg) {
         try {
-            SkunkcraftsConfig config = SkunkcraftsConfig.parse(cfg);
-            String identity = (config.name() + " " + config.moduleUrl()).toLowerCase();
-            return identity.contains("sges") || identity.contains("ground equip");
+            return identifiesAsSges(SkunkcraftsConfig.parse(cfg));
         } catch (IOException e) {
             log.warn("Could not read Skunkcrafts config {}, leaving it in place", cfg, e);
             return false;
         }
+    }
+
+    /** Loose match on the cfg's identity, so a repo rename alone does not break ownership. */
+    private static boolean identifiesAsSges(SkunkcraftsConfig config) {
+        String identity = (config.name() + " " + config.moduleUrl()).toLowerCase();
+        return identity.contains("sges") || identity.contains("ground equip");
     }
 
     @Override

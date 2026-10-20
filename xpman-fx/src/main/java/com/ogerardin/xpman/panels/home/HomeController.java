@@ -7,6 +7,8 @@ import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.plugins.Plugin;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
+import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -194,20 +197,35 @@ public class HomeController {
     }
 
     private void checkPluginUpdates() {
-        List<Plugin> plugins = xPlane.getPluginManager().getItems();
-        if (plugins == null) return;
-        
-        long count = plugins.stream()
-                .filter(SkunkcraftsUpdatable.class::isInstance)
-                .map(SkunkcraftsUpdatable.class::cast)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
-                .count();
-        
+        if (xPlane.getPluginManager().getItems() == null) return;
+
+        long count = updatablePluginAddons().count();
+
         Platform.runLater(() -> {
             pluginsUpdateCount.set((int) count);
             updateUpdatesSection();
         });
+    }
+
+    /**
+     * The plugin manager's addons with a pending Skunkcrafts update: plugins, plus the
+     * FlyWithLua scripts whose updater cfg lives in the plugin folder (e.g. SGES) — the
+     * script is the updatable addon there, not the plugin hosting it.
+     */
+    private Stream<SkunkcraftsUpdatable> updatablePluginAddons() {
+        List<Plugin> plugins = xPlane.getPluginManager().getItems();
+        return Stream.concat(
+                        plugins.stream()
+                                .filter(SkunkcraftsUpdatable.class::isInstance)
+                                .map(SkunkcraftsUpdatable.class::cast),
+                        plugins.stream()
+                                .filter(FlyWithLua.class::isInstance)
+                                .map(FlyWithLua.class::cast)
+                                .flatMap(fwl -> fwl.getScripts().stream())
+                                .filter(SkunkcraftsUpdatable.class::isInstance)
+                                .map(SkunkcraftsUpdatable.class::cast))
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
+                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable);
     }
 
     private void updateUpdatesSection() {
@@ -228,12 +246,7 @@ public class HomeController {
                     .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
                     .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
                     .forEach(updates::add);
-            xPlane.getPluginManager().getItems().stream()
-                    .filter(SkunkcraftsUpdatable.class::isInstance)
-                    .map(SkunkcraftsUpdatable.class::cast)
-                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
-                    .forEach(updates::add);
+            updatablePluginAddons().forEach(updates::add);
         }
         
         boolean hasUpdates = !updates.isEmpty();
@@ -252,7 +265,7 @@ public class HomeController {
                 .filter(SceneryPackage.class::isInstance)
                 .toList();
         List<SkunkcraftsUpdatable> pluginUpdates = updates.stream()
-                .filter(Plugin.class::isInstance)
+                .filter(u -> u instanceof Plugin || u instanceof FlyWithLuaScript)
                 .toList();
         
         if (!aircraftUpdates.isEmpty()) {
@@ -286,7 +299,7 @@ public class HomeController {
                             xPlane.getAircraftManager().reload();
                         } else if (updatable instanceof SceneryPackage) {
                             xPlane.getSceneryManager().reload();
-                        } else if (updatable instanceof Plugin) {
+                        } else if (updatable instanceof Plugin || updatable instanceof FlyWithLuaScript) {
                             xPlane.getPluginManager().reload();
                         }
                     }));

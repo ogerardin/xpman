@@ -5,6 +5,7 @@ import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -97,7 +98,14 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
             p.getLatestVersion();
             // pre-warm FlyWithLua scripts here (async thread) so that the UI rebuild doesn't
             // pay the lazy lua header parsing cost on the FX thread
-            if (p instanceof FlyWithLua fwl) fwl.getScripts();
+            if (p instanceof FlyWithLua fwl) {
+                // pre-warm the Skunkcrafts version of updatable scripts too, else the script
+                // row's update pill would fetch it on the FX thread
+                fwl.getScripts().stream()
+                        .filter(SkunkcraftsUpdatable.class::isInstance)
+                        .map(SkunkcraftsUpdatable.class::cast)
+                        .forEach(SkunkcraftsUpdatable::getSkunkcraftsLatestVersion);
+            }
         });
 
         log.info("Loaded {} plugins: {}", items.size(), items.stream().map(p -> p.getName() + " (" + p.getXplFile() + ")").toList());

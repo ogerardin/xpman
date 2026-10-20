@@ -83,6 +83,13 @@ public class FlyWithLua extends XPlaneOrgPlugin {
             .toList();
     }
 
+    @Override
+    public boolean isSkunkcraftsUpdatable() {
+        // the updater cfg in this folder, if any, belongs to a hosted script (e.g. SGES), not to
+        // the plugin: FlyWithLua itself ships from X-Plane.org and has no Skunkcrafts module
+        return false;
+    }
+
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {

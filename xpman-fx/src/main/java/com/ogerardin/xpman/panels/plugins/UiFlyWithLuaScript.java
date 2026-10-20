@@ -3,6 +3,7 @@ package com.ogerardin.xpman.panels.plugins;
 import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.PropertiesStage;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
@@ -38,12 +39,18 @@ public class UiFlyWithLuaScript implements PluginRow {
 
     @Override
     public boolean isUpdateAvailable() {
-        return false;
+        return script instanceof SkunkcraftsUpdatable updatable && updatable.isSkunkcraftsUpdateAvailable();
     }
 
     @Override
     public String getLatestVersion() {
-        return null;
+        return script instanceof SkunkcraftsUpdatable updatable ? updatable.getLatestVersion() : null;
+    }
+
+    /** Whether the hosted script is locked by its developer (Skunkcrafts). */
+    @SuppressWarnings("unused")
+    public boolean isSkunkcraftsLocked() {
+        return script instanceof SkunkcraftsUpdatable updatable && updatable.isSkunkcraftsLocked();
     }
 
     @Label("'Enable script'")
@@ -107,6 +114,24 @@ Press OK to continue.'
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Update via Skunkcrafts Updater'")
+    @EnabledIf("updateAvailable")
+    @OnSuccess("reload()")
+    public void skunkcraftsUpdate() {
+        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard((SkunkcraftsUpdatable) script).showAndWait();
+    }
+
+    @SuppressWarnings("unused")
+    @Label("'Skunkcrafts: Locked by developer'")
+    @EnabledIf("skunkcraftsLocked")
+    public void skunkcraftsLocked() {
+        new Alert(Alert.AlertType.INFORMATION,
+                "This addon is currently locked by the developer. " +
+                "The developer may be uploading files. Please try again later.")
+                .showAndWait();
     }
 
     @SuppressWarnings("unused")

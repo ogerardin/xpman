@@ -18,13 +18,13 @@ Plugins are displayed as a tree. System plugins show a system icon. Columns:
 | **Enabled** | Toggle switch |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version (extracted from native binary); an **Update available** pill appears when a Skunkcrafts update is available and shows the latest version on hover |
+| **Version** | Installed version (from the native binary, or the script header for FlyWithLua scripts); an **Update available** pill appears when a Skunkcrafts update is available and shows the latest version on hover |
 
 ### FlyWithLua
 
 The FlyWithLua plugin node expands to show its Lua scripts, plus groups **Disabled scripts (n)** and **Quarantined scripts (n)**.
 
-**SGES updates:** The SGES archive ships a Skunkcrafts updater config next to its `Scripts/` folder; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the Skunkcrafts protocol expects. SGES updates therefore appear on the **FlyWithLua plugin row** (right-click → **Update via Skunkcrafts Updater**), not on the script itself. Uninstalling SGES removes the config.
+**SGES updates:** The SGES archive ships a Skunkcrafts updater config next to its `Scripts/` folder; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the Skunkcrafts protocol expects. SGES is therefore the updatable addon: updates appear on the **SGES script row** (right-click → **Update via Skunkcrafts Updater**), not on the FlyWithLua plugin row. Uninstalling SGES removes the config.
 
 ### SimLoad Manager
 
@@ -76,6 +76,8 @@ Right-click a FlyWithLua script for:
 - **Links** — Dynamic submenu.
 - **Properties** — Shows a read-only Properties window with all object properties.
 - **Uninstall script** — Confirmation dialog.
+- **Update via Skunkcrafts Updater** — Available only for enabled scripts that have an update available (e.g. SGES).
+- **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
 
 ## Empty States
 
