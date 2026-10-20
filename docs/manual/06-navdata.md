@@ -41,8 +41,3 @@ Right-click a layer card for:
 
 - **Reveal** — Show the folder in Finder / Explorer / Files.
 - **Inspect** — Opens the Inspection results window.
-
-## Empty States
-
-- **"Loading nav data..."** — While scanning.
-- **"No nav data to show"** — When no nav data sets are found.

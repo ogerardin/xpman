@@ -80,8 +80,3 @@ Right-click a FlyWithLua script for:
 - **Uninstall script** — Confirmation dialog.
 - **Update via Skunkcrafts Updater** — Available only for enabled scripts that have an update available (e.g. SGES).
 - **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
-
-## Empty States
-
-- **"Loading plugins..."** — While scanning.
-- **"No plugins to show"** — When no plugins are found.
