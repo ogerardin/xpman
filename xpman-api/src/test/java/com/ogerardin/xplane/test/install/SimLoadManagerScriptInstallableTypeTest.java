@@ -92,10 +92,6 @@ class SimLoadManagerScriptInstallableTypeTest {
             out.putNextEntry(new ZipEntry("SLM-Data/settings.txt"));
             out.write("simbrief_id=123\n".getBytes());
             out.closeEntry();
-
-            out.putNextEntry(new ZipEntry("skunkcrafts_updater.cfg"));
-            out.write("version|4.3\nmodule|https://example.com\n".getBytes());
-            out.closeEntry();
         }
         return zip;
     }

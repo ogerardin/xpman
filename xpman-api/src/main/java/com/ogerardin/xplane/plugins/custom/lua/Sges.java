@@ -50,6 +50,10 @@ public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
     // FlyWithLua folder, which becomes the addon base folder for updates
     // shortcut: the beta cfg is installed but never read; add a main/beta channel selector
     // (like the native Skunkcrafts updater) when a user ever needs the beta channel
+    // The protocol has one cfg slot per addon base folder (skunkcrafts_updater.cfg); a second
+    // Skunkcrafts-managed FlyWithLua script would overwrite the first — the identity guard
+    // then migrates the pill to the surviving cfg's script. Upgrade when the protocol supports
+    // per-addon cfg names or subfolders.
     private static final List<String> UPDATER_CFG_FILES = List.of("skunkcrafts_updater.cfg", "skunkcrafts_updater_beta.cfg");
 
     public Sges(XPlane xPlane, Path luaFile) throws InstantiationException {

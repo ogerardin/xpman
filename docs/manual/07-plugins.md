@@ -26,6 +26,8 @@ The FlyWithLua plugin node expands to show its Lua scripts, plus groups **Disabl
 
 **SGES updates:** The SGES archive ships a Skunkcrafts updater config next to its `Scripts/` folder; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the Skunkcrafts protocol expects. SGES is therefore the updatable addon: updates appear on the **SGES script row** (right-click → **Update via Skunkcrafts Updater**), not on the FlyWithLua plugin row. Uninstalling SGES removes the config.
 
+**Skunkcrafts cfg slot:** the Skunkcrafts protocol has a single updater-cfg slot per addon base folder (`FlyWithLua/skunkcrafts_updater.cfg`) — a protocol-level constraint shared with the standalone Skunkcrafts Updater. If two Skunkcrafts-managed FlyWithLua scripts are ever installed, the last one installed wins the slot (its cfg overwrites the other's), and the identity guard makes the update pill follow whichever script matches the surviving cfg. Today SGES is the only such script, so no conflict is possible. Per-addon cfg filenames (e.g. `skunkcrafts_updater.sges.cfg`) and per-addon subfolders (e.g. `FlyWithLua/sges/`) would lift the limitation, but the protocol does not support either.
+
 ### SimLoad Manager
 
 SimLoad Manager (v5+) is a standalone X-Plane plugin that simulates realistic passenger, cargo, and fuel loading operations with SimBrief integration.
