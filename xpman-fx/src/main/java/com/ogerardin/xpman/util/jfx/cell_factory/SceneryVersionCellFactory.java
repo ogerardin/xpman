@@ -1,14 +1,14 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.panels.scenery.UiSceneryEntry;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 
 /**
- * Renders a scenery version with an update-available pill when needed.
+ * Renders a scenery version with an "Update" button when an update is available.
  */
 public class SceneryVersionCellFactory implements TableCellFactory<UiSceneryEntry, String> {
 
@@ -25,11 +25,15 @@ public class SceneryVersionCellFactory implements TableCellFactory<UiSceneryEntr
 
                 UiSceneryEntry row = getTableRow() == null ? null : getTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
-                    Label pill = new Label("Update available");
-                    pill.getStyleClass().add("pill-warning");
+                    Button button = new Button("Update");
+                    button.getStyleClass().add("updates-item-button");
                     String latestVersion = row.getLatestVersion();
-                    if (latestVersion != null) pill.setTooltip(new Tooltip("Latest version: " + latestVersion));
-                    setGraphic(pill);
+                    if (latestVersion != null) button.setTooltip(new Tooltip("Latest version: " + latestVersion));
+                    button.setOnAction(_ -> {
+                        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(row.getSceneryPackage()).showAndWait();
+                        row.getXPlane().getSceneryManager().reload();
+                    });
+                    setGraphic(button);
                     setContentDisplay(ContentDisplay.RIGHT);
                 }
             }

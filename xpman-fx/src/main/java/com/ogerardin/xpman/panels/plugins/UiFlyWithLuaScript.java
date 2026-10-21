@@ -124,6 +124,14 @@ Press OK to continue.'
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard((SkunkcraftsUpdatable) script).showAndWait();
     }
 
+    @Override
+    public Runnable updateAction() {
+        return () -> {
+            new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard((SkunkcraftsUpdatable) script).showAndWait();
+            script.getXPlane().getPluginManager().reload();
+        };
+    }
+
     @SuppressWarnings("unused")
     @Label("'Skunkcrafts: Locked by developer'")
     @EnabledIf("skunkcraftsLocked")

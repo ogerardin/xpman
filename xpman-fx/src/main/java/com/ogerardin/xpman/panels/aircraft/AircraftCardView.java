@@ -71,9 +71,13 @@ public class AircraftCardView extends VBox {
                 .map(AircraftCardView::badge)
                 .ifPresent(badges.getChildren()::add);
         if (uiAircraft.isSkunkcraftsUpdateAvailable()) {
-            Label updateBadge = new Label("Update available");
-            updateBadge.getStyleClass().add("aircraft-card-update-badge");
-            badges.getChildren().add(updateBadge);
+            Button updateButton = new Button("Update");
+            updateButton.getStyleClass().add("updates-item-button");
+            updateButton.setOnAction(_ -> {
+                new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(uiAircraft.getAircraft()).showAndWait();
+                uiAircraft.getXPlane().getAircraftManager().reload();
+            });
+            badges.getChildren().add(updateButton);
         }
         int liveryCount = uiAircraft.getAircraft().getLiveries().size();
         if (liveryCount > 0) {

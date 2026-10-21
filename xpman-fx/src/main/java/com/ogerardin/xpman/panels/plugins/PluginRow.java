@@ -25,6 +25,10 @@ public interface PluginRow extends SwitchRow {
         return false;
     }
 
+    default Runnable updateAction() {
+        return null;
+    }
+
     @Override
     default boolean isSwitchLocked() {
         return getSystem();

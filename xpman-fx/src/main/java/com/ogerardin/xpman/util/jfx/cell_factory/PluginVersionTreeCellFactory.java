@@ -1,15 +1,15 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.panels.plugins.PluginRow;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
 
 /**
- * Renders a plugin version with an update-available pill when needed.
+ * Renders a plugin version with an "Update" button when an update is available.
  */
 public class PluginVersionTreeCellFactory implements Callback<TreeTableColumn<PluginRow, String>, TreeTableCell<PluginRow, String>> {
 
@@ -26,11 +26,13 @@ public class PluginVersionTreeCellFactory implements Callback<TreeTableColumn<Pl
 
                 PluginRow row = getTreeTableRow() == null ? null : getTreeTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
-                    Label pill = new Label("Update available");
-                    pill.getStyleClass().add("pill-warning");
+                    Button button = new Button("Update");
+                    button.getStyleClass().add("updates-item-button");
                     String latestVersion = row.getLatestVersion();
-                    if (latestVersion != null) pill.setTooltip(new Tooltip("Latest version: " + latestVersion));
-                    setGraphic(pill);
+                    if (latestVersion != null) button.setTooltip(new Tooltip("Latest version: " + latestVersion));
+                    Runnable action = row.updateAction();
+                    if (action != null) button.setOnAction(_ -> action.run());
+                    setGraphic(button);
                     setContentDisplay(ContentDisplay.RIGHT);
                 }
             }
