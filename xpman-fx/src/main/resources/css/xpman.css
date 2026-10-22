@@ -871,6 +871,28 @@
     -fx-background-color: -color-accent-muted;
 }
 
+.navdata-card-fix-actions {
+    -fx-spacing: 4px;
+    -fx-padding: 4px 0 0 0;
+}
+
+.navdata-card-fix {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 3px 6px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 0.9em;
+}
+
+.navdata-card-fix .ikonli-font-icon {
+    -fx-fill: -color-fg-muted;
+}
+
+.navdata-card-fix:hover {
+    -fx-background-color: -color-accent-muted;
+}
+
 .navdata-info-description {
     -fx-text-fill: -color-fg-default;
     -fx-wrap-text: true;

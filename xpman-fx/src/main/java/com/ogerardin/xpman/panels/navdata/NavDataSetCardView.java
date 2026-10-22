@@ -5,6 +5,7 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataSetStatus;
+import com.ogerardin.xpman.diag.FixRunner;
 import com.ogerardin.xpman.util.SizeFormat;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
@@ -131,6 +132,10 @@ public class NavDataSetCardView extends VBox {
         HBox actions = buildHoverActions(uiItem);
 
         VBox info = new VBox(4, header, filesToggle, actions);
+        HBox fixActions = buildFixActions(inspection);
+        if (!fixActions.getChildren().isEmpty()) {
+            info.getChildren().add(fixActions);
+        }
         VBox.setMargin(info, new Insets(6, 8, 6, 8));
         getChildren().add(info);
 
@@ -196,6 +201,23 @@ public class NavDataSetCardView extends VBox {
         return actions;
     }
 
+    private HBox buildFixActions(InspectionResult inspection) {
+        HBox fixActions = new HBox(4);
+        fixActions.getStyleClass().add("navdata-card-fix-actions");
+
+        inspection.getMessages().stream()
+                .flatMap(m -> m.getFixes().stream())
+                .forEach(fix -> {
+                    Button button = new Button(fix.label());
+                    button.setGraphic(icon(Feather.TOOL));
+                    button.getStyleClass().add("navdata-card-fix");
+                    button.setOnAction(_ -> FixRunner.run(fix, this));
+                    fixActions.getChildren().add(button);
+                });
+
+        return fixActions;
+    }
+
     private void addAction(HBox actions, UiNavDataItem uiItem, String methodName, Feather feather) {
         findMethod(uiItem.getClass(), methodName).ifPresent(method -> {
             MethodButton<UiNavDataItem> button = new MethodButton<>(methodName, method, controller, uiItem);
@@ -236,7 +258,7 @@ public class NavDataSetCardView extends VBox {
         row.getStyleClass().add("navdata-card-file-row");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        if (!item.getExists().booleanValue()) {
+        if (!item.getExists()) {
             nameLabel.getStyleClass().add("navdata-card-file-missing");
             Label missing = new Label("absent");
             missing.getStyleClass().add("navdata-status-info");

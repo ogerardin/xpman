@@ -13,6 +13,7 @@
 Navigation data is organized as a vertical stack of **layer cards**. Each card shows:
 
 - **Status ball** — Inactive (grey), OK (green), warnings (yellow), or errors (red). Hover for details.
+- **Fix button** — Appears when a fix is available (e.g. "Move FAACIFP18 to Trash" for a cycle mismatch). Click to apply.
 - **Name** — Layer name.
 - **Layer i/n badge** — Position in the layer stack (e.g. `Layer 3/5`).
 - **Short state** — e.g. `Cycle 2610` (the AIRAC cycle identifier).
@@ -41,3 +42,13 @@ Right-click a layer card for:
 
 - **Reveal** — Show the folder in Finder / Explorer / Files.
 - **Inspect** — Opens the Inspection results window.
+
+## Inspection Results Window
+
+The inspection results table shows:
+
+- **Severity** — Icon and label (ERROR, WARN, INFO).
+- **Object** — The affected object (if any).
+- **Message** — The inspection message text.
+- **Details** — Icon; hover for additional details.
+- **Fix** — One button per available fix. Click to apply; the row is removed on success.

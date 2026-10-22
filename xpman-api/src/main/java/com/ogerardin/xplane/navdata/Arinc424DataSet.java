@@ -2,6 +2,8 @@ package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.inspection.TrashFileFix;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -101,8 +103,26 @@ public class Arinc424DataSet extends NavDataSet {
         if (mine.isEmpty() || underlying.isEmpty() || mine.get().equals(underlying.get())) {
             return Optional.empty();
         }
-        return Optional.of(InspectionMessage.error("AIRAC cycle " + underlying.get() + " does not match the cycle of the navdata "
-                + "layer this one overrides. X-Plane requires both to be the same cycle, because terminal "
-                + "procedures reference waypoints outside the terminal area; mixing cycles is not supported."));
+
+        Path faacifp18File = getChildren().stream()
+                .filter(NavDataItem::getExists)
+                .map(NavDataItem::getPath)
+                .filter(path -> "FAACIFP18".equals(path.getFileName().toString()))
+                .findFirst()
+                .orElse(null);
+
+        if (faacifp18File == null) {
+            return Optional.of(InspectionMessage.error("AIRAC cycle " + underlying.get() + " does not match the cycle of the navdata "
+                    + "layer this one overrides. X-Plane requires both to be the same cycle, because terminal "
+                    + "procedures reference waypoints outside the terminal area; mixing cycles is not supported."));
+        }
+
+        return Optional.of(InspectionMessage.builder()
+                .severity(Severity.ERROR)
+                .message("AIRAC cycle " + underlying.get() + " does not match the cycle of the navdata "
+                        + "layer this one overrides. X-Plane requires both to be the same cycle, because terminal "
+                        + "procedures reference waypoints outside the terminal area; mixing cycles is not supported.")
+                .fix(new TrashFileFix(faacifp18File, navData::reload))
+                .build());
     }
 }

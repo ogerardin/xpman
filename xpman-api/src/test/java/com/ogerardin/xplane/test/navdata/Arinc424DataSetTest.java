@@ -132,9 +132,17 @@ class Arinc424DataSetTest {
         writeCustomData("FAACIFP18", FAA_HEADER);
         writeDefaultData("earth_nav.dat", "2507");
 
-        assertThat(consistencyMessages(approachesLayer()), hasItem(allOf(
+        List<InspectionMessage> messages = consistencyMessages(approachesLayer());
+        assertThat(messages, hasItem(allOf(
                 hasProperty("severity", is(Severity.ERROR)),
                 hasProperty("message", containsString("AIRAC cycle 2507 does not match")))));
+
+        InspectionMessage mismatch = messages.stream()
+                .filter(m -> m.getMessage().contains("does not match"))
+                .findFirst()
+                .orElseThrow();
+        assertThat("mismatch error has one fix", mismatch.getFixes().size(), is(1));
+        assertThat("fix label mentions FAACIFP18", mismatch.getFixes().get(0).label(), containsString("FAACIFP18"));
     }
 
     @Test
@@ -161,9 +169,16 @@ class Arinc424DataSetTest {
         writeCustomData("earth_424.dat", FAA_HEADER);
         writeCustomData("FAACIFP18", FAA_HEADER);
 
-        assertThat(consistencyMessages(approachesLayer()), hasItem(allOf(
+        List<InspectionMessage> messages = consistencyMessages(approachesLayer());
+        assertThat(messages, hasItem(allOf(
                 hasProperty("severity", is(Severity.WARN)),
                 hasProperty("message", containsString("is not used")))));
+
+        InspectionMessage unused = messages.stream()
+                .filter(m -> m.getMessage().contains("is not used"))
+                .findFirst()
+                .orElseThrow();
+        assertThat("unused warning has no fix", unused.getFixes(), is(empty()));
     }
 
     @Test
