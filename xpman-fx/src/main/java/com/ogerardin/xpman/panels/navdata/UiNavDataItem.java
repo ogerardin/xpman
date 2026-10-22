@@ -7,13 +7,12 @@ import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
-import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Delegate;
 
-/** UI wrapper around {@link NavDataItem} that adds context-menu actions (reveal, inspect) and derived display properties. */
+/** UI wrapper around {@link NavDataItem} that adds a reveal context-menu action and derived display properties. */
 @Data
 @ToString(includeFieldNames = false)
 @RequiredArgsConstructor
@@ -44,8 +43,11 @@ public class UiNavDataItem {
         Platforms.getCurrent().reveal(getPath());
     }
 
-    @OnSuccess("displayInspectionResults(#result)")
-    public InspectionResult inspect() {
+    /**
+     * Runs the inspection for the wrapped item and returns the result. Used by the card
+     * to display problems inline; no longer exposed as an action (inspections are systematic).
+     */
+    public InspectionResult getInspectionResult() {
         return navDataItem instanceof Inspectable inspectable
                 ? inspectable.inspect()
                 : InspectionResult.empty();

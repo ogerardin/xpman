@@ -6,6 +6,7 @@ import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataSetStatus;
 import com.ogerardin.xpman.diag.FixRunner;
+import com.ogerardin.xpman.diag.SeverityIconCellFactory;
 import com.ogerardin.xpman.util.SizeFormat;
 import com.ogerardin.xpman.util.jfx.menu.GenericContextMenuFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
@@ -88,7 +89,7 @@ public class NavDataSetCardView extends VBox {
             getStyleClass().add("navdata-card-ignored");
         }
 
-        InspectionResult inspection = uiItem.inspect();
+        InspectionResult inspection = uiItem.getInspectionResult();
 
         Label nameLabel = new Label(uiItem.getName(),
                 buildStatusBall(uiItem, ignored, overriding, inspection));
@@ -132,9 +133,9 @@ public class NavDataSetCardView extends VBox {
         HBox actions = buildHoverActions(uiItem);
 
         VBox info = new VBox(4, header, filesToggle, actions);
-        HBox fixActions = buildFixActions(inspection);
-        if (!fixActions.getChildren().isEmpty()) {
-            info.getChildren().add(fixActions);
+        VBox messagesBox = buildMessages(inspection, ignored);
+        if (messagesBox != null) {
+            info.getChildren().add(messagesBox);
         }
         VBox.setMargin(info, new Insets(6, 8, 6, 8));
         getChildren().add(info);
@@ -161,7 +162,8 @@ public class NavDataSetCardView extends VBox {
     /**
      * The four-state status ball that stands in for the layer's icon: grey when X-Plane
      * reads none of the files, green when they are clean, orange on warnings, red on errors.
-     * Carries the reasons in its tooltip, so the card header itself stays scannable.
+     * The tooltip shows only the summary line; the detailed WARN/ERROR messages are displayed
+     * inline in the card.
      */
     private static Circle buildStatusBall(UiNavDataItem uiItem, boolean ignored, int overriding,
                                           InspectionResult inspection) {
@@ -173,49 +175,71 @@ public class NavDataSetCardView extends VBox {
             case WARNING -> "navdata-ball-warning";
             case ERROR -> "navdata-ball-error";
         });
-        Tooltip.install(ball, new Tooltip(tooltipText(ignored, overriding, status, inspection)));
+        Tooltip.install(ball, new Tooltip(tooltipText(ignored, overriding, status)));
         return ball;
     }
 
-    private static String tooltipText(boolean ignored, int overriding, NavDataSetStatus status,
-                                      InspectionResult inspection) {
-        List<String> lines = new ArrayList<>();
-        lines.add(switch (status) {
+    private static String tooltipText(boolean ignored, int overriding, NavDataSetStatus status) {
+        return switch (status) {
             case INACTIVE -> ignored ? "Ignored by layer " + overriding : "All files absent";
             case OK -> "OK";
             case WARNING -> "Warnings";
             case ERROR -> "Errors";
-        });
-        inspection.getMessages().stream()
-                .filter(message -> message.getSeverity() != Severity.INFO)
-                .map(InspectionMessage::getMessage)
-                .forEach(lines::add);
-        return String.join("\n", lines);
+        };
     }
 
     private HBox buildHoverActions(UiNavDataItem uiItem) {
         HBox actions = new HBox(4);
         actions.getStyleClass().add("navdata-card-actions");
-        addAction(actions, uiItem, "inspect", Feather.ACTIVITY);
         addAction(actions, uiItem, "reveal", Feather.FOLDER);
         return actions;
     }
 
-    private HBox buildFixActions(InspectionResult inspection) {
-        HBox fixActions = new HBox(4);
-        fixActions.getStyleClass().add("navdata-card-fix-actions");
+    /**
+     * Shows WARN/ERROR messages inline on the card, each with its own fix buttons.
+     * Returns null if the layer is ignored or there are no problems to display.
+     */
+    private VBox buildMessages(InspectionResult inspection, boolean ignored) {
+        if (ignored) {
+            return null;
+        }
+        List<InspectionMessage> problems = inspection.getMessages().stream()
+                .filter(m -> m.getSeverity() != Severity.INFO)
+                .toList();
+        if (problems.isEmpty()) {
+            return null;
+        }
+        VBox box = new VBox(2);
+        box.getStyleClass().add("navdata-card-messages");
+        for (InspectionMessage message : problems) {
+            HBox row = new HBox(6);
+            row.getStyleClass().add("navdata-card-message");
+            row.setWrapText(true);
 
-        inspection.getMessages().stream()
-                .flatMap(m -> m.getFixes().stream())
-                .forEach(fix -> {
+            FontIcon severityIcon = SeverityIconCellFactory.getSeverityIcon(message.getSeverity());
+            Label text = new Label(message.getMessage());
+            text.setWrapText(true);
+            text.getStyleClass().add("navdata-card-message-text");
+
+            row.getChildren().add(severityIcon);
+            HBox.setHgrow(text, Priority.ALWAYS);
+            row.getChildren().add(text);
+
+            if (!message.getFixes().isEmpty()) {
+                HBox fixes = new HBox(4);
+                message.getFixes().forEach(fix -> {
                     Button button = new Button(fix.label());
                     button.setGraphic(icon(Feather.TOOL));
                     button.getStyleClass().add("navdata-card-fix");
                     button.setOnAction(_ -> FixRunner.run(fix, this));
-                    fixActions.getChildren().add(button);
+                    fixes.getChildren().add(button);
                 });
+                row.getChildren().add(fixes);
+            }
 
-        return fixActions;
+            box.getChildren().add(row);
+        }
+        return box;
     }
 
     private void addAction(HBox actions, UiNavDataItem uiItem, String methodName, Feather feather) {

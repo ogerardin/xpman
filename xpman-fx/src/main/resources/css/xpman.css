@@ -893,6 +893,23 @@
     -fx-background-color: -color-accent-muted;
 }
 
+/* --- Inline message display on navdata cards --- */
+.navdata-card-messages {
+    -fx-spacing: 2px;
+    -fx-padding: 4px 0 0 0;
+}
+
+.navdata-card-message {
+    -fx-spacing: 6px;
+    -fx-alignment: top-left;
+}
+
+.navdata-card-message-text {
+    -fx-text-fill: -color-fg-default;
+    -fx-wrap-text: true;
+    -fx-font-size: 0.9em;
+}
+
 .navdata-info-description {
     -fx-text-fill: -color-fg-default;
     -fx-wrap-text: true;
