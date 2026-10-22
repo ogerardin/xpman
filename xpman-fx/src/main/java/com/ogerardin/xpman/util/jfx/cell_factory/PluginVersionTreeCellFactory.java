@@ -24,7 +24,7 @@ public class PluginVersionTreeCellFactory implements Callback<TreeTableColumn<Pl
                 setContentDisplay(ContentDisplay.TEXT_ONLY);
                 if (empty) return;
 
-                PluginRow row = getTreeTableRow() == null ? null : getTreeTableRow().getItem();
+                PluginRow row = getTableRow() == null ? null : getTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
                     Button button = new Button("Update");
                     button.getStyleClass().add("updates-item-button");
