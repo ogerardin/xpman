@@ -61,6 +61,11 @@ public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
         require(luaFile.getFileName().toString().equals(SCRIPT_FILENAME));
     }
 
+    @Override
+    public String getName() {
+        return "Simple Ground Equipment & Services";
+    }
+
     /** The updater cfg of the addon base folder, but only if it identifies itself as SGES. */
     @Getter(lazy = true)
     private final SkunkcraftsConfig skunkcraftsConfig = ownUpdaterCfg();
