@@ -3,7 +3,6 @@ package com.ogerardin.xplane.install.inspections;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
 
@@ -23,10 +22,8 @@ public enum SkunkcraftsUpdatableInspection implements Inspection<Archive> {
                 .anyMatch(path -> path.getFileName().toString().equals(SKUNKCRAFTS_CFG));
 
         if (hasSkunkcraftsCfg) {
-            return InspectionResult.of(InspectionMessage.builder()
-                    .severity(Severity.INFO)
-                    .message("This addon supports Skunkcrafts Updater")
-                    .build());
+            return InspectionResult.of(InspectionMessage.info(
+                    "This addon supports Skunkcrafts Updater"));
         }
 
         return InspectionResult.empty();

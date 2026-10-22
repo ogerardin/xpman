@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.install;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.inspections.AssertIsValidArchive;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -120,23 +121,16 @@ public class ArchiveInstallSource implements InstallSource, Archive {
         Optional<InstallableType> type = getInstallableType();
         
         if (type.isEmpty()) {
-            return InspectionResult.of(
-                com.ogerardin.xplane.inspection.InspectionMessage.builder()
-                    .severity(com.ogerardin.xplane.inspection.Severity.ERROR)
-                    .message("Archive type could not be identified. " +
-                            "Either file is not an installable X-Plane add-on, or it is corrupt.")
-                    .abort(true)
-                    .build()
-            );
+            return InspectionResult.of(InspectionMessage.error(
+                    "Archive type could not be identified. " +
+                            "Either file is not an installable X-Plane add-on, or it is corrupt.",
+                    true));
         }
         
         InstallableType detectedType = type.get();
         
         InspectionResult typeMessage = InspectionResult.of(
-            com.ogerardin.xplane.inspection.InspectionMessage.builder()
-                .severity(com.ogerardin.xplane.inspection.Severity.INFO)
-                .message("Archive type identified as: " + detectedType.description())
-                .build()
+            InspectionMessage.info("Archive type identified as: " + detectedType.description())
         );
         
         return typeMessage.append(detectedType.preconditions(xPlane, archive));

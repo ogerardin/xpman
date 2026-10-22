@@ -172,10 +172,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     public InspectionResult inspect() {
         List<InspectionMessage> messages = getChildren().stream()
                 .filter(item -> !item.getExists())
-                .map(item -> InspectionMessage.builder()
-                        .severity(Severity.INFO)
-                        .message("absent: " + item.getName())
-                        .build())
+                .map(item -> InspectionMessage.info("absent: " + item.getName()))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         List<String> cycles = getCycles();

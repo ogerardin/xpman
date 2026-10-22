@@ -3,7 +3,6 @@ package com.ogerardin.xplane.install.inspections.custom;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -21,9 +20,7 @@ public enum NavigraphCycleVersion implements Inspection<Archive> {
     public InspectionResult inspect(@NonNull Archive zip) {
         try {
             String text = zip.getAsText(Paths.get("cycle_info.txt"));
-            return InspectionResult.of(InspectionMessage.builder()
-                    .severity(Severity.INFO).message(text)
-                    .build());
+            return InspectionResult.of(InspectionMessage.info(text));
         } catch (FileNotFoundException _) {
             return InspectionResult.empty();
         }

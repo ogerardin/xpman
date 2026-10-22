@@ -27,17 +27,13 @@ public enum AssertHasSingleRootFolder implements Inspection<Archive> {
     public InspectionResult inspect(@NonNull Archive target) {
         Set<Path> rootFolders = rootFolders(target);
         if (rootFolders.size() != 1) {
-            return InspectionResult.of(InspectionMessage.builder()
-                    .severity(Severity.ERROR)
-                    .message("This file cannot be installed automatically because it " +
-                            "does not contain a single root folder; please check instructions and install manually.")
-                    .abort(true)
-                    .build());
+            return InspectionResult.of(InspectionMessage.error(
+                    "This file cannot be installed automatically because it " +
+                            "does not contain a single root folder; please check instructions and install manually.",
+                    true));
         }
-        return InspectionResult.of(InspectionMessage.builder()
-                .severity(Severity.INFO)
-                .message("Archive root folder: " + rootFolders.iterator().next())
-                .build());
+        return InspectionResult.of(InspectionMessage.info(
+                "Archive root folder: " + rootFolders.iterator().next()));
 
     }
 }

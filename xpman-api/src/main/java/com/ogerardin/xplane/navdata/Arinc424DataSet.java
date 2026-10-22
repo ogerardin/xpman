@@ -2,7 +2,6 @@ package com.ogerardin.xplane.navdata;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionMessage;
-import com.ogerardin.xplane.inspection.Severity;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -71,11 +70,8 @@ public class Arinc424DataSet extends NavDataSet {
                 .filter(Objects::nonNull)
                 .filter(dataset -> dataset.startsWith("FAACIFP"))
                 .findFirst()
-                .map(dataset -> InspectionMessage.builder()
-                        .severity(Severity.WARN)
-                        .message("US-only coverage (" + dataset + "): approaches, terminal fixes and navaids "
-                                + "outside the United States are not in this dataset.")
-                        .build());
+                .map(dataset -> InspectionMessage.warn("US-only coverage (" + dataset + "): approaches, terminal fixes and navaids "
+                                + "outside the United States are not in this dataset."));
     }
 
     /**
@@ -95,7 +91,7 @@ public class Arinc424DataSet extends NavDataSet {
         NavDataManager navData = getXPlane().getNavDataManager();
 
         if (navData.getSimWideOverride().filter(NavDataSet::getExists).isPresent()) {
-            return Optional.of(warn("This layer is not used: X-Plane reads no other navdata file while the "
+            return Optional.of(InspectionMessage.warn("This layer is not used: X-Plane reads no other navdata file while the "
                     + "sim-wide ARINC424 override is installed."));
         }
 
@@ -105,12 +101,8 @@ public class Arinc424DataSet extends NavDataSet {
         if (mine.isEmpty() || underlying.isEmpty() || mine.get().equals(underlying.get())) {
             return Optional.empty();
         }
-        return Optional.of(warn("AIRAC cycle " + underlying.get() + " does not match the cycle of the navdata "
+        return Optional.of(InspectionMessage.error("AIRAC cycle " + underlying.get() + " does not match the cycle of the navdata "
                 + "layer this one overrides. X-Plane requires both to be the same cycle, because terminal "
                 + "procedures reference waypoints outside the terminal area; mixing cycles is not supported."));
-    }
-
-    private static InspectionMessage warn(String message) {
-        return InspectionMessage.builder().severity(Severity.WARN).message(message).build();
     }
 }

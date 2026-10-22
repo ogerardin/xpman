@@ -3,7 +3,6 @@ package com.ogerardin.xplane.install.inspections;
 import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
@@ -30,16 +29,12 @@ public class WouldOverwriteInspection implements Inspection<Archive> {
             if (overwrites.isEmpty()) {
                 return InspectionResult.empty();
             }
-            return InspectionResult.of(InspectionMessage.builder()
-                    .severity(Severity.WARN)
-                    .message("Installing will overwrite %d existing file(s), e.g. %s"
-                            .formatted(overwrites.size(), overwrites.getFirst()))
-                    .build());
+            return InspectionResult.of(InspectionMessage.warn(
+                    "Installing will overwrite %d existing file(s), e.g. %s"
+                            .formatted(overwrites.size(), overwrites.getFirst())));
         } catch (IOException e) {
-            return InspectionResult.of(InspectionMessage.builder()
-                    .severity(Severity.ERROR)
-                    .message("Cannot determine what installing would overwrite: " + e.getMessage())
-                    .build());
+            return InspectionResult.of(InspectionMessage.error(
+                    "Cannot determine what installing would overwrite: " + e.getMessage()));
         }
     }
 }

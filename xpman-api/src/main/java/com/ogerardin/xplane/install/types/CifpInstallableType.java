@@ -3,7 +3,6 @@ package com.ogerardin.xplane.install.types;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
-import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.InstallableType;
 import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.util.progress.ProgressListener;
@@ -55,26 +54,22 @@ public class CifpInstallableType implements InstallableType {
     @Override
     public InspectionResult preconditions(XPlane xPlane, Archive archive) {
         List<InspectionMessage> messages = new ArrayList<>();
-        messages.add(InspectionMessage.builder()
-                .severity(Severity.WARN)
-                .message("Installs the FAA's approach data — approaches, terminal fixes and navaids, "
+        messages.add(InspectionMessage.warn(
+                "Installs the FAA's approach data — approaches, terminal fixes and navaids, "
                         + "ILS, GLS, airport and runway records — as Custom Data/" + FAACIFP18 + ". "
                         + "Only US airports are affected; everything outside the US keeps coming from your "
                         + "existing navdata. X-Plane applies this file only if its AIRAC cycle matches your "
-                        + "navdata, because terminal procedures reference waypoints outside the terminal area.")
-                .build());
+                        + "navdata, because terminal procedures reference waypoints outside the terminal area."));
 
         // Probed directly rather than through NavDataManager: asking the manager here would
         // force a full navdata layer scan, and fire reload events, just to check one file.
         // The sim-wide override layer holds no other file than this one.
         Path override = xPlane.getPaths().customData().resolve(SIM_WIDE_OVERRIDE_FILE);
         if (Files.exists(override)) {
-            messages.add(InspectionMessage.builder()
-                    .severity(Severity.WARN)
-                    .message("Custom Data/" + SIM_WIDE_OVERRIDE_FILE + " is installed. X-Plane reads no "
+            messages.add(InspectionMessage.warn(
+                    "Custom Data/" + SIM_WIDE_OVERRIDE_FILE + " is installed. X-Plane reads no "
                             + "other navdata file while it is there, so this will have no effect until it "
-                            + "is removed or renamed.")
-                    .build());
+                            + "is removed or renamed."));
         }
         return InspectionResult.of(messages);
     }

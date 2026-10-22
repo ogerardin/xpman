@@ -128,12 +128,12 @@ class Arinc424DataSetTest {
     }
 
     @Test
-    void warnsWhenTheApproachesCycleDiffersFromTheLayerItOverrides() throws Exception {
+    void errorWhenTheApproachesCycleDiffersFromTheLayerItOverrides() throws Exception {
         writeCustomData("FAACIFP18", FAA_HEADER);
         writeDefaultData("earth_nav.dat", "2507");
 
         assertThat(consistencyMessages(approachesLayer()), hasItem(allOf(
-                hasProperty("severity", is(Severity.WARN)),
+                hasProperty("severity", is(Severity.ERROR)),
                 hasProperty("message", containsString("AIRAC cycle 2507 does not match")))));
     }
 

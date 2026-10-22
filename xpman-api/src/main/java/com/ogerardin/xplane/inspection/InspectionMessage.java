@@ -35,4 +35,20 @@ public class InspectionMessage {
         return severity == Severity.ERROR;
     }
 
+    public static InspectionMessage warn(String message) {
+        return builder().severity(Severity.WARN).message(message).build();
+    }
+
+    public static InspectionMessage info(String message) {
+        return builder().message(message).build();  // INFO is the default severity
+    }
+
+    public static InspectionMessage error(String message) {
+        return builder().severity(Severity.ERROR).message(message).build();
+    }
+
+    public static InspectionMessage error(String message, boolean abort) {
+        return builder().severity(Severity.ERROR).message(message).abort(abort).build();
+    }
+
 }
