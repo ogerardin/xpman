@@ -7,13 +7,14 @@ from their repositories, without requiring installation of the Skunkcraft update
 ## Detecting Updates
 
 - The Home dashboard shows an **Updates Available** section grouped by category.
-- Each panel (Aircraft, Scenery, Plugins) shows an update marker on addons with available updates.
+- Each panel (Aircraft, Scenery, Plugins) shows an **Update** button in the Version column for addons with available updates.
 - Library tiles show **N updates** badges.
 - Disabled plugins, scenery, and FlyWithLua scripts are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
 
 ## Starting an Update
 
-- Click **Update** in the Home dashboard.
+- Click **Update** in a panel (Aircraft, Scenery, Plugins).
+- Or click **Update** in the Home dashboard.
 - Or right-click the addon and choose **Update via Skunkcrafts Updater** (shown only when an update is available).
 
 ## Skunkcrafts Update Wizard

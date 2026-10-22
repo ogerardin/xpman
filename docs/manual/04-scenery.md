@@ -28,7 +28,7 @@ The table lists all discovered scenery packages. Columns:
 | **Rank** | Position in `scenery_packs.ini` |
 | **Enabled** | Toggle switch (only for entries listed in `scenery_packs.ini`) |
 | **Name** | Package name |
-| **Version** | Package version; an **Update available** pill appears when an update is available and shows the latest version on hover |
+| **Version** | Package version; an **Update** button appears when an update is available (hover for the latest version); click it to open the update wizard |
 | **Has airport?** | Pill shown if the package contains an airport |
 | **Library?** | Pill shown if the package is a library |
 | **Tile count** | Number of terrain tiles |

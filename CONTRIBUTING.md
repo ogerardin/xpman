@@ -1,14 +1,86 @@
-# Extending XPman
+# Contributing to XPman
 
-XPman discovers custom aircraft, scenery, plugin, and FlyWithLua script classes
-at runtime. No registry or service-loader entry is required. Classes must be
-under `com.ogerardin.xplane` so ClassGraph can find them.
+Thank you for your interest in contributing to XPman! This guide will help you get started.
 
-## Custom Aircraft Classes
+## Building the project
 
-Create a subclass under `com.ogerardin.xplane.aircraft.custom` with a
-constructor accepting `(XPlane, AcfFile)`. The constructor must reject every
-aircraft it does not handle by calling `require(...)`.
+### Prerequisites
+
+- **JDK 25** (required — the project uses Java 25 features)
+- **Maven** 3.8+
+
+### Build commands
+
+```bash
+# Full build (all modules, skip tests)
+mvn clean package
+
+# Run tests
+mvn test
+
+# Run tests for a specific module
+mvn test -pl xpman-api
+
+# Run a single test class
+mvn test -pl xpman-api -Dtest=ZiboMod738Test
+```
+
+### Running the app locally
+
+The project uses JPMS (Java Platform Module System). When running from your IDE, you need to add this JVM argument for ControlsFX compatibility:
+
+```
+--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls
+```
+
+In IntelliJ:
+1. Run → Edit Configurations
+2. Select your `XPmanFX` configuration
+3. Add the above to "VM options"
+
+The `jpackage` builds already include this flag, so installed versions work without it.
+
+## Architecture
+
+The project has three Maven modules:
+
+| Module | Purpose |
+|--------|---------|
+| `xpman-api` | Pure Java API — domain model, file parsers, inspection framework, install logic |
+| `xpman-fx` | JavaFX desktop UI — FXML views, controllers, wizards |
+| `xpman-fx-dist` | Distribution packaging — installers via jpackage |
+
+### Key patterns
+
+- **Manager pattern**: Each domain aggregate (aircraft, plugins, scenery, etc.) has a `Manager<T>` with lazy loading and event dispatch.
+- **Inspection framework**: `Inspection<T>` is a functional interface composed via `.and()`. Domain objects implement `Inspectable`.
+- **InstallableType**: Strategy pattern for archive-based installation with auto-detection of content type.
+- **Platform polymorphism**: The `Platform` interface has platform-specific behavior via default methods and overrides.
+
+### Tech stack
+
+- **Java 25** with JPMS
+- **Lombok** for boilerplate reduction (`@Data`, `@Slf4j`, `@Getter`, `@Builder`, etc.)
+- **Gson** for JSON (not Jackson)
+- **No Spring DI** — `XPlane(folder)` is the root object
+- **FXML** for all UI views
+- **JUnit 5** + Hamcrest + Mockito for tests
+
+## Extending XPman
+
+XPman discovers custom aircraft, scenery, plugin, and FlyWithLua script classes at runtime. No registry or service-loader entry is required. Classes must be under `com.ogerardin.xplane` so ClassGraph can find them.
+
+### Discovery Rules
+
+Class-based extensions (aircraft, scenery, plugins, FlyWithLua scripts) are found using ClassGraph. XPman tries discovered subclass constructors with the object being inspected. The first constructor that succeeds is used; therefore each `require(...)` condition must be specific and fail for unrelated objects.
+
+Installable types use a different pattern: they are instantiated via a no-arg constructor, asked `recognizes(archive)`, and the deepest matching subclass wins.
+
+Tool manifests are discovered from the classpath resource directory `/tools`.
+
+### Custom Aircraft Classes
+
+Create a subclass under `com.ogerardin.xplane.aircraft.custom` with a constructor accepting `(XPlane, AcfFile)`. The constructor must reject every aircraft it does not handle by calling `require(...)`.
 
 ```java
 package com.ogerardin.xplane.aircraft.custom;
@@ -33,12 +105,9 @@ public class MyAircraft extends Aircraft {
 }
 ```
 
-Use the 3-arg `super(xPlane, acfFile, "Display Name")` constructor to force a
-specific display name instead of deriving it from the ACF file.
+Use the 3-arg `super(xPlane, acfFile, "Display Name")` constructor to force a specific display name instead of deriving it from the ACF file.
 
-Use a condition that uniquely identifies the aircraft. Existing classes use
-ACF metadata such as `getStudio()`, `getAcfName()`, and `getNotes()`, or files
-present in the aircraft directory.
+Use a condition that uniquely identifies the aircraft. Existing classes use ACF metadata such as `getStudio()`, `getAcfName()`, and `getNotes()`, or files present in the aircraft directory.
 
 Useful methods to override include:
 
@@ -51,11 +120,9 @@ Useful methods to override include:
 | `getManuals()` | Provide PDF manual paths |
 | `inspect()` | Add aircraft-specific checks |
 
-## Custom Scenery Classes
+### Custom Scenery Classes
 
-Create a subclass under `com.ogerardin.xplane.scenery.custom` with a
-constructor accepting `Path folder`. Reject folders that do not represent the
-custom scenery type.
+Create a subclass under `com.ogerardin.xplane.scenery.custom` with a constructor accepting `Path folder`. Reject folders that do not represent the custom scenery type.
 
 ```java
 package com.ogerardin.xplane.scenery.custom;
@@ -92,15 +159,11 @@ Useful methods to override include:
 | `isLibrary()` | Whether scenery is a library |
 | `inspect()` | Add scenery-specific checks |
 
-## Custom Plugin Classes
+### Custom Plugin Classes
 
-Create a subclass under `com.ogerardin.xplane.plugins.custom` with a
-constructor accepting `(XPlane, Path xplFile)`. The constructor must reject
-every plugin it does not handle by calling `require(...)`.
+Create a subclass under `com.ogerardin.xplane.plugins.custom` with a constructor accepting `(XPlane, Path xplFile)`. The constructor must reject every plugin it does not handle by calling `require(...)`.
 
-Extend `Plugin` directly, or extend `XPlaneOrgPlugin` if the plugin is hosted
-on x-plane.org (it provides automatic latest-version checking from the
-download page).
+Extend `Plugin` directly, or extend `XPlaneOrgPlugin` if the plugin is hosted on x-plane.org (it provides automatic latest-version checking from the download page).
 
 ```java
 package com.ogerardin.xplane.plugins.custom;
@@ -150,11 +213,9 @@ Useful methods to override include:
 | `getSystem()` | Return `true` for system plugins (protected from deletion) |
 | `delete()` | Custom deletion logic |
 
-## Custom FlyWithLua Script Classes
+### Custom FlyWithLua Script Classes
 
-Create a subclass under `com.ogerardin.xplane.plugins.custom.lua` with a
-constructor accepting `(XPlane, Path luaFile)`. The constructor must reject
-every script it does not handle by calling `require(...)`.
+Create a subclass under `com.ogerardin.xplane.plugins.custom.lua` with a constructor accepting `(XPlane, Path luaFile)`. The constructor must reject every script it does not handle by calling `require(...)`.
 
 ```java
 package com.ogerardin.xplane.plugins.custom.lua;
@@ -179,9 +240,7 @@ public class MyScript extends FlyWithLuaScript {
 }
 ```
 
-Script metadata (name, description, version) is automatically parsed from
-Lua header comments by `LuaHeaderParser`. Override `getVersion()` only when
-the header doesn't contain version info or it's stored differently.
+Script metadata (name, description, version) is automatically parsed from Lua header comments by `LuaHeaderParser`. Override `getVersion()` only when the header doesn't contain version info or it's stored differently.
 
 Useful methods to override include:
 
@@ -193,11 +252,9 @@ Useful methods to override include:
 | `delete()` | Custom deletion logic (e.g. remove associated data folders) |
 | `inspect()` | Add script-specific checks |
 
-## Custom Installable Types
+### Custom Installable Types
 
-`InstallableType` controls how archives are auto-detected and installed. Unlike
-domain object subclasses, installable types use a **no-arg constructor** and
-are discovered via `recognizes()`.
+`InstallableType` controls how archives are auto-detected and installed. Unlike domain object subclasses, installable types use a **no-arg constructor** and are discovered via `recognizes()`.
 
 Implement `InstallableType` anywhere under `com.ogerardin.xplane`:
 
@@ -237,13 +294,9 @@ public class MyInstallableType implements InstallableType {
 }
 ```
 
-Installable types can also be `static` inner classes co-located with the domain
-class they install (e.g. `FlyWithLuaScript.FlyWithLuaScriptInstallableType`).
+Installable types can also be `static` inner classes co-located with the domain class they install (e.g. `FlyWithLuaScript.FlyWithLuaScriptInstallableType`).
 
-**Deepest subclass wins.** When multiple types match an archive, the most
-specialized (deepest in the inheritance chain) is selected. This means a
-subtype can override its parent's `recognizes()` to handle a more specific case
-without changing the parent.
+**Deepest subclass wins.** When multiple types match an archive, the most specialized (deepest in the inheritance chain) is selected. This means a subtype can override its parent's `recognizes()` to handle a more specific case without changing the parent.
 
 | Method | Purpose |
 |---|---|
@@ -252,7 +305,9 @@ without changing the parent.
 | `preconditions(XPlane, Archive)` | Check preconditions before install |
 | `install(XPlane, Archive, ProgressListener)` | Perform installation |
 
-## Declaring A New Tool
+### Adding a Tool
+
+Tools are external applications managed by XPman. Adding a tool is simpler than adding recognized aircraft or plugins — you just create a JSON manifest file, no Java code needed.
 
 Add a JSON manifest under:
 
@@ -260,7 +315,7 @@ Add a JSON manifest under:
 xpman-api/src/main/resources/tools/
 ```
 
-The filename, without `.json`, becomes the tool ID. No Java code is needed.
+The filename, without `.json`, becomes the tool ID.
 
 ```json
 {
@@ -299,39 +354,19 @@ Supported fields include:
 | `file` | Installed executable path relative to install directory |
 | `installDir` | Custom install directory relative to X-Plane root; `null` = `Resources/tools`, `"."` = X-Plane root |
 | `version` | Explicit version string |
+| `versionRegex` | Regex pattern to extract the version from the tool's binary (group 1 is captured) |
 | `installChecker` | Optional content check, for example `{ "string": "1.2.3" }` |
 | `items` | Platform or version-specific variants |
 
-Platform and X-Plane version variants are filtered automatically. A tool is
-shown as installed when its declared `file` exists under the install directory
-and its optional install checker passes.
+Platform and X-Plane version variants are filtered automatically. A tool is shown as installed when its declared `file` exists under the install directory and its optional install checker passes.
 
-Supported downloads are `.zip` archives and macOS `.dmg` files. ZIP files are
-extracted into the install directory; DMG files must contain the application at
-the volume root.
+Supported downloads are `.zip` archives and macOS `.dmg` files. ZIP files are extracted into the install directory; DMG files must contain the application at the volume root.
 
-## Discovery Rules
+### Skunkcrafts Updater Integration
 
-Class-based extensions (aircraft, scenery, plugins, FlyWithLua scripts) are
-found using ClassGraph. XPman tries discovered subclass constructors with the
-object being inspected. The first constructor that succeeds is used; therefore
-each `require(...)` condition must be specific and fail for unrelated objects.
+Any addon (plugin, aircraft, or scenery) that implements `SkunkcraftsUpdatable` can participate in the Skunkcrafts update protocol. The base classes `Plugin`, `Aircraft`, and `SceneryPackage` already implement this interface.
 
-Installable types use a different pattern: they are instantiated via a no-arg
-constructor, asked `recognizes(archive)`, and the deepest matching subclass
-wins.
-
-Tool manifests are discovered from the classpath resource directory `/tools`.
-
-## Skunkcrafts Updater Integration
-
-Any addon (plugin, aircraft, or scenery) that implements `SkunkcraftsUpdatable`
-can participate in the Skunkcrafts update protocol. The base classes `Plugin`,
-`Aircraft`, and `SceneryPackage` already implement this interface.
-
-An addon is Skunkcrafts-updatable when it contains a `skunkcrafts_updater.cfg`
-file in its base folder. The configuration file uses pipe-delimited key|value
-format:
+An addon is Skunkcrafts-updatable when it contains a `skunkcrafts_updater.cfg` file in its base folder. The configuration file uses pipe-delimited key|value format:
 
 ```
 zone|custom
@@ -356,6 +391,34 @@ The remote repository must contain:
 - `skunkcrafts_updater_whitelist.txt` - List of managed files with CRC32 checksums
 - `skunkcrafts_updater_blacklist.txt` (optional) - Files to exclude from updates
 
-Users can trigger updates via the context menu on any Skunkcrafts-updatable addon.
-The update process downloads only changed files (differential update) and verifies
-integrity using CRC32 checksums.
+Users can trigger updates via the context menu on any Skunkcrafts-updatable addon. The update process downloads only changed files (differential update) and verifies integrity using CRC32 checksums.
+
+## Code style
+
+- **Zero boilerplate** — use Lombok, records, and modern Java features
+- **Polymorphism over conditionals** — prefer interfaces and enums with behavior
+- **Functional style** — use streams and method references where they improve clarity
+- **Javadoc on all classes** — concise, no `@author` tags
+- **No `switch`/`if-else`** when polymorphism works
+
+## Testing
+
+- Tests use **JUnit 5** with Hamcrest and Mockito
+- Tests that need a real X-Plane installation use `@EnableOnLocalXPlane*` annotations
+- Run all tests with `mvn test`
+
+## Pull requests
+
+1. Fork the repository at https://github.com/ogerardin/xpman
+2. Create a feature branch: `git checkout -b my-feature`
+3. Make your changes
+4. Run tests: `mvn test`
+5. Commit with clear messages
+6. Push to your fork: `git push origin my-feature`
+7. Open a pull request
+
+CI runs automatically on every push. Your PR will be reviewed and merged if it meets the project's standards.
+
+## Questions?
+
+Open an issue on GitHub if you need help or want to discuss a contribution before starting.

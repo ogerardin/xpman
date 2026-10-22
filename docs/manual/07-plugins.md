@@ -3,80 +3,100 @@
 ![Plugin management](assets/screenshots/plugins.png)
 *The Plugins panel.*
 
+The Plugins panel lists everything installed in `Resources/plugins`, lets you enable, disable and uninstall plugins, and shows when updates are available.
+
 ## Toolbar
 
 - **Reload** — Re-scan plugins.
-- **Install...** — Open the universal install wizard for plugins.
+- **Install...** — Open the universal install wizard (see [Installing Add-ons](09-installing-addons.md)).
 
-## Tree Table
+## Plugin List
 
-Plugins are displayed as a tree. System plugins show a system icon. Columns:
+Plugins are displayed as a tree. Columns:
 
 | Column | Description |
 |--------|-------------|
-| System icon | Shown for built-in/system plugins |
-| **Enabled** | Toggle switch |
+| Icon | Shield for built-in system plugins (they can be neither disabled nor uninstalled); code symbol for FlyWithLua scripts |
+| **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version (from the native binary, or the script header for FlyWithLua scripts); an **Update available** pill appears when a Skunkcrafts update is available and shows the latest version on hover |
+| **Version** | Installed version. An **Update** button appears when a newer version is available; hover it to see the latest version |
 
-### FlyWithLua
+The **Update** button opens the Skunkcrafts update wizard directly (see [Updating Add-ons](10-updating-addons.md)). It is available for any plugin or FlyWithLua script that ships a `skunkcrafts_updater.cfg`. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
 
-The FlyWithLua plugin node expands to show its Lua scripts, plus groups **Disabled scripts (n)** and **Quarantined scripts (n)**.
+## Recognized Plugins
 
-**SGES updates:** The SGES archive ships a Skunkcrafts updater config next to its `Scripts/` folder; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the Skunkcrafts protocol expects. SGES is therefore the updatable addon: updates appear on the **SGES script row** (right-click → **Update via Skunkcrafts Updater**), not on the FlyWithLua plugin row. Uninstalling SGES removes the config.
+Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unrecognized plugins are named after their folder, with no description. XPman **recognizes** a few popular ones and gives them a proper name, description, links, tailored install and uninstall checks, and — for some — automatic detection of newer versions.
 
-**Skunkcrafts cfg slot:** the Skunkcrafts protocol has a single updater-cfg slot per addon base folder (`FlyWithLua/skunkcrafts_updater.cfg`) — a protocol-level constraint shared with the standalone Skunkcrafts Updater. If two Skunkcrafts-managed FlyWithLua scripts are ever installed, the last one installed wins the slot (its cfg overwrites the other's), and the identity guard makes the update pill follow whichever script matches the surviving cfg. Today SGES is the only such script, so no conflict is possible. Per-addon cfg filenames (e.g. `skunkcrafts_updater.sges.cfg`) and per-addon subfolders (e.g. `FlyWithLua/sges/`) would lift the limitation, but the protocol does not support either.
+| Plugin | Recognized by | What XPman adds |
+|---|---|---|
+| FlyWithLua | `FlyWithLua` folder | Lists its scripts; uninstall warning; Linux library check on install; X-Plane.org and GitHub links; **Inspect** reports newer versions |
+| SGES | Its `.lua` file | Version read from the script; Skunkcrafts **Update** button on the script row; uninstall removes data, docs and updater files; manuals and X-Plane.org link |
+| SimLoad Manager | `SimLoadManager` folder (v5 plugin) or `SimLoadManager.lua` (v4 script) | Name, description and links; X-Plane 12.4.4 check and Linux `libcurl` warning on install; v4 uninstall also removes `SLM-Data` |
+| AutoGate | `AutoGate` folder | Description and X-Plane.org link; **Inspect** reports newer versions |
+| AviTab | `Avitab.xpl` | Description and X-Plane.org, GitHub and Wiki links; **Inspect** reports newer versions |
+| Terrain Radar | `TerrainRadar` folder | Version read from its readme; X-Plane.org link; **Inspect** reports newer versions |
+| X-IvAp | `X-IvAp-64.xpl` | Links to the IVAO home page and manual; **Inspect** reports newer versions from the IVAO site |
+| PluginAdmin | Folder name | System plugin: can be neither disabled nor uninstalled |
+
+More plugins will be recognized in future releases. If your favorite plugin is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.
+
+For plugins that report newer versions via **Inspect**, the comparison runs against the plugin's publication channel (X-Plane.org, or the IVAO site for X-IvAp). The **Update** button itself only appears when Skunkcrafts updates are supported.
+
+## FlyWithLua
+
+The FlyWithLua node expands to show its Lua scripts, plus two groups: **Disabled scripts (n)** and **Quarantined scripts (n)**. Scripts are hidden while FlyWithLua itself is disabled.
+
+Each script can be enabled, disabled or quarantined individually. Quarantining moves the script to a separate `Scripts (Quarantine)` folder, next to the regular `Scripts` and `Scripts (disabled)` folders.
+
+Installing any FlyWithLua script (including SGES and the v4 SimLoad Manager script) is blocked if FlyWithLua is missing or disabled. On Linux, installing the FlyWithLua plugin itself warns when `libglut` or `libopenal` is missing.
+
+Updates for scripts such as SGES appear on the **script's own row**, not on the FlyWithLua row.
+
+### SGES
+
+Simple Ground Equipment & Services ships a Skunkcrafts updater config; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the protocol expects. SGES is therefore the updatable addon: the **Update** button appears on the **SGES script row**, not on the FlyWithLua plugin row. Uninstalling SGES removes the config as well as its data and documentation folders.
 
 ### SimLoad Manager
 
-SimLoad Manager (v5+) is a standalone X-Plane plugin that simulates realistic passenger, cargo, and fuel loading operations with SimBrief integration.
+SimLoad Manager is recognized in two forms:
 
-**Requirements:**
-- X-Plane 12.4.4 or later
-- SGES (optional) — for ground vehicle operations
-- FlyWithLua (optional) — only required if using SGES
-- Linux: `libcurl.so.4` for SimBrief integration
+- **v5+** — a standalone plugin installed in `Resources/plugins/SimLoadManager`.
+- **v4** — a FlyWithLua script (`SimLoadManager.lua`) in `FlyWithLua/Scripts`.
 
-**Installation:**
-Extract the archive and place the entire `SimLoadManager/` folder into `Resources/plugins/` (do not rename). The plugin will appear in the X-Plane menu under Plugins → SimLoad Manager. XPman enforces the minimum X-Plane version requirement (12.4.4) and will block installation if your X-Plane version is older.
+The install wizard detects the archive format automatically. XPman enforces X-Plane 12.4.4 or later for the v5 plugin and blocks installation on older versions. On Linux, it warns when `libcurl.so.4` is missing (needed for SimBrief).
 
-**Migration from v4 (FlyWithLua script):**
-No manual steps required. SimLoad Manager v5 automatically migrates v4 settings and moves the old script from `FlyWithLua/Scripts/` to `FlyWithLua/Scripts (disabled)/`.
+Uninstalling the v4 script also removes the `SLM-Data` folder next to it.
 
-**Platform Notes:**
-- **macOS:** The plugin is not notarized by Apple. Use **Remove macOS quarantine** from the context menu if blocked.
-- **Linux:** SimBrief integration requires `libcurl.so.4` (install via package manager, e.g., `sudo apt install libcurl4`).
+## Uninstall
 
-**Automatic Updates:**
-SimLoad Manager supports Skunkcrafts Updater. Once installed, future versions can be updated directly via the **Update via Skunkcrafts Updater** context menu option.
+Uninstalling a plugin moves its entire folder to the trash. For FlyWithLua, the confirmation dialog warns that all its scripts will also be deleted.
 
-## Plugin Context Menu
+## Context Menus
+
+### Plugins
 
 Right-click a plugin for:
 
-- **Reveal**
-- **Remove macOS quarantine** — Shown only on macOS when the plugin is quarantined.
+- **Reveal** — Show the plugin folder in your file manager.
+- **Remove macOS quarantine** — macOS only, shown only when the plugin is quarantined.
 - **Enable plugin** / **Disable plugin**
-- **Uninstall plugin** — Confirmation dialog with details.
-- **Inspect** — Opens Inspection results.
-- **Properties** — Shows a read-only Properties window with all object properties.
-- **Update via Skunkcrafts Updater** — Available only for enabled plugins that have an update available.
-- **Skunkcrafts: Locked by developer**
-- **Links** — Dynamic submenu.
-- **Manuals** — Dynamic submenu with PDF manuals.
+- **Uninstall plugin** — Confirmation dialog with plugin-specific details.
+- **Inspect** — Show inspection results.
+- **Properties** — Read-only view of all plugin properties.
+- **Update via Skunkcrafts Updater** — Shown only for enabled plugins with an update available.
+- **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
+- **Links** and **Manuals** — Submenus, shown when available.
 
-## Script Context Menu (FlyWithLua)
+### Scripts (FlyWithLua)
 
-Right-click a FlyWithLua script for:
+Right-click a script for:
 
 - **Enable script** / **Disable script**
 - **Quarantine script** / **Unquarantine script**
 - **Reveal**
 - **Open in text editor**
-- **Manuals** — Dynamic submenu.
-- **Links** — Dynamic submenu.
-- **Properties** — Shows a read-only Properties window with all object properties.
 - **Uninstall script** — Confirmation dialog.
-- **Update via Skunkcrafts Updater** — Available only for enabled scripts that have an update available (e.g. SGES).
-- **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
+- **Properties**
+- **Update via Skunkcrafts Updater** / **Skunkcrafts: Locked by developer** — For scripts that support it (e.g. SGES).
+- **Links** and **Manuals** — Submenus, shown when available.
