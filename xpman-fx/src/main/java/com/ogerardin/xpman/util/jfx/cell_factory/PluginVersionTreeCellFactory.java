@@ -29,7 +29,7 @@ public class PluginVersionTreeCellFactory implements Callback<TreeTableColumn<Pl
                     Button button = new Button("Update");
                     button.getStyleClass().add("updates-item-button");
                     String latestVersion = row.getLatestVersion();
-                    if (latestVersion != null) button.setTooltip(new Tooltip("Latest version: " + latestVersion));
+                    if (latestVersion != null) button.setTooltip(new Tooltip("Update to " + latestVersion));
                     Runnable action = row.updateAction();
                     if (action != null) button.setOnAction(_ -> action.run());
                     setGraphic(button);
