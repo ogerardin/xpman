@@ -17,6 +17,15 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+/**
+ * Lightweight Google Drive API client using an embedded public API key (no OAuth).
+ * <p>
+ * Provides read-only access to public Drive folders — specifically the Zibo Mod 738 update folder.
+ * Supports listing files in a folder by ID and downloading file content. The API key is restricted
+ * to the Drive API in the GCP project and is intended for public data access only.
+ *
+ * @see <a href="https://developers.google.com/drive/api/guides/about-sdk">Drive API SDK</a>
+ */
 @Slf4j
 public class GoogleDriveClient {
     private static final String APPLICATION_NAME = "X-Plane Manager";

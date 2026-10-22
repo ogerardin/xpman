@@ -97,6 +97,7 @@ public class NavDataInfoDialog extends Dialog<Void> {
         return new HtmlRenderer().render(tokenizeHtml(html));
     }
 
+    /** HTML content renderer for the navigation data info dialog. */
     private static class HtmlRenderer {
         private final TextFlow flow = new TextFlow();
         private boolean inBold;

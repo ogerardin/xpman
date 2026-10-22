@@ -6,6 +6,13 @@ import lombok.NonNull;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * Fallback {@link Platform} implementation for unrecognized operating systems.
+ * <p>
+ * All file/URL operations throw {@link UnsupportedOperationException}; {@link #isRunnable} returns
+ * {@code false} and {@link #getVersion} returns {@code null}. Used when JNA's platform detection
+ * does not match any supported OS (macOS, Windows, Linux).
+ */
 @Getter
 public class UnknownPlatform implements Platform {
 

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
+/** UI wrapper around a {@link FlyWithLuaScript} that exposes context-menu actions (enable, disable, quarantine, uninstall, etc.) for the plugins tree table. */
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 @Data
 public class UiFlyWithLuaScript implements PluginRow {

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/** Introspects controller classes to discover menu-relevant methods, with caching and human-readable label generation. */
 @UtilityClass
 public class IntrospectionHelper {
 

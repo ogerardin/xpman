@@ -7,6 +7,15 @@ import one.util.streamex.StreamEx;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * An immutable container of {@link InspectionMessage}s produced by running an
+ * {@link com.ogerardin.xplane.inspection.Inspection} against an {@link Inspectable} object.
+ *
+ * <p>Delegates {@link List} methods to its internal message list and provides
+ * {@link #append(InspectionResult)} to merge results and {@link #isNotAbort()} to
+ * check whether any message sets the abort flag (used by chained inspections to
+ * short-circuit).</p>
+ */
 @Data
 public class InspectionResult {
 

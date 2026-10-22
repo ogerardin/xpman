@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.IOException;
 
+/** A user-editable scenery class that matches packages by regex on their name. */
 @Data
 @AllArgsConstructor
 public class RegexSceneryClass implements SceneryClass {

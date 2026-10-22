@@ -15,6 +15,7 @@ import lombok.experimental.Delegate;
 import java.io.IOException;
 import java.net.URL;
 
+/** UI wrapper around a {@link SceneryEntry} that exposes context-menu actions and a {@link SwitchRow}-compatible enable toggle for the scenery table. */
 @SuppressWarnings({"unused"})
 @Data
 public class UiSceneryEntry implements SwitchRow {

@@ -3,6 +3,7 @@ package com.ogerardin.xpman.util.jfx;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/** Persisted application preferences for JavaFX windows: quit confirmation, main window position, and wizard sizes. */
 @Data
 public class JfxAppPrefs {
 

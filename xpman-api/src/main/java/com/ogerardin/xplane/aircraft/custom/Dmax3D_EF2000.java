@@ -16,6 +16,9 @@ import java.util.regex.Pattern;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link Aircraft} for the Dmax3D Eurofighter Typhoon, recognized by studio and ACF name.
+ */
 public class Dmax3D_EF2000 extends Aircraft {
 
     private static final Pattern filePattern = Pattern.compile("ef2000_v(\\d)(\\d)");

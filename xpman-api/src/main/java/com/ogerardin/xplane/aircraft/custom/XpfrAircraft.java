@@ -23,6 +23,14 @@ import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link Aircraft} for XPFR aircraft, which use a non-standard version file naming
+ * convention. XPFR stores version information in text files named like {@code *-ID.v.VERSION.txt},
+ * where VERSION is in the format {@code N-N_(N)_N}. This class parses that pattern to extract the
+ * aircraft ID and version, and provides a link to the aircraft's detail page on xpfr.org.
+ * <p>
+ * Recognition is based on either the studio field being "XPFR" or the presence of a matching version file.
+ */
 @SuppressWarnings("unused")
 public class XpfrAircraft extends Aircraft {
 

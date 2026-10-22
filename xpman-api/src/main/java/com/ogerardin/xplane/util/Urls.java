@@ -6,6 +6,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+/**
+ * URL construction helper that converts a string spec to a {@link URL} without checked exceptions.
+ */
 @UtilityClass
 public class Urls {
     public URL url(String spec) throws MalformedURLException {

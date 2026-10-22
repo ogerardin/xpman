@@ -33,6 +33,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * A reusable "Properties" inspector window backed by a ControlsFX {@link PropertySheet}.
+ * <p>
+ * Uses JavaBeans introspection to discover all readable properties of a target object, displays them
+ * sorted alphabetically with humanized labels, and optionally exposes a configurable subset as editable.
+ * Edits are accumulated in a pending-changes map and only committed to the owner via a callback when
+ * the user presses Save; closing with unsaved changes prompts to Save / Discard / Cancel.
+ * <p>
+ * When the host app is {@link XPmanFX}, the window's position and size are persisted per caller-supplied
+ * {@code key} and restored on next show, so each properties window remembers its own placement.
+ * The window is shown modally ({@code showAndWait}) when there are editable properties, non-modally otherwise.
+ */
 public class PropertiesStage {
 
     private static final DefaultPropertyEditorFactory DEFAULT_EDITOR_FACTORY = new DefaultPropertyEditorFactory();
@@ -196,6 +208,7 @@ public class PropertiesStage {
         }
     }
 
+    /** Read-only implementation of PropertySheet.Item. */
     private static class ReadOnlyPropertyItem implements PropertySheet.Item {
         private final String name;
         private final String category;
@@ -251,6 +264,7 @@ public class PropertiesStage {
         }
     }
 
+    /** Non-editable editor for read-only property values. */
     private static final class ReadOnlyPropertyEditor implements PropertyEditor<Object> {
         private final TextField textField = new TextField();
 
@@ -275,6 +289,7 @@ public class PropertiesStage {
         }
     }
 
+    /** Editable implementation of PropertySheet.Item. */
     private static final class EditablePropertyItem extends ReadOnlyPropertyItem {
         private final Object originalValue;
         private final String saveKey;

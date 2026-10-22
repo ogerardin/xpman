@@ -59,6 +59,32 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Main application class for X-Plane Manager (XPman), a JavaFX desktop application for managing
+ * X-Plane installations, aircraft, plugins, scenery, and navigation data.
+ *
+ * <p>Extends {@link JfxApp} with {@link XPManPrefs} for persistent user preferences stored in
+ * a {@code ~/.xpman} JSON dotfile. Sets up the primary stage with a sidebar-driven content area,
+ * a menu bar with recent-X-Plane paths, theme management, and keyboard accelerators (Alt/Cmd+1..5)
+ * for direct section navigation.
+ *
+ * <p>Key responsibilities:
+ * <ul>
+ *   <li>Loads the main FXML layout and wires the {@link SidebarController} to swap section content
+ *       (cached per {@link Section} to avoid redundant FXML loads).</li>
+ *   <li>Provides {@link #buildController(Class)} as the controller factory for all FXML loaders,
+ *       instantiating controllers via a {@code (XPmanFX)} constructor when available, falling back
+ *       to a no-arg constructor, and returning {@code this} for the main controller type.</li>
+ *   <li>Holds the shared {@link XPlaneProperty} (the currently open X-Plane instance) and the
+ *       {@link SceneryOrganizer} for scenery classification.</li>
+ *   <li>Handles opening X-Plane directories (with validation, recent-path tracking, and stale-path
+ *       cleanup), launching the install wizard, settings dialog, log export, and external links.</li>
+ *   <li>Registers tools discovered by the {@link ToolsManager} into the Tools menu.</li>
+ * </ul>
+ *
+ * <p>The {@link #main(String[])} entry point installs a default uncaught-exception handler, logs
+ * version and environment info, tweaks text rendering system properties, and calls {@link #launch}.
+ */
 @Slf4j
 public class XPmanFX extends JfxApp<XPManPrefs> {
 
@@ -413,6 +439,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         stage.showAndWait();
     }
 
+    /** Menu item representing a recently opened X-Plane installation. */
     private class RecentMenuItem extends MenuItem {
         public RecentMenuItem(String folder) {
             super(folder);

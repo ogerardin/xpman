@@ -44,6 +44,7 @@ public class SeverityIconCellFactory<T> implements TableCellFactory<T, Severity>
         return fontIcon;
     }
 
+    /** Table cell rendering an icon for inspection result severity. */
     private class SeverityIconTableCell<S> extends TableCell<S, Severity> {
         @Override
         protected void updateItem(Severity item, boolean empty) {

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.InputStream;
 import java.util.Properties;
 
+/** Loads and exposes build-time git properties and runtime environment information. */
 @Slf4j
 @UtilityClass
 public class Config {

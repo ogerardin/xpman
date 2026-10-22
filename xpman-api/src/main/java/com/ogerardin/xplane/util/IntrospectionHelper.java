@@ -15,6 +15,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility for runtime class discovery and instantiation via ClassGraph scanning.
+ * <p>
+ * The {@link #getBestSubclassInstance} method is the core pattern for specializing domain objects:
+ * it scans all subclasses of a base class (cached after first scan), attempts to instantiate each
+ * with the provided constructor parameters, and returns the first successful instance. Subclass
+ * constructors that don't match the actual data throw {@link InstantiationException} via
+ * {@link #require}, allowing the next candidate to be tried. If no subclass matches, the base
+ * class is instantiated as a fallback.
+ * <p>
+ * This enables polymorphic domain models where specialized subclasses (e.g., {@code ZiboMod738}
+ * extending {@code Aircraft}) self-identify through constructor validation.
+ */
 @UtilityClass
 @Slf4j
 public class IntrospectionHelper {

@@ -27,6 +27,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * An X-Plane plugin, identified by its {@code .xpl} file.
+ *
+ * <p>Provides access to plugin metadata (name, description, version), enable/disable state
+ * (derived from whether the plugin folder resides under the active or disabled plugins
+ * directory), quarantine status, manuals, and links. Implements {@link Inspectable} for
+ * update-available checks, {@link Uninstallable} to move the plugin folder to trash, and
+ * {@link SkunkcraftsUpdatable} for Skunkcrafts updater integration.</p>
+ *
+ * <p>The plugin version is lazily extracted from the {@code .xpl} binary by the current
+ * platform. The concrete subclass may be refined at runtime via
+ * {@link com.ogerardin.xplane.util.IntrospectionHelper} (e.g. FlyWithLua).</p>
+ */
 @Slf4j
 @Getter
 public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, SkunkcraftsUpdatable {

@@ -21,6 +21,19 @@ import java.util.stream.Stream;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
+/**
+ * Manager for the collection of {@link NavDataSet}s present in an X-Plane installation.
+ *
+ * <p>Models the layered navdata architecture described by the X-Plane developer documentation:
+ * a sim-wide ARINC 424 override, the shipped base layer, a third-party updated base layer,
+ * FAA updated approaches, hand-placed localizers, and user-defined overrides. Fires
+ * {@link ManagerEvent}s of type {@code LOADING} and {@code LOADED} around each scan and
+ * supports asynchronous reload.</p>
+ *
+ * <p>Implements {@link InstallTarget}: archive installation extracts into the
+ * {@code Custom Data} folder. Provides helper methods to query the effective global
+ * dataset (taking shadowing into account).</p>
+ */
 @Slf4j
 @ToString
 public class NavDataManager extends Manager<NavDataSet> implements InstallTarget {

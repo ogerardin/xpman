@@ -20,6 +20,17 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * A scenery package within an X-Plane installation (a folder under Custom Scenery or
+ * Global Scenery).
+ *
+ * <p>Tracks the package folder, enable/disable state and rank (derived from
+ * {@code scenery_packs.ini} entries), tile and object counts, and whether the package
+ * is a library or contains an airport. Implements {@link Inspectable} for missing-data
+ * and missing-texture checks plus update-available inspection, {@link Uninstallable}
+ * to move the folder to trash, and {@link SkunkcraftsUpdatable} for Skunkcrafts updater
+ * integration.</p>
+ */
 @Data
 @Slf4j
 public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUpdatable {

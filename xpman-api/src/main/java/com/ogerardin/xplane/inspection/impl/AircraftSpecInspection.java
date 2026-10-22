@@ -7,6 +7,7 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import lombok.NonNull;
 
+/** Inspection that warns if an aircraft's ACF spec version mismatches the X-Plane major version. */
 public enum AircraftSpecInspection implements Inspection<Aircraft> {
 
     INSTANCE;

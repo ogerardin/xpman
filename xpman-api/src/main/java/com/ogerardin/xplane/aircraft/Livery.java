@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
 
+/** A livery (paint scheme) for an aircraft, identified by its folder name. */
 @Data
 public class Livery {
 

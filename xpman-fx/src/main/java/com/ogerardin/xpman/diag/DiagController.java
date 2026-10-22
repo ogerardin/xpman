@@ -7,6 +7,7 @@ import javafx.scene.control.TableView;
 
 import java.util.List;
 
+/** FXML controller for the inspection-results dialog, displaying messages in a table. */
 public class DiagController {
 
     private static final Label PLACEHOLDER = new Label("No messages");

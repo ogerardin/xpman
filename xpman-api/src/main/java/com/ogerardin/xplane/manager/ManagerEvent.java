@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.List;
 import java.util.function.Predicate;
 
+/** Event fired by a {@link Manager} when loading starts or completes. */
 @Getter
 @Builder
 @EqualsAndHashCode

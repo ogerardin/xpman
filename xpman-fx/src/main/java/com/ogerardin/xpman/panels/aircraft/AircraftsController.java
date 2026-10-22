@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/** FXML controller for the Aircrafts panel, managing card-based display, filtering, and search of installed aircraft. */
 @Slf4j
 public class AircraftsController extends Controller {
 

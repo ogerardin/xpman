@@ -5,6 +5,9 @@ import lombok.experimental.UtilityClass;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Map construction helpers: variadic key-value pair builder and map merger.
+ */
 @UtilityClass
 public class Maps {
 

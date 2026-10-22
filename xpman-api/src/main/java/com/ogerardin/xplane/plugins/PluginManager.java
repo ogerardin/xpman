@@ -29,6 +29,20 @@ import java.util.Optional;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
+/**
+ * Manager for the collection of {@link Plugin}s present in an X-Plane installation.
+ *
+ * <p>Scans both the active and disabled plugin folders for {@code .xpl} files, filters by
+ * the current platform, and builds {@link Plugin} instances (using
+ * {@link com.ogerardin.xplane.util.IntrospectionHelper} for best-subclass selection).
+ * Fires {@link ManagerEvent}s of type {@code LOADING} and {@code LOADED} around each scan,
+ * and pre-warms lazy fields (version, Skunkcrafts latest version) on the async thread so
+ * the UI thread never pays the cost.</p>
+ *
+ * <p>Implements {@link InstallTarget}: archive installation auto-detects the plugin root
+ * folder by locating the directory that contains platform subdirectories ({@code 64},
+ * {@code mac_x64}, etc.) and extracts accordingly.</p>
+ */
 @Slf4j
 @ToString
 public class PluginManager extends Manager<Plugin> implements InstallTarget {

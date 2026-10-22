@@ -11,6 +11,7 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+/** Utility for opening a non-modal dialog that shows a list of inspection messages. */
 @UtilityClass
 public class DiagUtil {
     @SneakyThrows

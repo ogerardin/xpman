@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+/** An interior node in the ACF property tree, holding a name and a mutable list of child items. */
 @Data
 @RequiredArgsConstructor
 public class PropertyTreeNode implements PropertyTreeItem{

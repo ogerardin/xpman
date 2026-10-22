@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
+/** UI wrapper around a {@link Plugin} that exposes context-menu actions (enable, disable, uninstall, inspect, Skunkcrafts update, etc.) for the plugins tree table. */
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 @Data
 public class UiPlugin implements PluginRow {

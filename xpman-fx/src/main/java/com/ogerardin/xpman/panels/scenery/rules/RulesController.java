@@ -17,6 +17,7 @@ import javafx.util.converter.DefaultStringConverter;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/** FXML controller for the scenery-class rules editor, allowing add/delete/reorder/edit of regex-based scenery classification rules. */
 public class RulesController {
 
     @FXML

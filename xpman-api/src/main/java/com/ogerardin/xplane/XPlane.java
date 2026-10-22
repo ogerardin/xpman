@@ -14,6 +14,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+/**
+ * Root object representing an X-Plane installation.
+ *
+ * <p>Provides access to all domain managers (aircraft, scenery, plugins, navdata, tools)
+ * through lazy-initialized getters, and exposes the installation's base folder, variant,
+ * version, and well-known subdirectory paths via {@link XplanePaths}.</p>
+ *
+ * <p>Construction validates that the base folder exists and auto-detects the X-Plane
+ * variant (XP11/XP12); managers are not created until first accessed.</p>
+ */
 @Slf4j
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -75,6 +85,7 @@ public class XPlane {
         return getBaseFolder().resolve("Log.txt");
     }
 
+    /** Path resolution helpers for X-Plane subdirectories. */
     public class XplanePaths {
         public Path aircraft() {
             return getBaseFolder().resolve("Aircraft");

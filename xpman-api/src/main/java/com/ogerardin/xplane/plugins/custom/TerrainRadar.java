@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link XPlaneOrgPlugin} for the Terrain Radar plugin, extracting version from {@code readme.txt}.
+ */
 @SuppressWarnings("unused")
 @Slf4j
 public class TerrainRadar extends XPlaneOrgPlugin {

@@ -45,6 +45,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.List;
 
+/**
+ * FXML controller for the Scenery panel, managing a table of scenery entries with enable/disable toggles,
+ * drag-and-drop reordering, move-up/down buttons, scenery-class classification, and scenery_packs.ini save/organize operations.
+ */
 public class SceneryController extends Controller {
 
     private final XPlaneProperty xPlaneProperty;

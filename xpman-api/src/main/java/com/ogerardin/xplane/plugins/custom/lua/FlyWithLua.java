@@ -23,6 +23,20 @@ import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link XPlaneOrgPlugin} for the FlyWithLua plugin — a Lua scripting engine for X-Plane.
+ * <p>
+ * FlyWithLua uses a non-standard folder layout: the XPL resides under a platform-specific subfolder
+ * (e.g. {@code 64/}) within a parent folder named "FlyWithLua", which also contains a {@code Scripts/}
+ * directory. This class detects that layout and exposes the Lua scripts as {@link FlyWithLuaScript} instances.
+ * <p>
+ * On Linux, installation requires shared libraries {@code libglut} and {@code libopenal};
+ * these are declared as preconditions by {@link FlyWithLuaInstallableType} and checked via
+ * {@link MissingSystemLibrariesInspection}.
+ *
+ * @see FlyWithLuaScript
+ * @see FlyWithLuaInstallableType
+ */
 @SuppressWarnings("unused")
 @Slf4j
 public class FlyWithLua extends XPlaneOrgPlugin {

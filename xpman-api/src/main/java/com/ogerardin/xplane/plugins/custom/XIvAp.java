@@ -20,6 +20,9 @@ import java.util.regex.Pattern;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link Plugin} for the X-IvAp IVAO network client, scraping latest version from the IVAO site.
+ */
 @SuppressWarnings("unused")
 @Slf4j
 public class XIvAp extends Plugin {

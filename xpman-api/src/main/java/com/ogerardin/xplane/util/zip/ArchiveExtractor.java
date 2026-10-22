@@ -71,8 +71,10 @@ final class ArchiveExtractor {
         }
     }
 
+    /** Archive entry descriptor with name, size, and input stream supplier. */
     record Entry(String name, long size, boolean directory, InputStreamSupplier inputStream) {}
 
+    /** Deferred input stream factory for lazy archive reading. */
     @FunctionalInterface
     interface InputStreamSupplier {
         InputStream open() throws IOException;

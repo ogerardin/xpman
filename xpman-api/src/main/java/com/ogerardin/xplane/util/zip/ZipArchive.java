@@ -16,6 +16,15 @@ import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * {@link Archive} implementation for ZIP files using the JDK's built-in {@link java.util.zip.ZipFile}.
+ * <p>
+ * Supports listing entries, extracting all or filtered subsets, reading individual entries as text,
+ * and validating archive integrity. Delegates the actual extraction logic to {@link ArchiveExtractor}
+ * for progress reporting and path filtering.
+ *
+ * @see SevenZArchive
+ */
 @Slf4j
 @Data
 public class ZipArchive implements Archive {

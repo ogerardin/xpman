@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+/** UI wrapper around {@link Aircraft} that exposes context-menu actions (reveal, uninstall, inspect, properties, etc.) via annotations. */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)

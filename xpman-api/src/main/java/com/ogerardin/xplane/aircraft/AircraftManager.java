@@ -27,6 +27,18 @@ import java.util.function.Predicate;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
+/**
+ * Manager for the collection of {@link Aircraft} present in an X-Plane installation.
+ *
+ * <p>Extends {@link Manager} with lazy synchronous loading on first access and asynchronous
+ * reload via {@link #reload()}. Fires {@link ManagerEvent}s of type {@code LOADING} and
+ * {@code LOADED} around each scan. Implements {@link InstallTarget} so that archive-based
+ * installation extracts into the Aircraft folder.</p>
+ *
+ * <p>Uses {@link com.ogerardin.xplane.util.IntrospectionHelper} to pick the best
+ * {@link Aircraft} subclass for each discovered {@code .acf} file. AI variant files
+ * ({@code *_AI.acf}) are filtered out.</p>
+ */
 @Slf4j
 @ToString
 public class AircraftManager extends Manager<Aircraft> implements InstallTarget {

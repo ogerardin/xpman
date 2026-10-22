@@ -15,6 +15,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+/** FXML controller for the Tools panel, displaying installed and available tools with filtering. */
 public class ToolsController extends Controller {
 
     private final XPlaneProperty xPlaneProperty;

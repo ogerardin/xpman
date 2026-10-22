@@ -26,6 +26,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Windows implementation of {@link Platform}, providing Windows-specific behaviors for file operations,
+ * app launching, version extraction, and X-Plane installation discovery.
+ * <p>
+ * Key behaviors:
+ * <ul>
+ *   <li>Uses {@code cmd /c start} and {@code explorer.exe} for file/URL operations</li>
+ *   <li>Parses PE (Portable Executable) files via pecoff4j to extract version info from resource sections</li>
+ *   <li>Searches candidate install locations including all drive roots, {@code Program Files} directories,
+ *       and Steam's common path</li>
+ *   <li>Reads CPU info from environment variables ({@code PROCESSOR_IDENTIFIER}, {@code NUMBER_OF_PROCESSORS})</li>
+ * </ul>
+ */
 @Getter
 @Slf4j
 public class WindowsPlatform implements Platform {

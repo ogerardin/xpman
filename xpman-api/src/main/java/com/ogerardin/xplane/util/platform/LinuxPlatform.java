@@ -19,6 +19,23 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Linux implementation of {@link Platform}, providing Linux-specific behaviors for file operations,
+ * app launching, version extraction, and X-Plane installation discovery.
+ * <p>
+ * Key behaviors:
+ * <ul>
+ *   <li>Uses {@code xdg-open} and {@code gtk-launch} for file/URL operations</li>
+ *   <li>Parses ELF binaries via jelf to extract plugin versions from the {@code .rodata} section heuristically</li>
+ *   <li>Probes shared library availability via {@code ldconfig -p}, matching sonames by prefix so that
+ *       versioned variants (e.g., {@code libfoo.so.3}) satisfy a {@code libfoo.so} requirement; if
+ *       {@code ldconfig} is unavailable, all libraries are reported as present to avoid false warnings</li>
+ *   <li>Searches candidate install locations including user home, {@code /opt}, and Steam's common paths</li>
+ *   <li>Reads CPU info via {@code uname -p} and {@code nproc --all}</li>
+ * </ul>
+ *
+ * @see MissingSystemLibrariesInspection
+ */
 @Getter
 @Slf4j
 public class LinuxPlatform implements Platform {

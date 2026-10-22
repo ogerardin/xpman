@@ -62,5 +62,6 @@ enum UsageCategory {
         }
     }
 
+    /** Disk usage result for a single storage category. */
     record CategoryResult(long size, List<Path> folderPaths) {}
 }

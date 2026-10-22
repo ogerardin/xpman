@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+/** FXML controller for the console dialog, displaying progress, status messages, and output text during async operations. */
 @Slf4j
 public class ConsoleController implements ProgressListener {
 

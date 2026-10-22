@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link Aircraft} for the FlightFactor Airbus A350 XWB, reading version from {@code a350.ini}.
+ */
 @SuppressWarnings("unused")
 @Slf4j
 public class FlightFactorA350 extends Aircraft {

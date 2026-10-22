@@ -4,6 +4,9 @@ import lombok.experimental.UtilityClass;
 
 import java.util.stream.Stream;
 
+/**
+ * Stream utilities for concatenating multiple streams of the same element type.
+ */
 @UtilityClass
 public class Streams {
 

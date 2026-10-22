@@ -9,6 +9,9 @@ import java.lang.reflect.RecordComponent;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.invokeSneaky;
 
+/**
+ * Record utilities for coalescing multiple records of the same type by taking the rightmost non-null component value.
+ */
 @UtilityClass
 public class Records {
 

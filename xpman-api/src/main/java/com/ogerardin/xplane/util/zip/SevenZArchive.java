@@ -16,6 +16,15 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
+/**
+ * {@link Archive} implementation for 7-Zip files using Apache Commons Compress's {@link SevenZFile}.
+ * <p>
+ * Mirrors the {@link ZipArchive} API but handles the 7z format. Supports listing entries, extracting
+ * all or filtered subsets, reading individual entries as text, and validating archive integrity.
+ * Delegates extraction to {@link ArchiveExtractor} for progress reporting and path filtering.
+ *
+ * @see ZipArchive
+ */
 @Slf4j
 @Data
 public class SevenZArchive implements Archive {

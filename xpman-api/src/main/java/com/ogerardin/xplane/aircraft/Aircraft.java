@@ -23,6 +23,18 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * An X-Plane aircraft, identified by its {@code .acf} file.
+ *
+ * <p>Provides access to aircraft metadata extracted from the ACF file (name, studio,
+ * category, description, callsign, etc.), associated liveries, thumbnail/icon images,
+ * manuals, and links. Implements {@link Inspectable} to check spec compatibility and
+ * available updates, {@link Uninstallable} to move the aircraft folder to trash, and
+ * {@link SkunkcraftsUpdatable} for Skunkcrafts updater integration.</p>
+ *
+ * <p>The concrete subclass may be refined at runtime via
+ * {@link com.ogerardin.xplane.util.IntrospectionHelper} (e.g. ZiboMod738).</p>
+ */
 @Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
@@ -150,6 +162,7 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
         return getAcfFile().getFile().resolveSibling("liveries");
     }
 
+    /** Aircraft category classification based on ACF file properties. */
     @AllArgsConstructor
     public enum Category {
         ULTRALIGHT("acf/_is_ultralight"),

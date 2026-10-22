@@ -12,6 +12,7 @@ import lombok.ToString;
 
 import java.nio.file.Path;
 
+/** UI wrapper around a {@link Livery}, extending {@link UiAircraft} with livery-specific icon, thumbnail, reveal, and uninstall behavior. */
 @Getter
 @ToString(includeFieldNames = false, onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(callSuper = false)

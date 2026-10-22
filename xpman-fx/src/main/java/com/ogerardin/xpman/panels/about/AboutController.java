@@ -10,6 +10,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+/** FXML controller for the About dialog, displaying version, build, JVM, and CPU information. */
 public class AboutController {
 
     @FXML

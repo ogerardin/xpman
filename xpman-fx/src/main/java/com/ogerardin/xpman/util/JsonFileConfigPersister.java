@@ -10,6 +10,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/** Persists application configuration to a JSON file in the user's home directory, with lazy loading and save-on-demand. */
 @Data
 @RequiredArgsConstructor
 @Slf4j

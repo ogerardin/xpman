@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.util;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/**
+ * File tree traversal and size utilities for finding files/directories matching predicates and computing folder sizes.
+ */
 @UtilityClass
 public class FileUtils {
 
@@ -24,7 +28,7 @@ public class FileUtils {
         List<Path> files = new ArrayList<>();
         Files.walkFileTree(startFolder, new SimpleFileVisitor<>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            public @NonNull FileVisitResult visitFile(@NonNull Path file, @NonNull BasicFileAttributes attrs) {
                 if (predicate.test(file)) {
                     files.add(file);
                 }
@@ -41,7 +45,7 @@ public class FileUtils {
         List<Path> dirs = new ArrayList<>();
         Files.walkFileTree(startFolder, new SimpleFileVisitor<>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+            public @NonNull FileVisitResult preVisitDirectory(@NonNull Path dir, @NonNull BasicFileAttributes attrs) {
                 if (predicate.test(dir)) {
                     dirs.add(dir);
                 }

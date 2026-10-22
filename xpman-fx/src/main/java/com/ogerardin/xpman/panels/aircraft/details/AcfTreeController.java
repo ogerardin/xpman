@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+/** FXML controller for the ACF property-tree browser, displaying an aircraft's properties as a hierarchical tree table. */
 public class AcfTreeController {
     @FXML
     private TreeTableView<UiProperty> treeTableView;

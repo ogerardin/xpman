@@ -25,6 +25,7 @@ public class SwitchTreeCellFactory<S extends SwitchRow> implements TreeTableCell
         return new SwitchTreeTableCell();
     }
 
+    /** Tree table cell with a toggle switch for boolean values. */
     private class SwitchTreeTableCell extends TreeTableCell<S, Boolean> {
 
         @Override

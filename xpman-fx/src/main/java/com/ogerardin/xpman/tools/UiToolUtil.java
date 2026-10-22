@@ -13,9 +13,11 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 
+/** Utility methods for installing, uninstalling, and running tools with console output and async execution. */
 @UtilityClass
 public class UiToolUtil {
 
@@ -38,7 +40,7 @@ public class UiToolUtil {
                 toolsManager.launch(installedTool);
             }
         } catch (ToolsException e) {
-            new Alert(Alert.AlertType.ERROR, "Error " + (runAfterInstall ? "installing or launching" : "installing") + " " + tool.getName() + ": " + e.getMessage()).showAndWait();
+            new Alert(Alert.AlertType.ERROR, MessageFormat.format("Error {0} {1}: {2}", runAfterInstall ? "installing or launching" : "installing", tool.getName(), e.getMessage())).showAndWait();
         }
     }
 

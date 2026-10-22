@@ -14,6 +14,9 @@ import java.util.Map;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link XPlaneOrgPlugin} for the AviTab plugin, recognized by XPL filename.
+ */
 @SuppressWarnings("unused")
 @Slf4j
 public class AviTab extends XPlaneOrgPlugin {

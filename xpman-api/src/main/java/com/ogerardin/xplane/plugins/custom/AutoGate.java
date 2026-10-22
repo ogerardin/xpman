@@ -9,6 +9,9 @@ import java.nio.file.Path;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link XPlaneOrgPlugin} for the AutoGate plugin, recognized by folder name.
+ */
 @SuppressWarnings("unused")
 @Slf4j
 public class AutoGate extends XPlaneOrgPlugin {

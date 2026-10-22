@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Delegate;
 
+/** UI wrapper around {@link NavDataItem} that adds context-menu actions (reveal, inspect) and derived display properties. */
 @Data
 @ToString(includeFieldNames = false)
 @RequiredArgsConstructor

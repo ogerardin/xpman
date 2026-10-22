@@ -25,6 +25,7 @@ public class SwitchCellFactory<S extends SwitchRow> implements TableCellFactory<
         return new SwitchTableCell();
     }
 
+    /** Table cell with a toggle switch for boolean values. */
     private class SwitchTableCell extends TableCell<S, Boolean> {
 
         @Override

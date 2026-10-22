@@ -56,6 +56,7 @@ public abstract class PathImageCell {
         cell.setGraphic(imageView);
     }
 
+    /** Factory for table cells displaying file paths and images. */
     public static class TableCellFactory<S> extends PathImageCell implements com.ogerardin.xpman.util.jfx.cell_factory.TableCellFactory<S, Path> {
         @Override
         public TableCell<S, Path> call(TableColumn<S, Path> param) {
@@ -68,6 +69,7 @@ public abstract class PathImageCell {
         }
     }
 
+    /** Factory for tree table cells displaying file paths and images. */
     public static class TreeTableCellFactory<S> extends PathImageCell implements com.ogerardin.xpman.util.jfx.cell_factory.TreeTableCellFactory<S, Path> {
         @Override
         public TreeTableCell<S, Path> call(TreeTableColumn<S, Path> param) {

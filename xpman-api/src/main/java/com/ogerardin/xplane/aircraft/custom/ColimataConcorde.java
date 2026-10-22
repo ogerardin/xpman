@@ -17,6 +17,9 @@ import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
+/**
+ * Specialization of {@link Aircraft} for the Colimata Concorde FXP, recognized by ACF name.
+ */
 @SuppressWarnings("unused")
 public class ColimataConcorde extends Aircraft {
 

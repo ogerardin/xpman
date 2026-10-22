@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+/** Utility for setting tooltips on {@link TableView} column headers by reaching into the internal header skin. */
 @UtilityClass
 @Slf4j
 public class TableViewUtil {

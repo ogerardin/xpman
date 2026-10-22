@@ -123,6 +123,7 @@ public class LuaHeaderParser {
         return metadata.result(name);
     }
 
+    /** Parsed metadata from a FlyWithLua script header comment. */
     private static class HeaderMetadata {
         private String name;
         private String version;

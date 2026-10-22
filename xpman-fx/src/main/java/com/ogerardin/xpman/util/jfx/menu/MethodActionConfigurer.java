@@ -17,6 +17,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * Configures a {@link MethodAction} by introspecting a controller method and wiring up
+ * confirmation dialogs and post-execution callbacks based on its annotations.
+ * <p>
+ * Reads {@link com.ogerardin.xpman.util.jfx.menu.annotation.Confirm @Confirm} to display a confirmation
+ * alert before invoking the method (with SpEL-evaluated message), and {@link com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess @OnSuccess}
+ * to execute a SpEL expression after successful completion (with the method's return value bound to a
+ * named variable in the evaluation context). Destructive operations containing "uninstall" in the message
+ * get a danger-styled OK button.
+ * <p>
+ * Reflection-heavy: caches the constructed action via lazy initialization, but the method, target object,
+ * parameter values, and evaluation context root are all held as final fields.
+ *
+ * @param <T> the type of the target object whose method will be invoked
+ * @param <R> the return type of the method
+ */
 @Slf4j
 @Data
 public class MethodActionConfigurer<T, R> {

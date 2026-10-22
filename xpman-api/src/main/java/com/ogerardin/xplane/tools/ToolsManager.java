@@ -28,6 +28,16 @@ import java.util.stream.Stream;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 
+/**
+ * Manager for X-Plane companion tools (e.g. headless sim data loaders, scenery organizers).
+ *
+ * <p>Loads tool manifests from bundled JSON resources (via ClassGraph), filters them by the
+ * current platform and X-Plane major version, and classifies each as either an
+ * {@link InstalledTool} (file present on disk) or an {@link InstallableTool} (not yet
+ * installed). Supports install (download + extract + quarantine removal + permission fix),
+ * uninstall, and launch. Fires {@link ManagerEvent}s around each load and supports
+ * asynchronous reload.</p>
+ */
 @Getter
 @Slf4j
 @ToString

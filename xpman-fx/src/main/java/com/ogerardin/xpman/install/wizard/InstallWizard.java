@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+/** Three-page install wizard that guides the user through selecting and installing an add-on into an X-Plane installation. */
 public class InstallWizard extends Wizard {
 
     @Getter(AccessLevel.PACKAGE)

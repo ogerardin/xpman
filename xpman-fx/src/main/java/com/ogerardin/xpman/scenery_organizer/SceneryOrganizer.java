@@ -6,6 +6,21 @@ import lombok.Data;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * Sorts scenery packages into priority classes and reorders them for {@code scenery_packs.ini}.
+ * <p>
+ * Maintains an ordered list of {@link SceneryClass} definitions (built-in and user-defined regex patterns).
+ * Each scenery package is matched against the list: regex-based rules are consulted first (more specific,
+ * brand-specific patterns), then built-in signals (file-based detection) in list order; unmatched packages
+ * fall back to {@link BuiltinSceneryClass#OTHER}. The list position determines both the match priority
+ * and the final load order — earlier classes load first.
+ * <p>
+ * The default class list includes airports, landmarks, global airports, overlay scenery, mesh scenery,
+ * libraries, and other. Legacy configurations without built-in markers are migrated to insert the
+ * built-in airport/library/other classes in their canonical positions.
+ * <p>
+ * Supports JSON serialization of the class list for persistence.
+ */
 @Data
 public class SceneryOrganizer {
 

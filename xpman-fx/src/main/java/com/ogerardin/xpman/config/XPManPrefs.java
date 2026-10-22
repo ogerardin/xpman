@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+/** User preferences for XPman, persisted as JSON to {@code ~/.xpman}. */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class XPManPrefs extends JfxAppPrefs {
@@ -35,5 +36,6 @@ public class XPManPrefs extends JfxAppPrefs {
     @JsonAdapter(SceneryClassesAdapter.class)
     List<SceneryClass> sceneryClasses;
 
+    /** Gson-friendly HashSet<String> for JSON deserialization of string sets. */
     public static class StringSet extends HashSet<String> {}
 }

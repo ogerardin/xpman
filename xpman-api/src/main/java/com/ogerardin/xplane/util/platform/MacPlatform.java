@@ -22,6 +22,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+/**
+ * macOS implementation of {@link Platform}, providing Mac-specific behaviors for file operations,
+ * app launching, version extraction, and X-Plane installation discovery.
+ * <p>
+ * Key behaviors:
+ * <ul>
+ *   <li>Uses {@code open} for file/URL operations and {@code xattr} for quarantine management</li>
+ *   <li>Parses Mach-O binaries heuristically to extract plugin versions (no proper Mach-O parser)</li>
+ *   <li>Searches candidate install locations including {@code /Applications}, user home, {@code /Volumes},
+ *       and Steam's common path</li>
+ *   <li>Handles macOS app bundles via {@link AppBundle}, reading {@code Info.plist} for metadata</li>
+ * </ul>
+ */
 @Getter
 @Slf4j
 public class MacPlatform implements Platform {

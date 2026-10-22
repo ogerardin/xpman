@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Fire-and-forget async task runner using a single daemon thread with exception logging.
+ */
 @Slf4j
 @UtilityClass
 public class AsyncHelper {

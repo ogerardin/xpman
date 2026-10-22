@@ -25,6 +25,7 @@ import javafx.scene.control.TreeTableView;
 import java.util.ArrayList;
 import java.util.List;
 
+/** FXML controller for the Plugins panel, managing a tree-table of plugins and FlyWithLua scripts with enable/disable toggles. */
 public class PluginsController extends Controller {
 
     private final XPlaneProperty xPlaneProperty;
@@ -126,6 +127,7 @@ public class PluginsController extends Controller {
         return header;
     }
 
+    /** Pseudo-row representing a FlyWithLua script group header in the plugins table. */
     public record ScriptGroupHeader(String name) implements PluginRow {
         @Override public String getName() { return name; }
         @Override public String getDesc() { return null; }

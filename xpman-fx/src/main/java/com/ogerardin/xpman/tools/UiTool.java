@@ -8,6 +8,7 @@ import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import lombok.Data;
 import lombok.experimental.Delegate;
 
+/** UI wrapper around a domain {@link Tool} that exposes install/uninstall actions for the UI layer. */
 @SuppressWarnings("ClassCanBeRecord")
 @Data
 public class UiTool {

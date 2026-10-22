@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 
+/** Inspection that extracts and displays the Navigraph cycle info from an archive. */
 public enum NavigraphCycleVersion implements Inspection<Archive> {
 
     INSTANCE;
