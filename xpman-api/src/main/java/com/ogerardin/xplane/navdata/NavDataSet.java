@@ -134,14 +134,14 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
      * by an icon and in {@link #inspect()}, not squeezed into a label.</p>
      */
     public String describeState() {
-        if (!getExists().booleanValue()) {
+        if (!getExists()) {
             return "Absent";
         }
         List<String> cycles = getCycles();
         if (cycles.isEmpty()) {
             return "No data";
         }
-        return cycles.size() == 1 ? "Cycle " + cycles.get(0) : "Mixed cycles";
+        return cycles.size() == 1 ? "Cycle " + cycles.getFirst() : "Mixed cycles";
     }
 
     /**
@@ -179,9 +179,9 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
 
         Severity severity = Severity.INFO;
         String message = switch (cycles.size()) {
-            case 1 -> "OK — cycle " + cycles.get(0);
+            case 1 -> "OK — cycle " + cycles.getFirst();
             // files are present but carry no header we can read a cycle from, e.g. ARINC 424
-            case 0 -> getExists().booleanValue() ? "Present (AIRAC cycle unknown)" : "No data present";
+            case 0 -> getExists() ? "Present (AIRAC cycle unknown)" : "No data present";
             default -> {
                 severity = Severity.WARN;
                 yield "Mixed AIRAC cycles: " + String.join(", ", cycles);
@@ -206,7 +206,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
     }
 
     @Override
-    public Boolean getExists() {
+    public boolean getExists() {
         return files.stream().map(NavDataItem::getPath).anyMatch(Files::exists);
     }
 }

@@ -54,7 +54,7 @@ public class AtcFile implements NavDataItem {
     }
 
     @Override
-    public Boolean getExists() {
+    public boolean getExists() {
         return Files.exists(file);
     }
 

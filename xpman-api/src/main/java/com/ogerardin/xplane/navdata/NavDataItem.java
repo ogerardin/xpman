@@ -55,6 +55,6 @@ public interface NavDataItem {
         return Collections.emptyList();
     }
 
-    Boolean getExists();
+    boolean getExists();
 
 }

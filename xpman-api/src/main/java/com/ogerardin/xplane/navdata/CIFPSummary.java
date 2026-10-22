@@ -51,7 +51,7 @@ public class CIFPSummary implements NavDataItem {
     }
 
     @Override
-    public Boolean getExists() {
+    public boolean getExists() {
         return Files.isDirectory(cifpDir) && !files.isEmpty();
     }
 }
