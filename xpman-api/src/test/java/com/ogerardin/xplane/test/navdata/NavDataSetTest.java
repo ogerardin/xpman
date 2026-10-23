@@ -171,4 +171,120 @@ class NavDataSetTest {
         assertThat(dataSet(data, "earth_nav.dat", "earth_fix.dat", "earth_awy.dat").getCycles(),
                 is(List.of("2507", "2610")));
     }
+
+    @Test
+    void overridingIndexIsMinusOneForEmptyList() {
+        assertThat(NavDataItem.overridingIndex(List.of()), is(-1));
+    }
+
+    @Test
+    void overridingIndexIsMinusOneWhenNoLayerOverrides() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+
+        assertThat(NavDataItem.overridingIndex(List.of(dataSet(data, "earth_nav.dat"))), is(-1));
+    }
+
+    @Test
+    void overridingIndexIsFirstPresentOverridingLayer() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_424.dat", "2610");
+
+        NavDataSet overrider = new NavDataSet("Override", "test", new XPlane(xplaneRoot), data, "earth_424.dat") {
+            @Override
+            public boolean isOverriding() {
+                return true;
+            }
+        };
+
+        assertThat(NavDataItem.overridingIndex(List.of(overrider)), is(1));
+    }
+
+    @Test
+    void overridingIndexSkipsOverridingLayerWithNoFiles() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        NavDataSet overriderNoFiles = new NavDataSet("Override", "test", new XPlane(xplaneRoot), data) {
+            @Override
+            public boolean isOverriding() {
+                return true;
+            }
+        };
+
+        assertThat(NavDataItem.overridingIndex(List.of(overriderNoFiles)), is(-1));
+    }
+
+    @Test
+    void activeReturnsEmptyForEmptyList() {
+        assertThat(NavDataItem.active(List.of()), is(empty()));
+    }
+
+    @Test
+    void activeReturnsEmptyWhenAllLayersAreAbsent() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        NavDataSet absent = dataSet(data, "missing.dat");
+        assertThat(NavDataItem.active(List.of(absent)), is(empty()));
+    }
+
+    @Test
+    void activeReturnsAllPresentLayersWhenNoOverrider() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2610");
+        NavDataSet layer1 = dataSet(data, "earth_nav.dat");
+        NavDataSet layer2 = dataSet(data, "earth_fix.dat");
+
+        assertThat(NavDataItem.active(List.of(layer1, layer2)), containsInAnyOrder(layer1, layer2));
+    }
+
+    @Test
+    void activeReturnsOnlyOverriderWhenPresent() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_424.dat", "2610");
+        writeDat(data, "earth_nav.dat", "2610");
+
+        NavDataSet overrider = new NavDataSet("Override", "test", new XPlane(xplaneRoot), data, "earth_424.dat") {
+            @Override
+            public boolean isOverriding() {
+                return true;
+            }
+        };
+        NavDataSet below = dataSet(data, "earth_nav.dat");
+
+        assertThat(NavDataItem.active(List.of(overrider, below)), contains(overrider));
+    }
+
+    @Test
+    void activeExcludesLayersAboveAPresentOverriderToo() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_424.dat", "2610");
+        writeDat(data, "earth_nav.dat", "2610");
+
+        NavDataSet above = dataSet(data, "earth_nav.dat");
+        NavDataSet overrider = new NavDataSet("Override", "test", new XPlane(xplaneRoot), data, "earth_424.dat") {
+            @Override
+            public boolean isOverriding() {
+                return true;
+            }
+        };
+
+        assertThat(NavDataItem.active(List.of(above, overrider)), contains(overrider));
+    }
+
+    @Test
+    void activeSkipsAbsentOverriderAndIncludesAllPresent() throws Exception {
+        Path data = xplaneRoot.resolve("Custom Data");
+        writeDat(data, "earth_nav.dat", "2610");
+        writeDat(data, "earth_fix.dat", "2610");
+
+        NavDataSet absentOverrider = new NavDataSet("Override", "test", new XPlane(xplaneRoot), data, "missing.dat") {
+            @Override
+            public boolean isOverriding() {
+                return true;
+            }
+        };
+        NavDataSet present = dataSet(data, "earth_nav.dat");
+        NavDataSet alsoPresent = dataSet(data, "earth_fix.dat");
+
+        assertThat(NavDataItem.active(List.of(absentOverrider, present, alsoPresent)), containsInAnyOrder(present, alsoPresent));
+    }
 }

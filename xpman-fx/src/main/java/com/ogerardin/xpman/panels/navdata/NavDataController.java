@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.navdata;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.XPlaneProperty;
@@ -62,16 +63,8 @@ public class NavDataController extends Controller {
         cardMenuFactory.clearCache();
         cardsPane.getChildren().clear();
 
-        // The highest-priority layer that is actually present and overrides the ones below
-        // it, as a 1-based layer index, or -1 when no layer overrides anything.
-        int overriding = -1;
-        for (int i = 0; i < uiItems.size(); i++) {
-            UiNavDataItem item = uiItems.get(i);
-            if (item.isOverriding() && item.getExists()) {
-                overriding = i + 1;
-                break;
-            }
-        }
+        int overriding = NavDataItem.overridingIndex(
+                uiItems.stream().map(UiNavDataItem::getNavDataItem).toList());
 
         for (int i = 0; i < uiItems.size(); i++) {
             cardsPane.getChildren().add(new NavDataSetCardView(uiItems.get(i), i + 1, uiItems.size(),

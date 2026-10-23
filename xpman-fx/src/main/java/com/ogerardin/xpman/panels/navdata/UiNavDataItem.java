@@ -22,14 +22,6 @@ public class UiNavDataItem {
     final NavDataItem navDataItem;
 
     /**
-     * True when this layer, once installed, makes X-Plane ignore every layer below it.
-     * Only layers (as opposed to files) can override.
-     */
-    public boolean isOverriding() {
-        return navDataItem instanceof NavDataSet navDataSet && navDataSet.isOverriding();
-    }
-
-    /**
      * A short description of this layer's state for the card header, e.g. {@code Cycle 2610}.
      * Empty for items that are not layers.
      */
