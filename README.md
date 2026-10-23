@@ -15,7 +15,7 @@ A cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 1
 - **Scenery** — Install scenery packages and auto-order `scenery_packs.ini` for optimal load order.
 - **Plugins** — Install, delete, and manage global plugins. System plugins are protected from deletion. Plugin versions extracted from native binaries. PDF manuals supported.
 - **FlyWithLua** — Manage FlyWithLua scripts with SGES integration.
-- **Nav data** — List and manage navigation data sets, including XP12 airspace and ATC data.
+- **Nav data** — List and manage navigation data sets, including XP12 airspace and ATC data. Detected problems like AIRAC cycle mismatches surface on the dashboard and layer cards, with one-click fixes.
 - **Tools** — Install and uninstall generic tools from manifest files, with custom install directory support.
 - **X-Plane updates** — Get notified when a new X-Plane version is available and start the updater.
 - **Disk usage** — View disk space consumed by each category (aircraft, scenery, plugins, etc.).
@@ -25,7 +25,7 @@ A cross-platform configuration manager for [X-Plane](https://www.x-plane.com/) 1
 ### Main Window
 ![Main window](assets/screenshots/home.png)
 
-### Aircrat management
+### Aircraft management
 ![Aircraft management](assets/screenshots/aircraft.png)
 
 ### Scenery management
@@ -62,7 +62,7 @@ macOS may block the app because it is not signed with an Apple Developer ID. Go 
 
 XPman is a standalone JavaFX desktop application.
 
-See [EXTENDING.md](EXTENDING.md) for how to implement custom aircraft and scenery classes or declare new tools.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to implement custom aircraft and scenery classes or declare new tools.
 
 **Tech stack:** Java 25, JavaFX 25, Maven, Lombok, Gson, JUnit 5
 
