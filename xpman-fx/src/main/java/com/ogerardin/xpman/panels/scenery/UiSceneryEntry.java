@@ -51,12 +51,14 @@ public class UiSceneryEntry implements SwitchRow {
         return getIniItem() == null;
     }
 
+    @Order(10)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     @EnabledIf("sceneryPackage != null")
     public void reveal() {
         Platforms.getCurrent().reveal(getSceneryPackage().getFolder());
     }
 
+    @Order(20)
     @Label("'Enable Scenery Package'")
     @EnabledIf("iniItem != null && iniItem.disabled")
     @OnSuccess("refreshTable()")
@@ -64,6 +66,7 @@ public class UiSceneryEntry implements SwitchRow {
         xPlane.getSceneryManager().enable(getSceneryEntry());
     }
 
+    @Order(30)
     @Label("'Disable Scenery Package'")
     @EnabledIf("iniItem != null && ! iniItem.disabled")
     @OnSuccess("refreshTable()")
@@ -71,6 +74,7 @@ public class UiSceneryEntry implements SwitchRow {
         xPlane.getSceneryManager().disable(getSceneryEntry());
     }
 
+    @Order(40)
     @Label("'Add to scenery_packs.ini'")
     @EnabledIf("iniItem == null && sceneryPackage != null && ! sceneryPackage.system")
     @OnSuccess("syncAndRefresh()")
@@ -78,6 +82,7 @@ public class UiSceneryEntry implements SwitchRow {
         xPlane.getSceneryManager().addToIni(getSceneryEntry());
     }
 
+    @Order(50)
     @Label("'Remove from scenery_packs.ini'")
     @EnabledIf("iniItem != null && sceneryPackage == null")
     @OnSuccess("syncAndRefresh()")
@@ -85,6 +90,7 @@ public class UiSceneryEntry implements SwitchRow {
         xPlane.getSceneryManager().removeFromIni(getSceneryEntry());
     }
 
+    @Order(60)
     @Label("'Uninstall'")
     @EnabledIf("sceneryPackage != null && ! sceneryPackage.system && ! token")
     @Confirm("""
@@ -96,11 +102,13 @@ Press OK to continue.'
         xPlane.getSceneryManager().uninstallSceneryPackage(getSceneryPackage());
     }
 
+    @Order(70)
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @Order(80)
     @EnabledIf("sceneryPackage != null")
     @OnSuccess("displayInspectionResults(#result)")
     public InspectionResult inspect() {
@@ -108,6 +116,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(90)
     @Label("'Update via Skunkcrafts Updater'")
     @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
@@ -116,6 +125,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(100)
     @Label("'Skunkcrafts: Locked by developer'")
     @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsLocked")
     public void skunkcraftsLocked() {
@@ -126,6 +136,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(110)
     public void properties() {
         PropertiesStage.show("scenery", getName(), sceneryEntry);
     }

@@ -7,6 +7,7 @@ import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -29,6 +30,7 @@ public class UiNavDataItem {
         return navDataItem instanceof NavDataSet navDataSet ? navDataSet.describeState() : "";
     }
 
+    @Order(10)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     @EnabledIf("exists")
     public void reveal() {

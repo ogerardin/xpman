@@ -5,6 +5,7 @@ import com.ogerardin.xplane.aircraft.Livery;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
 import javafx.scene.control.Alert;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,6 +48,7 @@ public class UiLivery extends UiAircraft {
     }
 
     @SuppressWarnings("unused")
+    @Order(10)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     @Override
     public void reveal() {
@@ -54,6 +56,7 @@ public class UiLivery extends UiAircraft {
     }
 
     @SuppressWarnings("unused")
+    @Order(20)
     @Label("'Uninstall livery'")
     @Confirm(value = """
             'The entire folder "' + xPlane.baseFolder.relativize(aircraft.liveriesFolder.resolve(livery.path)) + '" will be uninstalled. ' +

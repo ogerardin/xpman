@@ -11,6 +11,7 @@ import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Value;
 import javafx.scene.control.Alert;
 import lombok.Data;
@@ -54,6 +55,7 @@ public class UiFlyWithLuaScript implements PluginRow {
         return script instanceof SkunkcraftsUpdatable updatable && updatable.isSkunkcraftsLocked();
     }
 
+    @Order(10)
     @Label("'Enable script'")
     @EnabledIf("disabled")
     @OnSuccess("reload()")
@@ -61,6 +63,7 @@ public class UiFlyWithLuaScript implements PluginRow {
         script.setEnabled(true);
     }
 
+    @Order(20)
     @Label("'Disable script'")
     @EnabledIf("enabled")
     @OnSuccess("reload()")
@@ -68,6 +71,7 @@ public class UiFlyWithLuaScript implements PluginRow {
         script.setEnabled(false);
     }
 
+    @Order(30)
     @Label("'Quarantine script'")
     @EnabledIf("enabled")
     @OnSuccess("reload()")
@@ -75,6 +79,7 @@ public class UiFlyWithLuaScript implements PluginRow {
         script.setQuarantined(true);
     }
 
+    @Order(40)
     @Label("'Unquarantine script'")
     @EnabledIf("quarantined")
     @OnSuccess("reload()")
@@ -82,25 +87,30 @@ public class UiFlyWithLuaScript implements PluginRow {
         script.setQuarantined(false);
     }
 
+    @Order(50)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(script.getLuaFile());
     }
 
+    @Order(60)
     public void openInTextEditor() {
         Platforms.getCurrent().openInTextEditor(script.getLuaFile());
     }
 
+    @Order(70)
     @ForEach(group = "Manuals", iterable = "manuals.entrySet()", itemLabel = "#item.key")
     public void openManual(@Value("#item.value") Path path) {
         Platforms.getCurrent().openFile(path);
     }
 
+    @Order(80)
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @Order(90)
     @Label("'Uninstall script'")
     @Confirm(value = """
             'The script "' + script.luaFile.fileName + '" will be uninstalled.' +
@@ -119,6 +129,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Override
+    @Order(100)
     @Label("'Update via Skunkcrafts Updater'")
     @EnabledIf("updateAvailable")
     public void skunkcraftsUpdate() {
@@ -127,6 +138,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(110)
     @Label("'Skunkcrafts: Locked by developer'")
     @EnabledIf("skunkcraftsLocked")
     public void skunkcraftsLocked() {
@@ -137,6 +149,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(120)
     public void properties() {
         PropertiesStage.show("script", script.getLuaFile().getFileName().toString(), script);
     }

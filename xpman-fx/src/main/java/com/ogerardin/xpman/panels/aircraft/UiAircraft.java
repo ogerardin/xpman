@@ -37,12 +37,14 @@ public class UiAircraft {
     protected final Aircraft aircraft;
 
     @SuppressWarnings("unused")
+    @Order(10)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile());
     }
 
     @SuppressWarnings("unused")
+    @Order(20)
     @Label("'Uninstall aircraft'")
     @Confirm(value = """
             'The entire folder "' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '" will be uninstalled. ' +
@@ -56,23 +58,27 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(30)
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @Order(40)
     @ForEach(group = "Manuals", iterable = "manuals.entrySet()", itemLabel = "#item.key")
     public void openManual(@Value("#item.value") Path path) {
         Platforms.getCurrent().openFile(path);
     }
 
     @SuppressWarnings("unused")
+    @Order(50)
     @OnSuccess("displayInspectionResults(#result)")
     public InspectionResult inspect() {
         return aircraft.inspect();
     }
 
     @SuppressWarnings("unused")
+    @Order(60)
     @Label("'Explore ACF property tree'")
     public void details() throws IOException {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/acftree.fxml"));
@@ -86,6 +92,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(70)
     @Label("'Update via Skunkcrafts Updater'")
     @EnabledIf("skunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
@@ -94,6 +101,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(80)
     @Label("'Skunkcrafts: Locked by developer'")
     @EnabledIf("skunkcraftsLocked")
     public void skunkcraftsLocked() {
@@ -104,6 +112,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(90)
     @OnSuccess("reload()")
     public void properties() {
         Map<String, String> editableProperties = new HashMap<>(Map.of(

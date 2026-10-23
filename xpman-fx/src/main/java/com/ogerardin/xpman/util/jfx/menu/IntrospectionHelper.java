@@ -3,12 +3,14 @@ package com.ogerardin.xpman.util.jfx.menu;
 import com.ogerardin.xpman.util.SpelUtil;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +35,12 @@ public class IntrospectionHelper {
                 .filter(method -> !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().startsWith("is"))
                 // skip methods with parameters unless they have @ForEach
                 .filter(method -> method.getParameterCount() == 0 || method.isAnnotationPresent(ForEach.class))
+                .sorted(Comparator.comparingInt((Method method) -> {
+                            Order order = method.getAnnotation(Order.class);
+                            return order == null ? Integer.MAX_VALUE : order.value();
+                        })
+                        .thenComparing(Method::getName)
+                        .thenComparing(Method::toGenericString))
                 .toList();
     }
 

@@ -11,6 +11,7 @@ import com.ogerardin.xpman.util.jfx.menu.annotation.EnabledIf;
 import com.ogerardin.xpman.util.jfx.menu.annotation.ForEach;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Value;
 import javafx.scene.control.Alert;
 import lombok.Data;
@@ -38,17 +39,20 @@ public class UiPlugin implements PluginRow {
         return plugin.isSkunkcraftsUpdateAvailable();
     }
 
+    @Order(10)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {
         Platforms.getCurrent().reveal(plugin.getXplFile());
     }
 
+    @Order(20)
     @Label("'Remove macOS quarantine'")
     @EnabledIf("quarantined")
     public void removeQuarantine() {
         Platforms.getCurrent().removeQuarantine(plugin.getBaseFolder());
     }
 
+    @Order(30)
     @Label("'Enable plugin'")
     @EnabledIf("! enabled")
     @OnSuccess("reload()")
@@ -56,6 +60,7 @@ public class UiPlugin implements PluginRow {
         plugin.setEnabled(true);
     }
 
+    @Order(40)
     @Label("'Disable plugin'")
     @EnabledIf("enabled && ! system")
     @OnSuccess("reload()")
@@ -64,6 +69,7 @@ public class UiPlugin implements PluginRow {
     }
 
     @SuppressWarnings("unused")
+    @Order(50)
     @Label("'Uninstall plugin'")
     @EnabledIf("! system")
     @Confirm(value = """
@@ -77,16 +83,19 @@ Press OK to continue.'
         getXPlane().getPluginManager().uninstallPlugin(plugin);
     }
 
+    @Order(60)
     @ForEach(group = "Links", iterable = "links.entrySet()", itemLabel = "#item.key")
     public void openLink(@Value("#item.value") URL url) {
         Platforms.getCurrent().openUrl(url);
     }
 
+    @Order(70)
     @ForEach(group = "Manuals", iterable = "manuals.entrySet()", itemLabel = "#item.key")
     public void openManual(@Value("#item.value") Path path) {
         Platforms.getCurrent().openFile(path);
     }
 
+    @Order(80)
     @OnSuccess("displayInspectionResults(#result)")
     public InspectionResult inspect() {
         return plugin.inspect();
@@ -94,6 +103,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Override
+    @Order(90)
     @Label("'Update via Skunkcrafts Updater'")
     @EnabledIf("skunkcraftsUpdateAvailable")
     public void skunkcraftsUpdate() {
@@ -102,6 +112,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(100)
     @Label("'Skunkcrafts: Locked by developer'")
     @EnabledIf("skunkcraftsLocked")
     public void skunkcraftsLocked() {
@@ -112,6 +123,7 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Order(110)
     public void properties() {
         PropertiesStage.show("plugin", getName(), plugin);
     }
