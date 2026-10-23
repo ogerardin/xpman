@@ -23,7 +23,9 @@ A horizontal segmented bar shows disk space consumed by: Aircraft, Global scener
 
 ## Library Tiles
 
-Four clickable tiles let you jump to each management panel: **Aircraft**, **Scenery**, **Nav data**, **Plugins**. Each tile shows a badge with `N updates` when Skunkcrafts updates are available for that category. Disabled plugins and scenery are excluded from the update count; Skunkcrafts-updatable FlyWithLua scripts (e.g. SGES) count under **Plugins**.
+Four clickable tiles let you jump to each management panel: **Aircraft**, **Scenery**, **Nav data**, **Plugins**. Counts reflect what X-Plane actually loads: all aircraft, enabled scenery entries, enabled plugins, and installed nav data layers. Each tile shows a badge with `N updates` when Skunkcrafts updates are available for that category. Disabled plugins and scenery are excluded from the update count; Skunkcrafts-updatable FlyWithLua scripts (e.g. SGES) count under **Plugins**.
+
+The **Nav data** tile shows the number of layers that have data files installed and are actually read by X-Plane (layers shadowed by a sim-wide override are excluded). It also shows red and orange pills reporting the total number of error and warning messages across those active layers — e.g. a cycle mismatch between `earth_fix.dat` and `FAACIFP18`, or US-only coverage.
 
 ## Updates Available
 

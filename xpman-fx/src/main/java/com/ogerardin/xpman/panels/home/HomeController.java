@@ -6,9 +6,14 @@ import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
+import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.navdata.NavDataItem;
+import com.ogerardin.xplane.navdata.NavDataSet;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
+import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
@@ -21,6 +26,7 @@ import com.ogerardin.xpman.tools.UiToolUtil;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -40,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,6 +89,10 @@ public class HomeController {
     @FXML
     private Label pluginsUpdateBadge;
     @FXML
+    private Label navDataErrorBadge;
+    @FXML
+    private Label navDataWarningBadge;
+    @FXML
     private VBox updatesSection;
     @FXML
     private VBox updatesContent;
@@ -89,6 +100,8 @@ public class HomeController {
     private final IntegerProperty aircraftUpdateCount = new SimpleIntegerProperty(0);
     private final IntegerProperty sceneryUpdateCount = new SimpleIntegerProperty(0);
     private final IntegerProperty pluginsUpdateCount = new SimpleIntegerProperty(0);
+    private final IntegerProperty navDataErrorCount = new SimpleIntegerProperty(0);
+    private final IntegerProperty navDataWarningCount = new SimpleIntegerProperty(0);
 
     public HomeController(XPmanFX mainController) {
         this.mainController = mainController;
@@ -102,13 +115,15 @@ public class HomeController {
             AsyncHelper.runAsync(() -> checkUpdates(newXPlane));
         });
         
-        bindUpdateBadge(aircraftUpdateBadge, aircraftUpdateCount);
-        bindUpdateBadge(sceneryUpdateBadge, sceneryUpdateCount);
-        bindUpdateBadge(pluginsUpdateBadge, pluginsUpdateCount);
+        bindCountBadge(aircraftUpdateBadge, aircraftUpdateCount, "update");
+        bindCountBadge(sceneryUpdateBadge, sceneryUpdateCount, "update");
+        bindCountBadge(pluginsUpdateBadge, pluginsUpdateCount, "update");
+        bindCountBadge(navDataErrorBadge, navDataErrorCount, "error");
+        bindCountBadge(navDataWarningBadge, navDataWarningCount, "warning");
     }
 
-    private static void bindUpdateBadge(Label badge, IntegerProperty count) {
-        badge.textProperty().bind(count.map(c -> c + " update" + (c.intValue() != 1 ? "s" : "")));
+    private static void bindCountBadge(Label badge, IntegerProperty count, String noun) {
+        badge.textProperty().bind(count.map(c -> c + " " + noun + (c.intValue() != 1 ? "s" : "")));
         badge.visibleProperty().bind(count.greaterThan(0));
     }
 
@@ -132,10 +147,12 @@ public class HomeController {
     }
 
     private void trackCounts(XPlane xPlane) {
-        trackCount(xPlane, XPlane::getAircraftManager, aircraftCount, this::checkAircraftUpdates);
-        trackCount(xPlane, XPlane::getSceneryManager, sceneryCount, this::checkSceneryUpdates);
-        trackCount(xPlane, XPlane::getNavDataManager, navDataCount, null);
-        trackCount(xPlane, XPlane::getPluginManager, pluginsCount, this::checkPluginUpdates);
+        trackCount(xPlane, XPlane::getAircraftManager, aircraftCount, List::size, this::checkAircraftUpdates);
+        trackCount(xPlane, XPlane::getSceneryManager, sceneryCount,
+                items -> (int) items.stream().filter(SceneryEntry::isEnabled).count(), this::checkSceneryUpdates);
+        trackCount(xPlane, XPlane::getNavDataManager, navDataCount, items -> NavDataItem.active(items).size(), this::checkNavDataStatus);
+        trackCount(xPlane, XPlane::getPluginManager, pluginsCount,
+                items -> (int) items.stream().filter(Plugin::isEnabled).count(), this::checkPluginUpdates);
     }
 
     /**
@@ -144,12 +161,21 @@ public class HomeController {
      * after items are loaded.
      */
     private <T> void trackCount(XPlane xPlane, Function<XPlane, Manager<T>> managerGetter, Label countLabel, Runnable updateChecker) {
+        trackCount(xPlane, managerGetter, countLabel, List::size, updateChecker);
+    }
+
+    /**
+     * Registers a listener on the given manager that updates the target label with a count derived
+     * from the items whenever the manager loads, and triggers an initial load. Optionally runs an
+     * update check after items are loaded.
+     */
+    private <T> void trackCount(XPlane xPlane, Function<XPlane, Manager<T>> managerGetter, Label countLabel, ToIntFunction<List<T>> counter, Runnable updateChecker) {
         Manager<T> manager = managerGetter.apply(xPlane);
         manager.registerListener((ManagerEvent<T> event) -> {
             switch (event.getType()) {
                 case LOADING -> Platform.runLater(() -> countLabel.setText("…"));
                 case LOADED -> Platform.runLater(() -> {
-                        countLabel.setText(String.valueOf(event.getItems().size()));
+                        countLabel.setText(String.valueOf(counter.applyAsInt(event.getItems())));
                         if (updateChecker != null) {
                             AsyncHelper.runAsync(updateChecker);
                         }
@@ -204,6 +230,25 @@ public class HomeController {
         Platform.runLater(() -> {
             pluginsUpdateCount.set((int) count);
             updateUpdatesSection();
+        });
+    }
+
+    private void checkNavDataStatus() {
+        if (xPlane == null) return;
+        List<NavDataSet> activeSets = NavDataItem.active(xPlane.getNavDataManager().getNavDataSets());
+        int errors = 0;
+        int warnings = 0;
+        for (NavDataSet set : activeSets) {
+            for (InspectionMessage message : set.inspect().getMessages()) {
+                if (message.getSeverity() == Severity.ERROR) errors++;
+                else if (message.getSeverity() == Severity.WARN) warnings++;
+            }
+        }
+        final int errorCount = errors;
+        final int warningCount = warnings;
+        Platform.runLater(() -> {
+            navDataErrorCount.set(errorCount);
+            navDataWarningCount.set(warningCount);
         });
     }
 

@@ -41,7 +41,7 @@
 
         <Label styleClass="dashboard-section-title" text="Library"/>
         <HBox styleClass="dashboard-tiles" spacing="12.0">
-            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showAircraft" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showAircraft" maxWidth="Infinity" maxHeight="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
@@ -51,32 +51,35 @@
                     </VBox>
                 </graphic>
             </Button>
-            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showScenery" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showScenery" maxWidth="Infinity" maxHeight="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="sceneryCount" styleClass="dashboard-tile-count" text="—"/>
-                        <Label styleClass="dashboard-tile-label" text="Scenery"/>
+                        <Label styleClass="dashboard-tile-label" text="Active scenery packages"/>
                         <Label fx:id="sceneryUpdateBadge" styleClass="dashboard-tile-badge" visible="false"/>
                     </VBox>
                 </graphic>
             </Button>
-            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showNavData" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showNavData" maxWidth="Infinity" maxHeight="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="navDataCount" styleClass="dashboard-tile-count" text="—"/>
-                        <Label styleClass="dashboard-tile-label" text="Nav data"/>
-                        <Label styleClass="dashboard-tile-badge" visible="false"/>
+                        <Label styleClass="dashboard-tile-label" text="Active nav data layers"/>
+                        <HBox alignment="CENTER" spacing="4.0">
+                            <Label fx:id="navDataErrorBadge" styleClass="dashboard-tile-badge, dashboard-tile-badge-error" visible="false"/>
+                            <Label fx:id="navDataWarningBadge" styleClass="dashboard-tile-badge" visible="false"/>
+                        </HBox>
                     </VBox>
                 </graphic>
             </Button>
-            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showPlugins" maxWidth="Infinity"
+            <Button styleClass="dashboard-tile, dashboard-card" mnemonicParsing="false" onAction="#showPlugins" maxWidth="Infinity" maxHeight="Infinity"
                     HBox.hgrow="ALWAYS">
                 <graphic>
                     <VBox alignment="CENTER" spacing="4.0">
                         <Label fx:id="pluginsCount" styleClass="dashboard-tile-count" text="—"/>
-                        <Label styleClass="dashboard-tile-label" text="Plugins"/>
+                        <Label styleClass="dashboard-tile-label" text="Active plugins"/>
                         <Label fx:id="pluginsUpdateBadge" styleClass="dashboard-tile-badge" visible="false"/>
                     </VBox>
                 </graphic>

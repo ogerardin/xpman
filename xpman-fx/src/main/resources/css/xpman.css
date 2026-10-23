@@ -409,6 +409,11 @@
     -fx-padding: 2px 8px;
 }
 
+.dashboard-tile-badge-error {
+    -fx-text-fill: -color-danger-emphasis;
+    -fx-background-color: -color-danger-muted;
+}
+
 .dashboard-primary-button:disabled {
     -fx-opacity: 0.5;
 }
