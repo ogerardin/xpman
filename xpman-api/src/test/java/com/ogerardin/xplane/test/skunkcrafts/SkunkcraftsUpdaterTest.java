@@ -305,4 +305,21 @@ class SkunkcraftsUpdaterTest {
         // 123456789ABCDEF0 should be normalized to 9ABCDEF0 (lower 32 bits)
         assertThat(entries.get(2).expectedCRC(), is(0x9ABCDEF0L));
     }
+
+    @Test
+    void testEncodeUrlEncodesSpacesInFilename() throws IOException {
+        // Reproduces the SGES update failure: whitelist paths may contain spaces (e.g. "SGES_history (4).pdf")
+        java.net.URL url = SkunkcraftsUpdater.encodeUrl(
+                "https://raw.githubusercontent.com/GitHubJavelin/sges-updates/refs/heads/main/Scripts/SGES_history (4).pdf");
+
+        assertThat(url.toString(), is(
+                "https://raw.githubusercontent.com/GitHubJavelin/sges-updates/refs/heads/main/Scripts/SGES_history%20(4).pdf"));
+    }
+
+    @Test
+    void testEncodeUrlLeavesPlainUrlsUnchanged() throws IOException {
+        java.net.URL url = SkunkcraftsUpdater.encodeUrl("https://example.com/skunkcrafts_updater.cfg");
+
+        assertThat(url.toString(), is("https://example.com/skunkcrafts_updater.cfg"));
+    }
 }

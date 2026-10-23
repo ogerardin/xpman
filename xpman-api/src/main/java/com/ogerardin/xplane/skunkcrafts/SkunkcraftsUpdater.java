@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -291,7 +292,7 @@ public class SkunkcraftsUpdater {
         String url = normalizeBaseUrl(moduleUrl) + entry.relativePath();
         HttpURLConnection conn = null;
         try {
-            conn = (HttpURLConnection) new URL(url).openConnection();
+            conn = (HttpURLConnection) encodeUrl(url).openConnection();
             conn.setRequestMethod("HEAD");
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5000);
@@ -425,6 +426,19 @@ public class SkunkcraftsUpdater {
         }
     }
 
+    /**
+     * Converts a URL string that may contain unencoded characters (e.g. spaces in filenames) into a
+     * properly percent-encoded {@link URL}.
+     */
+    public static URL encodeUrl(String urlStr) throws IOException {
+        try {
+            URL raw = new URL(urlStr);
+            return new URI(raw.getProtocol(), raw.getAuthority(), raw.getPath(), raw.getQuery(), null).toURL();
+        } catch (java.net.URISyntaxException e) {
+            throw new IOException("Invalid URL: " + urlStr, e);
+        }
+    }
+
     private String normalizeBaseUrl(String url) {
         if (url == null) return "";
         String base = url.replace("\\", "/");
@@ -438,7 +452,7 @@ public class SkunkcraftsUpdater {
     }
 
     private String fetchText(String urlStr) throws IOException {
-        URL url = new URL(urlStr);
+        URL url = encodeUrl(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setConnectTimeout(10000);
@@ -466,7 +480,7 @@ public class SkunkcraftsUpdater {
     private void downloadFile(String urlStr, Path destination) throws IOException {
         Path tempFile = destination.resolveSibling(destination.getFileName() + ".tmp");
         try {
-            URL url = new URL(urlStr);
+            URL url = encodeUrl(urlStr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(10000);
