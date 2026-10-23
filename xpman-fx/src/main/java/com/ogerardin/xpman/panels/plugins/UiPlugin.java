@@ -93,19 +93,12 @@ Press OK to continue.'
     }
 
     @SuppressWarnings("unused")
+    @Override
     @Label("'Update via Skunkcrafts Updater'")
     @EnabledIf("skunkcraftsUpdateAvailable")
-    @OnSuccess("reload()")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(plugin).showAndWait();
-    }
-
-    @Override
-    public Runnable updateAction() {
-        return () -> {
-            new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(plugin).showAndWait();
-            plugin.getXPlane().getPluginManager().reload();
-        };
+        plugin.getXPlane().getPluginManager().reload();
     }
 
     @SuppressWarnings("unused")

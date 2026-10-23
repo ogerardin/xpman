@@ -25,8 +25,8 @@ public interface PluginRow extends SwitchRow {
         return false;
     }
 
-    default Runnable updateAction() {
-        return null;
+    /** Runs the Skunkcrafts update wizard and reloads the manager; no-op default because only updatable rows can trigger it. */
+    default void skunkcraftsUpdate() {
     }
 
     @Override
