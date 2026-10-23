@@ -1,15 +1,29 @@
-| Cat       | Feature                                                                    | Status             |
-|-----------|----------------------------------------------------------------------------|--------------------|
-| Aircraft  | rename aircraft/studio                                                     |                    |
-| Aircraft  | change aircraft category                                                   |                    |
-| Aircraft  | get aircraft version                                                       | Partially done     |
-| Aircraft  | fly aircraft directly                                                      |                    |
-| Aircraft  | improve property browser: shortcuts to common items, help, sort, filter    |                    |
-| Aircraft  | recognise specific aircraft -> requirements, check update, home page, etc. | Partially done     |
-| Liveries  | List/delete aircraft liveries                                              | In progress        |
-| Liveries  | Install livery from ZIP                                                    |                    |
-| Nav data  | automated FAA CIFP download & install                                      |                    |
-| Nav data  | automatically update navdata set                                           |                    |
-| Scenery   | generate flight plan for FMS / ATC                                         |                    |
-| Installer | install from URL                                                           |                    |
-| Installer | manage update, not just install: report versions instead of only overwrites |                    |
+# TODO
+
+## Aircraft
+- restore the "disabled aircraft" concept (by using disabled folder, similar to plugins)
+- Improve property browser: shortcuts to common items, help, sort, filter
+- Fly aircraft directly
+
+## Liveries
+- Install livery from ZIP
+
+## Nav data
+- Automated FAA CIFP download & install
+- Automatically update navdata set
+- navigraph utilities as tools?
+
+## Scenery
+
+## Installer
+- Install from URL
+- Manage update, not just install: report versions instead of only overwrites
+- abstract SkunkInstaller into generic install/update method, and implement additional channels (github, Google Drive, 
+x-plane.org, ...)
+- converge with tools install method
+
+## Misc
+- X-plane log analyzer
+- Generate flight plan for FMS / ATC
+- fix rendom order of context menu items
+- memorize column widths
