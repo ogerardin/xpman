@@ -845,42 +845,11 @@
     -fx-font-size: 0.9em;
 }
 
-.navdata-card-actions {
-    -fx-spacing: 4px;
-    -fx-padding: 4px 0 0 0;
-    -fx-opacity: 0;
-}
-
-.navdata-card:hover .navdata-card-actions {
-    -fx-opacity: 1;
-}
-
-.navdata-card-action {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-    -fx-padding: 3px;
-    -fx-background-radius: 4px;
-}
-
-.navdata-card-action .ikonli-font-icon {
-    -fx-fill: -color-fg-muted;
-}
-
-.navdata-card-action:hover {
-    -fx-background-color: -color-accent-muted;
-}
-
-.navdata-card-fix-actions {
-    -fx-spacing: 4px;
-    -fx-padding: 4px 0 0 0;
-}
-
 .navdata-card-fix {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-    -fx-padding: 3px 6px;
+    -fx-padding: 4px 10px;
     -fx-background-radius: 4px;
     -fx-font-size: 0.9em;
 }
@@ -900,8 +869,12 @@
 }
 
 .navdata-card-message {
-    -fx-spacing: 6px;
+    -fx-spacing: 2px;
     -fx-alignment: top-left;
+}
+
+.navdata-card-message-fixes {
+    -fx-padding: 4px 0 0 0;
 }
 
 .navdata-card-message-text {

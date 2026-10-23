@@ -13,7 +13,7 @@
 Navigation data is organized as a vertical stack of **layer cards**. Each card shows:
 
 - **Status ball** — Inactive (grey), OK (green), warnings (yellow), or errors (red).
-- **Problems** — Warning and error messages appear inline on the card, each with a fix button (e.g., "Move FAACIFP18 to Trash" for a cycle mismatch). Click the fix button to apply; the message is removed on success.
+- **Problems** — Warning and error messages appear inline on the card, with their fix buttons when any are available (e.g. "Move FAACIFP18 to Trash" for a cycle mismatch). Click a fix button to apply; the card refreshes.
 - **Name** — Layer name.
 - **Layer i/n badge** — Position in the layer stack (e.g. `Layer 3/5`).
 - **Short state** — e.g. `Cycle 2610` (the AIRAC cycle identifier).

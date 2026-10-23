@@ -13,6 +13,7 @@ import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
 import com.ogerardin.xpman.util.jfx.menu.MethodButton;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,6 +24,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import org.kordamp.ikonli.feather.Feather;
@@ -130,9 +132,15 @@ public class NavDataSetCardView extends VBox {
         filesToggle.getStyleClass().add("navdata-card-files-toggle");
         filesToggle.setOnAction(_ -> toggleFiles(uiItem));
 
-        HBox actions = buildHoverActions(uiItem);
+        HBox filesRow = new HBox(4, filesToggle);
+        findMethod(uiItem.getClass(), "reveal").ifPresent(method -> {
+            MethodButton<UiNavDataItem> revealButton = new MethodButton<>("reveal", method, controller, uiItem);
+            revealButton.setGraphic(icon(Feather.FOLDER));
+            revealButton.getStyleClass().add("navdata-card-files-toggle");
+            filesRow.getChildren().add(revealButton);
+        });
 
-        VBox info = new VBox(4, header, filesToggle, actions);
+        VBox info = new VBox(4, header, filesRow);
         VBox messagesBox = buildMessages(inspection, ignored);
         if (messagesBox != null) {
             info.getChildren().add(messagesBox);
@@ -188,13 +196,6 @@ public class NavDataSetCardView extends VBox {
         };
     }
 
-    private HBox buildHoverActions(UiNavDataItem uiItem) {
-        HBox actions = new HBox(4);
-        actions.getStyleClass().add("navdata-card-actions");
-        addAction(actions, uiItem, "reveal", Feather.FOLDER);
-        return actions;
-    }
-
     /**
      * Shows WARN/ERROR messages inline on the card, each with its own fix buttons.
      * Returns null if the layer is ignored or there are no problems to display.
@@ -212,44 +213,39 @@ public class NavDataSetCardView extends VBox {
         VBox box = new VBox(2);
         box.getStyleClass().add("navdata-card-messages");
         for (InspectionMessage message : problems) {
-            HBox row = new HBox(6);
-            row.getStyleClass().add("navdata-card-message");
-            row.setWrapText(true);
+            VBox messageBox = new VBox(2);
+            messageBox.getStyleClass().add("navdata-card-message");
 
+            HBox textRow = new HBox(6);
             FontIcon severityIcon = SeverityIconCellFactory.getSeverityIcon(message.getSeverity());
             Label text = new Label(message.getMessage());
             text.setWrapText(true);
             text.getStyleClass().add("navdata-card-message-text");
 
-            row.getChildren().add(severityIcon);
+            textRow.getChildren().add(severityIcon);
             HBox.setHgrow(text, Priority.ALWAYS);
-            row.getChildren().add(text);
+            textRow.getChildren().add(text);
+            messageBox.getChildren().add(textRow);
 
             if (!message.getFixes().isEmpty()) {
                 HBox fixes = new HBox(4);
+                fixes.setAlignment(Pos.CENTER_RIGHT);
+                fixes.setMaxWidth(Double.MAX_VALUE);
+                fixes.getStyleClass().add("navdata-card-message-fixes");
                 message.getFixes().forEach(fix -> {
                     Button button = new Button(fix.label());
                     button.setGraphic(icon(Feather.TOOL));
+                    button.setMinWidth(Region.USE_PREF_SIZE);
                     button.getStyleClass().add("navdata-card-fix");
                     button.setOnAction(_ -> FixRunner.run(fix, this));
                     fixes.getChildren().add(button);
                 });
-                row.getChildren().add(fixes);
+                messageBox.getChildren().add(fixes);
             }
 
-            box.getChildren().add(row);
+            box.getChildren().add(messageBox);
         }
         return box;
-    }
-
-    private void addAction(HBox actions, UiNavDataItem uiItem, String methodName, Feather feather) {
-        findMethod(uiItem.getClass(), methodName).ifPresent(method -> {
-            MethodButton<UiNavDataItem> button = new MethodButton<>(methodName, method, controller, uiItem);
-            button.setText(null);
-            button.setGraphic(icon(feather));
-            button.getStyleClass().add("navdata-card-action");
-            actions.getChildren().add(button);
-        });
     }
 
     private static Optional<Method> findMethod(Class<?> type, String name) {

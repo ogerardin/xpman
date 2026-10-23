@@ -7,6 +7,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -40,6 +41,7 @@ public class FixButtonsCellFactory implements Callback<TableColumn<InspectionMes
                         Button button = new Button(fix.label());
                         button.setGraphic(new FontIcon(Feather.TOOL));
                         ((FontIcon) button.getGraphic()).setIconSize(ICON_SIZE);
+                        button.setMinWidth(Region.USE_PREF_SIZE);
                         button.setOnAction(_ -> {
                             boolean success = FixRunner.run(fix, this);
                             if (success) {
