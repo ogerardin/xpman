@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,8 +129,9 @@ public class PluginsController extends Controller {
     }
 
     /** Pseudo-row representing a FlyWithLua script group header in the plugins table. */
-    public record ScriptGroupHeader(String name) implements PluginRow {
-        @Override public String getName() { return name; }
+    @Value
+    public static class ScriptGroupHeader implements PluginRow {
+        String name;
         @Override public String getDesc() { return null; }
         @Override public String getVersion() { return null; }
         @Override public String getLatestVersion() { return null; }
