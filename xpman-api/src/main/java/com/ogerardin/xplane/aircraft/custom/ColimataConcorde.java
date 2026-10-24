@@ -31,7 +31,7 @@ public class ColimataConcorde extends Aircraft {
     }
 
     @Override
-    public boolean canEditAcfName() {
+    public boolean isAcfNameEditable() {
         return false;
     }
 

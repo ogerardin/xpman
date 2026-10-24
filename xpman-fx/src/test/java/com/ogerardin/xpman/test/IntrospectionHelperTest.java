@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.test;
 
+import com.ogerardin.xpman.panels.aircraft.UiAircraft;
 import com.ogerardin.xpman.panels.plugins.UiPlugin;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
@@ -21,6 +22,18 @@ class IntrospectionHelperTest {
                 List.of("reveal", "removeQuarantine", "enablePlugin", "disablePlugin", "uninstall",
                         "openLink", "openManual", "inspect", "skunkcraftsUpdate", "skunkcraftsLocked", "properties"),
                 IntrospectionHelper.computeRelevantMethods(UiPlugin.class).stream()
+                        .map(Method::getName)
+                        .toList());
+    }
+
+    @Test
+    void uiAircraftMenuMethodsAreOnlyTheDeclaredActions() {
+        assertTrue(IntrospectionHelper.computeRelevantMethods(UiAircraft.class).stream()
+                .allMatch(method -> method.isAnnotationPresent(Order.class)));
+        assertEquals(
+                List.of("reveal", "uninstall", "openLink", "openManual", "inspect",
+                        "details", "skunkcraftsUpdate", "skunkcraftsLocked", "properties"),
+                IntrospectionHelper.computeRelevantMethods(UiAircraft.class).stream()
                         .map(Method::getName)
                         .toList());
     }

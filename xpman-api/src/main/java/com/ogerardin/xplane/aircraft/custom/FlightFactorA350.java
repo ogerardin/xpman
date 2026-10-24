@@ -38,7 +38,7 @@ public class FlightFactorA350 extends Aircraft {
     }
 
     @Override
-    public boolean canEditAcfName() {
+    public boolean isAcfNameEditable() {
         return false;
     }
 

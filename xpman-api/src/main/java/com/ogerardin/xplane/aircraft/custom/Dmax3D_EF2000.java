@@ -39,7 +39,7 @@ public class Dmax3D_EF2000 extends Aircraft {
     }
 
     @Override
-    public boolean canEditAcfName() {
+    public boolean isAcfNameEditable() {
         return false;
     }
 

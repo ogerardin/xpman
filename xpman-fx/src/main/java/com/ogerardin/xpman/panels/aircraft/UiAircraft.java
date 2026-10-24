@@ -125,7 +125,7 @@ Press OK to continue.'
                 "studio", "acf/_studio",
                 "notes", "acf/_notes"
         ));
-        if (!aircraft.canEditAcfName()) {
+        if (!aircraft.isAcfNameEditable()) {
             editableProperties.remove("name");
         }
         PropertiesStage.show("aircraft", getName(), aircraft, editableProperties,

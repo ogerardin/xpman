@@ -21,14 +21,14 @@ class AircraftNameEditabilityTest {
 
     @Test
     void normalAircraftNameCanBeEdited() {
-        assertTrue(new Aircraft(null, null).canEditAcfName());
+        assertTrue(new Aircraft(null, null).isAcfNameEditable());
     }
 
     @Test
     void customDisplayNameAircraftNamesCannotBeEdited() throws Exception {
-        assertFalse(aircraft("Airbus a350 XP11", "FlightFactor", FlightFactorA350.class).canEditAcfName());
-        assertFalse(aircraft("Eurofighter Typhoon", "dmax3d.com", Dmax3D_EF2000.class).canEditAcfName());
-        assertFalse(aircraft("CONCORDE FXP", "Colimata", ColimataConcorde.class).canEditAcfName());
+        assertFalse(aircraft("Airbus a350 XP11", "FlightFactor", FlightFactorA350.class).isAcfNameEditable());
+        assertFalse(aircraft("Eurofighter Typhoon", "dmax3d.com", Dmax3D_EF2000.class).isAcfNameEditable());
+        assertFalse(aircraft("CONCORDE FXP", "Colimata", ColimataConcorde.class).isAcfNameEditable());
     }
 
     private <T extends Aircraft> T aircraft(String name, String studio, Class<T> type) throws Exception {
