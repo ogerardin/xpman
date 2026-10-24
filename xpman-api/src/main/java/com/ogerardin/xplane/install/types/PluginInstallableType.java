@@ -26,8 +26,10 @@ public class PluginInstallableType implements InstallableType {
 
     @Override
     public boolean recognizes(Archive archive) {
+        // an aircraft archive may bundle .xpl plugins; a root-level .acf wins
         return archive.getPaths().stream()
-            .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"));
+            .anyMatch(path -> path.getFileName().toString().endsWith(".xpl"))
+            && !AircraftInstallableType.hasAcfAtRoot(archive);
     }
     
     @Override

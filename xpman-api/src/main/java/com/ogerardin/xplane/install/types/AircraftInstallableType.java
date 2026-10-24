@@ -27,10 +27,21 @@ public class AircraftInstallableType implements InstallableType {
 
     @Override
     public boolean recognizes(Archive archive) {
+        // a bundled plugin (e.g. plugins/xlua) does not make the archive a plugin archive
         return archive.getPaths().stream()
             .anyMatch(path -> path.getFileName().toString().endsWith(".acf"))
-            && archive.getPaths().stream()
-            .noneMatch(path -> path.getFileName().toString().endsWith(".xpl"));
+            && (archive.getPaths().stream()
+                .noneMatch(path -> path.getFileName().toString().endsWith(".xpl"))
+                || hasAcfAtRoot(archive));
+    }
+
+    /**
+     * An .acf directly under the archive's root folder means the root folder is an aircraft folder.
+     */
+    static boolean hasAcfAtRoot(Archive archive) {
+        return archive.getPaths().stream()
+            .anyMatch(path -> path.getNameCount() == 2
+                && path.getFileName().toString().endsWith(".acf"));
     }
     
     @Override
