@@ -74,7 +74,7 @@ public interface Platform {
     /** Extracts a version from the application's binary by scanning for the first match of the given pattern (group 1). */
     @SneakyThrows
     default String extractVersion(Path app, Pattern pattern) {
-        String content = new String(Files.readAllBytes(getBinary(app)), StandardCharsets.ISO_8859_1);
+        String content = Files.readString(getBinary(app), StandardCharsets.ISO_8859_1);
         Matcher matcher = pattern.matcher(content);
         return matcher.find() ? matcher.group(1) : null;
     }

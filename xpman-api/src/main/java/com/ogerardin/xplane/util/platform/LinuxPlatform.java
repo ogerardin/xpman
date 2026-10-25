@@ -57,7 +57,7 @@ public class LinuxPlatform implements Platform {
     @Override
     public String getCpuType() {
         ExecResults exec = CommandExecutor.exec("uname", "-p");
-        return exec.outputLines().get(0);
+        return exec.outputLines().getFirst();
     }
 
     @SneakyThrows

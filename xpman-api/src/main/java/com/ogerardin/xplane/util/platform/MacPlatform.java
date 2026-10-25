@@ -154,14 +154,14 @@ public class MacPlatform implements Platform {
     @Override
     public String getCpuType() {
         ExecResults exec = CommandExecutor.exec("sysctl", "-n", "machdep.cpu.brand_string");
-        return exec.outputLines().get(0);
+        return exec.outputLines().getFirst();
     }
 
     @SneakyThrows
     @Override
     public int getCpuCount() {
         ExecResults exec = CommandExecutor.exec("sysctl", "-n", "hw.ncpu");
-        return Integer.parseInt(exec.outputLines().get(0));
+        return Integer.parseInt(exec.outputLines().getFirst());
     }
 
     @Override
