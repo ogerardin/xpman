@@ -5,18 +5,19 @@ import com.ogerardin.xplane.inspection.Inspection;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
-import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.util.zip.Archive;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An {@link Inspection} that warns when plugins conflicting with the add-on being installed are
  * present: maps each conflicting plugin's base folder name (case-insensitive) to the reason it
- * conflicts; every installed match yields one non-blocking WARN.
+ * conflicts; every installed match yields one non-blocking WARN. Probes installed folder names
+ * without building Plugin objects, so it stays cheap enough for the wizard's FX thread.
  */
 @RequiredArgsConstructor
 public class ConflictingPluginsInspection implements Inspection<Archive> {
@@ -29,23 +30,17 @@ public class ConflictingPluginsInspection implements Inspection<Archive> {
         if (xPlane == null || conflicts.isEmpty()) {
             return InspectionResult.empty();
         }
-        List<InspectionMessage> messages = xPlane.getPluginManager().getPlugins().stream()
-                .filter(plugin -> reasonFor(plugin) != null)
-                .map(plugin -> InspectionMessage.builder()
+        Set<String> installedFolderNames = xPlane.getPluginManager().getInstalledPluginFolderNames();
+        List<InspectionMessage> messages = conflicts.entrySet().stream()
+                .filter(entry -> installedFolderNames.stream()
+                        .anyMatch(name -> entry.getKey().equalsIgnoreCase(name)))
+                .map(entry -> InspectionMessage.builder()
                         .severity(Severity.WARN)
-                        .object(plugin.getName())
+                        .object(entry.getKey())
                         .message("This plugin conflicts with the add-on being installed")
-                        .details(reasonFor(plugin))
+                        .details(entry.getValue())
                         .build())
                 .toList();
         return messages.isEmpty() ? InspectionResult.empty() : InspectionResult.of(messages);
-    }
-
-    private String reasonFor(Plugin plugin) {
-        String folder = plugin.getBaseFolder().getFileName().toString();
-        return conflicts.entrySet().stream()
-                .filter(entry -> entry.getKey().equalsIgnoreCase(folder))
-                .map(Map.Entry::getValue)
-                .findFirst().orElse(null);
     }
 }

@@ -237,15 +237,17 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     /**
      * Adds the given Custom Scenery folder to scenery_packs.ini above the first entry that
      * designates one of the given anchor folders (e.g. global airports, a legacy library), or
-     * at the top when no anchor is listed, and saves. An already-listed folder is repositioned.
-     * Returns false — with nothing written — if scenery_packs.ini does not exist or the folder
-     * is neither on disk nor listed.
+     * at the top when no anchor is listed, and saves. An already-listed folder is repositioned;
+     * a folder already above the anchors is left untouched. The entry list is refreshed even
+     * when scenery_packs.ini does not exist, so a freshly installed library shows up in the
+     * Scenery panel. Returns false — with nothing written — if the folder is neither on disk
+     * nor listed.
      */
     public boolean addToIniAbove(String folderName, String... anchorFolderNames) {
+        loadPackages();
         if (getSceneryPacksIniFile() == null) {
             return false;
         }
-        loadPackages();
         SceneryEntry entry = getSceneryEntries().stream()
                 .filter(e -> isFolder(e, folderName) || designatesFolder(e, folderName))
                 .findFirst().orElse(null);
@@ -272,15 +274,16 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
 
     /**
      * Removes the scenery_packs.ini entry designating the given Custom Scenery folder — e.g. one
-     * left dangling after the folder was trashed — and saves. Returns false if scenery_packs.ini
-     * does not exist, no entry designates the folder, or its folder still exists on disk (the
-     * scenery is still installed).
+     * left dangling after the folder was trashed — and saves. The entry list is refreshed even
+     * when scenery_packs.ini does not exist, so a trashed library disappears from the Scenery
+     * panel. Returns false if no entry designates the folder or its folder still exists on
+     * disk (the scenery is still installed).
      */
     public boolean removeFromIni(String folderName) {
+        loadPackages();
         if (getSceneryPacksIniFile() == null) {
             return false;
         }
-        loadPackages();
         SceneryEntry entry = getSceneryEntries().stream()
                 .filter(e -> designatesFolder(e, folderName))
                 .findFirst().orElse(null);

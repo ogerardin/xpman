@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
@@ -73,6 +75,24 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
             loadPlugins();
         }
         return Collections.unmodifiableList(items);
+    }
+
+    /**
+     * Names of the installed plugin folders (active and disabled), as a cheap probe that does
+     * not build Plugin objects — unlike {@link #getPlugins()}, a full load also pre-warms remote
+     * Skunkcrafts versions and must not be triggered from the FX thread (e.g. by install
+     * inspections).
+     */
+    @SneakyThrows
+    public Set<String> getInstalledPluginFolderNames() {
+        Set<String> names = new HashSet<>();
+        for (Path folder : List.of(pluginsFolder, disabledPluginsFolder)) {
+            for (Path xplFile : FileUtils.findFiles(folder,
+                    path -> path.getFileName().toString().endsWith(".xpl"))) {
+                names.add(Plugin.getBaseFolder(xplFile).getFileName().toString());
+            }
+        }
+        return names;
     }
 
 

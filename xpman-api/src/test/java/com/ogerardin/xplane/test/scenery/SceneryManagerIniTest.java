@@ -8,6 +8,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -120,12 +121,62 @@ class SceneryManagerIniTest {
     }
 
     @Test
-    void removeFromIniDoesNothingWhenIniIsAbsent() throws Exception {
+    void doesNotRewriteTheIniWhenTheFolderAlreadySitsAboveTheAnchors() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(
+                LIBRARY, // already listed at the top
+                "SCENERY_PACK Custom Scenery/Some Airport/",
+                GLOBAL_AIRPORTS);
+        createSceneryFolder(xPlane, "openSAM_Library");
+        Path ini = xPlane.getPaths().customScenery().resolve("scenery_packs.ini");
+        String before = Files.readString(ini);
+
+        assertTrue(xPlane.getSceneryManager().addToIniAbove("openSAM_Library", "Global Airports"));
+
+        assertEquals(before, Files.readString(ini)); // no churn: position already correct
+    }
+
+    @Test
+    void positionsAboveADisabledAnchor() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(
+                "SCENERY_PACK Custom Scenery/Some Airport/",
+                "SCENERY_PACK_DISABLED Custom Scenery/SAM_Library/",
+                GLOBAL_AIRPORTS);
+        createSceneryFolder(xPlane, "openSAM_Library");
+
+        assertTrue(xPlane.getSceneryManager().addToIniAbove("openSAM_Library", "Global Airports", "SAM_Library"));
+
+        List<String> lines = iniLines(xPlane);
+        assertTrue(lines.indexOf(LIBRARY) < lines.indexOf("SCENERY_PACK_DISABLED Custom Scenery/SAM_Library"),
+                "openSAM_Library above the disabled SAM_Library: " + lines);
+    }
+
+    @Test
+    void removeFromIniRefreshesEntriesEvenWhenThereIsNoIni() throws Exception {
         XPlane xPlane = newXPlane();
-        assertFalse(xPlane.getSceneryManager().removeFromIni("openSAM_Library"));
+        createSceneryFolder(xPlane, "openSAM_Library");
+        SceneryManager manager = xPlane.getSceneryManager();
+        assertTrue(hasEntryFor(manager, "openSAM_Library")); // the row shows before the folder is trashed
+
+        deleteFolder(xPlane.getPaths().customScenery().resolve("openSAM_Library")); // what uninstall does
+        boolean removed = manager.removeFromIni("openSAM_Library");
+
+        assertFalse(removed); // nothing to remove without an ini
+        assertFalse(hasEntryFor(manager, "openSAM_Library")); // but the row is refreshed away
     }
 
     // helpers
+
+    private static boolean hasEntryFor(SceneryManager manager, String folderName) {
+        return manager.getSceneryEntries().stream()
+                .anyMatch(entry -> entry.getSceneryPackage() != null
+                        && entry.getSceneryPackage().getFolder().getFileName().toString().equals(folderName));
+    }
+
+    private void deleteFolder(Path folder) throws IOException {
+        try (var paths = Files.walk(folder)) {
+            paths.sorted(Comparator.reverseOrder()).forEach(path -> path.toFile().delete());
+        }
+    }
 
     private XPlane newXPlane() throws Exception {
         return new XPlane(tempFolder);

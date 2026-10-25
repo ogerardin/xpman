@@ -216,6 +216,10 @@ class OpenSamPluginInstallableTypeTest {
 
         assertThat(Files.exists(xPlane.getPaths().plugins().resolve("openSAM").resolve("mac_x64").resolve("openSAM.xpl")), is(true));
         assertThat(Files.exists(xPlane.getPaths().customScenery().resolve("openSAM_Library").resolve("library.txt")), is(true));
+        // the Scenery panel's entry list was refreshed even without an ini
+        assertThat(xPlane.getSceneryManager().getSceneryEntries().stream()
+                .anyMatch(entry -> entry.getSceneryPackage() != null
+                        && entry.getSceneryPackage().getFolder().getFileName().toString().equals("openSAM_Library")), is(true));
     }
 
     // domain class matching
@@ -352,6 +356,20 @@ class OpenSamPluginInstallableTypeTest {
                 .filter(message -> message.getSeverity() == Severity.WARN).toList();
         assertThat(warnings.size(), is(2)); // plugin half + library half, and no ERROR
         assertThat(result.getMessages().stream().noneMatch(InspectionMessage::isError), is(true));
+    }
+
+    @Test
+    void conflictWarningDoesNotTriggerAFullPluginLoad() throws Exception {
+        Path zip = createOpenSamV5Archive();
+        XPlane xPlane = newXPlaneWithSceneryIni();
+        createFakePlugin(xPlane, "SAM");
+
+        new ConflictingPluginsInspection(xPlane, Map.of("SAM", "remove the SAM plugin"))
+                .inspect(new ZipArchive(zip));
+
+        // the conflict probe must not build Plugin objects: a full load pre-warms remote
+        // Skunkcrafts versions, a stall when triggered from the wizard's FX thread
+        assertThat(xPlane.getPluginManager().getItems(), is(nullValue()));
     }
 
     // helpers
