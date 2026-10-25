@@ -105,8 +105,10 @@ public class XPlane {
         }
         /** Global airports */
         public Path globalAirports() {
-            // the path for global airports changed in X-Plane 12
-            Path dir = (getMajorVersion() == XPlaneMajorVersion.XP11) ? customScenery() : globalScenery();
+            // the path for global airports changed in X-Plane 12; an undetectable version falls
+            // through to the XP12 layout like any non-XP11 version instead of blowing up
+            Path dir = (getVersion() != null && getMajorVersion() == XPlaneMajorVersion.XP11)
+                    ? customScenery() : globalScenery();
             return dir.resolve("Global Airports");
         }
         public Path resources() {

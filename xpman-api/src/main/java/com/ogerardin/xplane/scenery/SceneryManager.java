@@ -20,13 +20,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADED;
 import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
@@ -229,6 +232,96 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
             return true;
         }
         return false;
+    }
+
+    /**
+     * Adds the given Custom Scenery folder to scenery_packs.ini above the first entry that
+     * designates one of the given anchor folders (e.g. global airports, a legacy library), or
+     * at the top when no anchor is listed, and saves. An already-listed folder is repositioned.
+     * Returns false — with nothing written — if scenery_packs.ini does not exist or the folder
+     * is neither on disk nor listed.
+     */
+    public boolean addToIniAbove(String folderName, String... anchorFolderNames) {
+        if (getSceneryPacksIniFile() == null) {
+            return false;
+        }
+        loadPackages();
+        SceneryEntry entry = getSceneryEntries().stream()
+                .filter(e -> isFolder(e, folderName) || designatesFolder(e, folderName))
+                .findFirst().orElse(null);
+        if (entry == null) {
+            return false;
+        }
+        SceneryPackIniItem item = entry.getIniItem();
+        if (item == null) {
+            if (!addToIni(entry)) {
+                return false;
+            }
+            item = iniItems.getLast(); // the item just appended (addToIni rebuilt the entries)
+        }
+        int target = firstAnchorIndex(anchorFolderNames).orElse(0);
+        int index = indexOf(item);
+        if (index > target) {
+            iniItems.add(target, iniItems.remove(index));
+            items = buildEntries();
+            pendingChanges = true;
+        }
+        saveAndFireLoaded();
+        return true;
+    }
+
+    /**
+     * Removes the scenery_packs.ini entry designating the given Custom Scenery folder — e.g. one
+     * left dangling after the folder was trashed — and saves. Returns false if scenery_packs.ini
+     * does not exist, no entry designates the folder, or its folder still exists on disk (the
+     * scenery is still installed).
+     */
+    public boolean removeFromIni(String folderName) {
+        if (getSceneryPacksIniFile() == null) {
+            return false;
+        }
+        loadPackages();
+        SceneryEntry entry = getSceneryEntries().stream()
+                .filter(e -> designatesFolder(e, folderName))
+                .findFirst().orElse(null);
+        if (entry == null || !removeFromIni(entry)) {
+            return false;
+        }
+        saveAndFireLoaded();
+        return true;
+    }
+
+    /** True if the entry is the on-disk scenery package named {@code folderName}, listed or not. */
+    private static boolean isFolder(SceneryEntry entry, String folderName) {
+        return entry.getSceneryPackage() != null
+                && entry.getSceneryPackage().getFolder().getFileName().toString().equalsIgnoreCase(folderName);
+    }
+
+    /** True if the entry's ini item designates the folder named {@code folderName}, on disk or not. */
+    private boolean designatesFolder(SceneryEntry entry, String folderName) {
+        if (entry.getIniItem() == null) {
+            return false;
+        }
+        return designatesAnchor(entry.getIniItem(), folderName);
+    }
+
+    /** The 0-based index of the first ini item designating one of the anchor folders. */
+    private OptionalInt firstAnchorIndex(String... anchorFolderNames) {
+        return IntStream.range(0, iniItems.size())
+                .filter(i -> designatesAnchor(iniItems.get(i), anchorFolderNames))
+                .findFirst();
+    }
+
+    /** True if the ini item designates a folder whose name matches one of the given names (case-insensitive). */
+    private boolean designatesAnchor(SceneryPackIniItem item, String... folderNames) {
+        Path folder = SceneryEntry.resolveFolder(item, xPlane);
+        return folder != null && Arrays.stream(folderNames)
+                .anyMatch(name -> folder.getFileName().toString().equalsIgnoreCase(name));
+    }
+
+    private void saveAndFireLoaded() {
+        save();
+        fireEvent(ManagerEvent.<SceneryEntry>builder().type(LOADED).source(this).items(items).build());
     }
 
     public void organize(List<SceneryPackage> orderedPackages) {
