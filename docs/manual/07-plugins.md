@@ -38,6 +38,7 @@ Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unreco
 | Terrain Radar | `TerrainRadar` folder | Version read from its readme; X-Plane.org link; **Inspect** reports newer versions |
 | X-IvAp | `X-IvAp-64.xpl` | Links to the IVAO home page and manual; **Inspect** reports newer versions from the IVAO site |
 | PluginAdmin | Folder name | System plugin: can be neither disabled nor uninstalled |
+| openSAM | `openSAM` folder | Installs the plugin **and** the `openSAM_Library` scenery from the same archive, with scenery ordering; version/flavor checks and conflict warnings on install; uninstall removes both halves |
 
 More plugins will be recognized in future releases. If your favorite plugin is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.
 
@@ -68,9 +69,27 @@ The install wizard detects the archive format automatically. XPman enforces X-Pl
 
 Uninstalling the v4 script also removes the `SLM-Data` folder next to it.
 
+## openSAM
+
+openSAM is recognized in every release version, in two archive flavors:
+
+- **v5+** — X-Plane 12 only. XPman blocks the install on X-Plane 11 with a pointer to the 4.x releases.
+- **v4 and earlier** — X-Plane 11 and 12. These releases ship separate XP11 and XP12 flavors distinguished only by the archive filename (`openSAM-XP11-v4.5.5.zip` / `openSAM-XP12-v4.5.5.zip`); when the flavor is detectable, XPman blocks installing the wrong one.
+
+openSAM's archive contains two components, and the install wizard handles both:
+
+- `openSAM` → `Resources/plugins`
+- `openSAM_Library` → `Custom Scenery`, with its `scenery_packs.ini` entry automatically positioned **above `*GLOBAL_AIRPORTS*`** and above the legacy `SAM_Library` if that is installed. When `scenery_packs.ini` does not exist yet (X-Plane has never run), the entry cannot be positioned; XPman warns and the rank should be checked in the Scenery panel after X-Plane's first run.
+
+Installing also warns when plugins whose functionality is included in openSAM are still present: AutoDGS (v5+ only), the SAM plugin and the SAM Seasons emulator. Remove them as instructed by the warnings — `SAM_Library` itself may remain in `Custom Scenery` for sceneries that need it.
+
+Updates are handled by Skunkcrafts Updater: the **Update** button appears on the openSAM row once installed (see [Updating Add-ons](10-updating-addons.md)).
+
+Uninstalling openSAM from the Plugins panel removes the plugin, the `openSAM_Library` scenery **and** its `scenery_packs.ini` entry — the confirmation dialog says so. Uninstalling only `openSAM_Library` from the Scenery panel removes just the library.
+
 ## Uninstall
 
-Uninstalling a plugin moves its entire folder to the trash. For FlyWithLua, the confirmation dialog warns that all its scripts will also be deleted.
+Uninstalling a plugin moves its entire folder to the trash. For FlyWithLua, the confirmation dialog warns that all its scripts will also be deleted; for openSAM, that the `openSAM_Library` scenery and its `scenery_packs.ini` entry will also be removed.
 
 ## Context Menus
 
