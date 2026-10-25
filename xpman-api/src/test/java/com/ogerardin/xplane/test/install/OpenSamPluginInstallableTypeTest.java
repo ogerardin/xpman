@@ -26,6 +26,8 @@ import java.util.zip.ZipOutputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests recognition, installation and uninstallation of openSAM plugin archives (v5+ and
@@ -278,6 +280,80 @@ class OpenSamPluginInstallableTypeTest {
         assertThat(plugin.getUninstallWarningDetails(), containsString("openSAM_Library"));
     }
 
+    // blocking gates: XP12-only v5 and the v4 XP11/XP12 flavor (mocked X-Plane versions)
+
+    @Test
+    void blocksV5InstallOnXPlane11() throws Exception {
+        var result = new OpenSamPlugin.OpenSamPluginInstallableType()
+                .preconditions(versionMock("11.55.1", XPlaneMajorVersion.XP11),
+                        new ZipArchive(createOpenSamV5Archive()));
+
+        assertThat(result.isNotAbort(), is(false));
+        assertThat(result.getMessages(), hasItem(allOf(
+                hasProperty("severity", is(Severity.ERROR)),
+                hasProperty("message", containsString("X-Plane 12")))));
+    }
+
+    @Test
+    void allowsV5InstallOnXPlane12() throws Exception {
+        var result = new OpenSamPlugin.OpenSamPluginInstallableType()
+                .preconditions(versionMock("12.0.9", XPlaneMajorVersion.XP12),
+                        new ZipArchive(createOpenSamV5Archive()));
+
+        assertThat(result.isNotAbort(), is(true));
+        assertThat(result.getMessages().stream().noneMatch(InspectionMessage::isError), is(true));
+    }
+
+    @Test
+    void blocksWrongFlavorV4Install() throws Exception {
+        Path zip = createOpenSamArchive(false, "openSAM-XP11-v4.5.5"); // XP11 flavor...
+        var result = new OpenSamPlugin.OpenSam4PluginInstallableType()
+                .preconditions(versionMock("12.0.9", XPlaneMajorVersion.XP12), new ZipArchive(zip)); // ...on XP12
+
+        assertThat(result.isNotAbort(), is(false));
+        assertThat(result.getMessages(), hasItem(allOf(
+                hasProperty("severity", is(Severity.ERROR)),
+                hasProperty("message", containsString("X-Plane 11 flavor")))));
+    }
+
+    @Test
+    void allowsV4InstallOnXPlane11WithUnflavoredArchive() throws Exception {
+        // the "stick to a 4.x release on X-Plane 11" happy path: no flavor token, no XP12 gate
+        var result = new OpenSamPlugin.OpenSam4PluginInstallableType()
+                .preconditions(versionMock("11.55.1", XPlaneMajorVersion.XP11),
+                        new ZipArchive(createOpenSamArchive(false)));
+
+        assertThat(result.isNotAbort(), is(true));
+        assertThat(result.getMessages().stream().noneMatch(InspectionMessage::isError), is(true));
+    }
+
+    @Test
+    void allowsV4InstallWithMatchingFlavor() throws Exception {
+        Path zip = createOpenSamArchive(false, "openSAM-XP12-v4.5.5");
+        var result = new OpenSamPlugin.OpenSam4PluginInstallableType()
+                .preconditions(versionMock("12.0.9", XPlaneMajorVersion.XP12), new ZipArchive(zip));
+
+        assertThat(result.isNotAbort(), is(true));
+        assertThat(result.getMessages().stream().noneMatch(InspectionMessage::isError), is(true));
+    }
+
+    // reinstall over an existing install
+
+    @Test
+    void reinstallingOverAnExistingInstallWarnsAboutBothHalves() throws Exception {
+        Path zip = createOpenSamV5Archive();
+        XPlane xPlane = newXPlaneWithSceneryIni();
+        new OpenSamPlugin.OpenSamPluginInstallableType().install(xPlane, new ZipArchive(zip), NO_PROGRESS);
+
+        var result = new OpenSamPlugin.OpenSamPluginInstallableType()
+                .preconditions(xPlane, new ZipArchive(zip));
+
+        List<InspectionMessage> warnings = result.getMessages().stream()
+                .filter(message -> message.getSeverity() == Severity.WARN).toList();
+        assertThat(warnings.size(), is(2)); // plugin half + library half, and no ERROR
+        assertThat(result.getMessages().stream().noneMatch(InspectionMessage::isError), is(true));
+    }
+
     // helpers
 
     /** An openSAM v5-style archive: plugin half with the planes.cfg marker, library half, root docs. */
@@ -286,7 +362,11 @@ class OpenSamPluginInstallableTypeTest {
     }
 
     private Path createOpenSamArchive(boolean v5) throws IOException {
-        Path zip = Files.createTempFile(tempFolder, "openSAM-v" + (v5 ? "5.4.1" : "4.5.5"), ".zip");
+        return createOpenSamArchive(v5, "openSAM-v" + (v5 ? "5.4.1" : "4.5.5"));
+    }
+
+    private Path createOpenSamArchive(boolean v5, String namePrefix) throws IOException {
+        Path zip = Files.createTempFile(tempFolder, namePrefix, ".zip");
         try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
             zipEntry(out, "openSAM/mac_x64/openSAM.xpl", "dummy xpl content");
             zipEntry(out, "openSAM/win_x64/openSAM.xpl", "dummy xpl content");
@@ -333,6 +413,21 @@ class OpenSamPluginInstallableTypeTest {
     private List<String> iniLines(XPlane xPlane) throws IOException {
         return Files.readAllLines(xPlane.getPaths().customScenery().resolve("scenery_packs.ini"))
                 .stream().filter(line -> line.startsWith("SCENERY_PACK")).toList();
+    }
+
+    /**
+     * A mocked X-Plane reporting the given version, delegating paths and managers to a real
+     * temp install — the AssertXPlaneVersionAtLeastTest idiom, extended for the
+     * plugin-manager-aware preconditions chain.
+     */
+    private XPlane versionMock(String version, XPlaneMajorVersion major) throws Exception {
+        XPlane real = new XPlane(tempFolder);
+        XPlane xPlane = mock(XPlane.class);
+        when(xPlane.getVersion()).thenReturn(version);
+        when(xPlane.getMajorVersion()).thenReturn(major);
+        when(xPlane.getPaths()).thenReturn(real.getPaths());
+        when(xPlane.getPluginManager()).thenReturn(real.getPluginManager());
+        return xPlane;
     }
 
     /** Creates Resources/plugins/&lt;name&gt;/ with .xpl binaries for every platform. */
