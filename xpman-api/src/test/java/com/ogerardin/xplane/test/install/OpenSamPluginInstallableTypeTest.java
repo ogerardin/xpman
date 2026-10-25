@@ -10,6 +10,7 @@ import com.ogerardin.xplane.install.inspections.WouldOverwriteSubpathInspection;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.plugins.custom.OpenSamPlugin;
 import com.ogerardin.xplane.util.IntrospectionHelper;
+import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.ZipArchive;
 import org.junit.jupiter.api.Test;
@@ -370,6 +371,43 @@ class OpenSamPluginInstallableTypeTest {
         // the conflict probe must not build Plugin objects: a full load pre-warms remote
         // Skunkcrafts versions, a stall when triggered from the wizard's FX thread
         assertThat(xPlane.getPluginManager().getItems(), is(nullValue()));
+    }
+
+    // version display: the .xpl binary carries no version (the mac heuristic picks an
+    // incidental "0.8" code string); the shipped Skunkcrafts cfg is authoritative
+
+    @Test
+    void versionComesFromTheSkunkcraftsConfigNotTheBinary() throws Exception {
+        XPlane xPlane = new XPlane(tempFolder);
+        Path pluginFolder = xPlane.getPaths().plugins().resolve("openSAM");
+        Path xpl = pluginFolder.resolve("mac_x64").resolve("openSAM.xpl");
+        Files.createDirectories(xpl.getParent());
+        Files.writeString(xpl, "openSAM plugin binary, some link-time junk 0.8");
+        Files.writeString(pluginFolder.resolve("skunkcrafts_updater.cfg"),
+                "zone|custom\nmodule|https://example.com/\nversion|v5.4.1\nname|openSAM\n");
+
+        Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xPlane, xpl);
+
+        assertThat(plugin, instanceOf(OpenSamPlugin.class));
+        assertThat(plugin.getVersion(), is("v5.4.1"));
+    }
+
+    @Test
+    void versionFallsBackToTheBinaryWithoutSkunkcraftsConfig() throws Exception {
+        XPlane xPlane = new XPlane(tempFolder);
+        Path pluginFolder = xPlane.getPaths().plugins().resolve("openSAM");
+        Path xpl = pluginFolder.resolve("mac_x64").resolve("openSAM.xpl");
+        Files.createDirectories(xpl.getParent());
+        Files.writeString(xpl, "openSAM plugin binary, some link-time junk 0.8");
+        // no skunkcrafts_updater.cfg
+
+        Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xPlane, xpl);
+
+        // only mac's heuristic extracts a version out of these junk bytes; on other platforms
+        // they are not a real PE/ELF, so extraction is platform-specific and not asserted
+        if (Platforms.getCurrent() == Platforms.MAC) {
+            assertThat(plugin.getVersion(), is("0.8"));
+        }
     }
 
     // helpers

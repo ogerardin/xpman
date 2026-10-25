@@ -83,6 +83,8 @@ openSAM's archive contains two components, and the install wizard handles both:
 
 Installing also warns when plugins whose functionality is included in openSAM are still present: AutoDGS (v5+ only), the SAM plugin and the SAM Seasons emulator. Remove them as instructed by the warnings — `SAM_Library` itself may remain in `Custom Scenery` for sceneries that need it.
 
+The plugin's **Version** column is read from the shipped `skunkcrafts_updater.cfg` — the `.xpl` binary carries no version at all.
+
 Updates are handled by Skunkcrafts Updater: the **Update** button appears on the openSAM row once installed (see [Updating Add-ons](10-updating-addons.md)).
 
 Uninstalling openSAM from the Plugins panel removes the plugin, the `openSAM_Library` scenery **and** its `scenery_packs.ini` entry — the confirmation dialog says so. Uninstalling only `openSAM_Library` from the Scenery panel removes just the library.

@@ -14,6 +14,7 @@ import com.ogerardin.xplane.install.inspections.WouldOverwriteSubpathInspection;
 import com.ogerardin.xplane.install.types.PluginInstallableType;
 import com.ogerardin.xplane.plugins.Plugin;
 import com.ogerardin.xplane.scenery.SceneryManager;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xplane.util.Urls;
 import com.ogerardin.xplane.util.progress.ProgressListener;
@@ -57,6 +58,17 @@ public class OpenSamPlugin extends Plugin {
                 "GitHub repository", Urls.url("https://github.com/hotbso/openSAM"),
                 "Support (Discord)", Urls.url("https://discord.gg/BtDvKcUSEP")
         );
+    }
+
+    /**
+     * The version from the shipped Skunkcrafts updater config: openSAM's {@code .xpl} binary
+     * carries no version at all (no embedded plist), so the platform's heuristic extraction
+     * picks up an incidental code string instead (e.g. "0.8" on a 5.4.1 install).
+     */
+    @Override
+    public String getVersion() {
+        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        return cfg != null && cfg.version() != null ? cfg.version() : super.getVersion();
     }
 
     @Override
