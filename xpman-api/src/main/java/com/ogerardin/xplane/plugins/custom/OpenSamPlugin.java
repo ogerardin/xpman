@@ -13,6 +13,7 @@ import com.ogerardin.xplane.install.inspections.WouldOverwriteInspection;
 import com.ogerardin.xplane.install.inspections.WouldOverwriteSubpathInspection;
 import com.ogerardin.xplane.install.types.PluginInstallableType;
 import com.ogerardin.xplane.plugins.Plugin;
+import com.ogerardin.xplane.scenery.SceneryManager;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xplane.util.Urls;
 import com.ogerardin.xplane.util.progress.ProgressListener;
@@ -56,6 +57,26 @@ public class OpenSamPlugin extends Plugin {
                 "GitHub repository", Urls.url("https://github.com/hotbso/openSAM"),
                 "Support (Discord)", Urls.url("https://discord.gg/BtDvKcUSEP")
         );
+    }
+
+    @Override
+    public String getUninstallWarningDetails() {
+        return " The openSAM_Library scenery in Custom Scenery and its scenery_packs.ini entry will also be removed.";
+    }
+
+    /**
+     * Uninstalls the whole add-on: the plugin folder (super), the openSAM_Library scenery
+     * library, and its dangling scenery_packs.ini entry.
+     */
+    @Override
+    public void uninstall() throws IOException {
+        super.uninstall();
+        SceneryManager sceneryManager = getXPlane().getSceneryManager();
+        Path library = sceneryManager.getSceneryFolder().resolve(LIBRARY_FOLDER_NAME);
+        if (Files.exists(library)) {
+            moveToTrash(library);
+        }
+        sceneryManager.removeFromIni(LIBRARY_FOLDER_NAME);
     }
 
     /**

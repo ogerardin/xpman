@@ -18,6 +18,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -239,6 +240,42 @@ class OpenSamPluginInstallableTypeTest {
         Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xPlane, xpl);
 
         assertThat(plugin, not(instanceOf(OpenSamPlugin.class)));
+    }
+
+    // uninstall
+
+    @Test
+    void uninstallRemovesPluginLibraryAndIniEntry() throws Exception {
+        Path zip = createOpenSamV5Archive();
+        XPlane xPlane = newXPlaneWithSceneryIni();
+        new OpenSamPlugin.OpenSamPluginInstallableType().install(xPlane, new ZipArchive(zip), NO_PROGRESS);
+        Path xpl = xPlane.getPaths().plugins().resolve("openSAM").resolve("mac_x64").resolve("openSAM.xpl");
+
+        // emulate the trash by deleting for real: the ini entry is only dropped once the
+        // library folder is gone from disk
+        new OpenSamPlugin(xPlane, xpl) {
+            @Override
+            protected void moveToTrash(Path path) throws IOException {
+                try (var paths = Files.walk(path)) {
+                    paths.sorted(Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
+                }
+            }
+        }.uninstall();
+
+        assertThat(Files.exists(xPlane.getPaths().plugins().resolve("openSAM")), is(false));
+        assertThat(Files.exists(xPlane.getPaths().customScenery().resolve("openSAM_Library")), is(false));
+        assertThat(iniLines(xPlane).contains("SCENERY_PACK Custom Scenery/openSAM_Library"), is(false));
+    }
+
+    @Test
+    void uninstallWarningDetailsMentionTheSceneryLibrary() throws Exception {
+        XPlane xPlane = new XPlane(tempFolder);
+        createFakePlugin(xPlane, "openSAM");
+        Path xpl = xPlane.getPaths().plugins().resolve("openSAM").resolve("mac_x64").resolve("openSAM.xpl");
+
+        Plugin plugin = IntrospectionHelper.getBestSubclassInstance(Plugin.class, xPlane, xpl);
+
+        assertThat(plugin.getUninstallWarningDetails(), containsString("openSAM_Library"));
     }
 
     // helpers

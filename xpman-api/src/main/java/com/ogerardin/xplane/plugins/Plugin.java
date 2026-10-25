@@ -155,6 +155,11 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
         return "";
     }
 
+    /** Moves the given path to the trash; overridable as a seam for tests (Sges idiom). */
+    protected void moveToTrash(Path path) throws IOException {
+        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(path.toFile());
+    }
+
     @Override
     public InspectionResult inspect() {
         return isEnabled() ? UpdateAvailableInspection.INSTANCE.inspect(this) : InspectionResult.empty();
@@ -162,7 +167,6 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     @Override
     public void uninstall() throws IOException {
-        Path folder = getBaseFolder();
-        com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+        moveToTrash(getBaseFolder());
     }
 }
