@@ -1,5 +1,7 @@
 package com.ogerardin.xplane.test.skunkcrafts;
 
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
@@ -14,17 +16,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SkunkcraftsUpdatableTest {
 
+    private static final SkunkcraftsConfig VALID_CFG =
+            new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true);
+
     private static class FakeAddon implements SkunkcraftsUpdatable {
         private final String name;
         private final String version;
         private final SkunkcraftsConfig config;
         private final String latestVersion;
+        private final SkunkcraftsChannelStatus channelStatus;
 
         FakeAddon(String name, String version, SkunkcraftsConfig config, String latestVersion) {
+            this(name, version, config, latestVersion, SkunkcraftsChannelStatus.NONE);
+        }
+
+        FakeAddon(String name, String version, SkunkcraftsConfig config, String latestVersion,
+                  SkunkcraftsChannelStatus channelStatus) {
             this.name = name;
             this.version = version;
             this.config = config;
             this.latestVersion = latestVersion;
+            this.channelStatus = channelStatus;
         }
 
         @Override public String getName() { return name; }
@@ -32,6 +44,7 @@ class SkunkcraftsUpdatableTest {
         @Override public Path getSkunkcraftsFolder() { return Path.of("/fake"); }
         @Override public SkunkcraftsConfig getSkunkcraftsConfig() { return config; }
         @Override public String getSkunkcraftsLatestVersion() { return latestVersion; }
+        @Override public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() { return channelStatus; }
     }
 
     @Test
@@ -66,53 +79,100 @@ class SkunkcraftsUpdatableTest {
     }
 
     @Test
-    void validConfigWithVersionMismatchMeansUpdateAvailable() {
-        FakeAddon addon = new FakeAddon("Test", "1.0",
-                new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "2.0");
+    void stableStatusMeansUpdateAvailable() {
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(true, false, null));
         assertThat(addon.isSkunkcraftsUpdatable(), is(true));
         assertThat(addon.isSkunkcraftsUpdateAvailable(), is(true));
+        assertThat(addon.isAnySkunkcraftsUpdateAvailable(), is(true));
+    }
+
+    @Test
+    void labelMismatchWithoutContentIsNotAnUpdate() {
+        // the openSAM Library case: remote version label bumped, files identical
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0", SkunkcraftsChannelStatus.NONE);
+        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
+        assertThat(addon.isAnySkunkcraftsUpdateAvailable(), is(false));
+    }
+
+    @Test
+    void betaStatusDrivesBetaAvailability() {
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(false, true, "Beta"));
+        assertThat(addon.isSkunkcraftsBetaUpdateAvailable(), is(true));
+        assertThat(addon.getSkunkcraftsBetaLatestVersion(), is("Beta"));
+        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
+        assertThat(addon.isAnySkunkcraftsUpdateAvailable(), is(true));
     }
 
     @Test
     void noUpdateAvailableWhenNoLongerUpdatable() {
-        FakeAddon addon = new FakeAddon("Test", "1.0",
-                new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "2.0") {
+        // eligibility is checked live, not baked into the cached status
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(true, false, null)) {
             @Override
             public boolean isSkunkcraftsUpdatable() {
                 return false;
             }
         };
         assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
+        assertThat(addon.isSkunkcraftsBetaUpdateAvailable(), is(false));
+        assertThat(addon.isAnySkunkcraftsUpdateAvailable(), is(false));
     }
 
     @Test
-    void validConfigWithSameVersionMeansNoUpdate() {
-        FakeAddon addon = new FakeAddon("Test", "1.0",
-                new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "1.0");
-        assertThat(addon.isSkunkcraftsUpdatable(), is(true));
-        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
+    void disabledAndLockedAddonsHaveNoChannelStatus() {
+        FakeAddon disabled = new FakeAddon("Test", "1.0",
+                new SkunkcraftsConfig(null, null, "http://example.com", null, false, true, true), "2.0") {
+            @Override
+            public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
+                return computeSkunkcraftsChannelStatus();
+            }
+        };
+        assertThat(disabled.getSkunkcraftsChannelStatus(), is(SkunkcraftsChannelStatus.NONE));
+        assertThat(disabled.isSkunkcraftsUpdateAvailable(), is(false));
+
+        FakeAddon locked = new FakeAddon("Test", "1.0",
+                new SkunkcraftsConfig(null, null, "http://example.com", null, true, false, true), "2.0") {
+            @Override
+            public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
+                return computeSkunkcraftsChannelStatus();
+            }
+        };
+        assertThat(locked.getSkunkcraftsChannelStatus(), is(SkunkcraftsChannelStatus.NONE));
+    }
+
+    @Test
+    void resolveReturnsRequestedWhenItHasAnUpdate() {
+        FakeAddon bothChannels = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(true, true, "Beta"));
+        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.STABLE, bothChannels), is(SkunkcraftsChannel.STABLE));
+        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.BETA, bothChannels), is(SkunkcraftsChannel.BETA));
+    }
+
+    @Test
+    void resolveFallsBackToSoleAvailableChannel() {
+        FakeAddon betaOnly = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(false, true, "Beta"));
+        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.STABLE, betaOnly), is(SkunkcraftsChannel.BETA));
+
+        FakeAddon stableOnly = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(true, false, null));
+        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.BETA, stableOnly), is(SkunkcraftsChannel.STABLE));
+    }
+
+    @Test
+    void resolveReturnsRequestedWhenNeitherHasUpdate() {
+        FakeAddon none = new FakeAddon("Test", "1.0", VALID_CFG, "2.0", SkunkcraftsChannelStatus.NONE);
+        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.BETA, none), is(SkunkcraftsChannel.BETA));
     }
 
     /** SimLoad Manager scenario: cfg has its own version — use it, ignore the binary heuristic. */
     @Test
-    void cfgVersionMatchesRemoteMeansNoUpdate() {
+    void cfgVersionUsedAsInstalledVersion() {
         FakeAddon addon = new FakeAddon("Test", "99.0",
                 new SkunkcraftsConfig(null, "5.0.6", "http://example.com", null, false, false, true), "5.0.6");
-        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(false));
-    }
-
-    @Test
-    void cfgVersionDiffersFromRemoteMeansUpdate() {
-        FakeAddon addon = new FakeAddon("Test", "99.0",
-                new SkunkcraftsConfig(null, "1.0", "http://example.com", null, false, false, true), "2.0");
-        assertThat(addon.isSkunkcraftsUpdateAvailable(), is(true));
-    }
-
-    @Test
-    void getInstalledVersionUsesCfgVersionWhenPresent() {
-        FakeAddon addon = new FakeAddon("Test", "99.0",
-                new SkunkcraftsConfig(null, "1.5", "http://example.com", null, false, false, true), "2.0");
-        assertThat(addon.getInstalledVersion(), is("1.5"));
+        assertThat(addon.getInstalledVersion(), is("5.0.6"));
     }
 
     @Test
@@ -123,8 +183,7 @@ class SkunkcraftsUpdatableTest {
 
     @Test
     void getInstalledVersionFallsBackToGetVersionWhenCfgVersionNull() {
-        FakeAddon addon = new FakeAddon("Test", "1.0",
-                new SkunkcraftsConfig(null, null, "http://example.com", null, false, false, true), "2.0");
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0");
         assertThat(addon.getInstalledVersion(), is("1.0"));
     }
 
@@ -132,5 +191,19 @@ class SkunkcraftsUpdatableTest {
     void applyUpdateThrowsWhenNotUpdatable() {
         FakeAddon addon = new FakeAddon("Test", "1.0", null, null);
         assertThrows(SkunkcraftsUpdateException.class, () -> addon.applySkunkcraftsUpdate((p, m) -> {}));
+    }
+
+    @Test
+    void applyBetaUpdateThrowsWithoutBetaChannel() {
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(false, true, "Beta"));
+        assertThrows(SkunkcraftsUpdateException.class, () -> addon.applySkunkcraftsBetaUpdate((p, m) -> {}));
+    }
+
+    @Test
+    void betaSummaryIsEmptyWithoutBetaCfg() {
+        FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(false, true, "Beta"));
+        assertThat(addon.getSkunkcraftsBetaUpdateSummary(), is(new SkunkcraftsUpdateSummary(0, 0)));
     }
 }

@@ -2,8 +2,6 @@ package com.ogerardin.xplane.skunkcrafts;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Optional;
 
 import com.ogerardin.xplane.util.progress.ProgressListener;
 
@@ -27,6 +25,28 @@ public interface SkunkcraftsUpdatable {
 
     /** Returns the lazily-fetched remote version, or null if not updatable. */
     String getSkunkcraftsLatestVersion();
+
+    /** Returns the addon's beta channel config (skunkcrafts_updater_beta.cfg), or null if none. */
+    default SkunkcraftsConfig getSkunkcraftsBetaConfig() {
+        return SkunkcraftsUpdater.findBetaConfig(getSkunkcraftsFolder());
+    }
+
+    /**
+     * Returns the content-truth availability of both channels plus the beta channel's latest label.
+     * Domain classes cache this (see {@link #computeSkunkcraftsChannelStatus()}); this default computes it live.
+     */
+    default SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
+        return computeSkunkcraftsChannelStatus();
+    }
+
+    /** Computes the channel status from both channels' whitelists; {@link SkunkcraftsChannelStatus#NONE} when not updatable. */
+    default SkunkcraftsChannelStatus computeSkunkcraftsChannelStatus() {
+        if (!isSkunkcraftsUpdatable()) {
+            return SkunkcraftsChannelStatus.NONE;
+        }
+        return SkunkcraftsUpdater.computeChannelStatus(
+                getSkunkcraftsFolder(), getSkunkcraftsConfig(), getSkunkcraftsBetaConfig());
+    }
 
     /**
      * Returns the latest available version (from the Skunkcrafts config by default,
@@ -59,15 +79,26 @@ public interface SkunkcraftsUpdatable {
     }
 
     /**
-     * Whether a newer version is available remotely.
-     * Prefers the local cfg's {@code version} line (the protocol's own installed-version record);
-     * falls back to {@link #getVersion()} (usually a binary heuristic) when the cfg has no version.
+     * Whether the stable channel has files to download. Availability is content truth (CRC diff),
+     * never version labels; eligibility is checked live.
      */
     default boolean isSkunkcraftsUpdateAvailable() {
-        if (!isSkunkcraftsUpdatable()) return false;
-        String latest = getSkunkcraftsLatestVersion();
-        if (latest == null) return false;
-        return !Objects.equals(getInstalledVersion(), latest);
+        return isSkunkcraftsUpdatable() && getSkunkcraftsChannelStatus().stableUpdateAvailable();
+    }
+
+    /** Whether the beta channel offers content distinct from stable. Eligibility is checked live. */
+    default boolean isSkunkcraftsBetaUpdateAvailable() {
+        return isSkunkcraftsUpdatable() && getSkunkcraftsChannelStatus().betaUpdateAvailable();
+    }
+
+    /** Whether any channel has files to download. Eligibility is checked live. */
+    default boolean isAnySkunkcraftsUpdateAvailable() {
+        return isSkunkcraftsUpdatable() && getSkunkcraftsChannelStatus().anyUpdateAvailable();
+    }
+
+    /** The beta channel's remote version label, or null when beta is not offered. */
+    default String getSkunkcraftsBetaLatestVersion() {
+        return getSkunkcraftsChannelStatus().betaLatestVersion();
     }
 
     /**
@@ -81,11 +112,29 @@ public interface SkunkcraftsUpdatable {
         return SkunkcraftsUpdater.computeFilesToUpdateSummary(getSkunkcraftsFolder(), getSkunkcraftsConfig());
     }
 
+    /** Like {@link #getSkunkcraftsUpdateSummary()}, for the beta channel. */
+    default SkunkcraftsUpdateSummary getSkunkcraftsBetaUpdateSummary() {
+        SkunkcraftsConfig betaCfg = getSkunkcraftsBetaConfig();
+        if (!isSkunkcraftsUpdatable() || betaCfg == null) {
+            return new SkunkcraftsUpdateSummary(0, 0);
+        }
+        return SkunkcraftsUpdater.computeFilesToUpdateSummary(getSkunkcraftsFolder(), betaCfg);
+    }
+
     /** Downloads and applies differential updates for this addon. */
     default void applySkunkcraftsUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
         if (!isSkunkcraftsUpdatable()) {
             throw new SkunkcraftsUpdateException(getClass().getSimpleName() + " is not Skunkcrafts-updatable");
         }
         SkunkcraftsUpdater.applyUpdate(getSkunkcraftsFolder(), getSkunkcraftsConfig(), progress);
+    }
+
+    /** Downloads and applies differential updates from the beta channel. */
+    default void applySkunkcraftsBetaUpdate(ProgressListener progress) throws IOException, SkunkcraftsUpdateException {
+        SkunkcraftsConfig betaCfg = getSkunkcraftsBetaConfig();
+        if (!isSkunkcraftsUpdatable() || betaCfg == null) {
+            throw new SkunkcraftsUpdateException(getClass().getSimpleName() + " has no Skunkcrafts beta channel");
+        }
+        SkunkcraftsUpdater.applyUpdate(getSkunkcraftsFolder(), betaCfg, progress);
     }
 }
