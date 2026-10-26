@@ -27,6 +27,7 @@ import java.util.zip.CRC32;
  * <p>Protocol overview:
  * <ul>
  *   <li>Local: {@code skunkcrafts_updater.cfg} in addon base folder (pipe-delimited key|value)</li>
+ *   <li>Local: optional {@code skunkcrafts_updater_beta.cfg} declaring the beta channel's module</li>
  *   <li>Remote: {@code {moduleUrl}/skunkcrafts_updater.cfg} for version check</li>
  *   <li>Remote: {@code {moduleUrl}/skunkcrafts_updater_whitelist.txt} for file manifest</li>
  *   <li>Remote: {@code {moduleUrl}/skunkcrafts_updater_blacklist.txt} for excluded files</li>
@@ -38,6 +39,7 @@ import java.util.zip.CRC32;
 public class SkunkcraftsUpdater {
 
     private static final String CFG_FILENAME = "skunkcrafts_updater.cfg";
+    private static final String BETA_CFG_FILENAME = "skunkcrafts_updater_beta.cfg";
     private static final String WHITELIST_FILENAME = "skunkcrafts_updater_whitelist.txt";
     private static final String BLACKLIST_FILENAME = "skunkcrafts_updater_blacklist.txt";
     private static final String IGNORE_FILENAME = "skunkcrafts_updater_ignore.txt";
@@ -70,7 +72,20 @@ public class SkunkcraftsUpdater {
      * @return parsed config, or null if no config file exists
      */
     public SkunkcraftsConfig findConfig(Path folder) {
-        Path cfgFile = folder.resolve(CFG_FILENAME);
+        return findConfig(folder, CFG_FILENAME);
+    }
+
+    /**
+     * Finds and parses the addon's beta channel config (skunkcrafts_updater_beta.cfg).
+     *
+     * @return parsed config, or null if no beta config file exists
+     */
+    public SkunkcraftsConfig findBetaConfig(Path folder) {
+        return findConfig(folder, BETA_CFG_FILENAME);
+    }
+
+    private SkunkcraftsConfig findConfig(Path folder, String cfgFilename) {
+        Path cfgFile = folder.resolve(cfgFilename);
         if (!Files.exists(cfgFile)) {
             return null;
         }
@@ -309,17 +324,58 @@ public class SkunkcraftsUpdater {
 
     private static List<WhitelistEntry> fetchAndDiff(Path baseFolder, SkunkcraftsConfig config) {
         try {
-            List<WhitelistEntry> whitelist = fetchRemoteWhitelist(config.moduleUrl());
-            Set<String> ignoreSet = new HashSet<>();
-            ignoreSet.addAll(fetchRemoteBlacklist(config.moduleUrl()));
-            ignoreSet.addAll(parseLocalIgnore(baseFolder));
-            if (!config.liveries()) {
-                ignoreSet.add(KEY_LIVERIES);
-            }
-            return computeFilesToUpdate(baseFolder, whitelist, ignoreSet);
+            return computeFilesToUpdate(baseFolder, fetchRemoteWhitelist(config.moduleUrl()), ignoreSet(baseFolder, config));
         } catch (Exception e) {
             log.warn("Failed to compute files to update", e);
             return List.of();
+        }
+    }
+
+    /** The ignore set of a channel: its remote blacklist, the local user ignores, and liveries when excluded. */
+    private static Set<String> ignoreSet(Path baseFolder, SkunkcraftsConfig config) {
+        Set<String> ignoreSet = new HashSet<>();
+        ignoreSet.addAll(fetchRemoteBlacklist(config.moduleUrl()));
+        ignoreSet.addAll(parseLocalIgnore(baseFolder));
+        if (!config.liveries()) {
+            ignoreSet.add(KEY_LIVERIES);
+        }
+        return ignoreSet;
+    }
+
+    /**
+     * Computes content-truth availability for both channels: a channel has an update when its whitelist
+     * diff against the local files is non-empty. The beta channel is additionally suppressed when its
+     * whitelist is identical to the stable one — it offers nothing distinct whatever the version labels say.
+     * The beta channel's latest version label is fetched only when the beta channel is offered.
+     */
+    public SkunkcraftsChannelStatus computeChannelStatus(Path baseFolder, SkunkcraftsConfig stableCfg, SkunkcraftsConfig betaCfg) {
+        if (stableCfg == null || stableCfg.moduleUrl() == null) {
+            return SkunkcraftsChannelStatus.NONE;
+        }
+
+        List<WhitelistEntry> stableWhitelist = fetchRemoteWhitelist(stableCfg.moduleUrl());
+        boolean stable = hasFilesToUpdate(baseFolder, stableWhitelist, ignoreSet(baseFolder, stableCfg));
+
+        if (betaCfg == null || betaCfg.moduleUrl() == null) {
+            return new SkunkcraftsChannelStatus(stable, false, null);
+        }
+
+        List<WhitelistEntry> betaWhitelist = fetchRemoteWhitelist(betaCfg.moduleUrl());
+        if (betaWhitelist.equals(stableWhitelist)) {
+            return new SkunkcraftsChannelStatus(stable, false, null);
+        }
+
+        boolean beta = hasFilesToUpdate(baseFolder, betaWhitelist, ignoreSet(baseFolder, betaCfg));
+        String betaLatest = beta ? fetchRemoteVersion(betaCfg.moduleUrl()) : null;
+        return new SkunkcraftsChannelStatus(stable, beta, betaLatest);
+    }
+
+    private static boolean hasFilesToUpdate(Path baseFolder, List<WhitelistEntry> whitelist, Set<String> ignoreSet) {
+        try {
+            return !computeFilesToUpdate(baseFolder, whitelist, ignoreSet).isEmpty();
+        } catch (IOException e) {
+            log.warn("Failed to compute files to update", e);
+            return false;
         }
     }
 

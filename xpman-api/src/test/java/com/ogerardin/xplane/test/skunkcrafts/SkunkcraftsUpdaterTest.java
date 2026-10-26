@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.test.skunkcrafts;
 
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.skunkcrafts.WhitelistEntry;
@@ -7,11 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.CRC32;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -321,5 +324,130 @@ class SkunkcraftsUpdaterTest {
         java.net.URL url = SkunkcraftsUpdater.encodeUrl("https://example.com/skunkcrafts_updater.cfg");
 
         assertThat(url.toString(), is("https://example.com/skunkcrafts_updater.cfg"));
+    }
+
+    @Test
+    void findBetaConfigReturnsNullWhenAbsent() {
+        assertThat(SkunkcraftsUpdater.findBetaConfig(tempDir), is(nullValue()));
+    }
+
+    @Test
+    void findBetaConfigReturnsConfigWhenPresent() throws IOException {
+        Files.writeString(tempDir.resolve("skunkcrafts_updater_beta.cfg"), """
+                zone|custom
+                module|https://example.com/sges-updates-beta
+                name|Simple Ground Equip. & Services
+                version|Beta
+                locked|false
+                """);
+
+        SkunkcraftsConfig config = SkunkcraftsUpdater.findBetaConfig(tempDir);
+
+        assertThat(config, is(notNullValue()));
+        assertThat(config.moduleUrl(), is("https://example.com/sges-updates-beta"));
+        assertThat(config.version(), is("Beta"));
+    }
+
+    @Test
+    void computeChannelStatusReportsStableOnlyWhenNoBetaCfg() throws IOException {
+        try (SkunkcraftsServerFixture server = SkunkcraftsServerFixture.start()) {
+            Files.writeString(tempDir.resolve("file1.txt"), "old");
+            server.serve("stable/skunkcrafts_updater.cfg", remoteCfg("2.0", server.baseUrl() + "stable"));
+            server.serve("stable/skunkcrafts_updater_whitelist.txt", "file1.txt|" + crcOf("new") + "|99\n");
+
+            SkunkcraftsChannelStatus status = SkunkcraftsUpdater.computeChannelStatus(
+                    tempDir, localCfg(server.baseUrl() + "stable"), null);
+
+            assertThat(status.stableUpdateAvailable(), is(true));
+            assertThat(status.betaUpdateAvailable(), is(false));
+            assertThat(status.betaLatestVersion(), is(nullValue()));
+        }
+    }
+
+    @Test
+    void computeChannelStatusSuppressesBetaWhenWhitelistsIdentical() throws IOException {
+        try (SkunkcraftsServerFixture server = SkunkcraftsServerFixture.start()) {
+            Files.writeString(tempDir.resolve("file1.txt"), "old");
+            String whitelist = "file1.txt|" + crcOf("new") + "|99\n";
+            server.serve("stable/skunkcrafts_updater.cfg", remoteCfg("2.0", server.baseUrl() + "stable"));
+            server.serve("stable/skunkcrafts_updater_whitelist.txt", whitelist);
+            server.serve("beta/skunkcrafts_updater.cfg", remoteCfg("Beta", server.baseUrl() + "beta"));
+            // beta whitelist identical to stable: the SGES case, suppressed regardless of labels
+            server.serve("beta/skunkcrafts_updater_whitelist.txt", whitelist);
+
+            SkunkcraftsChannelStatus status = SkunkcraftsUpdater.computeChannelStatus(
+                    tempDir, localCfg(server.baseUrl() + "stable"), localCfg(server.baseUrl() + "beta"));
+
+            assertThat(status.stableUpdateAvailable(), is(true));
+            assertThat(status.betaUpdateAvailable(), is(false));
+            assertThat(status.betaLatestVersion(), is(nullValue()));
+        }
+    }
+
+    @Test
+    void computeChannelStatusOffersBetaWhenContentDiffersAndLabelsAreEqual() throws IOException {
+        try (SkunkcraftsServerFixture server = SkunkcraftsServerFixture.start()) {
+            Files.writeString(tempDir.resolve("file1.txt"), "old");
+            server.serve("stable/skunkcrafts_updater.cfg", remoteCfg("2.0", server.baseUrl() + "stable"));
+            // local matches stable content but not beta content
+            server.serve("stable/skunkcrafts_updater_whitelist.txt", "file1.txt|" + crcOf("old") + "|99\n");
+            server.serve("beta/skunkcrafts_updater.cfg", remoteCfg("2.0", server.baseUrl() + "beta"));
+            server.serve("beta/skunkcrafts_updater_whitelist.txt", "file1.txt|" + crcOf("beta content") + "|99\n");
+
+            SkunkcraftsChannelStatus status = SkunkcraftsUpdater.computeChannelStatus(
+                    tempDir, localCfg(server.baseUrl() + "stable"), localCfg(server.baseUrl() + "beta"));
+
+            assertThat(status.stableUpdateAvailable(), is(false));
+            assertThat(status.betaUpdateAvailable(), is(true));
+            assertThat(status.betaLatestVersion(), is("2.0"));
+        }
+    }
+
+    @Test
+    void computeChannelStatusToleratesUnreachableWhitelist() throws IOException {
+        try (SkunkcraftsServerFixture server = SkunkcraftsServerFixture.start()) {
+            server.serve("stable/skunkcrafts_updater.cfg", remoteCfg("2.0", server.baseUrl() + "stable"));
+            server.serve("beta/skunkcrafts_updater.cfg", remoteCfg("Beta", server.baseUrl() + "beta"));
+            // no whitelists served
+
+            SkunkcraftsChannelStatus status = SkunkcraftsUpdater.computeChannelStatus(
+                    tempDir, localCfg(server.baseUrl() + "stable"), localCfg(server.baseUrl() + "beta"));
+
+            assertThat(status.stableUpdateAvailable(), is(false));
+            assertThat(status.betaUpdateAvailable(), is(false));
+            assertThat(status.betaLatestVersion(), is(nullValue()));
+        }
+    }
+
+    @Test
+    void computeChannelStatusIgnoresDeadBetaModule() throws IOException {
+        try (SkunkcraftsServerFixture server = SkunkcraftsServerFixture.start()) {
+            Files.writeString(tempDir.resolve("file1.txt"), "old");
+            server.serve("stable/skunkcrafts_updater.cfg", remoteCfg("2.0", server.baseUrl() + "stable"));
+            server.serve("stable/skunkcrafts_updater_whitelist.txt", "file1.txt|" + crcOf("new") + "|99\n");
+            // beta module URL serves nothing
+
+            SkunkcraftsChannelStatus status = SkunkcraftsUpdater.computeChannelStatus(
+                    tempDir, localCfg(server.baseUrl() + "stable"), localCfg(server.baseUrl() + "dead"));
+
+            assertThat(status.stableUpdateAvailable(), is(true));
+            assertThat(status.betaUpdateAvailable(), is(false));
+            assertThat(status.betaLatestVersion(), is(nullValue()));
+        }
+    }
+
+    private static SkunkcraftsConfig localCfg(String moduleUrl) {
+        return new SkunkcraftsConfig("Test Addon", "1.0", moduleUrl, null, false, false, true);
+    }
+
+    /** A remote cfg body with the given version whose module points back at its own location. */
+    private static String remoteCfg(String version, String moduleUrl) {
+        return "name|Test Addon\nversion|" + version + "\nmodule|" + moduleUrl + "\ndisabled|false\nlocked|false\n";
+    }
+
+    private static long crcOf(String content) {
+        CRC32 crc = new CRC32();
+        crc.update(content.getBytes(StandardCharsets.UTF_8));
+        return crc.getValue();
     }
 }
