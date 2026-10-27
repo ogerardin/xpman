@@ -407,12 +407,8 @@ public class HomeController {
     private HBox createXPlaneUpdateRow(String name, String currentVersion, XPlaneReleaseInfo stableOffer,
                                      XPlaneReleaseInfo betaOffer, Runnable openInstaller) {
         return createUpdateRow(name, currentVersion, XPlaneUpdateDialog.availableVersions(stableOffer, betaOffer),
-                "Update…", () -> reviewXPlaneUpdate(new XPlaneUpdateDialog(currentVersion, stableOffer, betaOffer), openInstaller));
-    }
-
-    /** The installer is external: review cancellation must not launch or install anything. */
-    private static void reviewXPlaneUpdate(XPlaneUpdateDialog dialog, Runnable openInstaller) {
-        dialog.showAndWait().ifPresent(_ -> openInstaller.run());
+                "Update…", () -> new XPlaneUpdateDialog(currentVersion, stableOffer, betaOffer)
+                        .showAndWait().ifPresent(_ -> openInstaller.run()));
     }
 
     /**

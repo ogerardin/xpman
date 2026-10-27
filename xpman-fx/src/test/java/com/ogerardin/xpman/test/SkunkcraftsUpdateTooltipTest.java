@@ -15,11 +15,11 @@ class SkunkcraftsUpdateTooltipTest {
 
     @Test
     void availableVersionsOnlyListsOfferedChannels() {
-        assertEquals("Stable 2.1", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(true, false)));
-        assertEquals("Beta 2.2-b1", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(false, true)));
-        assertEquals("Stable 2.1 · Beta 2.2-b1", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(true, true)));
-        assertEquals("Beta ?", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(false, true, "2.1", null)));
-        assertEquals("", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(false, false)));
+        assertEquals("Stable 2.1", SkunkcraftsUpdateUtil.availableVersions(addon(true, false, "2.1", "2.2-b1")));
+        assertEquals("Beta 2.2-b1", SkunkcraftsUpdateUtil.availableVersions(addon(false, true, "2.1", "2.2-b1")));
+        assertEquals("Stable 2.1 · Beta 2.2-b1", SkunkcraftsUpdateUtil.availableVersions(addon(true, true, "2.1", "2.2-b1")));
+        assertEquals("Beta ?", SkunkcraftsUpdateUtil.availableVersions(addon(false, true, "2.1", null)));
+        assertEquals("", SkunkcraftsUpdateUtil.availableVersions(addon(false, false, "2.1", null)));
     }
 
     @Test
@@ -48,7 +48,11 @@ class SkunkcraftsUpdateTooltipTest {
     }
 
     private String tooltip(boolean stable, boolean beta, String latest) {
-        return SkunkcraftsUpdateUtil.updateTooltip(new SkunkcraftsUpdatable() {
+        return SkunkcraftsUpdateUtil.updateTooltip(addon(stable, beta, latest, "5.5.0-beta-3"));
+    }
+
+    private SkunkcraftsUpdatable addon(boolean stable, boolean beta, String latest, String betaLatest) {
+        return new SkunkcraftsUpdatable() {
             @Override public String getName() { return "Addon"; }
             @Override public String getVersion() { return "5.4.0"; }
             @Override public Path getSkunkcraftsFolder() { return null; }
@@ -57,8 +61,8 @@ class SkunkcraftsUpdateTooltipTest {
             }
             @Override public String getSkunkcraftsLatestVersion() { return latest; }
             @Override public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
-                return new SkunkcraftsChannelStatus(stable, beta, "5.5.0-beta-3");
+                return new SkunkcraftsChannelStatus(stable, beta, betaLatest);
             }
-        });
+        };
     }
 }

@@ -33,8 +33,6 @@ module xpman.fx {
     exports com.ogerardin.xpman.scenery_organizer to xpman.fx.test;
     exports com.ogerardin.xpman.settings to xpman.fx.test;
     exports com.ogerardin.xpman.panels.plugins to xpman.fx.test;
-    exports com.ogerardin.xpman.install.wizard to xpman.fx.test;
-    exports com.ogerardin.xpman.panels.home to xpman.fx.test;
     exports com.ogerardin.xpman.util.jfx.menu to xpman.fx.test;
     exports com.ogerardin.xpman.util.jfx.menu.annotation to xpman.fx.test;
 
@@ -44,7 +42,7 @@ module xpman.fx {
     opens com.ogerardin.xpman.install.wizard to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.aircraft to javafx.base, javafx.fxml, spring.expression;
-    opens com.ogerardin.xpman.panels.home to javafx.base, javafx.fxml, spring.expression, xpman.fx.test;
+    opens com.ogerardin.xpman.panels.home to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.aircraft.details to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.navdata to javafx.base, javafx.fxml, spring.expression;
     opens com.ogerardin.xpman.panels.plugins to javafx.base, javafx.fxml, spring.expression;
