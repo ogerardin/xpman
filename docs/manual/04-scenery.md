@@ -28,7 +28,7 @@ The table lists all discovered scenery packages. Columns:
 | **Rank** | Position in `scenery_packs.ini` |
 | **Enabled** | Toggle switch (only for entries listed in `scenery_packs.ini`) |
 | **Name** | Package name |
-| **Version** | Package version; an **Update** button appears when an update is available (hover for the latest version); click it to open the update wizard |
+| **Version** | Package version; **Update…** appears when an update is available (hover for offered channel versions); **Beta available** marks beta content; click to review the channel before updating |
 | **Has airport?** | Pill shown if the package contains an airport |
 | **Library?** | Pill shown if the package is a library |
 | **Tile count** | Number of terrain tiles |
@@ -55,7 +55,7 @@ Right-click a row for:
 - **Uninstall** — Confirmation dialog with details.
 - **Inspect** — Opens Inspection results.
 - **Properties** — Shows a read-only Properties window with all object properties.
-- **Update via Skunkcrafts Updater** — Available only for enabled packages that have an update available.
+- **Update…** — Available only for enabled packages that have an update available.
 - **Skunkcrafts: Locked by developer**
 - **Links** — Dynamic submenu.
 

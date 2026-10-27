@@ -478,6 +478,13 @@
     -fx-opacity: 0.9;
 }
 
+.update-beta-badge {
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-fg-default;
+    -fx-background-radius: 4px;
+    -fx-padding: 2px 6px;
+}
+
 /* --- Aircraft card grid --- */
 .aircraft-grid {
     -fx-hgap: 12px;

@@ -93,7 +93,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Order(70)
-    @Label("'Update via Skunkcrafts Updater'")
+    @Label("'Update…'")
     @EnabledIf("anySkunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
     public void skunkcraftsUpdate() {

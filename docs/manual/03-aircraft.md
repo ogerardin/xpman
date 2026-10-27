@@ -16,7 +16,7 @@ Each aircraft is displayed as a card with:
 
 - **Thumbnail** image
 - **Name** and **studio / author**
-- **Badges**: version, an **Update** button (when a Skunkcrafts update exists), `N liveries` (expandable to show livery mini-cards)
+- **Badges**: version, an **Update…** button (when a Skunkcrafts update exists), **Beta available** when applicable, `N liveries` (expandable to show livery mini-cards)
 
 Hover over a card to reveal icon buttons: **Explore ACF property tree**, **Inspect**, **Reveal**, **Uninstall**.
 
@@ -36,7 +36,7 @@ Any aircraft with an `.acf` file is listed. For most, XPman shows what the ACF f
 
 For the Concorde, A350 and Eurofighter, the aircraft name is fixed and can't be edited in **Properties**.
 
-Newer versions of aircraft that aren't distributed through Skunkcrafts (such as ZIBO) show up in **Inspect**. The **Update** button only appears for add-ons that support Skunkcrafts (see [Updating Add-ons](10-updating-addons.md)).
+Newer versions of aircraft that aren't distributed through Skunkcrafts (such as ZIBO) show up in **Inspect**. The **Update…** button only appears for add-ons that support Skunkcrafts (see [Updating Add-ons](10-updating-addons.md)).
 
 More aircraft will be recognized in future releases. If your favorite aircraft is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.
 
@@ -49,7 +49,7 @@ Right-click a card or livery for additional actions:
 - **Inspect** — Opens the Inspection results window showing the outcome of all inspections.
 - **Explore ACF property tree** — Opens the Aircraft details window (same as double-click).
 - **Properties** — Shows aircraft properties; **Name**, **Callsign**, **Tail number**, **ICAO code**, **Description**, **Author**, **Studio**, and **Notes** can be edited and saved. The name is read-only for add-ons with a fixed display name. Closing with unsaved edits prompts to Save, Discard, or Cancel. After the dialog closes, cards refresh to show saved values.
-- **Update via Skunkcrafts Updater** — Opens the Skunkcrafts update wizard (shown only when an update is available).
+- **Update…** — Opens the Skunkcrafts channel-review wizard (shown only when an update is available).
 - **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
 - **Links** — Dynamic submenu with links from the addon's manifest.
 - **Manuals** — Dynamic submenu listing PDF manuals bundled with the aircraft.

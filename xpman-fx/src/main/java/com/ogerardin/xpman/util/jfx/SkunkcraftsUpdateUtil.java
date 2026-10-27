@@ -12,6 +12,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -27,6 +32,22 @@ import java.util.stream.Stream;
  */
 @UtilityClass
 public class SkunkcraftsUpdateUtil {
+
+    /** The same compact action and informational beta marker for cards and table cells. */
+    public static HBox updateAction(boolean betaAvailable, String tooltip, Runnable action) {
+        Button button = new Button("Update…");
+        button.getStyleClass().add("updates-item-button");
+        button.setTooltip(new Tooltip(tooltip));
+        button.setOnAction(_ -> action.run());
+        HBox graphic = new HBox(6, button);
+        graphic.setAlignment(Pos.CENTER_LEFT);
+        if (betaAvailable) {
+            Label beta = new Label("Beta available");
+            beta.getStyleClass().add("update-beta-badge");
+            graphic.getChildren().add(beta);
+        }
+        return graphic;
+    }
 
     /** Lists only channels with pending updates, without changing the addon's latest-version source. */
     public static String updateTooltip(SkunkcraftsUpdatable updatable) {

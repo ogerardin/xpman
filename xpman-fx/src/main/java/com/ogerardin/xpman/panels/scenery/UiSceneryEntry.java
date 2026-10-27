@@ -117,7 +117,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Order(90)
-    @Label("'Update via Skunkcrafts Updater'")
+    @Label("'Update…'")
     @EnabledIf("sceneryPackage != null && sceneryPackage.anySkunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
     public void skunkcraftsUpdate() {

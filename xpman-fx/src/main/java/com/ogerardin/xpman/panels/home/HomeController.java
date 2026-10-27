@@ -15,7 +15,6 @@ import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryPackage;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -24,6 +23,7 @@ import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard;
 import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.tools.UiToolUtil;
+import com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -329,30 +329,22 @@ public class HomeController {
         section.getChildren().add(categoryLabel);
 
         for (SkunkcraftsUpdatable updatable : updates) {
-            if (updatable.isSkunkcraftsUpdateAvailable()) {
+            if (updatable.isAnySkunkcraftsUpdateAvailable()) {
                 section.getChildren().add(createUpdateRow(
                         updatable.getName(),
                         updatable.getInstalledVersion(),
-                        updatable.getSkunkcraftsLatestVersion(),
-                        "Update",
-                        () -> runUpdateWizard(updatable, SkunkcraftsChannel.STABLE)));
-            }
-            if (updatable.isSkunkcraftsBetaUpdateAvailable()) {
-                section.getChildren().add(createUpdateRow(
-                        updatable.getName(),
-                        updatable.getInstalledVersion(),
-                        updatable.getSkunkcraftsBetaLatestVersion(),
-                        "Update Beta",
-                        () -> runUpdateWizard(updatable, SkunkcraftsChannel.BETA)));
+                        SkunkcraftsUpdateUtil.availableVersions(updatable),
+                        "Update…",
+                        () -> runUpdateWizard(updatable)));
             }
         }
 
         return section;
     }
 
-    /** Opens the Skunkcrafts update wizard on the chosen channel, then reloads the owning manager. */
-    private void runUpdateWizard(SkunkcraftsUpdatable updatable, SkunkcraftsChannel channel) {
-        new SkunkcraftsUpdateWizard(updatable, channel).showAndWait();
+    /** Opens the same channel review as the management panels, then reloads the owning manager. */
+    private void runUpdateWizard(SkunkcraftsUpdatable updatable) {
+        new SkunkcraftsUpdateWizard(updatable).showAndWait();
         if (updatable instanceof Aircraft) {
             xPlane.getAircraftManager().reload();
         } else if (updatable instanceof SceneryPackage) {
@@ -370,18 +362,20 @@ public class HomeController {
 
         Label nameLabel = new Label(name);
         nameLabel.getStyleClass().add("updates-item-name");
-        HBox.setHgrow(nameLabel, javafx.scene.layout.Priority.ALWAYS);
+        Label installedLabel = new Label("Installed: " + Objects.toString(currentVersion, "?"));
+        installedLabel.getStyleClass().add("updates-item-version");
+        VBox product = new VBox(3, nameLabel, installedLabel);
+        HBox.setHgrow(product, javafx.scene.layout.Priority.ALWAYS);
 
-        Label versionLabel = new Label(
-                (currentVersion != null ? currentVersion : "?") + " → " + latestVersion
-        );
+        Label versionLabel = new Label(Objects.toString(latestVersion, "?"));
+        versionLabel.setWrapText(true);
         versionLabel.getStyleClass().add("updates-item-version");
 
         Button updateButton = new Button(buttonLabel);
         updateButton.getStyleClass().add("updates-item-button");
         updateButton.setOnAction(_ -> action.run());
 
-        item.getChildren().addAll(nameLabel, versionLabel, updateButton);
+        item.getChildren().addAll(product, versionLabel, updateButton);
         return item;
     }
 

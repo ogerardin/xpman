@@ -20,9 +20,9 @@ Plugins are displayed as a tree. Columns:
 | **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version. An **Update** button appears when a newer version is available; hover it to see the latest version |
+| **Version** | Installed version. **Update…** appears when content is available; hover for offered channel versions. **Beta available** marks beta content |
 
-The **Update** button opens the Skunkcrafts update wizard directly (see [Updating Add-ons](10-updating-addons.md)). It is available for any plugin or FlyWithLua script that ships a `skunkcrafts_updater.cfg`. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
+The **Update…** button opens the Skunkcrafts channel-review wizard (see [Updating Add-ons](10-updating-addons.md)). It is available for plugins or FlyWithLua scripts with pending Skunkcrafts content. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
 
 ## Recognized Plugins
 
@@ -31,7 +31,7 @@ Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unreco
 | Plugin | Recognized by | What XPman adds |
 |---|---|---|
 | FlyWithLua | `FlyWithLua` folder | Lists its scripts; uninstall warning; Linux library check on install; X-Plane.org and GitHub links; **Inspect** reports newer versions |
-| SGES | Its `.lua` file | Version read from the script; Skunkcrafts **Update** button on the script row; uninstall removes data, docs and updater files; manuals and X-Plane.org link |
+| SGES | Its `.lua` file | Version read from the script; Skunkcrafts **Update…** button on the script row; uninstall removes data, docs and updater files; manuals and X-Plane.org link |
 | SimLoad Manager | `SimLoadManager` folder (v5 plugin) or `SimLoadManager.lua` (v4 script) | Name, description and links; X-Plane 12.4.4 check and Linux `libcurl` warning on install; v4 uninstall also removes `SLM-Data` |
 | AutoGate | `AutoGate` folder | Description and X-Plane.org link; **Inspect** reports newer versions |
 | AviTab | `Avitab.xpl` | Description and X-Plane.org, GitHub and Wiki links; **Inspect** reports newer versions |
@@ -42,7 +42,7 @@ Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unreco
 
 More plugins will be recognized in future releases. If your favorite plugin is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.
 
-For plugins that report newer versions via **Inspect**, the comparison runs against the plugin's publication channel (X-Plane.org, or the IVAO site for X-IvAp). The **Update** button itself only appears when Skunkcrafts updates are supported.
+For plugins that report newer versions via **Inspect**, the comparison runs against the plugin's publication channel (X-Plane.org, or the IVAO site for X-IvAp). The **Update…** button itself only appears when Skunkcrafts updates are supported.
 
 ## FlyWithLua
 
@@ -56,7 +56,7 @@ Updates for scripts such as SGES appear on the **script's own row**, not on the 
 
 ### SGES
 
-Simple Ground Equipment & Services ships a Skunkcrafts updater config; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the protocol expects. SGES is therefore the updatable addon: the **Update** button appears on the **SGES script row**, not on the FlyWithLua plugin row. Uninstalling SGES removes the config as well as its data and documentation folders.
+Simple Ground Equipment & Services ships a Skunkcrafts updater config; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the protocol expects. SGES is therefore the updatable addon: the **Update…** button appears on the **SGES script row**, not on the FlyWithLua plugin row. Uninstalling SGES removes the config as well as its data and documentation folders.
 
 ### SimLoad Manager
 
@@ -93,7 +93,7 @@ Right-click a plugin for:
 - **Uninstall plugin** — Confirmation dialog with plugin-specific details.
 - **Inspect** — Show inspection results.
 - **Properties** — Read-only view of all plugin properties.
-- **Update via Skunkcrafts Updater** — Shown only for enabled plugins with an update available.
+- **Update…** — Shown only for enabled plugins with an update available.
 - **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
 - **Links** and **Manuals** — Submenus, shown when available.
 
@@ -107,5 +107,5 @@ Right-click a script for:
 - **Open in text editor**
 - **Uninstall script** — Confirmation dialog.
 - **Properties**
-- **Update via Skunkcrafts Updater** / **Skunkcrafts: Locked by developer** — For scripts that support it (e.g. SGES).
+- **Update…** / **Skunkcrafts: Locked by developer** — For scripts that support it (e.g. SGES).
 - **Links** and **Manuals** — Submenus, shown when available.

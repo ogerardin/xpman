@@ -1,9 +1,8 @@
 package com.ogerardin.xpman.util.jfx.cell_factory;
 
 import com.ogerardin.xpman.panels.plugins.PluginRow;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Tooltip;
+import com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
@@ -26,11 +25,8 @@ public class PluginVersionTreeCellFactory implements Callback<TreeTableColumn<Pl
 
                 PluginRow row = getTableRow() == null ? null : getTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
-                    Button button = new Button("Update");
-                    button.getStyleClass().add("updates-item-button");
-                    button.setTooltip(new Tooltip(row.getUpdateTooltip()));
-                    button.setOnAction(_ -> row.skunkcraftsUpdate());
-                    setGraphic(button);
+                    setGraphic(SkunkcraftsUpdateUtil.updateAction(
+                            row.isBetaUpdateAvailable(), row.getUpdateTooltip(), row::skunkcraftsUpdate));
                     setContentDisplay(ContentDisplay.RIGHT);
                 }
             }

@@ -45,6 +45,11 @@ public class UiFlyWithLuaScript implements PluginRow {
     }
 
     @Override
+    public boolean isBetaUpdateAvailable() {
+        return script instanceof SkunkcraftsUpdatable updatable && updatable.isSkunkcraftsBetaUpdateAvailable();
+    }
+
+    @Override
     public String getLatestVersion() {
         return script instanceof SkunkcraftsUpdatable updatable ? updatable.getLatestVersion() : null;
     }
@@ -136,7 +141,7 @@ Press OK to continue.'
     @SuppressWarnings("unused")
     @Override
     @Order(100)
-    @Label("'Update via Skunkcrafts Updater'")
+    @Label("'Update…'")
     @EnabledIf("updateAvailable")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard((SkunkcraftsUpdatable) script).showAndWait();

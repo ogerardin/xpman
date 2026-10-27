@@ -40,6 +40,11 @@ public class UiPlugin implements PluginRow {
     }
 
     @Override
+    public boolean isBetaUpdateAvailable() {
+        return plugin.isSkunkcraftsBetaUpdateAvailable();
+    }
+
+    @Override
     public String getUpdateTooltip() {
         return com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(plugin);
     }
@@ -109,7 +114,7 @@ Press OK to continue.'
     @SuppressWarnings("unused")
     @Override
     @Order(90)
-    @Label("'Update via Skunkcrafts Updater'")
+    @Label("'Update…'")
     @EnabledIf("anySkunkcraftsUpdateAvailable")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(plugin).showAndWait();

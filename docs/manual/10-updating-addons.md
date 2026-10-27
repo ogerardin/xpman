@@ -10,29 +10,29 @@ Some addons additionally ship a `skunkcrafts_updater_beta.cfg` file, declaring a
 
 An update is available when the addon's files actually differ from the ones the repository publishes — XPman compares the local files' checksums against the remote channel's file list, exactly like the original Skunkcrafts Updater does. Version numbers alone never decide: an addon whose version label changed but whose files did not is reported as up to date, not as an update.
 
-- The Home dashboard shows an **Updates Available** section grouped by category, with one row per channel that has files to download (`Update` and, when the addon has a beta channel with distinct content, `Update Beta`).
-- Each panel (Aircraft, Scenery, Plugins) shows an **Update** button in the Version column for addons with available updates.
-- In the Scenery and Plugins panels, the **Update** button's tooltip lists the available channels and their versions; when both are available, it lists both.
+- The Home dashboard shows an **Updates Available** section grouped by category, with one row per addon showing all offered channel versions together and one **Update…** button.
+- Aircraft cards and the Scenery and Plugins Version columns show the same **Update…** action. A **Beta available** marker appears when beta content is offered.
+- The **Update…** button's tooltip lists the available channels and their versions; when both are available, it lists both.
 - Library tiles show **N updates** badges, counting addons (an addon with both channels pending counts once).
 - Disabled plugins, scenery, and FlyWithLua scripts are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
 
-When both channels have files to download, you choose which one to install — the dashboard rows and the wizard's channel selector both offer the choice.
+When both channels have files to download, click **Update…** and choose which one to install in the wizard. Home and the management panels use the same review flow.
 
 ### Beta channels
 
 The beta channel is offered only when its file list differs from the stable one's: a beta that carries the same content as stable adds nothing and is not offered, whatever the version labels say. Switching is episodic — XPman remembers no channel preference:
 
 - Installing a beta records the beta version in the addon's updater config, but the stable channel's address is left untouched.
-- While you are on a beta, the stable row reappears as soon as stable publishes different content — installing it is the way back.
+- While you are on a beta, Stable is offered when its content differs from your installed files — choosing it in the wizard is the way back.
 - The official Skunkcrafts Updater application keeps working on the same folder.
 
 ## Starting an Update
 
-- Click **Update** in a panel (Aircraft, Scenery, Plugins).
-- Or click **Update** / **Update Beta** in the Home dashboard.
-- Or right-click the addon and choose **Update via Skunkcrafts Updater** (shown only when an update is available).
+- Click **Update…** in a panel (Aircraft, Scenery, Plugins).
+- Or click **Update…** in the Home dashboard.
+- Or right-click the addon and choose **Update…** (shown only when an update is available).
 
-Every entry point lands on a channel that has files to download: the wizard opens on the channel you clicked, or on the only channel with an update.
+Every entry point lands on a channel that has files to download: Stable when both are offered, otherwise the only offered channel, explicitly named in the review.
 
 ## Skunkcrafts Update Wizard
 
