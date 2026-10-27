@@ -110,7 +110,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
     @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = computeSkunkcraftsChannelStatus();
+    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
 
     public Map<String, URL> getLinks() {
         return Collections.emptyMap();

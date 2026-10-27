@@ -5,6 +5,7 @@ import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import org.junit.jupiter.api.Test;
 
@@ -126,7 +127,7 @@ class SkunkcraftsUpdatableTest {
                 new SkunkcraftsConfig(null, null, "http://example.com", null, false, true, true), "2.0") {
             @Override
             public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
-                return computeSkunkcraftsChannelStatus();
+                return SkunkcraftsUpdater.channelStatus(this);
             }
         };
         assertThat(disabled.getSkunkcraftsChannelStatus(), is(SkunkcraftsChannelStatus.NONE));
@@ -136,7 +137,7 @@ class SkunkcraftsUpdatableTest {
                 new SkunkcraftsConfig(null, null, "http://example.com", null, true, false, true), "2.0") {
             @Override
             public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
-                return computeSkunkcraftsChannelStatus();
+                return SkunkcraftsUpdater.channelStatus(this);
             }
         };
         assertThat(locked.getSkunkcraftsChannelStatus(), is(SkunkcraftsChannelStatus.NONE));

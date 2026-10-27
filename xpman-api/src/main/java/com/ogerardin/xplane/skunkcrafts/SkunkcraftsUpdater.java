@@ -343,6 +343,19 @@ public class SkunkcraftsUpdater {
     }
 
     /**
+     * Computes the channel status of an addon from both channels' whitelists;
+     * {@link SkunkcraftsChannelStatus#NONE} when not updatable. Domain classes call this once
+     * from a lazy field so the UI never pays it on the FX thread.
+     */
+    public SkunkcraftsChannelStatus channelStatus(SkunkcraftsUpdatable updatable) {
+        if (!updatable.isSkunkcraftsUpdatable()) {
+            return SkunkcraftsChannelStatus.NONE;
+        }
+        return computeChannelStatus(
+                updatable.getSkunkcraftsFolder(), updatable.getSkunkcraftsConfig(), updatable.getSkunkcraftsBetaConfig());
+    }
+
+    /**
      * Computes content-truth availability for both channels: a channel has an update when its whitelist
      * diff against the local files is non-empty. The beta channel is additionally suppressed when its
      * whitelist is identical to the stable one — it offers nothing distinct whatever the version labels say.

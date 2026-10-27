@@ -33,19 +33,11 @@ public interface SkunkcraftsUpdatable {
 
     /**
      * Returns the content-truth availability of both channels plus the beta channel's latest label.
-     * Domain classes cache this (see {@link #computeSkunkcraftsChannelStatus()}); this default computes it live.
+     * Domain classes cache this (see {@link SkunkcraftsUpdater#channelStatus(SkunkcraftsUpdatable)});
+     * this default computes it live.
      */
     default SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
-        return computeSkunkcraftsChannelStatus();
-    }
-
-    /** Computes the channel status from both channels' whitelists; {@link SkunkcraftsChannelStatus#NONE} when not updatable. */
-    default SkunkcraftsChannelStatus computeSkunkcraftsChannelStatus() {
-        if (!isSkunkcraftsUpdatable()) {
-            return SkunkcraftsChannelStatus.NONE;
-        }
-        return SkunkcraftsUpdater.computeChannelStatus(
-                getSkunkcraftsFolder(), getSkunkcraftsConfig(), getSkunkcraftsBetaConfig());
+        return SkunkcraftsUpdater.channelStatus(this);
     }
 
     /**

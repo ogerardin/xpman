@@ -136,7 +136,7 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
 
     /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
     @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = computeSkunkcraftsChannelStatus();
+    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
 
     public boolean isExtraAircraft() {
         return getAcfFile().getFile().getParent().getFileName().toString().equals("Extra Aircraft");

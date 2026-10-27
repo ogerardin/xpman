@@ -118,7 +118,7 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
 
     /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
     @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = computeSkunkcraftsChannelStatus();
+    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
 
     /** An optional URL that points to an icon for this scenery. */
     public URL getIconUrl() {
