@@ -14,6 +14,10 @@ public interface PluginRow extends SwitchRow {
     String getVersion();
     
     String getLatestVersion();
+
+    default String getUpdateTooltip() {
+        return "";
+    }
     
     boolean isUpdateAvailable();
     

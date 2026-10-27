@@ -27,8 +27,8 @@ public class SceneryVersionCellFactory implements TableCellFactory<UiSceneryEntr
                 if (row != null && row.isUpdateAvailable()) {
                     Button button = new Button("Update");
                     button.getStyleClass().add("updates-item-button");
-                    String latestVersion = row.getLatestVersion();
-                    if (latestVersion != null) button.setTooltip(new Tooltip("Update to " + latestVersion));
+                    button.setTooltip(new Tooltip(
+                            com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(row.getSceneryPackage())));
                     button.setOnAction(_ -> {
                         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(row.getSceneryPackage()).showAndWait();
                         row.getXPlane().getSceneryManager().reload();

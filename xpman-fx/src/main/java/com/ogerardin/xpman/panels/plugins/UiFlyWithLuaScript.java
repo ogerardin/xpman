@@ -49,6 +49,12 @@ public class UiFlyWithLuaScript implements PluginRow {
         return script instanceof SkunkcraftsUpdatable updatable ? updatable.getLatestVersion() : null;
     }
 
+    @Override
+    public String getUpdateTooltip() {
+        return script instanceof SkunkcraftsUpdatable updatable
+                ? com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(updatable) : "";
+    }
+
     /** Whether the hosted script is locked by its developer (Skunkcrafts). */
     @SuppressWarnings("unused")
     public boolean isSkunkcraftsLocked() {

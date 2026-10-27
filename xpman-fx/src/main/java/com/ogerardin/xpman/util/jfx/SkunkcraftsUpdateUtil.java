@@ -4,6 +4,7 @@ import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xpman.util.jfx.console.ConsoleController;
@@ -16,12 +17,24 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for performing Skunkcrafts updates from the UI.
  */
 @UtilityClass
 public class SkunkcraftsUpdateUtil {
+
+    /** Lists only channels with pending updates, without changing the addon's latest-version source. */
+    public static String updateTooltip(SkunkcraftsUpdatable updatable) {
+        return Arrays.stream(SkunkcraftsChannel.values())
+                .filter(channel -> channel.hasUpdate(updatable))
+                .map(channel -> channel.getLabel() + " update: "
+                        + Objects.toString(channel.latestVersion(updatable), "?"))
+                .collect(Collectors.joining("\n"));
+    }
 
     /**
      * Performs a Skunkcrafts update for the given updatable addon, showing a console dialog for progress.

@@ -39,6 +39,11 @@ public class UiPlugin implements PluginRow {
         return plugin.isAnySkunkcraftsUpdateAvailable();
     }
 
+    @Override
+    public String getUpdateTooltip() {
+        return com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(plugin);
+    }
+
     @Order(10)
     @Label("T(com.ogerardin.xplane.util.platform.Platforms).getCurrent().revealLabel()")
     public void reveal() {

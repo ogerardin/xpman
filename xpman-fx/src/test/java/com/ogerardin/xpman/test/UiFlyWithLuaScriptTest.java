@@ -36,6 +36,7 @@ class UiFlyWithLuaScriptTest {
         assertThat(row.isUpdateAvailable(), is(true));
         // the row's pill shows the stable channel's label; the wizard offers the beta channel too
         assertThat(row.getLatestVersion(), is("81.2"));
+        assertThat(row.getUpdateTooltip(), is("Stable update: 81.2\nBeta update: Beta"));
     }
 
     @Test
@@ -47,6 +48,7 @@ class UiFlyWithLuaScriptTest {
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
         assertThat(row.isUpdateAvailable(), is(true));
+        assertThat(row.getUpdateTooltip(), is("Beta update: Beta"));
     }
 
     @Test

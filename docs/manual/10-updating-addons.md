@@ -12,6 +12,7 @@ An update is available when the addon's files actually differ from the ones the 
 
 - The Home dashboard shows an **Updates Available** section grouped by category, with one row per channel that has files to download (`Update` and, when the addon has a beta channel with distinct content, `Update Beta`).
 - Each panel (Aircraft, Scenery, Plugins) shows an **Update** button in the Version column for addons with available updates.
+- In the Scenery and Plugins panels, the **Update** button's tooltip lists the available channels and their versions; when both are available, it lists both.
 - Library tiles show **N updates** badges, counting addons (an addon with both channels pending counts once).
 - Disabled plugins, scenery, and FlyWithLua scripts are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
 
