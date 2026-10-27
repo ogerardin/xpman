@@ -64,7 +64,7 @@ public class AircraftCardView extends VBox {
         Label authorLabel = new Label(authorText(uiAircraft));
         authorLabel.getStyleClass().add("aircraft-card-author");
 
-        HBox badges = new HBox(6);
+        FlowPane badges = new FlowPane(6, 6);
         badges.getStyleClass().add("aircraft-card-badges");
         Optional.ofNullable(uiAircraft.getVersion())
                 .filter(v -> !v.isBlank())

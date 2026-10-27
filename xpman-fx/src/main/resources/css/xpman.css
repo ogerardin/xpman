@@ -531,7 +531,8 @@
 }
 
 .aircraft-card-badges {
-    -fx-spacing: 6px;
+    -fx-hgap: 6px;
+    -fx-vgap: 6px;
     -fx-padding: 4px 0 0 0;
 }
 
