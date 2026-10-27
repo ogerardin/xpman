@@ -6,6 +6,7 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
 import com.ogerardin.xplane.inspection.impl.MissingSceneryDataInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
@@ -114,6 +115,10 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
             : null;
+
+    /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
+    @Getter(lazy = true)
+    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = computeSkunkcraftsChannelStatus();
 
     /** An optional URL that points to an icon for this scenery. */
     public URL getIconUrl() {

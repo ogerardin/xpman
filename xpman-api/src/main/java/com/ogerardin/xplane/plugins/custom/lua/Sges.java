@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
@@ -87,6 +88,19 @@ public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
     private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
             ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
             : null;
+
+    /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
+    @Getter(lazy = true)
+    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = computeSkunkcraftsChannelStatus();
+
+    /**
+     * The beta updater cfg of the addon base folder, but only if it identifies itself as SGES.
+     */
+    @Override
+    public SkunkcraftsConfig getSkunkcraftsBetaConfig() {
+        SkunkcraftsConfig cfg = SkunkcraftsUpdater.findBetaConfig(getSkunkcraftsFolder());
+        return cfg != null && identifiesAsSges(cfg) ? cfg : null;
+    }
 
     /**
      * The updater cfg of the addon base folder, or null if there is none or if it belongs to

@@ -98,6 +98,13 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
                 .map(this::getAircraft)
                 .toList();
 
+        // pre-warm Skunkcrafts labels and channel status (content check) off the FX thread,
+        // before the LOADED event rebuilds the cards
+        items.parallelStream().forEach(a -> {
+            a.getSkunkcraftsLatestVersion();
+            a.getSkunkcraftsChannelStatus();
+        });
+
         Instant t1 = Instant.now();
         long duration = Duration.between(t0, t1).toMillis();
 

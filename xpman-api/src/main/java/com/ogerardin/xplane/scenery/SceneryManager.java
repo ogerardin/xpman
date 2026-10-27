@@ -104,6 +104,16 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
         pendingChanges = false;
         items = buildEntries();
 
+        // pre-warm Skunkcrafts labels and channel status (content check) off the FX thread;
+        // later LOADED events reuse these package instances, so their caches carry over
+        items.stream()
+                .map(SceneryEntry::getSceneryPackage)
+                .filter(Objects::nonNull)
+                .forEach(p -> {
+                    p.getSkunkcraftsLatestVersion();
+                    p.getSkunkcraftsChannelStatus();
+                });
+
         log.info("Loaded {} scenery entries", items.size());
         fireEvent(ManagerEvent.<SceneryEntry>builder().type(LOADED).source(this).items(items).build());
     }

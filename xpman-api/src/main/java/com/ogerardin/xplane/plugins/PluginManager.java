@@ -130,15 +130,20 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         items.forEach(p -> {
             p.getVersion();
             p.getLatestVersion();
+            // pre-warm the channel status (content check) too, else the UI would pay it on the FX thread
+            p.getSkunkcraftsChannelStatus();
             // pre-warm FlyWithLua scripts here (async thread) so that the UI rebuild doesn't
             // pay the lazy lua header parsing cost on the FX thread
             if (p instanceof FlyWithLua fwl) {
-                // pre-warm the Skunkcrafts version of updatable scripts too, else the script
+                // pre-warm the Skunkcrafts version and channel status of updatable scripts too, else the script
                 // row's update pill would fetch it on the FX thread
                 fwl.getScripts().stream()
                         .filter(SkunkcraftsUpdatable.class::isInstance)
                         .map(SkunkcraftsUpdatable.class::cast)
-                        .forEach(SkunkcraftsUpdatable::getSkunkcraftsLatestVersion);
+                        .forEach(u -> {
+                            u.getSkunkcraftsLatestVersion();
+                            u.getSkunkcraftsChannelStatus();
+                        });
             }
         });
 
