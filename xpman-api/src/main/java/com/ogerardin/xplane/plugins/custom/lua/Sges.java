@@ -49,8 +49,6 @@ public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
     private static final String DOCS_FOLDER = "Simple_Ground_Equipment_and_Services_expanded_documentation";
     // the Skunkcrafts protocol ships the updater cfg next to Scripts/; it belongs in the
     // FlyWithLua folder, which becomes the addon base folder for updates
-    // shortcut: the beta cfg is installed but never read; add a main/beta channel selector
-    // (like the native Skunkcrafts updater) when a user ever needs the beta channel
     // The protocol has one cfg slot per addon base folder (skunkcrafts_updater.cfg); a second
     // Skunkcrafts-managed FlyWithLua script would overwrite the first — the identity guard
     // then migrates the pill to the surviving cfg's script. Upgrade when the protocol supports
