@@ -41,7 +41,7 @@ public class UiFlyWithLuaScript implements PluginRow {
 
     @Override
     public boolean isUpdateAvailable() {
-        return script instanceof SkunkcraftsUpdatable updatable && updatable.isSkunkcraftsUpdateAvailable();
+        return script instanceof SkunkcraftsUpdatable updatable && updatable.isAnySkunkcraftsUpdateAvailable();
     }
 
     @Override

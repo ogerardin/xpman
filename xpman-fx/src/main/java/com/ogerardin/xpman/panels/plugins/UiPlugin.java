@@ -36,7 +36,7 @@ public class UiPlugin implements PluginRow {
 
     @Override
     public boolean isUpdateAvailable() {
-        return plugin.isSkunkcraftsUpdateAvailable();
+        return plugin.isAnySkunkcraftsUpdateAvailable();
     }
 
     @Order(10)
@@ -105,7 +105,7 @@ Press OK to continue.'
     @Override
     @Order(90)
     @Label("'Update via Skunkcrafts Updater'")
-    @EnabledIf("skunkcraftsUpdateAvailable")
+    @EnabledIf("anySkunkcraftsUpdateAvailable")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(plugin).showAndWait();
         plugin.getXPlane().getPluginManager().reload();

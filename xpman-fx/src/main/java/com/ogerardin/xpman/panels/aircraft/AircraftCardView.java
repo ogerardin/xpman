@@ -70,7 +70,7 @@ public class AircraftCardView extends VBox {
                 .filter(v -> !v.isBlank())
                 .map(AircraftCardView::badge)
                 .ifPresent(badges.getChildren()::add);
-        if (uiAircraft.isSkunkcraftsUpdateAvailable()) {
+        if (uiAircraft.isAnySkunkcraftsUpdateAvailable()) {
             Button updateButton = new Button("Update");
             updateButton.getStyleClass().add("updates-item-button");
             updateButton.setOnAction(_ -> {

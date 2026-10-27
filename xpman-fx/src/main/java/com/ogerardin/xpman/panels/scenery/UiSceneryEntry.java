@@ -36,7 +36,7 @@ public class UiSceneryEntry implements SwitchRow {
 
     public boolean isUpdateAvailable() {
         return sceneryEntry.getSceneryPackage() != null
-                && sceneryEntry.getSceneryPackage().isSkunkcraftsUpdateAvailable();
+                && sceneryEntry.getSceneryPackage().isAnySkunkcraftsUpdateAvailable();
     }
 
     @Override
@@ -118,7 +118,7 @@ Press OK to continue.'
     @SuppressWarnings("unused")
     @Order(90)
     @Label("'Update via Skunkcrafts Updater'")
-    @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsUpdateAvailable")
+    @EnabledIf("sceneryPackage != null && sceneryPackage.anySkunkcraftsUpdateAvailable")
     @OnSuccess("reload()")
     public void skunkcraftsUpdate() {
         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(getSceneryPackage()).showAndWait();

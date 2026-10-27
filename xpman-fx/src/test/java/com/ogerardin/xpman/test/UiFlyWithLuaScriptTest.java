@@ -2,6 +2,7 @@ package com.ogerardin.xpman.test;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xpman.panels.plugins.UiFlyWithLuaScript;
@@ -27,12 +28,36 @@ class UiFlyWithLuaScriptTest {
 
     @Test
     void updatableScriptRowReportsUpdateAndLatestVersion() throws Exception {
-        FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript());
+        FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript(),
+                new SkunkcraftsChannelStatus(true, true, "Beta"));
 
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
         assertThat(row.isUpdateAvailable(), is(true));
+        // the row's pill shows the stable channel's label; the wizard offers the beta channel too
         assertThat(row.getLatestVersion(), is("81.2"));
+    }
+
+    @Test
+    void betaOnlyUpdateStillShowsTheRowPill() throws Exception {
+        // only the beta channel has content: the pill must still show (any channel)
+        FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript(),
+                new SkunkcraftsChannelStatus(false, true, "Beta"));
+
+        UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
+
+        assertThat(row.isUpdateAvailable(), is(true));
+    }
+
+    @Test
+    void updatableScriptRowWithNoPendingContentReportsNoUpdate() throws Exception {
+        // labels differ but no channel has content to download: no pill (the openSAM case)
+        FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript(),
+                SkunkcraftsChannelStatus.NONE);
+
+        UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
+
+        assertThat(row.isUpdateAvailable(), is(false));
     }
 
     @Test
@@ -52,11 +77,14 @@ class UiFlyWithLuaScriptTest {
         return luaFile;
     }
 
-    /** A script stub that reports a pending Skunkcrafts update, as SGES does. */
+    /** A script stub that reports pending Skunkcrafts updates, as SGES does. */
     private static class UpdatableScript extends FlyWithLuaScript implements SkunkcraftsUpdatable {
 
-        UpdatableScript(XPlane xPlane, Path luaFile) {
+        private final SkunkcraftsChannelStatus channelStatus;
+
+        UpdatableScript(XPlane xPlane, Path luaFile, SkunkcraftsChannelStatus channelStatus) {
             super(xPlane, luaFile);
+            this.channelStatus = channelStatus;
         }
 
         @Override
@@ -66,7 +94,7 @@ class UiFlyWithLuaScriptTest {
 
         @Override
         public SkunkcraftsConfig getSkunkcraftsConfig() {
-            return null;
+            return new SkunkcraftsConfig(null, null, "https://example.com", null, false, false, true);
         }
 
         @Override
@@ -75,8 +103,8 @@ class UiFlyWithLuaScriptTest {
         }
 
         @Override
-        public boolean isSkunkcraftsUpdateAvailable() {
-            return true;
+        public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
+            return channelStatus;
         }
     }
 }

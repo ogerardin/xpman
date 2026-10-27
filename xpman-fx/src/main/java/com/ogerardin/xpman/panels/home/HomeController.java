@@ -15,6 +15,7 @@ import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryPackage;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
@@ -193,8 +194,7 @@ public class HomeController {
         long count = aircraft.stream()
                 .filter(SkunkcraftsUpdatable.class::isInstance)
                 .map(SkunkcraftsUpdatable.class::cast)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                .filter(SkunkcraftsUpdatable::isAnySkunkcraftsUpdateAvailable)
                 .count();
         
         Platform.runLater(() -> {
@@ -212,8 +212,7 @@ public class HomeController {
                 .filter(java.util.Objects::nonNull)
                 .filter(SkunkcraftsUpdatable.class::isInstance)
                 .map(SkunkcraftsUpdatable.class::cast)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                .filter(SkunkcraftsUpdatable::isAnySkunkcraftsUpdateAvailable)
                 .count();
         
         Platform.runLater(() -> {
@@ -269,8 +268,7 @@ public class HomeController {
                                 .flatMap(fwl -> fwl.getScripts().stream())
                                 .filter(SkunkcraftsUpdatable.class::isInstance)
                                 .map(SkunkcraftsUpdatable.class::cast))
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable);
+                .filter(SkunkcraftsUpdatable::isAnySkunkcraftsUpdateAvailable);
     }
 
     private void updateUpdatesSection() {
@@ -280,16 +278,14 @@ public class HomeController {
             xPlane.getAircraftManager().getItems().stream()
                     .filter(SkunkcraftsUpdatable.class::isInstance)
                     .map(SkunkcraftsUpdatable.class::cast)
-                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                    .filter(SkunkcraftsUpdatable::isAnySkunkcraftsUpdateAvailable)
                     .forEach(updates::add);
             xPlane.getSceneryManager().getItems().stream()
                     .map(com.ogerardin.xplane.scenery.SceneryEntry::getSceneryPackage)
                     .filter(java.util.Objects::nonNull)
                     .filter(SkunkcraftsUpdatable.class::isInstance)
                     .map(SkunkcraftsUpdatable.class::cast)
-                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdatable)
-                    .filter(SkunkcraftsUpdatable::isSkunkcraftsUpdateAvailable)
+                    .filter(SkunkcraftsUpdatable::isAnySkunkcraftsUpdateAvailable)
                     .forEach(updates::add);
             updatablePluginAddons().forEach(updates::add);
         }
@@ -333,24 +329,37 @@ public class HomeController {
         section.getChildren().add(categoryLabel);
 
         for (SkunkcraftsUpdatable updatable : updates) {
-            section.getChildren().add(createUpdateRow(
-                    updatable.getName(),
-                    updatable.getInstalledVersion(),
-                    updatable.getSkunkcraftsLatestVersion(),
-                    "Update",
-                    () -> {
-                        new SkunkcraftsUpdateWizard(updatable).showAndWait();
-                        if (updatable instanceof Aircraft) {
-                            xPlane.getAircraftManager().reload();
-                        } else if (updatable instanceof SceneryPackage) {
-                            xPlane.getSceneryManager().reload();
-                        } else if (updatable instanceof Plugin || updatable instanceof FlyWithLuaScript) {
-                            xPlane.getPluginManager().reload();
-                        }
-                    }));
+            if (updatable.isSkunkcraftsUpdateAvailable()) {
+                section.getChildren().add(createUpdateRow(
+                        updatable.getName(),
+                        updatable.getInstalledVersion(),
+                        updatable.getSkunkcraftsLatestVersion(),
+                        "Update",
+                        () -> runUpdateWizard(updatable, SkunkcraftsChannel.STABLE)));
+            }
+            if (updatable.isSkunkcraftsBetaUpdateAvailable()) {
+                section.getChildren().add(createUpdateRow(
+                        updatable.getName(),
+                        updatable.getInstalledVersion(),
+                        updatable.getSkunkcraftsBetaLatestVersion(),
+                        "Update Beta",
+                        () -> runUpdateWizard(updatable, SkunkcraftsChannel.BETA)));
+            }
         }
 
         return section;
+    }
+
+    /** Opens the Skunkcrafts update wizard on the chosen channel, then reloads the owning manager. */
+    private void runUpdateWizard(SkunkcraftsUpdatable updatable, SkunkcraftsChannel channel) {
+        new SkunkcraftsUpdateWizard(updatable, channel).showAndWait();
+        if (updatable instanceof Aircraft) {
+            xPlane.getAircraftManager().reload();
+        } else if (updatable instanceof SceneryPackage) {
+            xPlane.getSceneryManager().reload();
+        } else if (updatable instanceof Plugin || updatable instanceof FlyWithLuaScript) {
+            xPlane.getPluginManager().reload();
+        }
     }
 
     private HBox createUpdateRow(String name, String currentVersion, String latestVersion,
