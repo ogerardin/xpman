@@ -31,14 +31,9 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
@@ -394,55 +389,30 @@ public class HomeController {
 
         Platform.runLater(() -> {
             xplaneUpdatesContent.getChildren().clear();
-            if (hasReleaseUpdate) {
-                xplaneUpdatesContent.getChildren().add(
-                        createXPlaneUpdateRow("Release", currentVersion, latestFinal, latestFinalReleaseInfo, xPlane));
-            }
-            if (hasBetaUpdate) {
-                xplaneUpdatesContent.getChildren().add(
-                        createXPlaneUpdateRow("Beta", currentVersion, latestBeta, latestBetaReleaseInfo, xPlane));
-            }
             boolean hasUpdates = hasReleaseUpdate || hasBetaUpdate;
+            if (hasUpdates) {
+                xplaneUpdatesContent.getChildren().add(createXPlaneUpdateRow(
+                        "X-Plane " + xPlane.getMajorVersion().getMajor(), currentVersion,
+                        hasReleaseUpdate ? latestFinalReleaseInfo : null,
+                        hasBetaUpdate ? latestBetaReleaseInfo : null, () -> {
+                            var installer = xPlane.getToolsManager().getTool("xplane-installer");
+                            UiToolUtil.runTool(xPlane, installer);
+                        }));
+            }
             xplaneUpdatesSection.setVisible(hasUpdates);
             xplaneUpdatesSection.setManaged(hasUpdates);
         });
     }
 
-    private HBox createXPlaneUpdateRow(String label, String currentVersion, String latestVersion,
-                                         XPlaneReleaseInfo releaseInfo, XPlane xPlane) {
-        boolean isBeta = label.equals("Beta");
-        HBox row = createUpdateRow(label, currentVersion, latestVersion, "Run Installer",
-                () -> {
-                    if (isBeta && !confirmBetaInstall()) {
-                        return;
-                    }
-                    var xPlaneInstaller = xPlane.getToolsManager().getTool("xplane-installer");
-                    UiToolUtil.runTool(xPlane, xPlaneInstaller);
-                });
-        releaseInfo.releaseNotesUrl().ifPresent(url -> {
-            Hyperlink link = new Hyperlink("Release notes");
-            link.setOnAction(_ -> Platforms.getCurrent().openUrl(url));
-            row.getChildren().add(link);
-        });
-        return row;
+    private HBox createXPlaneUpdateRow(String name, String currentVersion, XPlaneReleaseInfo stableOffer,
+                                     XPlaneReleaseInfo betaOffer, Runnable openInstaller) {
+        return createUpdateRow(name, currentVersion, XPlaneUpdateDialog.availableVersions(stableOffer, betaOffer),
+                "Update…", () -> reviewXPlaneUpdate(new XPlaneUpdateDialog(currentVersion, stableOffer, betaOffer), openInstaller));
     }
 
-    /**
-     * Shows a hint explaining how to make the X-Plane installer offer the beta release.
-     * @return true if the user chose to proceed.
-     */
-    private static boolean confirmBetaInstall() {
-        ButtonType proceed = new ButtonType("Proceed", ButtonBar.ButtonData.OK_DONE);
-        Image image = new Image(Objects.requireNonNull(
-                HomeController.class.getResource("/img/screenshot_beta.png")).toExternalForm());
-        Label message = new Label("To install a beta release, check the box that says " +
-                "'Check for new betas as well as updates' on the first step of the wizard ('Welcome')");
-        message.setWrapText(true);
-        message.maxWidthProperty().bind(image.widthProperty());
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, null, ButtonType.CANCEL, proceed);
-        alert.setHeaderText("Installing a beta release");
-        alert.getDialogPane().setContent(new VBox(8, message, new ImageView(image)));
-        return alert.showAndWait().filter(proceed::equals).isPresent();
+    /** The installer is external: review cancellation must not launch or install anything. */
+    private static void reviewXPlaneUpdate(XPlaneUpdateDialog dialog, Runnable openInstaller) {
+        dialog.showAndWait().ifPresent(_ -> openInstaller.run());
     }
 
     /**

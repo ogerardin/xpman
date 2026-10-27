@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.test;
 
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.XPlaneReleaseInfo;
 import com.ogerardin.xpman.panels.home.HomeController;
 import com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil;
 import javafx.scene.Parent;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ogerardin.xpman.test.FxTestSupport.onFx;
@@ -58,6 +60,23 @@ class UpdateAnnouncementsTest {
             button.fire();
             assertEquals(1, calls.get());
             assertEquals(1, SkunkcraftsUpdateUtil.updateAction(false, "Stable update: 2.1", () -> {}).getChildren().size());
+            return null;
+        });
+    }
+
+    @Test
+    void xplaneAlsoUsesOneNamedRowWithBothVersions() throws Exception {
+        onFx(() -> {
+            var method = HomeController.class.getDeclaredMethod("createXPlaneUpdateRow", String.class, String.class,
+                    XPlaneReleaseInfo.class, XPlaneReleaseInfo.class, Runnable.class);
+            method.setAccessible(true);
+            var row = (Parent) method.invoke(new HomeController(null), "X-Plane 12", "12.4.0",
+                    new XPlaneReleaseInfo("12.4.1", Optional.empty()),
+                    new XPlaneReleaseInfo("12.5.0-b1", Optional.empty()), (Runnable) () -> {});
+            assertTrue(text(row).contains("X-Plane 12"));
+            assertTrue(text(row).contains("Stable 12.4.1 · Beta 12.5.0-b1"));
+            assertEquals(1, row.lookupAll(".updates-item-button").size());
+            assertEquals("Update…", ((Button) row.lookup(".updates-item-button")).getText());
             return null;
         });
     }
