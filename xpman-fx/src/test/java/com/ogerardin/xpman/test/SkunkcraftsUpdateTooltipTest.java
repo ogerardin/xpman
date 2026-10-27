@@ -14,6 +14,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SkunkcraftsUpdateTooltipTest {
 
     @Test
+    void availableVersionsOnlyListsOfferedChannels() {
+        assertEquals("Stable 2.1", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(true, false)));
+        assertEquals("Beta 2.2-b1", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(false, true)));
+        assertEquals("Stable 2.1 · Beta 2.2-b1", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(true, true)));
+        assertEquals("Beta ?", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(false, true, "2.1", null)));
+        assertEquals("", SkunkcraftsUpdateUtil.availableVersions(new UpdateTestAddon(false, false)));
+    }
+
+    @Test
     void stableOnly() {
         assertEquals("Stable update: 5.4.1", tooltip(true, false, "5.4.1"));
     }

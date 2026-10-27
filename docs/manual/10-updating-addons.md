@@ -46,8 +46,8 @@ Shows:
 
 - **Addon:** name
 - **Current version:** installed version
-- **Channel:** a Stable/Beta choice, only when both channels have updates
-- **Available version:** latest version of the selected channel (or "Could not fetch remote version")
+- **Channel:** a Stable/Beta choice when both channels have updates, otherwise the name of the only offered channel. Stable is selected initially when both are available.
+- **Available version:** latest version of the selected channel (or "?" when its label could not be fetched)
 - **Update status:** "N file(s) to update (size)", or "Already up to date", or "Files are up to date — local and remote versions differ" when the version label drifted without any file change
 
 **Next** is disabled when there is nothing to update.

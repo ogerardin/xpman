@@ -15,7 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
@@ -33,7 +33,7 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
 
     private final SkunkcraftsUpdateWizard wizard;
     private final BooleanProperty invalidProperty = new SimpleBooleanProperty(true);
-    private boolean toggleListenerInstalled = false;
+    private long refreshGeneration;
 
     @FXML
     private Label addonNameLabel;
@@ -48,7 +48,10 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
     private Label filesCountLabel;
 
     @FXML
-    private VBox channelBox;
+    private Label selectedChannelLabel;
+
+    @FXML
+    private HBox channelChoices;
 
     @FXML
     private RadioButton stableRadio;
@@ -58,6 +61,13 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
 
     @FXML
     private ToggleGroup channelToggle;
+
+    @FXML
+    private void initialize() {
+        channelToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle != null) switchChannel(newToggle);
+        });
+    }
 
     @Override
     public ReadOnlyBooleanProperty invalidProperty() {
@@ -72,7 +82,7 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
         addonNameLabel.setText(updatable.getName());
 
         // Display current version (immediate, no network call)
-        String currentVersion = updatable.getVersion();
+        String currentVersion = updatable.getInstalledVersion();
         currentVersionLabel.setText(currentVersion != null ? currentVersion : "Unknown");
 
         // land on a channel that has an update: the requested one if possible, else the sole one
@@ -81,16 +91,14 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
         // the channel selector only exists when there is an actual choice to make
         boolean bothChannels = SkunkcraftsChannel.STABLE.hasUpdate(updatable)
                 && SkunkcraftsChannel.BETA.hasUpdate(updatable);
-        channelBox.setVisible(bothChannels);
-        channelBox.setManaged(bothChannels);
+        channelChoices.setVisible(bothChannels);
+        channelChoices.setManaged(bothChannels);
+        selectedChannelLabel.setText(wizard.getChannel().getLabel());
+        selectedChannelLabel.setVisible(!bothChannels);
+        selectedChannelLabel.setManaged(!bothChannels);
         if (bothChannels) {
             stableRadio.setSelected(wizard.getChannel() == SkunkcraftsChannel.STABLE);
             betaRadio.setSelected(wizard.getChannel() == SkunkcraftsChannel.BETA);
-            if (!toggleListenerInstalled) {
-                channelToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) ->
-                        switchChannel(newToggle));
-                toggleListenerInstalled = true;
-            }
         }
 
         refreshChannelInfo();
@@ -108,6 +116,7 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
     private void refreshChannelInfo() {
         SkunkcraftsUpdatable updatable = wizard.getUpdatable();
         SkunkcraftsChannel channel = wizard.getChannel();
+        long generation = ++refreshGeneration;
 
         // Set placeholders for values that require network calls
         remoteVersionLabel.setText("Loading...");
@@ -120,27 +129,19 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
                 // Fetch remote version
                 String remoteVersion = channel.latestVersion(updatable);
 
-                Platform.runLater(() -> {
-                    if (remoteVersion == null) {
-                        invalidProperty.set(true);
-                        remoteVersionLabel.setText("Could not fetch remote version");
-                        filesCountLabel.setText("");
-                        return;
-                    }
-                    remoteVersionLabel.setText(remoteVersion);
-                });
-
                 // Fetch update summary
                 SkunkcraftsUpdateSummary summary = channel.updateSummary(updatable);
                 int filesCount = summary.fileCount();
 
                 Platform.runLater(() -> {
+                    if (generation != refreshGeneration) return;
+                    remoteVersionLabel.setText(Objects.toString(remoteVersion, "?"));
                     if (filesCount == 0) {
                         // nothing to download; report the state honestly — a version-label mismatch
                         // without content (e.g. openSAM Library) is not an update
-                        filesCountLabel.setText(Objects.equals(updatable.getInstalledVersion(), remoteVersion)
-                                ? "Already up to date"
-                                : "Files are up to date — local and remote versions differ");
+                        filesCountLabel.setText(remoteVersion != null && !Objects.equals(updatable.getInstalledVersion(), remoteVersion)
+                                ? "Files are up to date — local and remote versions differ"
+                                : "Already up to date");
                         invalidProperty.set(true);
                     } else {
                         filesCountLabel.setText(filesCount + " file(s) to update (" + SizeFormat.humanSize(summary.totalSizeBytes()) + ")");
@@ -151,10 +152,16 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
             } catch (Exception e) {
                 log.error("Failed to load update information", e);
                 Platform.runLater(() -> {
+                    if (generation != refreshGeneration) return;
                     invalidProperty.set(true);
                     filesCountLabel.setText("Error: " + e.getMessage());
                 });
             }
         });
+    }
+
+    @Override
+    public void onExitingPage(WizardPane wizardPane) {
+        refreshGeneration++;
     }
 }

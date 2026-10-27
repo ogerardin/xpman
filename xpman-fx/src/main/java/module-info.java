@@ -33,6 +33,7 @@ module xpman.fx {
     exports com.ogerardin.xpman.scenery_organizer to xpman.fx.test;
     exports com.ogerardin.xpman.settings to xpman.fx.test;
     exports com.ogerardin.xpman.panels.plugins to xpman.fx.test;
+    exports com.ogerardin.xpman.install.wizard to xpman.fx.test;
     exports com.ogerardin.xpman.util.jfx.menu to xpman.fx.test;
     exports com.ogerardin.xpman.util.jfx.menu.annotation to xpman.fx.test;
 

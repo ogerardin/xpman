@@ -26,9 +26,10 @@
                 <Label text="Current version:" style="-fx-font-weight: bold;"/>
                 <Label fx:id="currentVersionLabel" text=""/>
             </VBox>
-            <VBox fx:id="channelBox" spacing="5.0" visible="false" managed="false">
+            <VBox fx:id="channelBox" spacing="5.0">
                 <Label text="Channel:" style="-fx-font-weight: bold;"/>
-                <HBox spacing="15.0">
+                <Label fx:id="selectedChannelLabel"/>
+                <HBox fx:id="channelChoices" spacing="15.0">
                     <RadioButton fx:id="stableRadio" text="Stable">
                         <toggleGroup>
                             <ToggleGroup fx:id="channelToggle"/>

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Utility class for performing Skunkcrafts updates from the UI.
@@ -29,11 +30,21 @@ public class SkunkcraftsUpdateUtil {
 
     /** Lists only channels with pending updates, without changing the addon's latest-version source. */
     public static String updateTooltip(SkunkcraftsUpdatable updatable) {
-        return Arrays.stream(SkunkcraftsChannel.values())
-                .filter(channel -> channel.hasUpdate(updatable))
+        return availableChannels(updatable)
                 .map(channel -> channel.getLabel() + " update: "
                         + Objects.toString(channel.latestVersion(updatable), "?"))
                 .collect(Collectors.joining("\n"));
+    }
+
+    /** Concise offered versions for a single dashboard product row. */
+    public static String availableVersions(SkunkcraftsUpdatable updatable) {
+        return availableChannels(updatable)
+                .map(channel -> channel.getLabel() + " " + Objects.toString(channel.latestVersion(updatable), "?"))
+                .collect(Collectors.joining(" · "));
+    }
+
+    private static Stream<SkunkcraftsChannel> availableChannels(SkunkcraftsUpdatable updatable) {
+        return Arrays.stream(SkunkcraftsChannel.values()).filter(channel -> channel.hasUpdate(updatable));
     }
 
     /**
