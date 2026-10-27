@@ -41,7 +41,7 @@ public class SkunkcraftsPage2Controller implements PageListener {
         // Run update in background thread
         Thread thread = new Thread(() -> {
             try {
-                updatable.applySkunkcraftsUpdate(this::updateProgress);
+                wizard.getChannel().apply(updatable, this::updateProgress);
                 Platform.runLater(() -> {
                     progress.setProgress(1.0);
                     fileLabel.setText("Update complete!");

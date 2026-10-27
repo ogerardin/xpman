@@ -1,5 +1,6 @@
 package com.ogerardin.xpman.install.wizard;
 
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateSummary;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xpman.util.SizeFormat;
@@ -11,13 +12,20 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
 
+import java.util.Objects;
+
 /**
  * Controller for the first page of the Skunkcrafts update wizard.
- * Displays a summary of the update: addon name, current version, remote version, and file count.
+ * Displays a summary of the update: addon name, current version, selected channel's remote version,
+ * and file count. When both channels have updates, lets the user pick the channel to install.
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +33,7 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
 
     private final SkunkcraftsUpdateWizard wizard;
     private final BooleanProperty invalidProperty = new SimpleBooleanProperty(true);
+    private boolean toggleListenerInstalled = false;
 
     @FXML
     private Label addonNameLabel;
@@ -37,6 +46,18 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
 
     @FXML
     private Label filesCountLabel;
+
+    @FXML
+    private VBox channelBox;
+
+    @FXML
+    private RadioButton stableRadio;
+
+    @FXML
+    private RadioButton betaRadio;
+
+    @FXML
+    private ToggleGroup channelToggle;
 
     @Override
     public ReadOnlyBooleanProperty invalidProperty() {
@@ -54,6 +75,40 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
         String currentVersion = updatable.getVersion();
         currentVersionLabel.setText(currentVersion != null ? currentVersion : "Unknown");
 
+        // land on a channel that has an update: the requested one if possible, else the sole one
+        wizard.setChannel(SkunkcraftsChannel.resolve(wizard.getChannel(), updatable));
+
+        // the channel selector only exists when there is an actual choice to make
+        boolean bothChannels = SkunkcraftsChannel.STABLE.hasUpdate(updatable)
+                && SkunkcraftsChannel.BETA.hasUpdate(updatable);
+        channelBox.setVisible(bothChannels);
+        channelBox.setManaged(bothChannels);
+        if (bothChannels) {
+            stableRadio.setSelected(wizard.getChannel() == SkunkcraftsChannel.STABLE);
+            betaRadio.setSelected(wizard.getChannel() == SkunkcraftsChannel.BETA);
+            if (!toggleListenerInstalled) {
+                channelToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) ->
+                        switchChannel(newToggle));
+                toggleListenerInstalled = true;
+            }
+        }
+
+        refreshChannelInfo();
+    }
+
+    private void switchChannel(Toggle selected) {
+        SkunkcraftsChannel newChannel = selected == betaRadio ? SkunkcraftsChannel.BETA : SkunkcraftsChannel.STABLE;
+        if (newChannel != wizard.getChannel()) {
+            wizard.setChannel(newChannel);
+            refreshChannelInfo();
+        }
+    }
+
+    /** Fetches the selected channel's remote version and update summary in the background. */
+    private void refreshChannelInfo() {
+        SkunkcraftsUpdatable updatable = wizard.getUpdatable();
+        SkunkcraftsChannel channel = wizard.getChannel();
+
         // Set placeholders for values that require network calls
         remoteVersionLabel.setText("Loading...");
         filesCountLabel.setText("Loading...");
@@ -63,8 +118,8 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
         com.ogerardin.xplane.util.AsyncHelper.runAsync(() -> {
             try {
                 // Fetch remote version
-                String remoteVersion = updatable.getSkunkcraftsLatestVersion();
-                
+                String remoteVersion = channel.latestVersion(updatable);
+
                 Platform.runLater(() -> {
                     if (remoteVersion == null) {
                         invalidProperty.set(true);
@@ -76,12 +131,16 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
                 });
 
                 // Fetch update summary
-                SkunkcraftsUpdateSummary summary = updatable.getSkunkcraftsUpdateSummary();
+                SkunkcraftsUpdateSummary summary = channel.updateSummary(updatable);
                 int filesCount = summary.fileCount();
-                
+
                 Platform.runLater(() -> {
                     if (filesCount == 0) {
-                        filesCountLabel.setText("Already up to date");
+                        // nothing to download; report the state honestly — a version-label mismatch
+                        // without content (e.g. openSAM Library) is not an update
+                        filesCountLabel.setText(Objects.equals(updatable.getInstalledVersion(), remoteVersion)
+                                ? "Already up to date"
+                                : "Files are up to date — local and remote versions differ");
                         invalidProperty.set(true);
                     } else {
                         filesCountLabel.setText(filesCount + " file(s) to update (" + SizeFormat.humanSize(summary.totalSizeBytes()) + ")");
