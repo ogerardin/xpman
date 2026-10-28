@@ -9,6 +9,7 @@ import com.ogerardin.xplane.tools.InstalledTool;
 import com.ogerardin.xplane.tools.Tool;
 import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.platform.Platforms;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xpman.config.XPManPrefs;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
@@ -125,6 +126,11 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     @Getter
     private final SceneryOrganizer sceneryOrganizer = new SceneryOrganizer(getConfig().getSceneryClasses());
+
+    // Bridge the user preference into Skunkcrafts availability; read live so Settings changes apply without restart
+    {
+        SkunkcraftsUpdater.ignoreBetaChannel = () -> getConfig().isIgnoreBetaUpdates();
+    }
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();
 

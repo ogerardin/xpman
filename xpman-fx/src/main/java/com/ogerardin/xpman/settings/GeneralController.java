@@ -17,12 +17,17 @@ public class GeneralController implements SettingsPage {
     private CheckBox confirmQuitCheckBox;
 
     @FXML
+    private CheckBox ignoreBetaUpdatesCheckBox;
+
+    @FXML
     private void initialize() {
         confirmQuitCheckBox.setSelected(mainController.getConfig().isConfirmQuit());
+        ignoreBetaUpdatesCheckBox.setSelected(mainController.getConfig().isIgnoreBetaUpdates());
     }
 
     @Override
     public void apply() {
         mainController.getConfig().setConfirmQuit(confirmQuitCheckBox.isSelected());
+        mainController.getConfig().setIgnoreBetaUpdates(ignoreBetaUpdatesCheckBox.isSelected());
     }
 }

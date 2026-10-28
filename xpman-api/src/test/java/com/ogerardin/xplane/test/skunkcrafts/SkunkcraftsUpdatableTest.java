@@ -107,6 +107,32 @@ class SkunkcraftsUpdatableTest {
     }
 
     @Test
+    void ignoreBetaChannelHidesBetaButKeepsStable() {
+        FakeAddon bothChannels = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(true, true, "Beta"));
+        SkunkcraftsUpdater.ignoreBetaChannel = () -> true;
+        try {
+            assertThat(bothChannels.isSkunkcraftsBetaUpdateAvailable(), is(false));
+            assertThat(bothChannels.isAnySkunkcraftsUpdateAvailable(), is(true));
+        } finally {
+            SkunkcraftsUpdater.ignoreBetaChannel = () -> false;
+        }
+    }
+
+    @Test
+    void ignoreBetaChannelHidesBetaOnlyUpdates() {
+        FakeAddon betaOnly = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
+                new SkunkcraftsChannelStatus(false, true, "Beta"));
+        SkunkcraftsUpdater.ignoreBetaChannel = () -> true;
+        try {
+            assertThat(betaOnly.isAnySkunkcraftsUpdateAvailable(), is(false));
+            assertThat(SkunkcraftsChannel.BETA.hasUpdate(betaOnly), is(false));
+        } finally {
+            SkunkcraftsUpdater.ignoreBetaChannel = () -> false;
+        }
+    }
+
+    @Test
     void noUpdateAvailableWhenNoLongerUpdatable() {
         // eligibility is checked live, not baked into the cached status
         FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",

@@ -80,15 +80,17 @@ public interface SkunkcraftsUpdatable {
 
     /** Whether the beta channel offers content distinct from stable. Eligibility is checked live. */
     default boolean isSkunkcraftsBetaUpdateAvailable() {
-        return isSkunkcraftsUpdatable() && getSkunkcraftsChannelStatus().betaUpdateAvailable();
+        return isSkunkcraftsUpdatable()
+                && !SkunkcraftsUpdater.ignoreBetaChannel.getAsBoolean()
+                && getSkunkcraftsChannelStatus().betaUpdateAvailable();
     }
 
     /** Whether any channel has files to download. Eligibility is checked live. */
     default boolean isAnySkunkcraftsUpdateAvailable() {
-        return isSkunkcraftsUpdatable() && getSkunkcraftsChannelStatus().anyUpdateAvailable();
+        return isSkunkcraftsUpdateAvailable() || isSkunkcraftsBetaUpdateAvailable();
     }
 
-    /** The beta channel's remote version label, or null when beta is not offered. */
+    /** The beta channel's remote version label, or null when the beta channel is not offered; reflects remote content only, not the ignore-beta preference. */
     default String getSkunkcraftsBetaLatestVersion() {
         return getSkunkcraftsChannelStatus().betaLatestVersion();
     }

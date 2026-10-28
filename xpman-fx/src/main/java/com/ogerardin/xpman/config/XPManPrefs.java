@@ -23,6 +23,8 @@ public class XPManPrefs extends JfxAppPrefs {
 
     String theme = "dark";
 
+    boolean ignoreBetaUpdates = false;
+
     WindowPosition settingsPosition;
 
     WindowSize wizardSize;

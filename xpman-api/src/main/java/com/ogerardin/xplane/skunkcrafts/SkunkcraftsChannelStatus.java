@@ -14,8 +14,4 @@ public record SkunkcraftsChannelStatus(
 ) {
 
     public static final SkunkcraftsChannelStatus NONE = new SkunkcraftsChannelStatus(false, false, null);
-
-    public boolean anyUpdateAvailable() {
-        return stableUpdateAvailable || betaUpdateAvailable;
-    }
 }

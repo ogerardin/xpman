@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.zip.CRC32;
 
 /**
@@ -54,6 +55,12 @@ public class SkunkcraftsUpdater {
 
     private static final long CRC_SENTINEL_MISSING = 0xFFFFFFFFL;
     private static final long CRC_SENTINEL_SKIP = 0L;
+
+    /**
+     * Global user preference (registered once at UI startup, read live): when true the beta
+     * channel is treated as unavailable wherever availability is checked.
+     */
+    public static volatile BooleanSupplier ignoreBetaChannel = () -> false;
 
     /**
      * Checks if the addon is locked by the developer (updates temporarily unavailable).

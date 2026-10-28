@@ -5,4 +5,5 @@
       fx:controller="com.ogerardin.xpman.settings.GeneralController"
       styleClass="settings-pane">
     <CheckBox fx:id="confirmQuitCheckBox" text="Confirm quit"/>
+    <CheckBox fx:id="ignoreBetaUpdatesCheckBox" text="Ignore beta updates"/>
 </VBox>
