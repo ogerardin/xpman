@@ -7,7 +7,7 @@ The Settings dialog has a category tree on the left and a settings pane on the r
 ## General
 
 - **Confirm quit** — When enabled (default), XPman shows a **"Do you really want to quit?"** dialog on quit.
-- **Ignore beta updates** — When enabled, addons' beta channels are treated as unavailable everywhere: no beta badges or tooltips, no beta-only addons in the Home updates section, and the update wizard offers the stable channel only. Takes effect without restarting; already-displayed panels reflect it on their next reload. Default is off.
+- **Ignore beta updates** — When enabled, addons' beta channels are treated as unavailable everywhere: no beta badges or tooltips, no beta-only addons in the Home updates section, and the update wizard offers the stable channel only. X-Plane's own updates are included: the Beta version is not offered on the dashboard. Takes effect immediately on OK — update displays reload in the background. Default is off.
 
 ## Tools
 

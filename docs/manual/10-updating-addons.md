@@ -25,7 +25,7 @@ The beta channel is offered only when its file list differs from the stable one'
 - Installing a beta records the beta version in the addon's updater config, but the stable channel's address is left untouched.
 - While you are on a beta, Stable is offered when its content differs from your installed files — choosing it in the wizard is the way back.
 - The official Skunkcrafts Updater application keeps working on the same folder.
-- Enabling **Settings → General → Ignore beta updates** hides the beta channel everywhere in XPman; only the stable channel is ever offered.
+- Enabling **Settings → General → Ignore beta updates** hides the beta channel everywhere in XPman, X-Plane's own beta updates included; only the stable channel is ever offered. The change applies immediately.
 
 ## Starting an Update
 

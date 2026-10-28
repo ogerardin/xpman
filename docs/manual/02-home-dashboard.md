@@ -15,7 +15,7 @@ The **Install anything...** button opens the universal install wizard (see [Inst
 
 ## X-Plane Updates Available
 
-When a new X-Plane version is available, the dashboard shows one **X-Plane** row with the installed version and all offered **Stable** and **Beta** versions together. Click **Update…** to review the channel before opening the installer. Stable is selected initially when both are offered; when only one is offered, its channel is named explicitly. A **Release notes** link follows the selected channel when available.
+When a new X-Plane version is available, the dashboard shows one **X-Plane** row with the installed version and all offered **Stable** and **Beta** versions together. Click **Update…** to review the channel before opening the installer. Stable is selected initially when both are offered; when only one is offered, its channel is named explicitly. A **Release notes** link follows the selected channel when available. When **Ignore beta updates** is enabled (see [Settings](11-settings.md)), the Beta version is not offered.
 
 Click **Open X-Plane Installer** to continue, then manually click **Update X-Plane** in the installer. XPman does not select the installer's update channel for you:
 

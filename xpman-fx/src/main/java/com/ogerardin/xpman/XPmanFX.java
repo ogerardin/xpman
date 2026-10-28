@@ -115,6 +115,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     private final Map<Section, Node> sectionCache = new EnumMap<>(Section.class);
 
+    private final Map<Section, Object> sectionControllers = new EnumMap<>(Section.class);
+
     @Getter
     private final JsonFileConfigPersister<XPManPrefs> configManager = new JsonFileConfigPersister<>(XPManPrefs.class, ".xpman");
 
@@ -296,11 +298,18 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         }
     }
 
+    /** The controller of a displayed section, or null when the section was never displayed. */
+    public Object getSectionController(Section section) {
+        return sectionControllers.get(section);
+    }
+
     @SneakyThrows
     private Node loadSectionContent(Section section) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(section.getContentFxml()));
         loader.setControllerFactory(this::buildController);
-        return loader.load();
+        Node content = loader.load();
+        sectionControllers.put(section, loader.getController());
+        return content;
     }
 
     /**

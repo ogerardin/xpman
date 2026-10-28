@@ -16,6 +16,7 @@ import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
 import com.ogerardin.xplane.scenery.SceneryEntry;
 import com.ogerardin.xplane.scenery.SceneryPackage;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
@@ -385,7 +386,8 @@ public class HomeController {
         String latestBeta = latestBetaReleaseInfo.version();
 
         boolean hasReleaseUpdate = compareVersions(latestFinal, currentVersion) > 0;
-        boolean hasBetaUpdate = !latestBeta.equals(latestFinal) && compareVersions(latestBeta, currentVersion) > 0;
+        boolean hasBetaUpdate = !SkunkcraftsUpdater.ignoreBetaChannel.getAsBoolean()
+                && !latestBeta.equals(latestFinal) && compareVersions(latestBeta, currentVersion) > 0;
 
         Platform.runLater(() -> {
             xplaneUpdatesContent.getChildren().clear();
@@ -402,6 +404,13 @@ public class HomeController {
             xplaneUpdatesSection.setVisible(hasUpdates);
             xplaneUpdatesSection.setManaged(hasUpdates);
         });
+    }
+
+    /** Re-runs the X-Plane update check, honoring the current ignore-beta preference. */
+    public void refreshXPlaneUpdates() {
+        if (xPlane != null) {
+            AsyncHelper.runAsync(() -> checkUpdates(xPlane));
+        }
     }
 
     private HBox createXPlaneUpdateRow(String name, String currentVersion, XPlaneReleaseInfo stableOffer,
