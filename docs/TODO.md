@@ -13,6 +13,11 @@
 - navigraph utilities as tools?
 
 ## Scenery
+- handle MisterX https://forums.x-plane.org/files/file/28167-misterx-library-and-static-aircraft-extension/
+- hand HandyObjects https://forums.x-plane.org/files/file/24261-the-handy-objects-library/
+
+## Pugins
+-  inspect plugin binary Mach-O architectures for Apple Silicon (arm64) vs Intel compatibility
 
 ## Installer
 - Install from URL
