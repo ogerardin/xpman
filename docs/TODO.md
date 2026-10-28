@@ -9,8 +9,7 @@
 - Install livery from ZIP
 
 ## Nav data
-- Automated FAA CIFP download & install
-- Automatically update navdata set
+- Automatically update navdata set?
 - navigraph utilities as tools?
 
 ## Scenery
@@ -25,5 +24,4 @@ x-plane.org, ...)
 ## Misc
 - X-plane log analyzer
 - Generate flight plan for FMS / ATC
-- fix rendom order of context menu items
 - memorize column widths
