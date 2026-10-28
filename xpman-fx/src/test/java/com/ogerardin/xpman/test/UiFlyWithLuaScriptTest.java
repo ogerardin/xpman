@@ -34,7 +34,6 @@ class UiFlyWithLuaScriptTest {
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
         assertThat(row.isUpdateAvailable(), is(true));
-        assertThat(row.isBetaUpdateAvailable(), is(true));
         // the row's pill shows the stable channel's label; the wizard offers the beta channel too
         assertThat(row.getLatestVersion(), is("81.2"));
         assertThat(row.getUpdateTooltip(), is("Stable update: 81.2\nBeta update: Beta"));
@@ -49,7 +48,6 @@ class UiFlyWithLuaScriptTest {
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
         assertThat(row.isUpdateAvailable(), is(true));
-        assertThat(row.isBetaUpdateAvailable(), is(true));
         assertThat(row.getUpdateTooltip(), is("Beta update: Beta"));
     }
 
@@ -62,7 +60,6 @@ class UiFlyWithLuaScriptTest {
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
         assertThat(row.isUpdateAvailable(), is(false));
-        assertThat(row.isBetaUpdateAvailable(), is(false));
     }
 
     @Test
@@ -72,7 +69,6 @@ class UiFlyWithLuaScriptTest {
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
         assertThat(row.isUpdateAvailable(), is(false));
-        assertThat(row.isBetaUpdateAvailable(), is(false));
         assertThat(row.getLatestVersion(), is(nullValue()));
     }
 

@@ -6,6 +6,7 @@ import com.ogerardin.xpman.util.jfx.WindowPositionHelper;
 import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.stage.Stage;
 import lombok.Getter;
 
 /**
@@ -34,6 +35,14 @@ public class SkunkcraftsUpdateWizard extends Wizard {
             "/fxml/install_wizard/skunkcrafts_page2.fxml"
         );
         WindowPositionHelper.setupSkunkcraftsWizard(this);
+        getDialog().setOnShown(_ -> {
+            Stage stage = (Stage) getDialog().getDialogPane().getScene().getWindow();
+            stage.setMinWidth(400);
+            stage.setMinHeight(300);
+            // Saved sizes can predate the channel section; never restore below the usable minimum.
+            stage.setWidth(Math.max(stage.getWidth(), stage.getMinWidth()));
+            stage.setHeight(Math.max(stage.getHeight(), stage.getMinHeight()));
+        });
     }
 
     public SkunkcraftsChannel getChannel() {

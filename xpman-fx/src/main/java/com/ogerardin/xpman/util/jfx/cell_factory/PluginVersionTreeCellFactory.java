@@ -26,7 +26,7 @@ public class PluginVersionTreeCellFactory implements Callback<TreeTableColumn<Pl
                 PluginRow row = getTableRow() == null ? null : getTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
                     setGraphic(SkunkcraftsUpdateUtil.updateAction(
-                            row.isBetaUpdateAvailable(), row.getUpdateTooltip(), row::skunkcraftsUpdate));
+                            false, row.getUpdateTooltip(), row::skunkcraftsUpdate));
                     setContentDisplay(ContentDisplay.RIGHT);
                 }
             }

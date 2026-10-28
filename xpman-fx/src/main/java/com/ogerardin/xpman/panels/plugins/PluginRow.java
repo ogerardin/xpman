@@ -21,10 +21,6 @@ public interface PluginRow extends SwitchRow {
     
     boolean isUpdateAvailable();
 
-    default boolean isBetaUpdateAvailable() {
-        return false;
-    }
-    
     boolean getSystem();
     
     boolean isScript();

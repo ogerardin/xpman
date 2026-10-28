@@ -11,7 +11,7 @@ Some addons additionally ship a `skunkcrafts_updater_beta.cfg` file, declaring a
 An update is available when the addon's files actually differ from the ones the repository publishes — XPman compares the local files' checksums against the remote channel's file list, exactly like the original Skunkcrafts Updater does. Version numbers alone never decide: an addon whose version label changed but whose files did not is reported as up to date, not as an update.
 
 - The Home dashboard shows an **Updates Available** section grouped by category, with one row per addon showing all offered channel versions together and one **Update…** button.
-- Aircraft cards and the Scenery and Plugins Version columns show the same **Update…** action. A **Beta available** marker appears when beta content is offered.
+- Aircraft cards and the Scenery and Plugins Version columns show the same **Update…** action. Aircraft cards additionally show **Beta available** when beta content is offered; plugin and scenery rows keep channel versions in the tooltip only.
 - The **Update…** button's tooltip lists the available channels and their versions; when both are available, it lists both.
 - Library tiles show **N updates** badges, counting addons (an addon with both channels pending counts once).
 - Disabled plugins, scenery, and FlyWithLua scripts are excluded from update markers, dashboard counts and rows, and update actions. Aircraft are not disableable.
@@ -36,18 +36,18 @@ Every entry point lands on a channel that has files to download: Stable when bot
 
 ## Skunkcrafts Update Wizard
 
-The wizard window is resizable, and remembers its size between sessions; it always opens centered. The bounds are kept unchanged when navigating between pages.
+The wizard window is resizable, and remembers its size between sessions; it always opens centered. The bounds are kept unchanged when navigating between pages. The window has a minimum usable size, including when restoring an older saved size. On the review page, the content scrolls when space is limited so the navigation buttons remain visible.
 
 ### Page 1 — Review
 
 *"Review update information."*
 
-Shows:
+Shows the add-on name as a heading, a compact two-column summary, and the download status below a separator:
 
-- **Addon:** name
-- **Current version:** installed version
+- **Heading:** add-on name
+- **Installed:** installed version
 - **Channel:** a Stable/Beta choice when both channels have updates, otherwise the name of the only offered channel. Stable is selected initially when both are available.
-- **Available version:** latest version of the selected channel (or "?" when its label could not be fetched)
+- **Available:** latest version of the selected channel (or "?" when its label could not be fetched)
 - **Update status:** "N file(s) to update (size)", or "Already up to date", or "Files are up to date — local and remote versions differ" when the version label drifted without any file change
 
 **Next** is disabled when there is nothing to update.

@@ -40,11 +40,6 @@ public class UiPlugin implements PluginRow {
     }
 
     @Override
-    public boolean isBetaUpdateAvailable() {
-        return plugin.isSkunkcraftsBetaUpdateAvailable();
-    }
-
-    @Override
     public String getUpdateTooltip() {
         return com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(plugin);
     }

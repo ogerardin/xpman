@@ -25,7 +25,7 @@ public class SceneryVersionCellFactory implements TableCellFactory<UiSceneryEntr
                 UiSceneryEntry row = getTableRow() == null ? null : getTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
                     setGraphic(SkunkcraftsUpdateUtil.updateAction(
-                            row.getSceneryPackage().isSkunkcraftsBetaUpdateAvailable(),
+                            false,
                             SkunkcraftsUpdateUtil.updateTooltip(row.getSceneryPackage()), () -> {
                         new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(row.getSceneryPackage()).showAndWait();
                         row.getXPlane().getSceneryManager().reload();

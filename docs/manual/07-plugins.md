@@ -20,7 +20,7 @@ Plugins are displayed as a tree. Columns:
 | **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version. **Update…** appears when content is available; hover for offered channel versions. **Beta available** marks beta content |
+| **Version** | Installed version. **Update…** appears when content is available; hover for offered channel versions |
 
 The **Update…** button opens the Skunkcrafts channel-review wizard (see [Updating Add-ons](10-updating-addons.md)). It is available for plugins or FlyWithLua scripts with pending Skunkcrafts content. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
 
