@@ -1,1 +1,14 @@
+// Custom title page
+#v(4em)
+#align(center)[
+  #image("xpman-fx/src/main/resources/img/icon.png", width: 40%)
+  #v(2em)
+  #text(size: 24pt, weight: "bold")[XPman User Manual]
+  #v(1em)
+  #text(size: 14pt)[VERSION_PLACEHOLDER]
+  #v(1em)
+  #text(size: 12pt)[The XPman Team]
+]
+#pagebreak()
+
 #show heading.where(level: 1): it => { pagebreak(weak: true); it }

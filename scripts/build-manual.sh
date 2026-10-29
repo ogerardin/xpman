@@ -76,18 +76,19 @@ for f in "$MANUAL_DIR"/[0-9]*.md; do
 done
 
 echo "Building PDF: $OUTPUT_DIR/$PDF_NAME"
+# Generate temp header with version injected
+TEMP_HEADER="$OUTPUT_DIR/pdf-header-typst.tmp"
+sed "s|VERSION_PLACEHOLDER|Version ${VERSION} (${DATE})|g" "$MANUAL_DIR/pdf-header.typst" > "$TEMP_HEADER"
+
 pandoc \
     --pdf-engine=typst \
     --pdf-engine-opt="--font-path=$FONT_DIR" \
-    -H "$MANUAL_DIR/pdf-header.typst" \
+    -H "$TEMP_HEADER" \
     --toc \
     --toc-depth=2 \
     --resource-path="$REPO_ROOT" \
     -V "mainfont=Arimo" \
     -V "linkcolor=0969DA" \
-    -M "title=XPman User Manual" \
-    -M "subtitle=Version ${VERSION} (${DATE})" \
-    -M "author=The XPman Team" \
     -o "$OUTPUT_DIR/$PDF_NAME" \
     "$PDF_SOURCE_DIR"/[0-9]*.md
 
