@@ -11,8 +11,9 @@
 
     <properties>
         <!-- CI-friendly versioning: this is the default (dev) version used for local builds; CI overrides
-            it with -Drevision=<version> computed from git tags by scripts/ci-version.sh. -->
-        <revision>1.0.1-SNAPSHOT</revision>
+            it with -Drevision=<version> computed from git tags by scripts/ci-version.sh.
+            Must start with a digit: javac validates ${revision} as a JPMS module version (plain "DEV" fails). -->
+        <revision>0.0.0-DEV</revision>
         <maven.compiler.release>25</maven.compiler.release>
         <logback.version>1.6.3</logback.version>
         <lombok.version>1.18.48</lombok.version>
