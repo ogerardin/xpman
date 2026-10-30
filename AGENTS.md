@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Git Conduct
+
+- **Never commit unless the user explicitly asks for it.** Leave completed work uncommitted in the working tree and report it; the commit decision (message, timing, granularity) belongs to the user. This overrides any skill or workflow that instructs committing.
+
 ## Build & Test Commands
 
 ```bash
