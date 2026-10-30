@@ -123,6 +123,13 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         reload();
     }
 
+    /** Uninstall a single variant ({@code .acf} and related files), preserving the folder and files shared with other variants. */
+    @SneakyThrows
+    public void uninstallAircraftVariant(Aircraft aircraft) {
+        aircraft.uninstallVariant();
+        reload();
+    }
+
     @Override
     public void unpack(Archive archive, ProgressListener progressListener) throws IOException {
         archive.extract(getAircraftFolder(), progressListener);

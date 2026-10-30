@@ -1,7 +1,6 @@
 # TODO
 
 ## Aircraft
-- uninstall single variant
 - restore the "disabled aircraft" concept (by using disabled folder, similar to plugins)
 - Improve property browser: shortcuts to common items, help, sort, filter
 - Fly aircraft directly

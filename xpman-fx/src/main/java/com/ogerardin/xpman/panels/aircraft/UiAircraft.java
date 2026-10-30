@@ -44,6 +44,28 @@ public class UiAircraft {
     }
 
     @SuppressWarnings("unused")
+    @Order(15)
+    @Label("'Uninstall this variant'")
+    @EnabledIf("isMultiVariant")
+    @Confirm(value = """
+            'Only variant "' + aircraft.name + '" (' + aircraft.acfFile.file.fileName + ') will be uninstalled. ' +
+            'Files shared with the other variants of this aircraft, including liveries, will be preserved.
+
+            Press OK to continue.'
+            """, alertType = Alert.AlertType.WARNING)
+    public void uninstallVariant() {
+        getXPlane().getAircraftManager().uninstallAircraftVariant(aircraft);
+    }
+
+    /** True when other variants visible in the aircraft panel share this aircraft's folder.
+     * Named with the {@code is} prefix so the menu introspection skips it (not a menu action). */
+    public boolean isMultiVariant() {
+        return getXPlane().getAircraftManager()
+                .getAircraftByFolder(aircraft.getAcfFile().getFile().getParent())
+                .size() > 1;
+    }
+
+    @SuppressWarnings("unused")
     @Order(20)
     @Label("'Uninstall aircraft'")
     @Confirm(value = """

@@ -235,6 +235,29 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
                 .append(UpdateAvailableInspection.INSTANCE.inspect(this));
     }
 
+    /**
+     * The files that belong to this variant alone: the {@code .acf} file and its derived icon files.
+     * Folder-level files shared with other variants of the same aircraft (objects, liveries) are excluded.
+     */
+    public List<Path> getVariantFiles() {
+        return Stream.of(
+                        getAcfFile().getFile(),
+                        getAcfDerivedFileIfExists("_icon11.png"),
+                        getAcfDerivedFileIfExists("_icon11_thumb.png"))
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    /**
+     * Uninstall this variant only, by moving {@link #getVariantFiles()} to the trash;
+     * the aircraft folder and files shared with other variants are preserved.
+     */
+    public void uninstallVariant() throws IOException {
+        for (Path file : getVariantFiles()) {
+            com.sun.jna.platform.FileUtils.getInstance().moveToTrash(file.toFile());
+        }
+    }
+
     @Override
     public void uninstall() throws IOException {
         Path folder = acfFile.getFile().getParent();
