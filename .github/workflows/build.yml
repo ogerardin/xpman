@@ -297,7 +297,7 @@ jobs:
                 xargs -r gh release delete --yes --cleanup-tag
               if gh release create "$VERSION" artifacts/* \
                   --target "$GITHUB_SHA" \
-                  --title "$VERSION ($DATE)" \
+                  --title "$VERSION" \
                   --notes-file "${RUNNER_TEMP}/release-notes.md"; then
                 break
               fi
