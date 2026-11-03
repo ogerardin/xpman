@@ -148,8 +148,7 @@ class PropertiesStageTest {
     @Test
     void aircraftPropertiesActionReloadsAfterItReturns() throws Exception {
         var onSuccess = java.util.Arrays.stream(UiAircraft.class.getMethod("properties").getDeclaredAnnotations())
-                .filter(annotation -> annotation.annotationType().getName()
-                        .equals("com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess"))
+                .filter(annotation -> annotation instanceof com.ogerardin.xpman.util.jfx.menu.annotation.OnSuccess)
                 .findFirst();
 
         assertTrue(onSuccess.isPresent());

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import java.util.zip.CRC32;
 
@@ -60,7 +61,8 @@ public class SkunkcraftsUpdater {
      * Global user preference (registered once at UI startup, read live): when true the beta
      * channel is treated as unavailable wherever availability is checked.
      */
-    public static volatile BooleanSupplier ignoreBetaChannel = () -> false;
+    public static final AtomicReference<BooleanSupplier> ignoreBetaChannel = 
+            new AtomicReference<>(() -> false);
 
     /**
      * Checks if the addon is locked by the developer (updates temporarily unavailable).
@@ -113,17 +115,21 @@ public class SkunkcraftsUpdater {
     public String fetchRemoteVersion(String moduleUrl) {
         String cfgUrl = normalizeBaseUrl(moduleUrl) + CFG_FILENAME;
         try {
-            String content = fetchText(cfgUrl);
-            for (String line : content.split(LINE_SPLIT)) {
-                String[] parts = line.trim().split("\\|", 2);
-                if (parts.length >= 2 && KEY_VERSION.equalsIgnoreCase(parts[0].trim())) {
-                    return parts[1].trim();
-                }
-            }
+            return fetchRemoteVersionChecked(moduleUrl);
         } catch (java.net.SocketTimeoutException e) {
             log.warn("Timeout fetching remote version from {}: {}", cfgUrl, e.getMessage());
         } catch (IOException e) {
             log.warn("Failed to fetch remote version from {}: {}", cfgUrl, e.getMessage());
+        }
+        return null;
+    }
+
+    /** Returns an absent label as null, but does not swallow a failed metadata request. */
+    public String fetchRemoteVersionChecked(String moduleUrl) throws IOException {
+        String content = fetchText(normalizeBaseUrl(moduleUrl) + CFG_FILENAME);
+        for (String line : content.split(LINE_SPLIT)) {
+            String[] parts = line.trim().split("\\|", 2);
+            if (parts.length >= 2 && KEY_VERSION.equalsIgnoreCase(parts[0].trim())) return parts[1].trim();
         }
         return null;
     }
@@ -134,8 +140,7 @@ public class SkunkcraftsUpdater {
     public List<WhitelistEntry> fetchRemoteWhitelist(String moduleUrl) {
         String url = normalizeBaseUrl(moduleUrl) + WHITELIST_FILENAME;
         try {
-            String content = fetchText(url);
-            return parseWhitelist(content);
+            return fetchRemoteWhitelistChecked(moduleUrl);
         } catch (java.net.SocketTimeoutException e) {
             log.warn("Timeout fetching remote whitelist from {}: {}", url, e.getMessage());
             return List.of();
@@ -143,6 +148,10 @@ public class SkunkcraftsUpdater {
             log.warn("Failed to fetch remote whitelist from {}: {}", url, e.getMessage());
             return List.of();
         }
+    }
+
+    private List<WhitelistEntry> fetchRemoteWhitelistChecked(String moduleUrl) throws IOException {
+        return parseWhitelist(fetchText(normalizeBaseUrl(moduleUrl) + WHITELIST_FILENAME));
     }
 
     /**
@@ -297,9 +306,9 @@ public class SkunkcraftsUpdater {
      *
      * @param baseFolder the base folder of the addon
      * @param config the Skunkcrafts configuration
-     * @return the summary of files to update, or an empty summary if computation fails
+     * @return the summary of files to update; discovery and local read failures propagate
      */
-    public SkunkcraftsUpdateSummary computeFilesToUpdateSummary(Path baseFolder, SkunkcraftsConfig config) {
+    public SkunkcraftsUpdateSummary computeFilesToUpdateSummary(Path baseFolder, SkunkcraftsConfig config) throws IOException {
         List<WhitelistEntry> filesToUpdate = fetchAndDiff(baseFolder, config);
         long totalSize = filesToUpdate.stream()
                 .mapToLong(entry -> entry.expectedSize() != null ? entry.expectedSize() : fetchRemoteFileSize(config.moduleUrl(), entry))
@@ -329,13 +338,8 @@ public class SkunkcraftsUpdater {
         }
     }
 
-    private static List<WhitelistEntry> fetchAndDiff(Path baseFolder, SkunkcraftsConfig config) {
-        try {
-            return computeFilesToUpdate(baseFolder, fetchRemoteWhitelist(config.moduleUrl()), ignoreSet(baseFolder, config));
-        } catch (Exception e) {
-            log.warn("Failed to compute files to update", e);
-            return List.of();
-        }
+    private static List<WhitelistEntry> fetchAndDiff(Path baseFolder, SkunkcraftsConfig config) throws IOException {
+        return computeFilesToUpdate(baseFolder, fetchRemoteWhitelistChecked(config.moduleUrl()), ignoreSet(baseFolder, config));
     }
 
     /** The ignore set of a channel: its remote blacklist, the local user ignores, and liveries when excluded. */
@@ -369,34 +373,37 @@ public class SkunkcraftsUpdater {
      * The beta channel's latest version label is fetched only when the beta channel is offered.
      */
     public SkunkcraftsChannelStatus computeChannelStatus(Path baseFolder, SkunkcraftsConfig stableCfg, SkunkcraftsConfig betaCfg) {
+        try {
+            var status = computeChannelStatusChecked(baseFolder, stableCfg, betaCfg);
+            return new SkunkcraftsChannelStatus(status.stableUpdateAvailable(), status.betaUpdateAvailable(),
+                    status.betaUpdateAvailable() ? fetchRemoteVersion(betaCfg.moduleUrl()) : null);
+        } catch (IOException e) {
+            log.warn("Failed to check channel status", e);
+            if (betaCfg != null) return computeChannelStatus(baseFolder, stableCfg, null);
+            return SkunkcraftsChannelStatus.NONE;
+        }
+    }
+
+    /** Checks content availability without version labels, preserving discovery failures. */
+    public SkunkcraftsChannelStatus computeChannelStatusChecked(Path baseFolder, SkunkcraftsConfig stableCfg, SkunkcraftsConfig betaCfg) throws IOException {
         if (stableCfg == null || stableCfg.moduleUrl() == null) {
             return SkunkcraftsChannelStatus.NONE;
         }
 
-        List<WhitelistEntry> stableWhitelist = fetchRemoteWhitelist(stableCfg.moduleUrl());
-        boolean stable = hasFilesToUpdate(baseFolder, stableWhitelist, ignoreSet(baseFolder, stableCfg));
+        List<WhitelistEntry> stableWhitelist = fetchRemoteWhitelistChecked(stableCfg.moduleUrl());
+        boolean stable = !computeFilesToUpdate(baseFolder, stableWhitelist, ignoreSet(baseFolder, stableCfg)).isEmpty();
 
         if (betaCfg == null || betaCfg.moduleUrl() == null) {
             return new SkunkcraftsChannelStatus(stable, false, null);
         }
 
-        List<WhitelistEntry> betaWhitelist = fetchRemoteWhitelist(betaCfg.moduleUrl());
+        List<WhitelistEntry> betaWhitelist = fetchRemoteWhitelistChecked(betaCfg.moduleUrl());
         if (betaWhitelist.equals(stableWhitelist)) {
             return new SkunkcraftsChannelStatus(stable, false, null);
         }
 
-        boolean beta = hasFilesToUpdate(baseFolder, betaWhitelist, ignoreSet(baseFolder, betaCfg));
-        String betaLatest = beta ? fetchRemoteVersion(betaCfg.moduleUrl()) : null;
-        return new SkunkcraftsChannelStatus(stable, beta, betaLatest);
-    }
-
-    private static boolean hasFilesToUpdate(Path baseFolder, List<WhitelistEntry> whitelist, Set<String> ignoreSet) {
-        try {
-            return !computeFilesToUpdate(baseFolder, whitelist, ignoreSet).isEmpty();
-        } catch (IOException e) {
-            log.warn("Failed to compute files to update", e);
-            return false;
-        }
+        boolean beta = !computeFilesToUpdate(baseFolder, betaWhitelist, ignoreSet(baseFolder, betaCfg)).isEmpty();
+        return new SkunkcraftsChannelStatus(stable, beta, null);
     }
 
     /**
@@ -457,7 +464,7 @@ public class SkunkcraftsUpdater {
         }
 
         progress.progress(-1.0, "Fetching remote whitelist...");
-        List<WhitelistEntry> whitelist = fetchRemoteWhitelist(config.moduleUrl());
+        List<WhitelistEntry> whitelist = fetchRemoteWhitelistChecked(config.moduleUrl());
 
         Set<String> ignoreSet = new HashSet<>();
         ignoreSet.addAll(fetchRemoteBlacklist(config.moduleUrl()));

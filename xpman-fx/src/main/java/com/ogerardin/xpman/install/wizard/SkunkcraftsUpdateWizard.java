@@ -1,7 +1,7 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.update.UpdateChannel;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
 import com.ogerardin.xpman.util.jfx.WindowPositionHelper;
 import com.ogerardin.xpman.util.jfx.wizard.Wizard;
 import javafx.beans.property.ObjectProperty;
@@ -17,19 +17,19 @@ import lombok.Getter;
 public class SkunkcraftsUpdateWizard extends Wizard {
 
     @Getter
-    private final SkunkcraftsUpdatable updatable;
+    private final SkunkcraftsUpdateProvider updatable;
 
-    private final ObjectProperty<SkunkcraftsChannel> channel =
-            new SimpleObjectProperty<>(SkunkcraftsChannel.STABLE);
+    @Getter private final String addonName;
+    @Getter private final Runnable onUpdated;
 
-    public SkunkcraftsUpdateWizard(SkunkcraftsUpdatable updatable) {
-        this(updatable, SkunkcraftsChannel.STABLE);
-    }
+    private final ObjectProperty<UpdateChannel> channel =
+            new SimpleObjectProperty<>(UpdateChannel.RELEASE);
 
-    public SkunkcraftsUpdateWizard(SkunkcraftsUpdatable updatable, SkunkcraftsChannel requestedChannel) {
+    public SkunkcraftsUpdateWizard(String addonName, SkunkcraftsUpdateProvider updatable, Runnable onUpdated) {
         super("Skunkcrafts Update");
         this.updatable = updatable;
-        this.channel.set(requestedChannel);
+        this.addonName = addonName;
+        this.onUpdated = onUpdated;
         setFlow(
             "/fxml/install_wizard/skunkcrafts_page1.fxml",
             "/fxml/install_wizard/skunkcrafts_page2.fxml"
@@ -45,15 +45,15 @@ public class SkunkcraftsUpdateWizard extends Wizard {
         });
     }
 
-    public SkunkcraftsChannel getChannel() {
+    public UpdateChannel getChannel() {
         return channel.get();
     }
 
-    public void setChannel(SkunkcraftsChannel channel) {
+    public void setChannel(UpdateChannel channel) {
         this.channel.set(channel);
     }
 
-    public ObjectProperty<SkunkcraftsChannel> channelProperty() {
+    public ObjectProperty<UpdateChannel> channelProperty() {
         return channel;
     }
 }

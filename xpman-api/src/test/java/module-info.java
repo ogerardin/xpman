@@ -32,5 +32,6 @@ module xpman.api.test {
     opens com.ogerardin.xplane.test.skunkcrafts to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.inspection to org.junit.platform.commons;
     opens com.ogerardin.xplane.test.lua to org.junit.platform.commons;
+    opens com.ogerardin.xplane.test.update to org.junit.platform.commons;
 
 }

@@ -43,7 +43,7 @@ public class GeneralController implements SettingsPage {
     private void refreshUpdateDisplays() {
         XPlane xPlane = mainController.xPlaneProperty().get();
         if (xPlane == null) return;
-        // manager reloads fire LOADED, which re-renders every panel's update badges and the Home Skunkcrafts sections
+        // Manager reloads refresh provider discovery and re-render update badges and Home sections.
         xPlane.getAircraftManager().reload();
         xPlane.getSceneryManager().reload();
         xPlane.getPluginManager().reload();

@@ -75,9 +75,9 @@ class SceneryManagerSystemExclusionTest {
         SceneryEntry entry = manager.getSceneryEntries().getFirst();
 
         assertThat(entry.getSceneryPackage().isEnabled(), is(false));
-        assertThat(entry.getSceneryPackage().isSkunkcraftsUpdatable(), is(false));
+        assertThat(entry.getSceneryPackage().getUpdateStatus().state(), is(com.ogerardin.xplane.update.UpdateStatus.State.DISABLED));
         manager.enable(entry);
         assertThat(entry.getSceneryPackage().isEnabled(), is(true));
-        assertThat(entry.getSceneryPackage().isSkunkcraftsUpdatable(), is(true));
+        assertThat(entry.getSceneryPackage().getUpdateStatus().state(), is(com.ogerardin.xplane.update.UpdateStatus.State.UNKNOWN));
     }
 }

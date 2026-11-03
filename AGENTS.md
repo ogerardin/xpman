@@ -97,6 +97,68 @@ mvn test -pl xpman-api -Dtest=ParserTest
 - Tests that need a real X-Plane install use `@EnableOnLocalXPlane*` annotations (in `com.ogerardin.test.util`) to skip automatically when no matching X-Plane installation is found; `@EnableOnAircraftPresent` and `@EnableOnSceneryPresent` additionally gate on specific add-on files.
 - Test resources include sample X-Plane files (ACF, OBJ, scenery_packs.ini, server lists) in `xpman-api/src/test/resources/`.
 
+## SonarQube Analysis
+
+### Prerequisites
+
+1. **Install sonar-scanner** - choose one of:
+   - Package manager: `brew install sonar-scanner` (macOS), `apt install sonar-scanner` (Debian/Ubuntu), `choco install sonar-scanner` (Windows)
+   - Manual download from https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scanners/sonarscanner/
+   - Docker image: `sonarsource/sonar-scanner-cli`
+
+2. **Configure SonarQube server** - set environment variables:
+   ```bash
+   export SONAR_HOST_URL=<your-sonarqube-url>  # e.g., http://localhost:9000 or https://sonarcloud.io
+   export SONAR_TOKEN=<your-authentication-token>
+   ```
+
+3. **Generate authentication token**:
+   - Navigate to your SonarQube instance → My Account → Security
+   - Generate a token with "Execute Analysis" permission
+   - Store securely (e.g., in a secrets manager or shell profile)
+
+### Running Analysis
+
+**Option 1: Using the script** (recommended)
+```bash
+./generate-sonar-properties.sh
+```
+
+The script requires `SONAR_TOKEN` and optionally `SONAR_HOST_URL` (defaults to http://localhost:9000). It will:
+1. Build the project with `mvn -B -DskipTests clean package`
+2. Resolve all Maven dependencies using the reactor
+3. Generate `sonar-project.properties` with the complete classpath
+4. Run the SonarQube analysis
+
+**Option 2: Manual analysis**
+```bash
+# Build the project
+mvn -B -DskipTests clean package
+
+# Run the scanner
+sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN
+```
+
+### Viewing Results
+
+- **Dashboard**: `$SONAR_HOST_URL/dashboard?id=com.ogerardin.xplane%3Axpman`
+- **Issues**: `$SONAR_HOST_URL/project/issues?id=com.ogerardin.xplane%3Axpman`
+
+### Configuration
+
+- **Properties file**: `sonar-project.properties` (auto-generated, do not edit manually)
+- **Project key**: `com.ogerardin.xplane:xpman`
+- **Coverage**: Not configured (tests skipped by default)
+
+### Notes
+
+- The analysis includes all compiled classes from both `xpman-api` and `xpman-fx` modules
+- Test coverage is not measured (JaCoCo not configured) - SonarQube reports 0% but this is **unmeasured**, not verified
+- The scanner resolves all Maven dependencies automatically via the Maven reactor
+- Uncommitted changes will trigger "missing blame information" warnings (safe to ignore)
+- SonarQube may report "unresolved imports" for Lombok-generated symbols (`@Slf4j` log field, etc.) - this is a known SonarQube limitation with Lombok code generation, not actual missing dependencies
+- The script currently hardcodes `localhost:9000` and `0.0.0-DEV` artifact versions; manual analysis with environment variables is more portable
+
 ## User Manual
 
 - The user manual lives in `docs/manual/` (Markdown chapters `00-*.md` … `12-*.md`). It is rendered to a PDF by `scripts/build-manual.sh` (pandoc + pinned Typst + pinned pandoc, Arimo font) and published via the CI `docs` job as a release artifact; on every `main` push the same script also syncs the chapters to the GitHub Wiki (`ogerardin/xpman.wiki`) using the `WIKI_TOKEN` Actions secret.

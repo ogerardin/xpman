@@ -17,6 +17,7 @@ organize your aircraft, scenery, plugins, and tools from a single desktop applic
 - **X-Plane updates** — Get notified when a new X-Plane version is available and start the updater.
 - **Disk usage** — View disk space consumed by each category (aircraft, scenery, plugins, etc.).
 - **Skunkcrafts Updater integration** — Detect and apply updates for addons that support the Skunkcrafts Updater protocol.
+- **Manual update discovery** — Find published updates for supported Google Drive, X-Plane.org and IVAO add-ons and open their download pages.
 
 ## Installation
 

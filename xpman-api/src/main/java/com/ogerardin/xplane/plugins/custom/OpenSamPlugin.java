@@ -67,7 +67,7 @@ public class OpenSamPlugin extends Plugin {
      */
     @Override
     public String getVersion() {
-        SkunkcraftsConfig cfg = getSkunkcraftsConfig();
+        SkunkcraftsConfig cfg = com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater.findConfig(getBaseFolder());
         return cfg != null && cfg.version() != null ? cfg.version() : super.getVersion();
     }
 

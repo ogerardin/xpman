@@ -6,9 +6,10 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.MissingReferencedTexturesInspection;
 import com.ogerardin.xplane.inspection.impl.MissingSceneryDataInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
+import com.ogerardin.xplane.update.*;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
+import java.util.Optional;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.FileUtils;
 import lombok.*;
@@ -29,12 +30,12 @@ import java.util.Map;
  * {@code scenery_packs.ini} entries), tile and object counts, and whether the package
  * is a library or contains an airport. Implements {@link Inspectable} for missing-data
  * and missing-texture checks plus update-available inspection, {@link Uninstallable}
- * to move the folder to trash, and {@link SkunkcraftsUpdatable} for Skunkcrafts updater
+ * to move the folder to trash, and {@link Updatable} for provider-based updater
  * integration.</p>
  */
 @Data
 @Slf4j
-public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUpdatable {
+public class SceneryPackage implements Inspectable, Uninstallable, Updatable {
 
     public static final String EARTH_NAV_DATA = "Earth nav data";
     public static final String OBJECTS = "Objects";
@@ -94,31 +95,21 @@ public class SceneryPackage implements Inspectable, Uninstallable, SkunkcraftsUp
 
     /** The scenery version, falling back to its Skunkcrafts config when present. */
     public String getVersion() {
-        SkunkcraftsConfig config = getSkunkcraftsConfig();
+        SkunkcraftsConfig config = SkunkcraftsUpdater.findConfig(folder);
         return config != null ? config.version() : null;
     }
 
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
+    private final Optional<UpdateProvider> updateProvider = loadUpdateProvider();
 
-    @Override
-    public Path getSkunkcraftsFolder() {
-        return folder;
+    private Optional<UpdateProvider> loadUpdateProvider() {
+        var skunkcraftsConfig = SkunkcraftsUpdater.findConfig(folder);
+        if (skunkcraftsConfig == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new SkunkcraftsUpdateProvider(this::getFolder, skunkcraftsConfig,
+                SkunkcraftsUpdater.findBetaConfig(folder), this::getVersion, this::isEnabled));
     }
-
-    @Override
-    public boolean isSkunkcraftsUpdatable() {
-        return isEnabled() && SkunkcraftsUpdatable.super.isSkunkcraftsUpdatable();
-    }
-
-    @Getter(lazy = true)
-    private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
-            ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
-            : null;
-
-    /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
-    @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
 
     /** An optional URL that points to an icon for this scenery. */
     public URL getIconUrl() {

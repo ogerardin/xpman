@@ -41,6 +41,9 @@ public class SkunkcraftsServerFixture implements AutoCloseable {
         return this;
     }
 
+    /** Makes a previously available endpoint return 404. */
+    public void remove(String path) { content.remove(path); }
+
     private void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath().replaceFirst("^/", "");
         String body = content.get(path);

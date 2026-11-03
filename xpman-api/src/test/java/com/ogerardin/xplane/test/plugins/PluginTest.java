@@ -90,9 +90,9 @@ class PluginTest {
         Files.writeString(xplFile.getParent().resolve("skunkcrafts_updater.cfg"), "module|https://example.com/\n");
         Plugin plugin = new Plugin(newXPlane(), xplFile);
 
-        assertThat(plugin.isSkunkcraftsUpdatable(), is(true));
+        assertThat(plugin.getUpdateStatus().state(), is(com.ogerardin.xplane.update.UpdateStatus.State.UNKNOWN));
         plugin.setEnabled(false);
-        assertThat(plugin.isSkunkcraftsUpdatable(), is(false));
+        assertThat(plugin.getUpdateStatus().state(), is(com.ogerardin.xplane.update.UpdateStatus.State.DISABLED));
     }
 
     @Test

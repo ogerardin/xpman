@@ -36,12 +36,12 @@ public class UiPlugin implements PluginRow {
 
     @Override
     public boolean isUpdateAvailable() {
-        return plugin.isAnySkunkcraftsUpdateAvailable();
+        return plugin.isUpdateAvailable();
     }
 
     @Override
     public String getUpdateTooltip() {
-        return com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(plugin);
+        return com.ogerardin.xpman.util.jfx.UpdateUtil.updateTooltip(plugin);
     }
 
     @Order(10)
@@ -109,18 +109,19 @@ Press OK to continue.'
     @SuppressWarnings("unused")
     @Override
     @Order(90)
-    @Label("'Update…'")
-    @EnabledIf("anySkunkcraftsUpdateAvailable")
-    public void skunkcraftsUpdate() {
-        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(plugin).showAndWait();
-        plugin.getXPlane().getPluginManager().reload();
+    @Label("updateActionLabel")
+    @EnabledIf("updateAvailable")
+    public void update() {
+        com.ogerardin.xpman.util.jfx.UpdateUtil.showUpdates(plugin, () -> plugin.getXPlane().getPluginManager().reload());
     }
+
+    @Override public String getUpdateActionLabel() { return com.ogerardin.xpman.util.jfx.UpdateUtil.actionLabel(plugin); }
 
     @SuppressWarnings("unused")
     @Order(100)
     @Label("'Skunkcrafts: Locked by developer'")
-    @EnabledIf("skunkcraftsLocked")
-    public void skunkcraftsLocked() {
+    @EnabledIf("updateLocked")
+    public void showUpdateLock() {
         new Alert(Alert.AlertType.INFORMATION,
                 "This plugin is currently locked by the developer. " +
                 "The developer may be uploading files. Please try again later.")

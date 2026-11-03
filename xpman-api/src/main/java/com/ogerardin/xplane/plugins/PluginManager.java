@@ -5,7 +5,8 @@ import com.ogerardin.xplane.install.InstallTarget;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.update.Updatable;
+import com.ogerardin.xplane.update.UpdateProvider;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.FileUtils;
 import com.ogerardin.xplane.util.IntrospectionHelper;
@@ -129,21 +130,15 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
         items.forEach(p -> {
             p.getVersion();
-            p.getLatestVersion();
-            // pre-warm the channel status (content check) too, else the UI would pay it on the FX thread
-            p.getSkunkcraftsChannelStatus();
+            p.getUpdateProvider().ifPresent(UpdateProvider::checkForUpdates);
             // pre-warm FlyWithLua scripts here (async thread) so that the UI rebuild doesn't
             // pay the lazy lua header parsing cost on the FX thread
             if (p instanceof FlyWithLua fwl) {
-                // pre-warm the Skunkcrafts version and channel status of updatable scripts too, else the script
-                // row's update pill would fetch it on the FX thread
+                // Discover hosted-script updates before their rows render on the FX thread.
                 fwl.getScripts().stream()
-                        .filter(SkunkcraftsUpdatable.class::isInstance)
-                        .map(SkunkcraftsUpdatable.class::cast)
-                        .forEach(u -> {
-                            u.getSkunkcraftsLatestVersion();
-                            u.getSkunkcraftsChannelStatus();
-                        });
+                        .filter(Updatable.class::isInstance)
+                        .map(Updatable.class::cast)
+                        .forEach(u -> u.getUpdateProvider().ifPresent(UpdateProvider::checkForUpdates));
             }
         });
 

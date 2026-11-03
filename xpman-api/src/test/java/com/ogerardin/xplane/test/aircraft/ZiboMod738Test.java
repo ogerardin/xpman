@@ -30,7 +30,7 @@ class ZiboMod738Test {
                 file("XP12"),
                 file("XP11")
         );
-        assertThat(ZiboMod738.GoogleDriveChannel.extractLatestVersion(files), is("4.05.35"));
+        assertThat(ZiboMod738.GoogleDriveUpdateProvider.extractLatestVersion(files), is("4.05.35"));
     }
 
     @Test
@@ -43,7 +43,7 @@ class ZiboMod738Test {
         );
         // rc5_7 patch version-part ("4_00_rc5") doesn't match the full release version-part ("4_00_rc2_0"),
         // so the patch is not applied; latest = full version only.
-        assertThat(ZiboMod738.GoogleDriveChannel.extractLatestVersion(files), is("4.00.rc2.0"));
+        assertThat(ZiboMod738.GoogleDriveUpdateProvider.extractLatestVersion(files), is("4.00.rc2.0"));
     }
 
     @Test
@@ -53,7 +53,7 @@ class ZiboMod738Test {
                 file("B738X_3_42_10.zip"),
                 file("B738X_3_42_03.zip")
         );
-        assertThat(ZiboMod738.GoogleDriveChannel.extractLatestVersion(files), is("3.42.10"));
+        assertThat(ZiboMod738.GoogleDriveUpdateProvider.extractLatestVersion(files), is("3.42.10"));
     }
 
     @Test
@@ -62,7 +62,7 @@ class ZiboMod738Test {
                 file("B738X_XP12_4_05_35.zip"),
                 file("ZIBOmod installation guide.pdf")
         );
-        assertThat(ZiboMod738.GoogleDriveChannel.extractLatestVersion(files), is(nullValue()));
+        assertThat(ZiboMod738.GoogleDriveUpdateProvider.extractLatestVersion(files), is(nullValue()));
     }
 
     @Test
@@ -71,7 +71,7 @@ class ZiboMod738Test {
                 file("B737-800X_XP12_4_05_full.zip"),
                 file("ZIBOmod installation guide.pdf")
         );
-        assertThat(ZiboMod738.GoogleDriveChannel.extractLatestVersion(files), is("4.05"));
+        assertThat(ZiboMod738.GoogleDriveUpdateProvider.extractLatestVersion(files), is("4.05"));
     }
 
     @Test

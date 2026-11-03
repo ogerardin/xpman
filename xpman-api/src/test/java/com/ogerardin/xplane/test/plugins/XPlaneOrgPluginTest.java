@@ -16,6 +16,7 @@ import java.nio.file.Path;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests version reporting of plugins distributed via X-Plane.org.
@@ -36,6 +37,7 @@ class XPlaneOrgPluginTest {
                 exchange -> respond(exchange, "name|SGES\nversion|81.2\nmodule|http://127.0.0.1:" + port + "/sges\n"));
         server.createContext("/orgpage",
                 exchange -> respond(exchange, "<html>\"softwareVersion\": \"2.8.17\"</html>"));
+        server.createContext("/sges/skunkcrafts_updater_whitelist.txt", exchange -> respond(exchange, ""));
         server.start();
         try {
             Path pluginFolder = tempDir.resolve("Resources/plugins/FlyWithLua");
@@ -48,7 +50,8 @@ class XPlaneOrgPluginTest {
             XPlaneOrgPlugin plugin = new XPlaneOrgPlugin(new XPlane(tempDir), xplFile,
                     "FlyWithLua", "test plugin", "http://127.0.0.1:" + port + "/orgpage");
 
-            assertThat(plugin.isSkunkcraftsUpdatable(), is(true));
+            plugin.getUpdateProvider().orElseThrow().checkForUpdates();
+            assertThat(plugin.getUpdateProvider().orElseThrow().getName(), is("Skunkcrafts"));
             assertThat(plugin.getLatestVersion(), is("81.2"));
         } finally {
             server.stop(0);
@@ -61,5 +64,30 @@ class XPlaneOrgPluginTest {
         try (OutputStream out = exchange.getResponseBody()) {
             out.write(bytes);
         }
+    }
+
+    @Test
+    void publicationDiscoverySurvivesSubsequentProviderReads() throws Exception {
+        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        var requests = new java.util.concurrent.atomic.AtomicInteger();
+        server.createContext("/page", exchange -> {
+            requests.incrementAndGet();
+            respond(exchange, "<html>\"softwareVersion\": \"2.0\"</html>");
+        });
+        server.start();
+        try {
+            var binary = tempDir.resolve("Resources/plugins/Test/64/test.xpl");
+            Files.createDirectories(binary.getParent());
+            Files.writeString(binary, "");
+            var plugin = new XPlaneOrgPlugin(new XPlane(tempDir), binary, "Test", "Test",
+                    "http://127.0.0.1:" + server.getAddress().getPort() + "/page") {
+                @Override public String getVersion() { return "1.0"; }
+            };
+            plugin.getUpdateProvider().orElseThrow().checkForUpdates();
+            assertTrue(plugin.isUpdateAvailable());
+            assertEquals("2.0", plugin.getLatestVersion());
+            assertSame(plugin.getUpdateProvider().orElseThrow(), plugin.getUpdateProvider().orElseThrow());
+            assertEquals(1, requests.get());
+        } finally { server.stop(0); }
     }
 }

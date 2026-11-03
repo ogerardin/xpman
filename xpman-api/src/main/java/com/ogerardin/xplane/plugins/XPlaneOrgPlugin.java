@@ -1,9 +1,11 @@
 package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.XPlane;
+import com.ogerardin.xplane.update.PublicationUpdateProvider;
+import com.ogerardin.xplane.update.UpdateProvider;
+import java.util.Optional;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xplane.util.Urls;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -30,20 +32,17 @@ public class XPlaneOrgPlugin extends Plugin {
     @NonNull
     private final String xPlaneOrgDownloadPage;
 
-    @Getter(lazy = true)
-    private final String latestVersion = loadlatestVersion();
+    @Override
+    protected Optional<UpdateProvider> loadUpdateProvider() {
+        return super.loadUpdateProvider().or(() -> Optional.of(new XPlaneOrgPublicationUpdateProvider()));
+    }
 
     public XPlaneOrgPlugin(XPlane xPlane, Path xplFile, String name, String description, String xPlaneOrgDownloadPage) {
         super(xPlane, xplFile, name, description);
         this.xPlaneOrgDownloadPage = xPlaneOrgDownloadPage;
     }
 
-    private String loadlatestVersion() {
-        // a Skunkcrafts-managed addon is versioned by its Skunkcrafts module; the x-plane.org page
-        // version is an unrelated namespace and would misreport the update the UI offers
-        if (isSkunkcraftsUpdatable()) {
-            return getSkunkcraftsLatestVersion();
-        }
+    private String loadLatestVersion() throws IOException {
         // not optimal, but works: we fetch the whole HTML page and regex the version out of it
         // TODO: improve this
         try {
@@ -65,10 +64,7 @@ public class XPlaneOrgPlugin extends Plugin {
                 return matcher.group(1);
             }
             log.warn("No softwareVersion found on page for {} ({})", getName(), xPlaneOrgDownloadPage);
-        } catch (IOException | RuntimeException e) {
-            log.warn("Could not determine latest version for {} from {}: {}", getName(), xPlaneOrgDownloadPage, e.getMessage());
-            log.debug("Failed to fetch HTML page", e);
-        }
+        } catch (RuntimeException e) { throw new IOException("Could not read publication page", e); }
         return null;
     }
 
@@ -78,5 +74,18 @@ public class XPlaneOrgPlugin extends Plugin {
         return Maps.mapOf(
                 "Plugin page on X-Plane.org", Urls.url(xPlaneOrgDownloadPage)
         );
+    }
+
+    private class XPlaneOrgPublicationUpdateProvider extends PublicationUpdateProvider {
+        public XPlaneOrgPublicationUpdateProvider() {
+            super(XPlaneOrgPlugin.this::getVersion, XPlaneOrgPlugin.this::isEnabled);
+        }
+
+        public String getName() { return "X-Plane.org"; }
+
+        protected String fetchLatestVersion() throws IOException { return loadLatestVersion(); }
+
+        @SneakyThrows
+        public URL getUrl() { return Urls.url(xPlaneOrgDownloadPage); }
     }
 }

@@ -8,9 +8,8 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.update.*;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,7 @@ import java.util.stream.Stream;
  * category, description, callsign, etc.), associated liveries, thumbnail/icon images,
  * manuals, and links. Implements {@link Inspectable} to check spec compatibility and
  * available updates, {@link Uninstallable} to move the aircraft folder to trash, and
- * {@link SkunkcraftsUpdatable} for Skunkcrafts updater integration.</p>
+ * {@link Updatable} for provider-based updates.</p>
  *
  * <p>The concrete subclass may be refined at runtime via
  * {@link com.ogerardin.xplane.util.IntrospectionHelper} (e.g. ZiboMod738).</p>
@@ -39,7 +38,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable, SkunkcraftsUpdatable {
+public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable, Updatable {
 
     @EqualsAndHashCode.Include
     private final AcfFile acfFile;
@@ -122,21 +121,18 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
     }
 
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
+    private final Optional<UpdateProvider> updateProvider = loadUpdateProvider();
 
-    @Override
-    public Path getSkunkcraftsFolder() {
-        return getAcfFile().getFile().getParent();
+    /** Creates the cached provider; subclasses may supply a fallback when no protocol is assigned. */
+    protected Optional<UpdateProvider> loadUpdateProvider() {
+        Path folder = getAcfFile().getFile().getParent();
+        var skunkcraftsConfig = SkunkcraftsUpdater.findConfig(folder);
+        if (skunkcraftsConfig == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new SkunkcraftsUpdateProvider(folder, skunkcraftsConfig,
+                SkunkcraftsUpdater.findBetaConfig(folder), this::getVersion, () -> true));
     }
-
-    @Getter(lazy = true)
-    private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
-            ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
-            : null;
-
-    /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
-    @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
 
     public boolean isExtraAircraft() {
         return getAcfFile().getFile().getParent().getFileName().toString().equals("Extra Aircraft");

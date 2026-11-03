@@ -4,7 +4,7 @@ import com.ogerardin.xpman.panels.scenery.UiSceneryEntry;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil;
+import com.ogerardin.xpman.util.jfx.UpdateUtil;
 
 /**
  * Renders a scenery version with an "Update" button when an update is available.
@@ -24,12 +24,8 @@ public class SceneryVersionCellFactory implements TableCellFactory<UiSceneryEntr
 
                 UiSceneryEntry row = getTableRow() == null ? null : getTableRow().getItem();
                 if (row != null && row.isUpdateAvailable()) {
-                    setGraphic(SkunkcraftsUpdateUtil.updateAction(
-                            false,
-                            SkunkcraftsUpdateUtil.updateTooltip(row.getSceneryPackage()), () -> {
-                        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(row.getSceneryPackage()).showAndWait();
-                        row.getXPlane().getSceneryManager().reload();
-                    }));
+                    setGraphic(UpdateUtil.updateAction(row.getUpdateActionLabel(), false,
+                            UpdateUtil.updateTooltip(row.getSceneryPackage()), row::update));
                     setContentDisplay(ContentDisplay.RIGHT);
                 }
             }

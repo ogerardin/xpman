@@ -1,7 +1,9 @@
 package com.ogerardin.xplane.aircraft.custom;
 
 import com.google.api.services.drive.model.File;
-import com.ogerardin.xplane.PublicationChannel;
+import com.ogerardin.xplane.update.PublicationUpdateProvider;
+import com.ogerardin.xplane.update.UpdateProvider;
+import java.util.function.Supplier;
 import com.ogerardin.xplane.Versioned;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneMajorVersion;
@@ -43,17 +45,14 @@ public class ZiboMod738 extends Aircraft implements Versioned {
     public static final RecommendedPluginsInspection RECOMMENDED_PLUGINS_INSPECTION
             = new RecommendedPluginsInspection(AviTab.class, TerrainRadar.class);
 
-    private final PublicationChannel channel = new GoogleDriveChannel(getXPlane().getMajorVersion());
+    private final PublicationUpdateProvider publicationProvider = new GoogleDriveUpdateProvider(getXPlane().getMajorVersion(), this::getVersion);
 
     @Getter(lazy = true)
     private final String version = loadVersion();
 
-    @Getter(lazy = true)
-    private final String latestVersion = loadLatestVersion();
-
-    @SneakyThrows
-    private String loadLatestVersion() {
-        return channel.getLatestVersion();
+    @Override
+    protected Optional<UpdateProvider> loadUpdateProvider() {
+        return Optional.of(publicationProvider);
     }
 
     public ZiboMod738(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
@@ -98,7 +97,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
                 Maps.mapOf(
                         "ZIBO community on Facebook", Urls.url("https://www.facebook.com/zibocommunity"),
                         "ZIBO mod forum on X-Plane.org", Urls.url("https://forums.x-plane.org/index.php?/forums/topic/138974-b737-800x-zibo-mod-info-installation-download-links"),
-                        "Download page (" + channel.getName() + ")", channel.getUrl()
+                        "Download page (" + publicationProvider.getName() + ")", publicationProvider.getUrl()
                 ));
     }
 
@@ -115,13 +114,14 @@ public class ZiboMod738 extends Aircraft implements Versioned {
      * to extract the latest version.
      * Note: there is also a torrents versrion; https://drive.google.com/drive/folders/12ggG4G1c0h_EIDgIaQAmU9bnuUWSOLrc
      */
-    public static class GoogleDriveChannel implements PublicationChannel {
+    public static class GoogleDriveUpdateProvider extends PublicationUpdateProvider {
         /** The Google Drive folder ID of the folder containing published updates */
         private static final String ZIBO_FOLDER_ID = "1RHz4PQqWNGGpVG9GaHr84kuGs8LM2xyK";
 
         private final XPlaneMajorVersion majorVersion;
 
-        public GoogleDriveChannel(XPlaneMajorVersion majorVersion) {
+        public GoogleDriveUpdateProvider(XPlaneMajorVersion majorVersion, Supplier<String> installedVersion) {
+            super(installedVersion, () -> true);
             this.majorVersion = majorVersion;
         }
 
@@ -130,7 +130,8 @@ public class ZiboMod738 extends Aircraft implements Versioned {
             return "Google Drive";
         }
 
-        public String getLatestVersion() throws IOException, GeneralSecurityException {
+        @Override
+        protected String fetchLatestVersion() throws IOException, GeneralSecurityException {
             // Full versions are published as a file B737-800X_<version>_full.zip, e.g. B737-800X_3_42_full.zip
             // Patches are published as incremental files B738X_<version>_<patch>.zip, e.g. B737-800X_3_42_10.zip
             // Since the Drive folder was reorganized into XP11/XP12 subfolders, release files live inside the
@@ -195,7 +196,7 @@ public class ZiboMod738 extends Aircraft implements Versioned {
         @SneakyThrows
         @Override
         public URL getUrl() {
-            return Urls.url("https://drive.google.com/drive/folders/" + GoogleDriveChannel.ZIBO_FOLDER_ID);
+            return Urls.url("https://drive.google.com/drive/folders/" + ZIBO_FOLDER_ID);
         }
     }
 

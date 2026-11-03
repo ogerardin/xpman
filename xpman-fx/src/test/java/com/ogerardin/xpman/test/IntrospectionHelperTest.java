@@ -20,7 +20,7 @@ class IntrospectionHelperTest {
                 .allMatch(method -> method.isAnnotationPresent(Order.class)));
         assertEquals(
                 List.of("reveal", "removeQuarantine", "enablePlugin", "disablePlugin", "uninstall",
-                        "openLink", "openManual", "inspect", "skunkcraftsUpdate", "skunkcraftsLocked", "properties"),
+                        "openLink", "openManual", "inspect", "update", "showUpdateLock", "properties"),
                 IntrospectionHelper.computeRelevantMethods(UiPlugin.class).stream()
                         .map(Method::getName)
                         .toList());
@@ -32,7 +32,7 @@ class IntrospectionHelperTest {
                 .allMatch(method -> method.isAnnotationPresent(Order.class)));
         assertEquals(
                 List.of("reveal", "uninstallVariant", "uninstall", "openLink", "openManual", "inspect",
-                        "details", "skunkcraftsUpdate", "skunkcraftsLocked", "properties"),
+                        "details", "update", "showUpdateLock", "properties"),
                 IntrospectionHelper.computeRelevantMethods(UiAircraft.class).stream()
                         .map(Method::getName)
                         .toList());

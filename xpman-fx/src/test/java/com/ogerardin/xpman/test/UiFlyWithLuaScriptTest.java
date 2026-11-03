@@ -2,9 +2,9 @@ package com.ogerardin.xpman.test;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.update.*;
+import java.util.Optional;
+import java.util.List;
 import com.ogerardin.xpman.panels.plugins.UiFlyWithLuaScript;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -23,13 +23,19 @@ import static org.hamcrest.Matchers.nullValue;
  */
 class UiFlyWithLuaScriptTest {
 
+    @Test
+    void scriptMenuExposesInspection() {
+        assertThat(com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper.computeRelevantMethods(UiFlyWithLuaScript.class)
+                .stream().anyMatch(method -> method.getName().equals("inspect")), is(true));
+    }
+
     @TempDir
     Path tempDir;
 
     @Test
     void updatableScriptRowReportsUpdateAndLatestVersion() throws Exception {
         FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript(),
-                new SkunkcraftsChannelStatus(true, true, "Beta"));
+                UpdateChannel.RELEASE, UpdateChannel.BETA);
 
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
@@ -43,7 +49,7 @@ class UiFlyWithLuaScriptTest {
     void betaOnlyUpdateStillShowsTheRowPill() throws Exception {
         // only the beta channel has content: the pill must still show (any channel)
         FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript(),
-                new SkunkcraftsChannelStatus(false, true, "Beta"));
+                UpdateChannel.BETA);
 
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
@@ -54,8 +60,7 @@ class UiFlyWithLuaScriptTest {
     @Test
     void updatableScriptRowWithNoPendingContentReportsNoUpdate() throws Exception {
         // labels differ but no channel has content to download: no pill (the openSAM case)
-        FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript(),
-                SkunkcraftsChannelStatus.NONE);
+        FlyWithLuaScript script = new UpdatableScript(new XPlane(tempDir), createScript());
 
         UiFlyWithLuaScript row = new UiFlyWithLuaScript(script);
 
@@ -80,33 +85,27 @@ class UiFlyWithLuaScriptTest {
     }
 
     /** A script stub that reports pending Skunkcrafts updates, as SGES does. */
-    private static class UpdatableScript extends FlyWithLuaScript implements SkunkcraftsUpdatable {
+    private static class UpdatableScript extends FlyWithLuaScript implements Updatable {
 
-        private final SkunkcraftsChannelStatus channelStatus;
+        private final List<UpdateChannel> channels;
 
-        UpdatableScript(XPlane xPlane, Path luaFile, SkunkcraftsChannelStatus channelStatus) {
+        UpdatableScript(XPlane xPlane, Path luaFile, UpdateChannel... channels) {
             super(xPlane, luaFile);
-            this.channelStatus = channelStatus;
+            this.channels = List.of(channels);
         }
 
         @Override
-        public Path getSkunkcraftsFolder() {
-            return null;
-        }
-
-        @Override
-        public SkunkcraftsConfig getSkunkcraftsConfig() {
-            return new SkunkcraftsConfig(null, null, "https://example.com", null, false, false, true);
-        }
-
-        @Override
-        public String getSkunkcraftsLatestVersion() {
-            return "81.2";
-        }
-
-        @Override
-        public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
-            return channelStatus;
+        public Optional<UpdateProvider> getUpdateProvider() {
+            var offers = channels.stream().map(channel -> new UpdateOffer(channel,
+                    channel == UpdateChannel.RELEASE ? "81.2" : "Beta", (UpdateAction.Direct) p -> {})).toList();
+            return Optional.of(new UpdateProvider() {
+                public String getName() { return "Test"; }
+                public void checkForUpdates() {}
+                public UpdateStatus getStatus() {
+                    return new UpdateStatus(offers.isEmpty() ? UpdateStatus.State.CURRENT : UpdateStatus.State.AVAILABLE,
+                            "80.1", "81.2", offers, null);
+                }
+            });
         }
     }
 }

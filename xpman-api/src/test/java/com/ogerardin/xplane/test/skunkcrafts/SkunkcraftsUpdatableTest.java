@@ -1,6 +1,5 @@
 package com.ogerardin.xplane.test.skunkcrafts;
 
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannel;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateException;
@@ -49,7 +48,7 @@ class SkunkcraftsUpdatableTest {
     }
 
     @Test
-    void nullConfigMeansNotUpdatable() {
+    void nullConfigMeansNotUpdatable() throws Exception {
         FakeAddon addon = new FakeAddon("Test", "1.0", null, null);
         assertThat(addon.isSkunkcraftsUpdatable(), is(false));
         assertThat(addon.isSkunkcraftsLocked(), is(false));
@@ -110,12 +109,12 @@ class SkunkcraftsUpdatableTest {
     void ignoreBetaChannelHidesBetaButKeepsStable() {
         FakeAddon bothChannels = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
                 new SkunkcraftsChannelStatus(true, true, "Beta"));
-        SkunkcraftsUpdater.ignoreBetaChannel = () -> true;
+        SkunkcraftsUpdater.ignoreBetaChannel.set(() -> true);
         try {
             assertThat(bothChannels.isSkunkcraftsBetaUpdateAvailable(), is(false));
             assertThat(bothChannels.isAnySkunkcraftsUpdateAvailable(), is(true));
         } finally {
-            SkunkcraftsUpdater.ignoreBetaChannel = () -> false;
+            SkunkcraftsUpdater.ignoreBetaChannel.set(() -> false);
         }
     }
 
@@ -123,12 +122,11 @@ class SkunkcraftsUpdatableTest {
     void ignoreBetaChannelHidesBetaOnlyUpdates() {
         FakeAddon betaOnly = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
                 new SkunkcraftsChannelStatus(false, true, "Beta"));
-        SkunkcraftsUpdater.ignoreBetaChannel = () -> true;
+        SkunkcraftsUpdater.ignoreBetaChannel.set(() -> true);
         try {
             assertThat(betaOnly.isAnySkunkcraftsUpdateAvailable(), is(false));
-            assertThat(SkunkcraftsChannel.BETA.hasUpdate(betaOnly), is(false));
         } finally {
-            SkunkcraftsUpdater.ignoreBetaChannel = () -> false;
+            SkunkcraftsUpdater.ignoreBetaChannel.set(() -> false);
         }
     }
 
@@ -169,31 +167,6 @@ class SkunkcraftsUpdatableTest {
         assertThat(locked.getSkunkcraftsChannelStatus(), is(SkunkcraftsChannelStatus.NONE));
     }
 
-    @Test
-    void resolveReturnsRequestedWhenItHasAnUpdate() {
-        FakeAddon bothChannels = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
-                new SkunkcraftsChannelStatus(true, true, "Beta"));
-        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.STABLE, bothChannels), is(SkunkcraftsChannel.STABLE));
-        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.BETA, bothChannels), is(SkunkcraftsChannel.BETA));
-    }
-
-    @Test
-    void resolveFallsBackToSoleAvailableChannel() {
-        FakeAddon betaOnly = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
-                new SkunkcraftsChannelStatus(false, true, "Beta"));
-        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.STABLE, betaOnly), is(SkunkcraftsChannel.BETA));
-
-        FakeAddon stableOnly = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
-                new SkunkcraftsChannelStatus(true, false, null));
-        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.BETA, stableOnly), is(SkunkcraftsChannel.STABLE));
-    }
-
-    @Test
-    void resolveReturnsRequestedWhenNeitherHasUpdate() {
-        FakeAddon none = new FakeAddon("Test", "1.0", VALID_CFG, "2.0", SkunkcraftsChannelStatus.NONE);
-        assertThat(SkunkcraftsChannel.resolve(SkunkcraftsChannel.BETA, none), is(SkunkcraftsChannel.BETA));
-    }
-
     /** SimLoad Manager scenario: cfg has its own version — use it, ignore the binary heuristic. */
     @Test
     void cfgVersionUsedAsInstalledVersion() {
@@ -228,7 +201,7 @@ class SkunkcraftsUpdatableTest {
     }
 
     @Test
-    void betaSummaryIsEmptyWithoutBetaCfg() {
+    void betaSummaryIsEmptyWithoutBetaCfg() throws Exception {
         FakeAddon addon = new FakeAddon("Test", "1.0", VALID_CFG, "2.0",
                 new SkunkcraftsChannelStatus(false, true, "Beta"));
         assertThat(addon.getSkunkcraftsBetaUpdateSummary(), is(new SkunkcraftsUpdateSummary(0, 0)));

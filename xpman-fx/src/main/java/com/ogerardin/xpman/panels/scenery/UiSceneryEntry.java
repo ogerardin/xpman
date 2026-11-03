@@ -36,7 +36,7 @@ public class UiSceneryEntry implements SwitchRow {
 
     public boolean isUpdateAvailable() {
         return sceneryEntry.getSceneryPackage() != null
-                && sceneryEntry.getSceneryPackage().isAnySkunkcraftsUpdateAvailable();
+                && sceneryEntry.getSceneryPackage().isUpdateAvailable();
     }
 
     @Override
@@ -117,18 +117,22 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Order(90)
-    @Label("'Update…'")
-    @EnabledIf("sceneryPackage != null && sceneryPackage.anySkunkcraftsUpdateAvailable")
-    @OnSuccess("reload()")
-    public void skunkcraftsUpdate() {
-        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(getSceneryPackage()).showAndWait();
+    @Label("updateActionLabel")
+    @EnabledIf("updateAvailable")
+    public void update() {
+        if (getSceneryPackage() != null) com.ogerardin.xpman.util.jfx.UpdateUtil.showUpdates(
+                getSceneryPackage(), () -> xPlane.getSceneryManager().reload());
+    }
+
+    public String getUpdateActionLabel() {
+        return getSceneryPackage() == null ? "Update…" : com.ogerardin.xpman.util.jfx.UpdateUtil.actionLabel(getSceneryPackage());
     }
 
     @SuppressWarnings("unused")
     @Order(100)
     @Label("'Skunkcrafts: Locked by developer'")
-    @EnabledIf("sceneryPackage != null && sceneryPackage.skunkcraftsLocked")
-    public void skunkcraftsLocked() {
+    @EnabledIf("sceneryPackage != null && sceneryPackage.updateLocked")
+    public void showUpdateLock() {
         new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION,
                 "This scenery is currently locked by the developer. " +
                 "The developer may be uploading files. Please try again later.")

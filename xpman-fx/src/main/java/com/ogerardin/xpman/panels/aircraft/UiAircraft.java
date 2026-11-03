@@ -115,18 +115,19 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Order(70)
-    @Label("'Update…'")
-    @EnabledIf("anySkunkcraftsUpdateAvailable")
-    @OnSuccess("reload()")
-    public void skunkcraftsUpdate() {
-        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard(aircraft).showAndWait();
+    @Label("updateActionLabel")
+    @EnabledIf("updateAvailable")
+    public void update() {
+        com.ogerardin.xpman.util.jfx.UpdateUtil.showUpdates(aircraft, () -> getXPlane().getAircraftManager().reload());
     }
+
+    public String getUpdateActionLabel() { return com.ogerardin.xpman.util.jfx.UpdateUtil.actionLabel(aircraft); }
 
     @SuppressWarnings("unused")
     @Order(80)
     @Label("'Skunkcrafts: Locked by developer'")
-    @EnabledIf("skunkcraftsLocked")
-    public void skunkcraftsLocked() {
+    @EnabledIf("updateLocked")
+    public void showUpdateLock() {
         new Alert(Alert.AlertType.INFORMATION,
                 "This aircraft is currently locked by the developer. " +
                 "The developer may be uploading files. Please try again later.")

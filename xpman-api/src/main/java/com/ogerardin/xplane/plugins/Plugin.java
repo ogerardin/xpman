@@ -6,13 +6,13 @@ import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
+import com.ogerardin.xplane.update.*;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
+import java.util.Optional;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,10 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -35,7 +32,7 @@ import java.util.stream.Stream;
  * (derived from whether the plugin folder resides under the active or disabled plugins
  * directory), quarantine status, manuals, and links. Implements {@link Inspectable} for
  * update-available checks, {@link Uninstallable} to move the plugin folder to trash, and
- * {@link SkunkcraftsUpdatable} for Skunkcrafts updater integration.</p>
+ * {@link Updatable} for provider-based updates.</p>
  *
  * <p>The plugin version is lazily extracted from the {@code .xpl} binary by the current
  * platform. The concrete subclass may be refined at runtime via
@@ -43,7 +40,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, SkunkcraftsUpdatable {
+public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, Updatable {
 
     private Path xplFile;
 
@@ -91,26 +88,20 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
+    private final Optional<UpdateProvider> updateProvider = loadUpdateProvider();
 
-    @Override
-    public Path getSkunkcraftsFolder() {
-        return getBaseFolder();
+    /** Creates the cached provider; subclasses may supply a fallback when no protocol is assigned. */
+    protected Optional<UpdateProvider> loadUpdateProvider() {
+        Path folder = getBaseFolder();
+        var config = supportsSkunkcrafts() ? SkunkcraftsUpdater.findConfig(folder) : null;
+        if (config == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new SkunkcraftsUpdateProvider(this::getBaseFolder, config,
+                SkunkcraftsUpdater.findBetaConfig(folder), this::getVersion, this::isEnabled));
     }
 
-    @Override
-    public boolean isSkunkcraftsUpdatable() {
-        return isEnabled() && SkunkcraftsUpdatable.super.isSkunkcraftsUpdatable();
-    }
-
-    @Getter(lazy = true)
-    private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
-            ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
-            : null;
-
-    /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
-    @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
+    protected boolean supportsSkunkcrafts() { return true; }
 
     public Map<String, URL> getLinks() {
         return Collections.emptyMap();

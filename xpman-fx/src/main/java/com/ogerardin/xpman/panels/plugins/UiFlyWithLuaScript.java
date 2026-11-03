@@ -2,8 +2,9 @@ package com.ogerardin.xpman.panels.plugins;
 
 import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.inspection.Inspectable;
+import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLuaScript;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.update.Updatable;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.util.jfx.PropertiesStage;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Confirm;
@@ -41,24 +42,24 @@ public class UiFlyWithLuaScript implements PluginRow {
 
     @Override
     public boolean isUpdateAvailable() {
-        return script instanceof SkunkcraftsUpdatable updatable && updatable.isAnySkunkcraftsUpdateAvailable();
+        return script instanceof Updatable updatable && updatable.isUpdateAvailable();
     }
 
     @Override
     public String getLatestVersion() {
-        return script instanceof SkunkcraftsUpdatable updatable ? updatable.getLatestVersion() : null;
+        return script instanceof Updatable updatable ? updatable.getLatestVersion() : null;
     }
 
     @Override
     public String getUpdateTooltip() {
-        return script instanceof SkunkcraftsUpdatable updatable
-                ? com.ogerardin.xpman.util.jfx.SkunkcraftsUpdateUtil.updateTooltip(updatable) : "";
+        return script instanceof Updatable updatable
+                ? com.ogerardin.xpman.util.jfx.UpdateUtil.updateTooltip(updatable) : "";
     }
 
     /** Whether the hosted script is locked by its developer (Skunkcrafts). */
     @SuppressWarnings("unused")
-    public boolean isSkunkcraftsLocked() {
-        return script instanceof SkunkcraftsUpdatable updatable && updatable.isSkunkcraftsLocked();
+    public boolean isUpdateLocked() {
+        return script instanceof Updatable updatable && updatable.isUpdateLocked();
     }
 
     @Order(10)
@@ -136,18 +137,22 @@ Press OK to continue.'
     @SuppressWarnings("unused")
     @Override
     @Order(100)
-    @Label("'Update…'")
+    @Label("updateActionLabel")
     @EnabledIf("updateAvailable")
-    public void skunkcraftsUpdate() {
-        new com.ogerardin.xpman.install.wizard.SkunkcraftsUpdateWizard((SkunkcraftsUpdatable) script).showAndWait();
-        script.getXPlane().getPluginManager().reload();
+    public void update() {
+        if (script instanceof Updatable updatable) com.ogerardin.xpman.util.jfx.UpdateUtil.showUpdates(
+                updatable, () -> script.getXPlane().getPluginManager().reload());
+    }
+
+    @Override public String getUpdateActionLabel() {
+        return script instanceof Updatable updatable ? com.ogerardin.xpman.util.jfx.UpdateUtil.actionLabel(updatable) : "Update…";
     }
 
     @SuppressWarnings("unused")
     @Order(110)
     @Label("'Skunkcrafts: Locked by developer'")
-    @EnabledIf("skunkcraftsLocked")
-    public void skunkcraftsLocked() {
+    @EnabledIf("updateLocked")
+    public void showUpdateLock() {
         new Alert(Alert.AlertType.INFORMATION,
                 "This addon is currently locked by the developer. " +
                 "The developer may be uploading files. Please try again later.")
@@ -159,4 +164,9 @@ Press OK to continue.'
     public void properties() {
         PropertiesStage.show("script", script.getLuaFile().getFileName().toString(), script);
     }
+
+    @Order(130)
+    @EnabledIf("script instanceof T(com.ogerardin.xplane.update.Updatable)")
+    @OnSuccess("displayInspectionResults(#result)")
+    public InspectionResult inspect() { return script.inspect(); }
 }

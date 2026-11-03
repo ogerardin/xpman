@@ -31,12 +31,12 @@ public class LuaHeaderParser {
 
     // Matches "V1.2" or "v1.2.3" shorthand version (e.g., "V1.2 by Carsten Lynker").
     private static final Pattern VERSION_V_PATTERN = Pattern.compile(
-        "^\\s*+[Vv](\\d+(?:\\.\\d+)*)\\b.*$"
+        "^\\s*+[Vv](\\d+(?:\\.\\d+){0,3})\\b", Pattern.CASE_INSENSITIVE
     );
 
     // Matches "Ver." or "Ver" followed by version number (e.g., "Ver. 1.02").
     private static final Pattern VERSION_VER_PATTERN = Pattern.compile(
-        "^.*?[Vv]er\\.?\\s+(\\d+(?:\\.\\d+)*)\\b.*$"
+        "[Vv]er\\.?\\s+(\\d+(?:\\.\\d+){0,3})\\b"
     );
 
     private static final Pattern DESC_PATTERN = Pattern.compile(
@@ -231,7 +231,7 @@ public class LuaHeaderParser {
 
         private static String firstGroup(Pattern pattern, String line) {
             Matcher matcher = pattern.matcher(line);
-            return matcher.matches() ? matcher.group(1).trim() : null;
+            return matcher.find() ? matcher.group(1).trim() : null;
         }
     }
 

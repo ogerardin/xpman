@@ -3,6 +3,9 @@ package com.ogerardin.xplane.plugins.custom;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.plugins.Plugin;
+import com.ogerardin.xplane.update.PublicationUpdateProvider;
+import com.ogerardin.xplane.update.UpdateProvider;
+import java.util.Optional;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xplane.util.Urls;
@@ -54,9 +57,16 @@ public class XIvAp extends Plugin {
         );
     }
 
-    @SneakyThrows
     @Override
-    public String getLatestVersion() {
+    protected Optional<UpdateProvider> loadUpdateProvider() {
+        return super.loadUpdateProvider().or(() -> Optional.of(new PublicationUpdateProvider(this::getVersion, this::isEnabled) {
+            public String getName() { return "IVAO"; }
+            @SneakyThrows public URL getUrl() { return Urls.url(IVAP_HOME_URL); }
+            protected String fetchLatestVersion() throws java.io.IOException { return loadLatestVersion(); }
+        }));
+    }
+
+    private String loadLatestVersion() throws java.io.IOException {
         Document doc = Jsoup.connect(IVAP_HOME_URL).get();
 
         Pattern pattern = Pattern.compile("v([0-9.]++)[^\\r\\n]+Current");

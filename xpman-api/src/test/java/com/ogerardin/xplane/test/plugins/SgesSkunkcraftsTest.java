@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.plugins.custom.lua.FlyWithLua;
 import com.ogerardin.xplane.plugins.custom.lua.Sges;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
 import com.ogerardin.xplane.test.skunkcrafts.SkunkcraftsServerFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that SGES — the FlyWithLua script — is the Skunkcrafts-updatable addon, not the
@@ -44,14 +46,14 @@ class SgesSkunkcraftsTest {
 
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
 
-            assertThat(sges.isSkunkcraftsUpdatable(), is(true));
+            assertThat(provider(sges).isSkunkcraftsUpdatable(), is(true));
             // the FlyWithLua folder is the addon base folder the whitelist paths resolve against
-            assertThat(sges.getSkunkcraftsFolder(), is(luaFile.getParent().getParent()));
+            assertThat(provider(sges).getSkunkcraftsFolder(), is(luaFile.getParent().getParent()));
             // the installed version is the cfg's, not the lua header's
             assertThat(sges.getInstalledVersion(), is("80.1"));
-            assertThat(sges.getSkunkcraftsLatestVersion(), is("81.2"));
-            assertThat(sges.isSkunkcraftsUpdateAvailable(), is(true));
-            assertThat(sges.isSkunkcraftsBetaUpdateAvailable(), is(false));
+            assertThat(sges.getLatestVersion(), is("81.2"));
+            assertThat(sges.isUpdateAvailable(), is(true));
+            assertThat(provider(sges).isSkunkcraftsBetaUpdateAvailable(), is(false));
         }
     }
 
@@ -66,8 +68,9 @@ class SgesSkunkcraftsTest {
 
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
 
-            assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
-            assertThat(sges.isAnySkunkcraftsUpdateAvailable(), is(false));
+            provider(sges);
+            assertThat(sges.isUpdateAvailable(), is(false));
+            assertThat(sges.getUpdateStatus().offers().isEmpty(), is(true));
         }
     }
 
@@ -84,10 +87,10 @@ class SgesSkunkcraftsTest {
 
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
 
-            assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
-            assertThat(sges.isSkunkcraftsBetaUpdateAvailable(), is(true));
-            assertThat(sges.getSkunkcraftsBetaLatestVersion(), is("81.3-beta"));
-            assertThat(sges.isAnySkunkcraftsUpdateAvailable(), is(true));
+            assertThat(provider(sges).isSkunkcraftsUpdateAvailable(), is(false));
+            assertThat(provider(sges).isSkunkcraftsBetaUpdateAvailable(), is(true));
+            assertThat(provider(sges).getSkunkcraftsBetaLatestVersion(), is("81.3-beta"));
+            assertThat(sges.isUpdateAvailable(), is(true));
         }
     }
 
@@ -106,8 +109,8 @@ class SgesSkunkcraftsTest {
 
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
 
-            assertThat(sges.isSkunkcraftsUpdateAvailable(), is(true));
-            assertThat(sges.isSkunkcraftsBetaUpdateAvailable(), is(false));
+            assertThat(provider(sges).isSkunkcraftsUpdateAvailable(), is(true));
+            assertThat(provider(sges).isSkunkcraftsBetaUpdateAvailable(), is(false));
         }
     }
 
@@ -120,8 +123,8 @@ class SgesSkunkcraftsTest {
 
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
 
-            assertThat(sges.getSkunkcraftsBetaConfig(), is(nullValue()));
-            assertThat(sges.isSkunkcraftsBetaUpdateAvailable(), is(false));
+            assertThat(provider(sges).getSkunkcraftsBetaConfig(), is(nullValue()));
+            assertThat(provider(sges).isSkunkcraftsBetaUpdateAvailable(), is(false));
         }
     }
 
@@ -138,7 +141,7 @@ class SgesSkunkcraftsTest {
             server.serve("beta/Scripts/" + SCRIPT, "beta script content");
 
             Sges sges = new Sges(new XPlane(tempDir), luaFile);
-            sges.applySkunkcraftsBetaUpdate((p, m) -> {});
+            ((com.ogerardin.xplane.update.UpdateAction.Direct) provider(sges).getStatus().offers().getFirst().action()).apply((p, m) -> {});
 
             assertThat(Files.readString(luaFile), is("beta script content"));
             String cfgContent = Files.readString(flyWithLuaFolder().resolve(CFG));
@@ -155,8 +158,8 @@ class SgesSkunkcraftsTest {
         Sges sges = new Sges(new XPlane(tempDir), installedSges("Scripts",
                 "disabled|false\nzone|custom\nname|BetterPushback\nmodule|https://example.com/betterpushback\nversion|1.6.2\nlocked|false\n"));
 
-        assertThat(sges.isSkunkcraftsUpdatable(), is(false));
-        assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
+        assertThat(sges.getUpdateProvider().isEmpty(), is(true));
+        assertThat(sges.isUpdateAvailable(), is(false));
     }
 
     @Test
@@ -166,8 +169,8 @@ class SgesSkunkcraftsTest {
         Sges sges = new Sges(new XPlane(tempDir),
                 installedSges("Scripts (disabled)", sgesCfg("https://example.com/sges")));
 
-        assertThat(sges.isSkunkcraftsUpdatable(), is(false));
-        assertThat(sges.isSkunkcraftsUpdateAvailable(), is(false));
+        assertThat(sges.getUpdateStatus().state(), is(com.ogerardin.xplane.update.UpdateStatus.State.DISABLED));
+        assertThat(sges.isUpdateAvailable(), is(false));
     }
 
     @Test
@@ -180,10 +183,57 @@ class SgesSkunkcraftsTest {
 
         FlyWithLua flyWithLua = new FlyWithLua(new XPlane(tempDir), xplFile);
 
-        assertThat(flyWithLua.isSkunkcraftsUpdatable(), is(false));
+        assertThat(flyWithLua.getUpdateProvider().orElseThrow().getName(), is("X-Plane.org"));
     }
 
     // Fixture helpers
+
+    @Test
+    void disablingHostInvalidatesCapturedScriptUpdate() throws Exception {
+        try (var server = SkunkcraftsServerFixture.start()) {
+            var luaFile = installedSges("Scripts", sgesCfg(server.baseUrl()), null);
+            server.serve("skunkcrafts_updater.cfg", remoteCfg("81.2", server.baseUrl()))
+                    .serve("skunkcrafts_updater_whitelist.txt", whitelist(crcOf("newer script content")));
+            var xPlane = new XPlane(tempDir);
+            var sges = new Sges(xPlane, luaFile);
+            var action = (com.ogerardin.xplane.update.UpdateAction.Direct) provider(sges).getStatus().offers().getFirst().action();
+            var binary = flyWithLuaFolder().resolve("64/FlyWithLua.xpl");
+            Files.createDirectories(binary.getParent());
+            Files.writeString(binary, "");
+            var host = new FlyWithLua(xPlane, binary);
+            host.setEnabled(false);
+            assertThrows(IOException.class, () -> action.apply((p, m) -> {}));
+            assertEquals(com.ogerardin.xplane.update.UpdateStatus.State.DISABLED, sges.getUpdateStatus().state());
+            assertFalse(Files.exists(flyWithLuaFolder()));
+            var reloaded = new Sges(xPlane, host.getBaseFolder().resolve("Scripts/" + SCRIPT));
+            assertEquals(com.ogerardin.xplane.update.UpdateStatus.State.DISABLED, reloaded.getUpdateStatus().state());
+        }
+    }
+
+    @Test
+    void inspectionReportsRealProviderOffersAndFailures() throws Exception {
+        try (var server = SkunkcraftsServerFixture.start()) {
+            var luaFile = installedSges("Scripts", sgesCfg(server.baseUrl()), null);
+            server.serve("skunkcrafts_updater.cfg", remoteCfg("81.2", server.baseUrl()))
+                    .serve("skunkcrafts_updater_whitelist.txt", whitelist(crcOf("newer script content")));
+            var sges = new Sges(new XPlane(tempDir), luaFile);
+            provider(sges);
+            assertEquals(1, sges.inspect().size());
+            assertEquals("Update available: 81.2", sges.inspect().get(0).getMessage());
+            server.remove("skunkcrafts_updater_whitelist.txt");
+            provider(sges);
+            assertEquals(1, sges.inspect().size());
+            assertTrue(sges.inspect().get(0).getMessage().contains("Could not check updates"));
+            sges.setEnabled(false);
+            assertTrue(sges.inspect().isEmpty());
+        }
+    }
+
+    private SkunkcraftsUpdateProvider provider(Sges sges) {
+        var provider = (SkunkcraftsUpdateProvider) sges.getUpdateProvider().orElseThrow();
+        provider.checkForUpdates();
+        return provider;
+    }
 
     /** Installs SGES (script in the given Scripts folder + updater cfg, optionally beta cfg, in the FlyWithLua folder). */
     private Path installedSges(String scriptsFolder, String cfgContent, String betaCfgContent) throws IOException {

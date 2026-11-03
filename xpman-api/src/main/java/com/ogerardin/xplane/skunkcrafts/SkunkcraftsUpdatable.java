@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 
 /**
- * Implemented by domain objects (Plugin, Aircraft, SceneryPackage) that can be
- * updated via the Skunkcrafts Updater protocol.
+ * Protocol contract used by the Skunkcrafts provider and its specialized review flow.
+ * Domain objects expose {@link com.ogerardin.xplane.update.Updatable} instead.
  */
 public interface SkunkcraftsUpdatable {
 
@@ -33,7 +33,7 @@ public interface SkunkcraftsUpdatable {
 
     /**
      * Returns the content-truth availability of both channels plus the beta channel's latest label.
-     * Domain classes cache this (see {@link SkunkcraftsUpdater#channelStatus(SkunkcraftsUpdatable)});
+     * Providers cache this (see {@link SkunkcraftsUpdater#channelStatus(SkunkcraftsUpdatable)});
      * this default computes it live.
      */
     default SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() {
@@ -81,7 +81,7 @@ public interface SkunkcraftsUpdatable {
     /** Whether the beta channel offers content distinct from stable. Eligibility is checked live. */
     default boolean isSkunkcraftsBetaUpdateAvailable() {
         return isSkunkcraftsUpdatable()
-                && !SkunkcraftsUpdater.ignoreBetaChannel.getAsBoolean()
+                && !SkunkcraftsUpdater.ignoreBetaChannel.get().getAsBoolean()
                 && getSkunkcraftsChannelStatus().betaUpdateAvailable();
     }
 
@@ -97,9 +97,9 @@ public interface SkunkcraftsUpdatable {
 
     /**
      * Fetches the remote whitelist and returns the files to update with their total download size.
-     * @return the summary of files to update, or an empty summary if up to date, not updatable, or on error
+     * @return the summary of files to update, or an empty summary if up to date or not updatable
      */
-    default SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() {
+    default SkunkcraftsUpdateSummary getSkunkcraftsUpdateSummary() throws IOException {
         if (!isSkunkcraftsUpdatable()) {
             return new SkunkcraftsUpdateSummary(0, 0);
         }
@@ -107,7 +107,7 @@ public interface SkunkcraftsUpdatable {
     }
 
     /** Like {@link #getSkunkcraftsUpdateSummary()}, for the beta channel. */
-    default SkunkcraftsUpdateSummary getSkunkcraftsBetaUpdateSummary() {
+    default SkunkcraftsUpdateSummary getSkunkcraftsBetaUpdateSummary() throws IOException {
         SkunkcraftsConfig betaCfg = getSkunkcraftsBetaConfig();
         if (!isSkunkcraftsUpdatable() || betaCfg == null) {
             return new SkunkcraftsUpdateSummary(0, 0);

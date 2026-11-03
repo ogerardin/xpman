@@ -6,7 +6,9 @@ import com.ogerardin.xplane.install.InstallationException;
 import com.ogerardin.xplane.install.inspections.SkunkcraftsUpdatableInspection;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsChannelStatus;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
+import com.ogerardin.xplane.update.*;
+import java.util.Optional;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
@@ -37,12 +39,12 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
  *
  * <p>SGES ships a Skunkcrafts updater config next to its Scripts/ folder; it is installed into
  * the FlyWithLua folder (the addon base folder the protocol resolves updates against) and
- * removed again on uninstall. SGES is therefore the {@link SkunkcraftsUpdatable} addon — the
+ * removed again on uninstall. SGES is therefore the {@link Updatable} addon — the
  * FlyWithLua plugin hosting it is not.
  */
 @SuppressWarnings("unused")
 @Slf4j
-public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
+public class Sges extends FlyWithLuaScript implements Updatable {
 
     private static final String SCRIPT_FILENAME = "Simple_Ground_Equipment_and_Services.lua";
     private static final String DATA_FOLDER = "Simple_Ground_Equipment_and_Services";
@@ -65,48 +67,29 @@ public class Sges extends FlyWithLuaScript implements SkunkcraftsUpdatable {
         return "Simple Ground Equipment & Services";
     }
 
-    /** The updater cfg of the addon base folder, but only if it identifies itself as SGES. */
     @Getter(lazy = true)
-    private final SkunkcraftsConfig skunkcraftsConfig = ownUpdaterCfg();
+    private final Optional<UpdateProvider> updateProvider = loadUpdateProvider();
 
-    @Override
-    public Path getSkunkcraftsFolder() {
-        // the cfg lives in the FlyWithLua folder: the addon base folder the whitelist paths resolve against
-        return activeScriptsFolder().getParent();
+    private Optional<UpdateProvider> loadUpdateProvider() {
+        Path folder = activeScriptsFolder().getParent();
+        SkunkcraftsConfig config = SkunkcraftsUpdater.findConfig(folder);
+        if (config == null || !identifiesAsSges(config)) return Optional.empty();
+        SkunkcraftsConfig beta = SkunkcraftsUpdater.findBetaConfig(folder);
+        return Optional.of(new SkunkcraftsUpdateProvider(() -> activeScriptsFolder().getParent(), config,
+                beta != null && identifiesAsSges(beta) ? beta : null, this::getVersion, this::isUpdateEligible));
+    }
+
+    private boolean isUpdateEligible() {
+        // The host can move while this script row still holds its old active-folder path.
+        return isEnabled() && Files.isRegularFile(getLuaFile())
+                && !getLuaFile().startsWith(getXPlane().getPaths().disabledPlugins());
     }
 
     @Override
-    public boolean isSkunkcraftsUpdatable() {
-        // gate on enabled like Plugin: applying an update while SGES sits in Scripts (disabled)/
-        // would download the whitelist into the active Scripts folder, duplicating the script
-        return isEnabled() && SkunkcraftsUpdatable.super.isSkunkcraftsUpdatable();
-    }
-
-    @Getter(lazy = true)
-    private final String skunkcraftsLatestVersion = isSkunkcraftsUpdatable()
-            ? SkunkcraftsUpdater.fetchRemoteVersion(getSkunkcraftsConfig().moduleUrl())
-            : null;
-
-    /** Content-truth availability of both Skunkcrafts channels, cached so the UI never pays the check on the FX thread. */
-    @Getter(lazy = true)
-    private final SkunkcraftsChannelStatus skunkcraftsChannelStatus = SkunkcraftsUpdater.channelStatus(this);
-
-    /**
-     * The beta updater cfg of the addon base folder, but only if it identifies itself as SGES.
-     */
-    @Override
-    public SkunkcraftsConfig getSkunkcraftsBetaConfig() {
-        SkunkcraftsConfig cfg = SkunkcraftsUpdater.findBetaConfig(getSkunkcraftsFolder());
-        return cfg != null && identifiesAsSges(cfg) ? cfg : null;
-    }
-
-    /**
-     * The updater cfg of the addon base folder, or null if there is none or if it belongs to
-     * another FlyWithLua addon sharing that folder.
-     */
-    private SkunkcraftsConfig ownUpdaterCfg() {
-        SkunkcraftsConfig cfg = SkunkcraftsUpdater.findConfig(getSkunkcraftsFolder());
-        return cfg != null && identifiesAsSges(cfg) ? cfg : null;
+    public InspectionResult inspect() {
+        return isUpdateEligible()
+                ? com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection.INSTANCE.inspect(this)
+                : InspectionResult.empty();
     }
 
     @Override

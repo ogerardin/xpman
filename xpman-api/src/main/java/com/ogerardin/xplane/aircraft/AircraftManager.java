@@ -98,12 +98,9 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
                 .map(this::getAircraft)
                 .toList();
 
-        // pre-warm Skunkcrafts labels and channel status (content check) off the FX thread,
-        // before the LOADED event rebuilds the cards
-        items.parallelStream().forEach(a -> {
-            a.getSkunkcraftsLatestVersion();
-            a.getSkunkcraftsChannelStatus();
-        });
+        // Discover before LOADED so card rendering only reads cached provider results.
+        items.parallelStream().forEach(a -> a.getUpdateProvider().ifPresent(
+                com.ogerardin.xplane.update.UpdateProvider::checkForUpdates));
 
         Instant t1 = Instant.now();
         long duration = Duration.between(t0, t1).toMillis();

@@ -234,4 +234,35 @@ class LuaHeaderParserTest {
         assertThat(metadata.version(), is("1.02"));
         assertThat(metadata.description(), is("Imugi Show Plugin Information In VR Ver. 1.02"));
     }
+
+    @Test
+    void longVersionLineDoesNotCauseStackOverflow() throws IOException {
+        // Regression test for SonarQube bug: regex stack overflow with long inputs
+        // Fixed by limiting version segments to max 4 parts (e.g., "1.2.3.4")
+        Path script = tempDir.resolve("long_version.lua");
+        // Create a pathological case: many version segments that could cause backtracking
+        String longVersion = "V1" + ".0".repeat(10000);
+        Files.writeString(script, "-- " + longVersion + "\n");
+
+        LuaHeaderParser.LuaMetadata metadata = LuaHeaderParser.parse(script);
+
+        // Should parse without stack overflow
+        // Pattern now limits to max 4 version parts, so it matches "1.0.0.0"
+        assertThat(metadata.version(), is("1.0.0.0"));
+    }
+
+    @Test
+    void longVerLineDoesNotCauseStackOverflow() throws IOException {
+        // Regression test for SonarQube bug: regex stack overflow with long inputs
+        // Fixed by limiting version segments to max 4 parts and removing leading .*?
+        Path script = tempDir.resolve("long_ver.lua");
+        // Create a pathological case: many characters before "Ver" that could cause backtracking
+        String longLine = "a".repeat(10000) + "Ver 1.0";
+        Files.writeString(script, "-- " + longLine + "\n");
+
+        LuaHeaderParser.LuaMetadata metadata = LuaHeaderParser.parse(script);
+
+        // Should parse without stack overflow, version should be extracted
+        assertThat(metadata.version(), is("1.0"));
+    }
 }

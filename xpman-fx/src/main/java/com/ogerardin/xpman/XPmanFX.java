@@ -131,7 +131,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
 
     // Bridge the user preference into Skunkcrafts availability; read live so Settings changes apply without restart
     {
-        SkunkcraftsUpdater.ignoreBetaChannel = () -> getConfig().isIgnoreBetaUpdates();
+        SkunkcraftsUpdater.ignoreBetaChannel.set(() -> getConfig().isIgnoreBetaUpdates());
     }
 
     private static final XPlaneProperty xPlaneProperty = new XPlaneProperty();

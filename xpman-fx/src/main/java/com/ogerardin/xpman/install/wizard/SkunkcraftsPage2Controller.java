@@ -1,6 +1,5 @@
 package com.ogerardin.xpman.install.wizard;
 
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdatable;
 import com.ogerardin.xpman.util.jfx.ErrorDialog;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
@@ -36,15 +35,17 @@ public class SkunkcraftsPage2Controller implements PageListener {
         disableButton(wizardPane, ButtonData.BACK_PREVIOUS, true);
         disableButton(wizardPane, ButtonData.NEXT_FORWARD, true);
 
-        SkunkcraftsUpdatable updatable = wizard.getUpdatable();
-
         // Run update in background thread
         Thread thread = new Thread(() -> {
             try {
-                wizard.getChannel().apply(updatable, this::updateProgress);
+                var offer = wizard.getUpdatable().getStatus().offers().stream()
+                        .filter(o -> o.channel() == wizard.getChannel()).findFirst()
+                        .orElseThrow(() -> new java.io.IOException("Update is no longer available"));
+                ((com.ogerardin.xplane.update.UpdateAction.Direct) offer.action()).apply(this::updateProgress);
                 Platform.runLater(() -> {
                     progress.setProgress(1.0);
                     fileLabel.setText("Update complete!");
+                    wizard.getOnUpdated().run();
                 });
             } catch (Exception e) {
                 log.error("Update failed", e);

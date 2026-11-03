@@ -20,9 +20,9 @@ Plugins are displayed as a tree. Columns:
 | **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version. **Update…** appears when content is available; hover for offered channel versions |
+| **Version** | Installed version. **Update…** for Skunkcrafts content or **Open download page** for a manual update; hover for offered versions |
 
-The **Update…** button opens the Skunkcrafts channel-review wizard (see [Updating Add-ons](10-updating-addons.md)). It is available for plugins or FlyWithLua scripts with pending Skunkcrafts content. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
+The **Update…** button opens the Skunkcrafts channel-review wizard (see [Updating Add-ons](10-updating-addons.md)). Plugins with a supported publication-page provider instead show **Open download page** when its version differs from the installed version. That opens the publisher's site, not an automatic installation. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
 
 ## Recognized Plugins
 
@@ -42,7 +42,7 @@ Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unreco
 
 More plugins will be recognized in future releases. If your favorite plugin is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.
 
-For plugins that report newer versions via **Inspect**, the comparison runs against the plugin's publication channel (X-Plane.org, or the IVAO site for X-IvAp). The **Update…** button itself only appears when Skunkcrafts updates are supported.
+For publication-based plugins, the comparison runs against X-Plane.org, or the IVAO site for X-IvAp. The same pending update appears in **Inspect**, the dashboard, and the **Open download page** action. Skunkcrafts-managed plugins use their Skunkcrafts provider instead, including when locked.
 
 ## FlyWithLua
 
@@ -57,6 +57,8 @@ Updates for scripts such as SGES appear on the **script's own row**, not on the 
 ### SGES
 
 Simple Ground Equipment & Services ships a Skunkcrafts updater config; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the protocol expects. SGES is therefore the updatable addon: the **Update…** button appears on the **SGES script row**, not on the FlyWithLua plugin row. Uninstalling SGES removes the config as well as its data and documentation folders.
+
+Use **Inspect** on the SGES row to see available updates or failed update checks. Disabling FlyWithLua also invalidates any update action still visible on an old SGES row while the panel reloads.
 
 ### SimLoad Manager
 
@@ -94,6 +96,7 @@ Right-click a plugin for:
 - **Inspect** — Show inspection results.
 - **Properties** — Read-only view of all plugin properties.
 - **Update…** — Shown only for enabled plugins with an update available.
+- **Open download page** — Shown for a pending manual-download update; reload after installing it manually.
 - **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
 - **Links** and **Manuals** — Submenus, shown when available.
 
@@ -107,5 +110,6 @@ Right-click a script for:
 - **Open in text editor**
 - **Uninstall script** — Confirmation dialog.
 - **Properties**
+- **Inspect** — For updatable scripts such as SGES; shows update offers and discovery failures.
 - **Update…** / **Skunkcrafts: Locked by developer** — For scripts that support it (e.g. SGES).
 - **Links** and **Manuals** — Submenus, shown when available.
