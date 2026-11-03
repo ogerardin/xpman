@@ -89,7 +89,7 @@ public class ActionsCellFactory<S, T> implements TableCellFactory<S, T> {
     }
 
     private Control buildControl(Method method, T target, Style style) {
-        String label = IntrospectionHelper.getLabelForMethod(method);
+        String label = IntrospectionHelper.getLabelForMethod(method, target);
         Control control = style.buildControl(method, label, evaluationContextRoot, target);
         // make sure the control becomes unmanaged when set to invisible (to force relayout)
         control.managedProperty().bind(control.visibleProperty());

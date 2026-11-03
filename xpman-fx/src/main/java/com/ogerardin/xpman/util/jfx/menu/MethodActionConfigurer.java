@@ -64,7 +64,7 @@ public class MethodActionConfigurer<T, R> {
             // we must do something upton completion
             builder.onSuccess(result -> {
                 this.onSuccess(result, onSuccess.resultVariableName(), onSuccess.value(), evalContextRoot);
-                log.info("{}: done", IntrospectionHelper.getLabelForMethod(method));
+                log.info("{}: done", IntrospectionHelper.getLabelForMethod(method, target));
             });
         }
 

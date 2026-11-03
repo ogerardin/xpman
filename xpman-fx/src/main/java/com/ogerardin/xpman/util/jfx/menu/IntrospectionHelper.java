@@ -53,12 +53,12 @@ public class IntrospectionHelper {
         }
     }
 
-    public static String getLabelForMethod(Method method) {
+    public static String getLabelForMethod(Method method, Object target) {
         var label = method.getAnnotation(Label.class);
         String text;
         if (label != null) {
             String expr = label.value();
-            text = (String) SpelUtil.eval(expr, null);
+            text = (String) SpelUtil.eval(expr, target);
         } else {
             // no @Label: try to make up something human-readable from the method name
             String[] words = StringUtils.splitByCharacterTypeCamelCase(method.getName());

@@ -17,7 +17,7 @@ module xpman.fx.test {
     requires org.hamcrest;
     requires java.desktop;
 
-    opens com.ogerardin.xpman.test to org.junit.platform.commons;
+    opens com.ogerardin.xpman.test to org.junit.platform.commons, spring.expression;
     opens com.ogerardin.xpman.test.scenery_organizer to org.junit.platform.commons, xpman.fx, com.google.gson;
     opens com.ogerardin.xpman.util.test to org.junit.platform.commons, xpman.fx, com.google.gson;
 }

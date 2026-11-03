@@ -101,7 +101,7 @@ public class ToolCardView extends HBox {
 
         List<Method> methods = IntrospectionHelper.computeRelevantMethods(uiTool.getClass());
         for (Method method : methods) {
-            String label = IntrospectionHelper.getLabelForMethod(method);
+            String label = IntrospectionHelper.getLabelForMethod(method, uiTool);
             MethodButton<UiTool> button = new MethodButton<>(label, method, evaluationContextRoot, uiTool);
             button.getStyleClass().add("tool-card-action");
             button.setMinWidth(Region.USE_PREF_SIZE);

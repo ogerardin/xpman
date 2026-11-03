@@ -46,6 +46,8 @@ The beta channel is offered only when its file list differs from the stable one'
 
 For manual downloads, use **Open download page** in the same places. For Skunkcrafts, every entry point lands on a channel that has files to download: Stable when both are offered, otherwise the only offered channel, explicitly named in the review.
 
+Right-click menus use the addon's update provider to choose the action label, including for FlyWithLua scripts. Other context-menu actions remain available when no update is offered.
+
 ## Skunkcrafts Update Wizard
 
 The wizard window is resizable, and remembers its size between sessions; it always opens centered. The bounds are kept unchanged when navigating between pages. The window has a minimum usable size, including when restoring an older saved size. On the review page, the content scrolls when space is limited so the navigation buttons remain visible.

@@ -70,7 +70,7 @@ public abstract class IntrospectingContextMenuFactory<T> {
             return new ForEachMenuItem<T>(evaluationContextRoot, forEach, method, target);
         }
 
-        String label = IntrospectionHelper.getLabelForMethod(method);
+        String label = IntrospectionHelper.getLabelForMethod(method, target);
         //TODO allow the use of @Value on methods that are not annotated with @ForEach
         return new MethodMenuItem<>(evaluationContextRoot, label, method, target);
     }

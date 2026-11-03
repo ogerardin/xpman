@@ -3,6 +3,7 @@ package com.ogerardin.xpman.test;
 import com.ogerardin.xpman.panels.aircraft.UiAircraft;
 import com.ogerardin.xpman.panels.plugins.UiPlugin;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectionHelper;
+import com.ogerardin.xpman.util.jfx.menu.annotation.Label;
 import com.ogerardin.xpman.util.jfx.menu.annotation.Order;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,40 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IntrospectionHelperTest {
+
+    @Test
+    void labelExpressionReadsTheActionTarget() throws Exception {
+        var target = new LabelFixture("Open download page");
+        assertEquals("Open download page", IntrospectionHelper.getLabelForMethod(
+                target.getClass().getMethod("update"), target));
+        assertEquals("Update…", IntrospectionHelper.getLabelForMethod(
+                target.getClass().getMethod("update"), new LabelFixture("Update…")));
+    }
+
+    @Test
+    void quotedLabelRemainsLiteral() throws Exception {
+        assertEquals("Uninstall", IntrospectionHelper.getLabelForMethod(
+                LabelFixture.class.getMethod("uninstall"), new LabelFixture("Update…")));
+    }
+
+    @Test
+    void missingLabelUsesHumanReadableMethodName() throws Exception {
+        assertEquals("Open Manual", IntrospectionHelper.getLabelForMethod(
+                LabelFixture.class.getMethod("openManual"), new LabelFixture("Update…")));
+    }
+
+    /** Actions with instance-based, literal, and inferred labels. */
+    public record LabelFixture(String updateActionLabel) {
+        public String getUpdateActionLabel() { return updateActionLabel; }
+
+        @Label("updateActionLabel")
+        public void update() {}
+
+        @Label("'Uninstall'")
+        public void uninstall() {}
+
+        public void openManual() {}
+    }
 
     @Test
     void relevantMethodsFollowExplicitOrder() {
