@@ -8,3 +8,7 @@ target/
 .playwright-mcp/
 .owasp/
 release-artifacts/
+.scannerwork/
+.sonar-classpath.txt
+*.sonar-classpath.txt
+.collect-sonar-deps.sh
