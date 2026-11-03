@@ -16,6 +16,9 @@ module xpman.fx.test {
     requires org.junit.jupiter.api;
     requires org.hamcrest;
     requires java.desktop;
+    requires java.logging;
+    requires atlantafx.base;
+    requires org.mockito;
 
     opens com.ogerardin.xpman.test to org.junit.platform.commons, spring.expression;
     opens com.ogerardin.xpman.test.scenery_organizer to org.junit.platform.commons, xpman.fx, com.google.gson;

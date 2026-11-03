@@ -22,8 +22,8 @@
     -fx-font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
 }
 
-/* ControlsFX's PropertySheet search field uses Modena lookups; map them to AtlantaFX. */
-.property-sheet .custom-text-field {
+/* ControlsFX search fields use Modena lookups; map them to AtlantaFX. */
+.custom-text-field {
     -fx-text-inner-color: -color-fg-default;
     -fx-control-inner-background: -color-bg-default;
     -fx-text-box-border: -color-border-default;

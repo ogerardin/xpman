@@ -7,7 +7,7 @@
 
 - **Reload** — Re-scan the X-Plane aircraft folder.
 - **Install...** — Open the universal install wizard to install an aircraft from a `.zip` or `.7z` archive (see [Installing Add-ons](09-installing-addons.md)).
-- **Search** — Filter aircraft by name, author, or studio (debounced for responsiveness).
+- **Search** — Filter aircraft by name, author, or studio (debounced for responsiveness). Click the **×** inside the search box to clear the search text without changing the selected **Filter**.
 - **Filter** — Dropdown: `All`, `Category: …`, `Studio: …`, `Studio ≠ Laminar Research`.
 
 ## Card Grid
