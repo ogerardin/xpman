@@ -54,7 +54,10 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
         if (scene != null) {
             scene.rootProperty().addListener((_, _, _) -> {
                 if (!(scene.getWindow() instanceof Stage stage)) return;
-                double x = stage.getX(), y = stage.getY(), w = stage.getWidth(), h = stage.getHeight();
+                double x = stage.getX();
+                double y = stage.getY();
+                double w = stage.getWidth();
+                double h = stage.getHeight();
                 // Pre-show pane swaps and hide teardown snapshot an unpositioned stage (NaN bounds);
                 // restoring those would poison the bounds — only restore real bounds (page changes).
                 if (Double.isNaN(x + y + w + h)) return;
@@ -89,7 +92,8 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
         getDialog().setOnHiding(event -> {
             Stage stage = getStage();
             if (stage == null) return;
-            double w = stage.getWidth(), h = stage.getHeight();
+            double w = stage.getWidth();
+            double h = stage.getHeight();
             // never persist a NaN size: it would poison the prefs file and make every
             // subsequent Gson save throw ("JSON forbids NaN and infinities")
             if (Double.isNaN(w + h)) return;
@@ -100,8 +104,8 @@ public class Wizard extends org.controlsfx.dialog.Wizard {
     private Stage getStage() {
         if (getDialog().getDialogPane() != null &&
             getDialog().getDialogPane().getScene() != null &&
-            getDialog().getDialogPane().getScene().getWindow() instanceof Stage) {
-            return (Stage) getDialog().getDialogPane().getScene().getWindow();
+            getDialog().getDialogPane().getScene().getWindow() instanceof Stage stage) {
+            return stage;
         }
         return null;
     }

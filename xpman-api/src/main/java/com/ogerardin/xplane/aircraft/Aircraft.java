@@ -10,7 +10,6 @@ import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
 import com.ogerardin.xplane.update.*;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -126,12 +125,7 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
     /** Creates the cached provider; subclasses may supply a fallback when no protocol is assigned. */
     protected Optional<UpdateProvider> loadUpdateProvider() {
         Path folder = getAcfFile().getFile().getParent();
-        var skunkcraftsConfig = SkunkcraftsUpdater.findConfig(folder);
-        if (skunkcraftsConfig == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new SkunkcraftsUpdateProvider(folder, skunkcraftsConfig,
-                SkunkcraftsUpdater.findBetaConfig(folder), this::getVersion, () -> true));
+        return SkunkcraftsUpdateProvider.discover(() -> folder, this::getVersion, () -> true);
     }
 
     public boolean isExtraAircraft() {

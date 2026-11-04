@@ -75,9 +75,9 @@ class AircraftSearchFieldTest {
             var warnings = new ArrayList<String>();
             var logger = Logger.getLogger("javafx.css");
             var handler = new Handler() {
-                @Override public void publish(LogRecord record) { warnings.add(record.getMessage()); }
-                @Override public void flush() {}
-                @Override public void close() {}
+                @Override public void publish(LogRecord logRecord) { warnings.add(logRecord.getMessage()); }
+                @Override public void flush() { /* nothing to flush: messages go straight to the list */ }
+                @Override public void close() { /* nothing to release: no backing resource */ }
             };
             logger.addHandler(handler);
             String previousTheme = Application.getUserAgentStylesheet();

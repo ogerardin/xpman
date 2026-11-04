@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 /**
  * Specialized {@link Aircraft} class to handle the Zibo Mod B737-800X.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "java:S2160"}) // Identity is deliberately ACF-file based (inherited); version caches and providers must not affect it.
 @Slf4j
 public class ZiboMod738 extends Aircraft implements Versioned {
 

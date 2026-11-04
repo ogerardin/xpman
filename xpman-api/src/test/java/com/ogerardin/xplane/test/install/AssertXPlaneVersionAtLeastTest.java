@@ -5,14 +5,11 @@ import com.ogerardin.xplane.install.inspections.AssertXPlaneVersionAtLeast;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.util.zip.Archive;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,50 +19,21 @@ import static org.mockito.Mockito.when;
  */
 class AssertXPlaneVersionAtLeastTest {
 
-    @TempDir
-    Path tempDir;
-
-    @Test
-    void passesWhenVersionMeetsMinimum() throws Exception {
-        // Create a fake X-Plane installation
-        Path xplaneDir = tempDir.resolve("X-Plane 12");
-        Files.createDirectories(xplaneDir);
-        
-        XPlane xPlane = new XPlane(xplaneDir);
-        XPlane mockXPlane = mock(XPlane.class);
-        when(mockXPlane.getVersion()).thenReturn("12.4.4");
-        
-        Archive archive = mock(Archive.class);
-        AssertXPlaneVersionAtLeast inspection = new AssertXPlaneVersionAtLeast(mockXPlane, "12.4.4");
-        
-        InspectionResult result = inspection.inspect(archive);
-        
+    @ParameterizedTest(name = "{0} passes the {1} minimum")
+    @CsvSource({
+            "12.4.4, 12.4.4",   // meets minimum
+            "12.5.0, 12.4.4",   // exceeds minimum
+            ", 12.4.4"          // unknown version never blocks
+    })
+    void passesWhenVersionMeetsExceedsOrUnknownMinimum(String version, String minimum) {
+        InspectionResult result = inspect(version, minimum);
         assertThat(result.isEmpty(), is(true));
     }
 
     @Test
-    void passesWhenVersionExceedsMinimum() throws Exception {
-        XPlane mockXPlane = mock(XPlane.class);
-        when(mockXPlane.getVersion()).thenReturn("12.5.0");
-        
-        Archive archive = mock(Archive.class);
-        AssertXPlaneVersionAtLeast inspection = new AssertXPlaneVersionAtLeast(mockXPlane, "12.4.4");
-        
-        InspectionResult result = inspection.inspect(archive);
-        
-        assertThat(result.isEmpty(), is(true));
-    }
+    void blocksWhenVersionBelowMinimum() {
+        InspectionResult result = inspect("12.4.3", "12.4.4");
 
-    @Test
-    void blocksWhenVersionBelowMinimum() throws Exception {
-        XPlane mockXPlane = mock(XPlane.class);
-        when(mockXPlane.getVersion()).thenReturn("12.4.3");
-        
-        Archive archive = mock(Archive.class);
-        AssertXPlaneVersionAtLeast inspection = new AssertXPlaneVersionAtLeast(mockXPlane, "12.4.4");
-        
-        InspectionResult result = inspection.inspect(archive);
-        
         assertThat(result.isEmpty(), is(false));
         assertThat(result.getMessages().size(), is(1));
         assertThat(result.getMessages().get(0).getSeverity(), is(com.ogerardin.xplane.inspection.Severity.ERROR));
@@ -73,29 +41,17 @@ class AssertXPlaneVersionAtLeastTest {
     }
 
     @Test
-    void passesWhenVersionUnknown() throws Exception {
-        XPlane mockXPlane = mock(XPlane.class);
-        when(mockXPlane.getVersion()).thenReturn(null);
-        
-        Archive archive = mock(Archive.class);
-        AssertXPlaneVersionAtLeast inspection = new AssertXPlaneVersionAtLeast(mockXPlane, "12.4.4");
-        
-        InspectionResult result = inspection.inspect(archive);
-        
-        assertThat(result.isEmpty(), is(true));
+    void handlesLegacyVersionFormat() {
+        // Legacy format 12.04r3 = 12.0.4, below the 12.4.4 minimum
+        InspectionResult result = inspect("12.04r3", "12.4.4");
+        assertThat(result.isEmpty(), is(false));
     }
 
-    @Test
-    void handlesLegacyVersionFormat() throws Exception {
+    private InspectionResult inspect(String version, String minimum) {
         XPlane mockXPlane = mock(XPlane.class);
-        when(mockXPlane.getVersion()).thenReturn("12.04r3"); // Legacy format = 12.0.4
-        
+        when(mockXPlane.getVersion()).thenReturn(version);
+
         Archive archive = mock(Archive.class);
-        AssertXPlaneVersionAtLeast inspection = new AssertXPlaneVersionAtLeast(mockXPlane, "12.4.4");
-        
-        InspectionResult result = inspection.inspect(archive);
-        
-        // 12.0.4 < 12.4.4, should block
-        assertThat(result.isEmpty(), is(false));
+        return new AssertXPlaneVersionAtLeast(mockXPlane, minimum).inspect(archive);
     }
 }

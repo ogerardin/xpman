@@ -48,6 +48,7 @@ import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
  */
 @Slf4j
 @ToString
+@SuppressWarnings("java:S2160") // Manager identity is by X-Plane instance (inherited); loaded items and folders are mutable state, not identity.
 public class PluginManager extends Manager<Plugin> implements InstallTarget {
 
     /**

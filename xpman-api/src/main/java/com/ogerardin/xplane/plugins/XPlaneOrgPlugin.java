@@ -9,9 +9,7 @@ import com.ogerardin.xplane.util.Urls;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -42,32 +40,6 @@ public class XPlaneOrgPlugin extends Plugin {
         this.xPlaneOrgDownloadPage = xPlaneOrgDownloadPage;
     }
 
-    private String loadLatestVersion() throws IOException {
-        // not optimal, but works: we fetch the whole HTML page and regex the version out of it
-        // TODO: improve this
-        try {
-            final URL url = Urls.url(xPlaneOrgDownloadPage);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-            connection.setInstanceFollowRedirects(true);
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-            connection.connect();
-            final InputStream inputStream = connection.getInputStream();
-            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            IOUtils.copy(inputStream, outputStream);
-            connection.disconnect();
-            String html = outputStream.toString(StandardCharsets.UTF_8);
-            Pattern pattern = Pattern.compile(".*\"softwareVersion\": \"([0-9.]+)\".*", Pattern.DOTALL);
-            final Matcher matcher = pattern.matcher(html);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            }
-            log.warn("No softwareVersion found on page for {} ({})", getName(), xPlaneOrgDownloadPage);
-        } catch (RuntimeException e) { throw new IOException("Could not read publication page", e); }
-        return null;
-    }
-
     @SneakyThrows
     @Override
     public Map<String, URL> getLinks() {
@@ -83,7 +55,39 @@ public class XPlaneOrgPlugin extends Plugin {
 
         public String getName() { return "X-Plane.org"; }
 
-        protected String fetchLatestVersion() throws IOException { return loadLatestVersion(); }
+        /** Scrapes the publication page for its softwareVersion field. */
+        @Override
+        protected String fetchLatestVersion() throws IOException {
+            // TODO: not optimal, but works: we fetch the whole HTML page and regex the version out of it
+            try {
+                String html = fetchPublicationPage();
+                Pattern pattern = Pattern.compile(".*\"softwareVersion\": \"([0-9.]+)\".*", Pattern.DOTALL);
+                Matcher matcher = pattern.matcher(html);
+                if (matcher.matches()) {
+                    return matcher.group(1);
+                }
+                log.warn("No softwareVersion found on page for {} ({})", getName(), xPlaneOrgDownloadPage);
+            } catch (RuntimeException e) { throw new IOException("Could not read publication page", e); }
+            return null;
+        }
+
+        /** Downloads the publication page HTML; the connection is always released. */
+        private String fetchPublicationPage() throws IOException {
+            final URL url = Urls.url(xPlaneOrgDownloadPage);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            try {
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                connection.setInstanceFollowRedirects(true);
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                connection.connect();
+                try (InputStream inputStream = connection.getInputStream()) {
+                    return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                }
+            } finally {
+                connection.disconnect();
+            }
+        }
 
         @SneakyThrows
         public URL getUrl() { return Urls.url(xPlaneOrgDownloadPage); }

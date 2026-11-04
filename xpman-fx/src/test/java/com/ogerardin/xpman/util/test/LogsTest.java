@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static java.util.stream.Collectors.toSet;
@@ -29,7 +30,7 @@ class LogsTest {
         Logs.zip(source, zip);
 
         try (ZipFile archive = new ZipFile(zip.toFile())) {
-            assertThat(archive.stream().map(entry -> entry.getName()).collect(toSet()),
+            assertThat(archive.stream().map(ZipEntry::getName).collect(toSet()),
                     is(Set.of("xpman.log", "xpman.2026-10-08.0.log")));
             try (var log = archive.getInputStream(archive.getEntry("xpman.log"))) {
                 assertThat(new String(log.readAllBytes()), is("current log"));

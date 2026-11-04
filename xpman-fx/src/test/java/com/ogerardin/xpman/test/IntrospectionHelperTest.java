@@ -41,12 +41,12 @@ class IntrospectionHelperTest {
         public String getUpdateActionLabel() { return updateActionLabel; }
 
         @Label("updateActionLabel")
-        public void update() {}
+        public void update() { /* fixture action: only the @Label annotation is inspected */ }
 
         @Label("'Uninstall'")
-        public void uninstall() {}
+        public void uninstall() { /* fixture action: only the @Label annotation is inspected */ }
 
-        public void openManual() {}
+        public void openManual() { /* fixture action: the method name supplies the inferred label */ }
     }
 
     @Test
@@ -83,17 +83,17 @@ class IntrospectionHelperTest {
 
     private static class OrderedFixture {
         @Order(20)
-        public void alpha() {}
+        public void alpha() { /* fixture action: only the @Order annotation is inspected */ }
 
         @Order(20)
-        public void beta() {}
+        public void beta() { /* fixture action: only the @Order annotation is inspected */ }
 
         @Order(10)
-        public void zulu() {}
+        public void zulu() { /* fixture action: only the @Order annotation is inspected */ }
 
-        public void unannotatedZeta() {}
+        public void unannotatedZeta() { /* fixture action: unannotated methods sort after annotated ones */ }
 
-        public void unannotatedAlpha() {}
+        public void unannotatedAlpha() { /* fixture action: unannotated methods sort after annotated ones */ }
     }
 
 }

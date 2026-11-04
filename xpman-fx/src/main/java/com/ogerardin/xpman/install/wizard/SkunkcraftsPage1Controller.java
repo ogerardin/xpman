@@ -126,38 +126,39 @@ public class SkunkcraftsPage1Controller implements Validating, PageListener {
         // Fetch remote data in background to avoid blocking the UI
         com.ogerardin.xplane.util.AsyncHelper.runAsync(() -> {
             try {
-                // Fetch remote version
                 String remoteVersion = updatable.getLatestVersion(channel);
-
-                // Fetch update summary
                 SkunkcraftsUpdateSummary summary = updatable.getUpdateSummary(channel);
-                int filesCount = summary.fileCount();
-
-                Platform.runLater(() -> {
-                    if (generation != refreshGeneration) return;
-                    remoteVersionLabel.setText(Objects.toString(remoteVersion, "?"));
-                    if (filesCount == 0) {
-                        // nothing to download; report the state honestly — a version-label mismatch
-                        // without content (e.g. openSAM Library) is not an update
-                        filesCountLabel.setText(remoteVersion != null && !Objects.equals(updatable.getInstalledVersion(), remoteVersion)
-                                ? "Files are up to date — local and remote versions differ"
-                                : "Already up to date");
-                        invalidProperty.set(true);
-                    } else {
-                        filesCountLabel.setText(filesCount + " file(s) to update (" + SizeFormat.humanSize(summary.totalSizeBytes()) + ")");
-                        invalidProperty.set(false);
-                    }
-                });
-
+                Platform.runLater(() -> showChannelInfo(generation, updatable, remoteVersion, summary));
             } catch (Exception e) {
                 log.error("Failed to load update information", e);
-                Platform.runLater(() -> {
-                    if (generation != refreshGeneration) return;
-                    invalidProperty.set(true);
-                    filesCountLabel.setText("Error: " + e.getMessage());
-                });
+                Platform.runLater(() -> showChannelFailure(generation, e));
             }
         });
+    }
+
+    /** Renders a successful channel refresh; a stale generation is dropped. */
+    private void showChannelInfo(long generation, SkunkcraftsUpdateProvider updatable,
+                                 String remoteVersion, SkunkcraftsUpdateSummary summary) {
+        if (generation != refreshGeneration) return;
+        remoteVersionLabel.setText(Objects.toString(remoteVersion, "?"));
+        if (summary.fileCount() == 0) {
+            // nothing to download; report the state honestly — a version-label mismatch
+            // without content (e.g. openSAM Library) is not an update
+            filesCountLabel.setText(remoteVersion != null && !Objects.equals(updatable.getInstalledVersion(), remoteVersion)
+                    ? "Files are up to date — local and remote versions differ"
+                    : "Already up to date");
+            invalidProperty.set(true);
+        } else {
+            filesCountLabel.setText(summary.fileCount() + " file(s) to update (" + SizeFormat.humanSize(summary.totalSizeBytes()) + ")");
+            invalidProperty.set(false);
+        }
+    }
+
+    /** Renders a failed channel refresh; a stale generation is dropped. */
+    private void showChannelFailure(long generation, Exception e) {
+        if (generation != refreshGeneration) return;
+        invalidProperty.set(true);
+        filesCountLabel.setText("Error: " + e.getMessage());
     }
 
     @Override

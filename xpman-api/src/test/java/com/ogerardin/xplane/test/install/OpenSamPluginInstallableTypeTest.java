@@ -459,10 +459,14 @@ class OpenSamPluginInstallableTypeTest {
     private XPlane newXPlaneWithSceneryIni() throws Exception {
         Path customScenery = tempFolder.resolve("Custom Scenery");
         Files.createDirectories(customScenery);
-        Files.writeString(customScenery.resolve("scenery_packs.ini"),
-                "I\n1000 Version\nSCENERY\n\n"
-                        + "SCENERY_PACK Custom Scenery/Some Airport/\n"
-                        + "SCENERY_PACK *GLOBAL_AIRPORTS*\n");
+        Files.writeString(customScenery.resolve("scenery_packs.ini"), """
+                I
+                1000 Version
+                SCENERY
+
+                SCENERY_PACK Custom Scenery/Some Airport/
+                SCENERY_PACK *GLOBAL_AIRPORTS*
+                """);
         return new XPlane(tempFolder);
     }
 

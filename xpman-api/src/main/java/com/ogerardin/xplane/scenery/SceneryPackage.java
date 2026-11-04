@@ -103,12 +103,7 @@ public class SceneryPackage implements Inspectable, Uninstallable, Updatable {
     private final Optional<UpdateProvider> updateProvider = loadUpdateProvider();
 
     private Optional<UpdateProvider> loadUpdateProvider() {
-        var skunkcraftsConfig = SkunkcraftsUpdater.findConfig(folder);
-        if (skunkcraftsConfig == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new SkunkcraftsUpdateProvider(this::getFolder, skunkcraftsConfig,
-                SkunkcraftsUpdater.findBetaConfig(folder), this::getVersion, this::isEnabled));
+        return SkunkcraftsUpdateProvider.discover(this::getFolder, this::getVersion, this::isEnabled);
     }
 
     /** An optional URL that points to an icon for this scenery. */

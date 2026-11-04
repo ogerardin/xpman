@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -32,13 +33,24 @@ public class SkunkcraftsUpdateProvider implements UpdateProvider, SkunkcraftsUpd
         this(() -> folder, config, beta, version, enabled);
     }
 
+    /** Creates a provider from the Skunkcrafts config discovered in the add-on's folder, or empty if none. */
+    public static Optional<UpdateProvider> discover(
+            Supplier<Path> folder, Supplier<String> version, BooleanSupplier enabled) {
+        SkunkcraftsConfig config = SkunkcraftsUpdater.findConfig(folder.get());
+        if (config == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new SkunkcraftsUpdateProvider(
+                folder, config, SkunkcraftsUpdater.findBetaConfig(folder.get()), version, enabled));
+    }
+
     @Override public Path getSkunkcraftsFolder() { return folder.get(); }
 
     @Override public String getName() { return "Skunkcrafts"; }
     @Override public String getVersion() { return version.get(); }
 
-    public String getSkunkcraftsLatestVersion() { return skunkcraftsLatestVersion.get(); }
-    public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() { return skunkcraftsChannelStatus.get(); }
+    @Override public String getSkunkcraftsLatestVersion() { return skunkcraftsLatestVersion.get(); }
+    @Override public SkunkcraftsChannelStatus getSkunkcraftsChannelStatus() { return skunkcraftsChannelStatus.get(); }
 
     @Override
     public boolean isSkunkcraftsUpdatable() {
@@ -50,15 +62,7 @@ public class SkunkcraftsUpdateProvider implements UpdateProvider, SkunkcraftsUpd
         if (!isSkunkcraftsUpdatable()) return;
         try {
             failure.set(null);
-            try {
-                skunkcraftsChannelStatus.set(SkunkcraftsUpdater.computeChannelStatusChecked(
-                        getSkunkcraftsFolder(), skunkcraftsConfig, skunkcraftsBetaConfig));
-            } catch (IOException e) {
-                if (skunkcraftsBetaConfig == null) throw e;
-                skunkcraftsChannelStatus.set(SkunkcraftsUpdater.computeChannelStatusChecked(
-                        getSkunkcraftsFolder(), skunkcraftsConfig, null));
-                failure.set("Beta update check failed: " + e.getMessage());
-            }
+            skunkcraftsChannelStatus.set(loadChannelStatus());
             skunkcraftsLatestVersion.set(fetchVersion(skunkcraftsConfig.moduleUrl()));
             if (skunkcraftsChannelStatus.get().betaUpdateAvailable()) {
                 skunkcraftsChannelStatus.set(new SkunkcraftsChannelStatus(skunkcraftsChannelStatus.get().stableUpdateAvailable(),
@@ -69,6 +73,19 @@ public class SkunkcraftsUpdateProvider implements UpdateProvider, SkunkcraftsUpd
             skunkcraftsChannelStatus.set(SkunkcraftsChannelStatus.NONE);
             failure.set(e.getMessage());
             state.set(UpdateStatus.State.FAILED);
+        }
+    }
+
+    /** Loads channel status, falling back to stable-only when beta discovery fails. */
+    private SkunkcraftsChannelStatus loadChannelStatus() throws IOException {
+        try {
+            return SkunkcraftsUpdater.computeChannelStatusChecked(
+                    getSkunkcraftsFolder(), skunkcraftsConfig, skunkcraftsBetaConfig);
+        } catch (IOException e) {
+            if (skunkcraftsBetaConfig == null) throw e;
+            failure.set("Beta update check failed: " + e.getMessage());
+            return SkunkcraftsUpdater.computeChannelStatusChecked(
+                    getSkunkcraftsFolder(), skunkcraftsConfig, null);
         }
     }
 
@@ -84,17 +101,39 @@ public class SkunkcraftsUpdateProvider implements UpdateProvider, SkunkcraftsUpd
 
     @Override
     public synchronized UpdateStatus getStatus() {
-        var current = !enabled.getAsBoolean() ? UpdateStatus.State.DISABLED
-                : isSkunkcraftsLocked() ? UpdateStatus.State.LOCKED
-                : !isSkunkcraftsUpdatable() ? UpdateStatus.State.DISABLED : state.get();
+        var current = currentState();
         List<UpdateOffer> offers = current == UpdateStatus.State.CURRENT
                 ? Arrays.stream(UpdateChannel.values()).filter(this::hasUpdate)
                 .map(c -> new UpdateOffer(c, getLatestVersion(c),
                         (UpdateAction.Direct) progress -> apply(c, progress))).toList() : List.of();
-        var reported = !offers.isEmpty() ? UpdateStatus.State.AVAILABLE
-                : current == UpdateStatus.State.CURRENT && failure.get() != null ? UpdateStatus.State.FAILED : current;
+        var reported = reportedState(current, offers);
         return new UpdateStatus(reported,
                 getInstalledVersion(), skunkcraftsLatestVersion.get(), offers, failure.get());
+    }
+
+    /** The live state ignoring pending offers: disabled, locked, or the last check's outcome. */
+    private UpdateStatus.State currentState() {
+        if (!enabled.getAsBoolean()) {
+            return UpdateStatus.State.DISABLED;
+        }
+        if (isSkunkcraftsLocked()) {
+            return UpdateStatus.State.LOCKED;
+        }
+        if (!isSkunkcraftsUpdatable()) {
+            return UpdateStatus.State.DISABLED;
+        }
+        return state.get();
+    }
+
+    /** The state to report: offers win, then a metadata failure, otherwise the live state. */
+    private UpdateStatus.State reportedState(UpdateStatus.State current, List<UpdateOffer> offers) {
+        if (!offers.isEmpty()) {
+            return UpdateStatus.State.AVAILABLE;
+        }
+        if (current == UpdateStatus.State.CURRENT && failure.get() != null) {
+            return UpdateStatus.State.FAILED;
+        }
+        return current;
     }
 
     private boolean hasUpdate(UpdateChannel channel) {

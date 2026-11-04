@@ -41,6 +41,7 @@ import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
  */
 @Slf4j
 @ToString
+@SuppressWarnings("java:S2160") // Manager identity is by X-Plane instance (inherited); loaded entries and ini state are mutable, not identity.
 public class SceneryManager extends Manager<SceneryEntry> implements InstallTarget {
 
     @NonNull @Getter

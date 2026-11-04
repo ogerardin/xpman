@@ -58,9 +58,10 @@ class SkunkcraftsUpdateTooltipTest {
                 var offers = Stream.concat(stable ? Stream.of(new UpdateOffer(UpdateChannel.RELEASE, latest, (UpdateAction.Direct) p -> {})) : Stream.empty(),
                         beta ? Stream.of(new UpdateOffer(UpdateChannel.BETA, betaLatest, (UpdateAction.Direct) p -> {})) : Stream.empty()).toList();
                 return Optional.of(new UpdateProvider() {
-                    public String getName() { return "Test"; }
-                    public void checkForUpdates() {}
-                    public UpdateStatus getStatus() { return new UpdateStatus(offers.isEmpty() ? UpdateStatus.State.CURRENT : UpdateStatus.State.AVAILABLE,
+                    @Override public String getName() { return "Test"; }
+                    /** No-op: this fixture serves a precomputed status. */
+                    @Override public void checkForUpdates() { /* fixture serves a precomputed status */ }
+                    @Override public UpdateStatus getStatus() { return new UpdateStatus(offers.isEmpty() ? UpdateStatus.State.CURRENT : UpdateStatus.State.AVAILABLE,
                             "5.4.0", latest, offers, null); }
                 });
             }

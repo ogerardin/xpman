@@ -19,11 +19,11 @@ public class Logs {
         Path logDir = Platforms.getCurrent().getLogDir(userHome);
         try {
             return Files.createDirectories(logDir);
-        } catch (IOException e) {
+        } catch (IOException _) {
             Path fallback = userHome.resolve(".xpman/logs");
             try {
                 return Files.createDirectories(fallback);
-            } catch (IOException ignored) {
+            } catch (IOException _) {
                 return fallback;
             }
         }

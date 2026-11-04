@@ -69,14 +69,13 @@ public class PluginsController extends Controller {
 
     private void onPluginManagerEvent(ManagerEvent<Plugin> event) {
         Platform.runLater(() -> {
-            switch (event.getType()) {
-                // rows are kept until LOADED replaces them, so the tree doesn't flash
-                // (and an in-flight switch animation isn't cut short) during reloads
-                case LOADING -> loading.set(true);
-                case LOADED -> {
-                    loading.set(false);
-                    rebuildTree(event.getItems());
-                }
+            // rows are kept until LOADED replaces them, so the tree doesn't flash
+            // (and an in-flight switch animation isn't cut short) during reloads
+            if (event.getType() == ManagerEvent.Type.LOADING) {
+                loading.set(true);
+            } else if (event.getType() == ManagerEvent.Type.LOADED) {
+                loading.set(false);
+                rebuildTree(event.getItems());
             }
         });
     }

@@ -8,9 +8,6 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
 import com.ogerardin.xplane.update.*;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
-import java.util.Optional;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
-import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -23,6 +20,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -92,13 +90,9 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     /** Creates the cached provider; subclasses may supply a fallback when no protocol is assigned. */
     protected Optional<UpdateProvider> loadUpdateProvider() {
-        Path folder = getBaseFolder();
-        var config = supportsSkunkcrafts() ? SkunkcraftsUpdater.findConfig(folder) : null;
-        if (config == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new SkunkcraftsUpdateProvider(this::getBaseFolder, config,
-                SkunkcraftsUpdater.findBetaConfig(folder), this::getVersion, this::isEnabled));
+        return supportsSkunkcrafts()
+                ? SkunkcraftsUpdateProvider.discover(this::getBaseFolder, this::getVersion, this::isEnabled)
+                : Optional.empty();
     }
 
     protected boolean supportsSkunkcrafts() { return true; }

@@ -91,7 +91,17 @@ public class XPlaneUpdateDialog extends Dialog<XPlaneReleaseInfo> {
                 new Label("Channel:"), choices, soleChannel, notes, instructions, guidance, screenshot);
         content.setPrefWidth(560);
         getDialogPane().setContent(content);
-        setResultConverter(button -> button == openInstaller ? (betaSelected.get() ? betaOffer : stableOffer) : null);
+        setResultConverter(button -> convertResult(button, openInstaller, betaSelected, betaOffer, stableOffer));
+    }
+
+    /** The selected channel's offer for the installer button, or null for cancellation. */
+    private static XPlaneReleaseInfo convertResult(ButtonType button, ButtonType openInstaller,
+                                                   BooleanProperty betaSelected,
+                                                   XPlaneReleaseInfo betaOffer, XPlaneReleaseInfo stableOffer) {
+        if (button != openInstaller) {
+            return null;
+        }
+        return betaSelected.get() ? betaOffer : stableOffer;
     }
 
     /** Offered labels for the single X-Plane product row; absence is distinct from an unknown label. */

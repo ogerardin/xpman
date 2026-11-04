@@ -99,6 +99,8 @@ public class HomeController {
     private final IntegerProperty navDataErrorCount = new SimpleIntegerProperty(0);
     private final IntegerProperty navDataWarningCount = new SimpleIntegerProperty(0);
 
+    private static final String UPDATE_NOUN = "update";
+
     public HomeController(XPmanFX mainController) {
         this.mainController = mainController;
     }
@@ -111,9 +113,9 @@ public class HomeController {
             AsyncHelper.runAsync(() -> checkUpdates(newXPlane));
         });
         
-        bindCountBadge(aircraftUpdateBadge, aircraftUpdateCount, "update");
-        bindCountBadge(sceneryUpdateBadge, sceneryUpdateCount, "update");
-        bindCountBadge(pluginsUpdateBadge, pluginsUpdateCount, "update");
+        bindCountBadge(aircraftUpdateBadge, aircraftUpdateCount, UPDATE_NOUN);
+        bindCountBadge(sceneryUpdateBadge, sceneryUpdateCount, UPDATE_NOUN);
+        bindCountBadge(pluginsUpdateBadge, pluginsUpdateCount, UPDATE_NOUN);
         bindCountBadge(navDataErrorBadge, navDataErrorCount, "error");
         bindCountBadge(navDataWarningBadge, navDataWarningCount, "warning");
     }

@@ -56,8 +56,11 @@ class TrashFileFixTest {
     void labelUsesFileName() {
         Path file = Path.of("/some/path/FAACIFP18");
         TrashFileFix fix = new TrashFileFix(file, () -> {}) {
+            /** Label-only test: apply() is never called, so nothing is ever trashed. */
             @Override
-            protected void moveToTrash(Path path) {}
+            protected void moveToTrash(Path path) {
+                throw new AssertionError("label tests must never trash files");
+            }
         };
 
         assertThat(fix.label(), is("Move FAACIFP18 to Trash"));
@@ -66,8 +69,11 @@ class TrashFileFixTest {
     @Test
     void labelHandlesNullFileName() {
         TrashFileFix fix = new TrashFileFix(Path.of("/"), () -> {}) {
+            /** Label-only test: apply() is never called, so nothing is ever trashed. */
             @Override
-            protected void moveToTrash(Path path) {}
+            protected void moveToTrash(Path path) {
+                throw new AssertionError("label tests must never trash files");
+            }
         };
 
         assertThat(fix.label(), is("Move / to Trash"));

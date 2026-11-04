@@ -41,6 +41,7 @@ import static com.ogerardin.xplane.manager.ManagerEvent.Type.LOADING;
 @Getter
 @Slf4j
 @ToString
+@SuppressWarnings("java:S2160") // Manager identity is by X-Plane instance (inherited); loaded tools and manifests are mutable state, not identity.
 public class ToolsManager extends Manager<Tool> {
 
     @NonNull

@@ -99,9 +99,10 @@ class UiFlyWithLuaScriptTest {
             var offers = channels.stream().map(channel -> new UpdateOffer(channel,
                     channel == UpdateChannel.RELEASE ? "81.2" : "Beta", (UpdateAction.Direct) p -> {})).toList();
             return Optional.of(new UpdateProvider() {
-                public String getName() { return "Test"; }
-                public void checkForUpdates() {}
-                public UpdateStatus getStatus() {
+                @Override public String getName() { return "Test"; }
+                /** No-op: this fixture serves a precomputed status. */
+                @Override public void checkForUpdates() { /* fixture serves a precomputed status */ }
+                @Override public UpdateStatus getStatus() {
                     return new UpdateStatus(offers.isEmpty() ? UpdateStatus.State.CURRENT : UpdateStatus.State.AVAILABLE,
                             "80.1", "81.2", offers, null);
                 }

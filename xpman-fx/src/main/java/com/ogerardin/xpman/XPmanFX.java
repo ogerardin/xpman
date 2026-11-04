@@ -52,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -129,8 +130,8 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     @Getter
     private final SceneryOrganizer sceneryOrganizer = new SceneryOrganizer(getConfig().getSceneryClasses());
 
-    // Bridge the user preference into Skunkcrafts availability; read live so Settings changes apply without restart
-    {
+    public XPmanFX() {
+        // Bridge the user preference into Skunkcrafts availability; read live so Settings changes apply without restart
         SkunkcraftsUpdater.ignoreBetaChannel.set(() -> getConfig().isIgnoreBetaUpdates());
     }
 
@@ -390,7 +391,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         Path logDir = Logs.logDir();
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Export XPman logs");
-        chooser.setInitialFileName("xpman-logs-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".zip");
+        chooser.setInitialFileName("xpman-logs-" + LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".zip");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("ZIP archives", "*.zip"));
         if (Files.isDirectory(logDir)) {
             chooser.setInitialDirectory(logDir.toFile());

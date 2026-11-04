@@ -69,14 +69,14 @@ public class SimLoadManagerPlugin extends Plugin {
             boolean hasSimLoadManagerFolder = archive.getPaths().stream()
                     .anyMatch(path -> {
                         String name = path.getFileName().toString();
-                        return name.equals("SimLoadManager") && path.getNameCount() >= 1;
+                        return name.equals(FOLDER_NAME) && path.getNameCount() >= 1;
                     });
 
             boolean hasLuaFolder = archive.getPaths().stream()
                     .anyMatch(path -> {
                         String name = path.getFileName().toString();
                         return name.equals("lua") &&
-                               path.toString().contains("SimLoadManager");
+                               path.toString().contains(FOLDER_NAME);
                     });
 
             boolean hasXplFiles = archive.getPaths().stream()

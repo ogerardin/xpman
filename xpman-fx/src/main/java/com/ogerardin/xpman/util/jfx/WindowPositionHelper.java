@@ -9,6 +9,8 @@ import com.ogerardin.xpman.util.jfx.wizard.Wizard;
  */
 public class WindowPositionHelper {
 
+    private WindowPositionHelper() {}
+
     private static XPManPrefs config;
     private static Runnable saveCallback;
 

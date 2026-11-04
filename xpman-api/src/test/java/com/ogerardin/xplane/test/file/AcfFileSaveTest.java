@@ -94,9 +94,9 @@ class AcfFileSaveTest {
     @Test
     void saveRejectsLineBreaksWithoutTouchingFile() throws IOException {
         AcfFile acfFile = writeAcf(ACF_CONTENTS);
+        var changes = Map.of("acf/_descrip", "Bad\nP acf/_name injected");
 
-        assertThrows(IllegalArgumentException.class,
-                () -> acfFile.save(Map.of("acf/_descrip", "Bad\nP acf/_name injected")));
+        assertThrows(IllegalArgumentException.class, () -> acfFile.save(changes));
         assertThat(Files.readString(acfFile.getFile()), is(ACF_CONTENTS));
         assertThat(Files.exists(acfFile.getFile().resolveSibling("test.acf.bak")), is(false));
     }

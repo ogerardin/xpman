@@ -36,26 +36,43 @@ public class FixButtonsCellFactory implements Callback<TableColumn<InspectionMes
                     setGraphic(null);
                     setStyle("");
                 } else {
-                    HBox box = new HBox(4);
-                    fixes.forEach(fix -> {
-                        Button button = new Button(fix.label());
-                        button.setGraphic(new FontIcon(Feather.TOOL));
-                        ((FontIcon) button.getGraphic()).setIconSize(ICON_SIZE);
-                        button.setMinWidth(Region.USE_PREF_SIZE);
-                        button.setOnAction(_ -> {
-                            boolean success = FixRunner.run(fix, this);
-                            if (success) {
-                                TableView<InspectionMessage> table = getTableView();
-                                InspectionMessage row = getTableRow().getItem();
-                                if (table != null && row != null) {
-                                    table.getItems().remove(row);
-                                }
-                            }
-                        });
-                        box.getChildren().add(button);
-                    });
-                    setGraphic(box);
+                    setGraphic(buildFixButtons(fixes));
                     setStyle("-fx-alignment: center-left;");
+                }
+            }
+
+            /** One button per fix; clicking runs it and removes the row on success. */
+            private HBox buildFixButtons(List<Fix> fixes) {
+                HBox box = new HBox(4);
+                fixes.forEach(fix -> box.getChildren().add(buildFixButton(fix)));
+                return box;
+            }
+
+            private Button buildFixButton(Fix fix) {
+                Button button = new Button(fix.label());
+                button.setGraphic(new FontIcon(Feather.TOOL));
+                ((FontIcon) button.getGraphic()).setIconSize(ICON_SIZE);
+                button.setMinWidth(Region.USE_PREF_SIZE);
+                button.setOnAction(_ -> runFixAndRemoveRow(fix));
+                return button;
+            }
+
+            /**
+             * The dialog shows a snapshot; a fixed message would be stale,
+             * so the row is removed after a successful fix.
+             */
+            private void runFixAndRemoveRow(Fix fix) {
+                boolean success = FixRunner.run(fix, this);
+                if (success) {
+                    removeRow();
+                }
+            }
+
+            private void removeRow() {
+                TableView<InspectionMessage> table = getTableView();
+                InspectionMessage row = getTableRow().getItem();
+                if (table != null && row != null) {
+                    table.getItems().remove(row);
                 }
             }
         };

@@ -48,13 +48,14 @@ class UpdateAvailableInspectionTest {
 
     private Updatable item(UpdateStatus status) {
         return new Updatable() {
-            public String getName() { return "MyAddon"; }
-            public String getVersion() { return "1.0"; }
-            public Optional<UpdateProvider> getUpdateProvider() {
+            @Override public String getName() { return "MyAddon"; }
+            @Override public String getVersion() { return "1.0"; }
+            @Override public Optional<UpdateProvider> getUpdateProvider() {
                 return Optional.of(new UpdateProvider() {
-                    public String getName() { return "Test"; }
-                    public void checkForUpdates() {}
-                    public UpdateStatus getStatus() { return status; }
+                    @Override public String getName() { return "Test"; }
+                    /** No-op: this fixture serves a precomputed status. */
+                    @Override public void checkForUpdates() { /* fixture serves a precomputed status */ }
+                    @Override public UpdateStatus getStatus() { return status; }
                 });
             }
         };

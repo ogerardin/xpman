@@ -80,8 +80,8 @@ class PropertiesStageTest {
         Map<String, Object> cache = new HashMap<>();
         
         Object result = getCachedMethod.invoke(null, bean, throwsPd, cache);
-        assertTrue(result != null);
-        assertTrue(result.toString().length() > 0);
+        assertNotNull(result);
+        assertFalse(result.toString().isEmpty());
     }
 
     @SuppressWarnings("unchecked")

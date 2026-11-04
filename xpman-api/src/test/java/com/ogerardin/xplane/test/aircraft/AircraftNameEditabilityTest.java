@@ -2,7 +2,7 @@ package com.ogerardin.xplane.test.aircraft;
 
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.aircraft.custom.ColimataConcorde;
-import com.ogerardin.xplane.aircraft.custom.Dmax3D_EF2000;
+import com.ogerardin.xplane.aircraft.custom.Dmax3dEf2000;
 import com.ogerardin.xplane.aircraft.custom.FlightFactorA350;
 import com.ogerardin.xplane.file.AcfFile;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class AircraftNameEditabilityTest {
     @Test
     void customDisplayNameAircraftNamesCannotBeEdited() throws Exception {
         assertFalse(aircraft("Airbus a350 XP11", "FlightFactor", FlightFactorA350.class).isAcfNameEditable());
-        assertFalse(aircraft("Eurofighter Typhoon", "dmax3d.com", Dmax3D_EF2000.class).isAcfNameEditable());
+        assertFalse(aircraft("Eurofighter Typhoon", "dmax3d.com", Dmax3dEf2000.class).isAcfNameEditable());
         assertFalse(aircraft("CONCORDE FXP", "Colimata", ColimataConcorde.class).isAcfNameEditable());
     }
 

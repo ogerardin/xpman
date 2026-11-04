@@ -44,10 +44,10 @@ public class OpenSamPlugin extends Plugin {
     private static final String FOLDER_NAME = "openSAM";
     static final String LIBRARY_FOLDER_NAME = "openSAM_Library";
     // openSAM/planes.cfg is the v5 marker: v4 and earlier ship acf_*.txt files instead
-    private static final Path V5_MARKER = Path.of("openSAM", "planes.cfg");
+    private static final Path V5_MARKER = Path.of(FOLDER_NAME, "planes.cfg");
 
     public OpenSamPlugin(XPlane xPlane, Path xplFile) throws InstantiationException {
-        super(xPlane, xplFile, "openSAM", "Marshaller and VDGS guidance for all sceneries, jetway and object animation");
+        super(xPlane, xplFile, FOLDER_NAME, "Marshaller and VDGS guidance for all sceneries, jetway and object animation");
         require(getBaseFolder(xplFile).getFileName().toString().equalsIgnoreCase(FOLDER_NAME));
     }
 
@@ -153,6 +153,7 @@ public class OpenSamPlugin extends Plugin {
          * The version gate: openSAM v5+ runs on X-Plane 12 only. An undetectable X-Plane version
          * skips the check (house philosophy: a missing probe never blocks).
          */
+        @SuppressWarnings("java:S1172") // The archive parameter is required by the v4 override, which reads the release flavor from it.
         protected InspectionResult versionGate(XPlane xPlane, Archive archive) {
             if (xPlane.getVersion() == null) {
                 return InspectionResult.empty();

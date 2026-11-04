@@ -31,7 +31,7 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
  * <p>
  * Recognition is based on either the studio field being "XPFR" or the presence of a matching version file.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "java:S2160"}) // Identity is deliberately ACF-file based (inherited); XPFR metadata must not affect it.
 public class XpfrAircraft extends Aircraft {
 
     @SuppressWarnings("java:S8786") // Retain legacy hyphen matching; input is a single bounded local filename.

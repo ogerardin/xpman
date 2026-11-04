@@ -31,6 +31,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
     protected Stage primaryStage;
 
     @Override
+    @SuppressWarnings("java:S2696") // JavaFX constructs one Application instance; registering it here is the standard singleton pattern.
     public void start(Stage primaryStage) {
         instance = this;
         this.primaryStage = primaryStage;
@@ -113,7 +114,7 @@ public abstract class JfxApp<C extends JfxAppPrefs> extends Application {
 
     protected abstract C getConfig();
 
-    static JfxApp<?> getInstance() {
+    static Application getInstance() {
         return instance;
     }
 

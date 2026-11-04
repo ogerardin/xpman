@@ -92,6 +92,7 @@ public abstract class NavDataSet extends XPlaneObject implements Inspectable, Na
      * <p>The sim-wide ARINC 424 override is the only such layer: X-Plane does not load any
      * other navdata text file once it has read {@code earth_424.dat}.</p>
      */
+    @Override
     public boolean isOverriding() {
         return false;
     }

@@ -19,7 +19,8 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 /**
  * Specialization of {@link Aircraft} for the Dmax3D Eurofighter Typhoon, recognized by studio and ACF name.
  */
-public class Dmax3D_EF2000 extends Aircraft {
+@SuppressWarnings("java:S2160") // Identity is deliberately ACF-file based (inherited); version caches must not affect it.
+public class Dmax3dEf2000 extends Aircraft {
 
     private static final Pattern filePattern = Pattern.compile("ef2000_v(\\d)(\\d)");
 
@@ -33,7 +34,7 @@ public class Dmax3D_EF2000 extends Aircraft {
         return m.matches() ? m.group(1) + "." + m.group(2) : null;
     }
 
-    public Dmax3D_EF2000(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
+    public Dmax3dEf2000(XPlane xPlane, AcfFile acfFile) throws InstantiationException {
         super(xPlane, acfFile, "Dmax3D Eurofighter Typhoon");
         require(getStudio().equals("dmax3d.com") && getAcfName().equals("Eurofighter Typhoon"));
     }

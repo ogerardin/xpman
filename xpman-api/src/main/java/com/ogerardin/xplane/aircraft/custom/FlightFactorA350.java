@@ -22,7 +22,7 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 /**
  * Specialization of {@link Aircraft} for the FlightFactor Airbus A350 XWB, reading version from {@code a350.ini}.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "java:S2160"}) // Identity is deliberately ACF-file based (inherited); version caches must not affect it.
 @Slf4j
 public class FlightFactorA350 extends Aircraft {
 

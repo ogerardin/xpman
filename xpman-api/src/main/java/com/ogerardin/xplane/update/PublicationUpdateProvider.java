@@ -29,11 +29,10 @@ public abstract class PublicationUpdateProvider implements UpdateProvider {
         String installed = installedVersion.get();
         try {
             String latest = fetchLatestVersion();
-            var state = latest == null ? UpdateStatus.State.UNKNOWN
-                    : Objects.equals(installed, latest) ? UpdateStatus.State.CURRENT : UpdateStatus.State.AVAILABLE;
+            var state = stateFor(installed, latest);
             UpdateAction.DownloadPage action = () -> {
                 if (!enabled.getAsBoolean()) throw new IOException("Add-on is disabled");
-        var url = getUrl();
+                var url = getUrl();
                 if (url == null) throw new IOException("Download page is unavailable");
                 return url;
             };
@@ -43,6 +42,14 @@ public abstract class PublicationUpdateProvider implements UpdateProvider {
         } catch (Exception e) {
             status.set(new UpdateStatus(UpdateStatus.State.FAILED, installed, null, List.of(), e.getMessage()));
         }
+    }
+
+    /** UNKNOWN when the latest version is unavailable, CURRENT when equal, AVAILABLE otherwise. */
+    private static UpdateStatus.State stateFor(String installed, String latest) {
+        if (latest == null) {
+            return UpdateStatus.State.UNKNOWN;
+        }
+        return Objects.equals(installed, latest) ? UpdateStatus.State.CURRENT : UpdateStatus.State.AVAILABLE;
     }
 
     @Override

@@ -70,7 +70,6 @@ public class NavDataSetCardView extends VBox {
             Map.entry("airspace.txt", Feather.FILE_TEXT),
             Map.entry("atc.dat", Feather.FILE_TEXT));
 
-    private final NavDataController controller;
     private final GenericContextMenuFactory<UiNavDataItem> menuFactory;
 
     private VBox filesBox;
@@ -78,7 +77,6 @@ public class NavDataSetCardView extends VBox {
 
     public NavDataSetCardView(UiNavDataItem uiItem, int layerIndex, int layerCount, int overriding,
                                NavDataController controller) {
-        this.controller = controller;
         this.menuFactory = controller.getCardMenuFactory();
 
         getStyleClass().add("navdata-card");

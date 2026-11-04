@@ -79,13 +79,10 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         log.info("Loading aircraft...");
         fireEvent(ManagerEvent.<Aircraft>builder().source(this).type(LOADING).build());
 
-        // find all .acf files under the Aircraft folder
+        // find all .acf files under the Aircraft folder. These are aircraft variants.
         Predicate<Path> isAcfPredicate = f -> f.getFileName().toString().endsWith(".acf");
         List<Path> acfFiles = FileUtils.findFiles(aircraftFolder, isAcfPredicate);
-
-        // TODO: introduce proper "configuration" concept — multiple ACFs in the same folder
-        // are X-Plane configurations (e.g. AI variant, with/without G1000). Currently we
-        // filter known variants but should model this as Aircraft→Configuration relationship.
+        // *_AI.acf are AI aircraft (non-flyable)
         acfFiles = acfFiles.stream()
                 .filter(f -> !f.getFileName().toString().matches(".*_AI\\.acf$"))
                 .toList();

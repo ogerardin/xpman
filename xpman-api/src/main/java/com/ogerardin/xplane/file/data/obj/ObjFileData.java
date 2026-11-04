@@ -2,6 +2,7 @@ package com.ogerardin.xplane.file.data.obj;
 
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.XPlaneFileData;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,12 +29,12 @@ import java.util.ArrayList;
  * }
  * }</pre>
  *
- * @author Olivier G.
  * @see com.ogerardin.xplane.file.ObjFile
  */
 @Getter
 @Setter
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class ObjFileData extends XPlaneFileData {
 
     /**

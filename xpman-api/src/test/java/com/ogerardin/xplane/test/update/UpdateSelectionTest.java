@@ -85,6 +85,29 @@ class UpdateSelectionTest {
     }
 
     @Test
+    void aircraftUsesSkunkcraftsOnlyWhenConfigured() throws Exception {
+        var folder = root.resolve("Aircraft/A320");
+        Files.createDirectories(folder);
+        var acf = folder.resolve("test.acf");
+        Files.writeString(acf, """
+                I
+                1200 version
+                ACF
+                PROPERTIES_BEGIN
+                P acf/_name Test
+                PROPERTIES_END
+                """);
+        var aircraft = new com.ogerardin.xplane.aircraft.Aircraft(new XPlane(root),
+                new com.ogerardin.xplane.file.AcfFile(acf));
+        assertTrue(aircraft.getUpdateProvider().isEmpty());
+        Files.writeString(folder.resolve("skunkcrafts_updater.cfg"),
+                "version|1.0\nmodule|https://example.com\n");
+        var reloaded = new com.ogerardin.xplane.aircraft.Aircraft(new XPlane(root),
+                new com.ogerardin.xplane.file.AcfFile(acf));
+        assertInstanceOf(SkunkcraftsUpdateProvider.class, reloaded.getUpdateProvider().orElseThrow());
+    }
+
+    @Test
     void configurationBackedVersionsDoNotRecurse() throws Exception {
         var folder = root.resolve("Resources/plugins/openSAM");
         Files.createDirectories(folder.resolve("64"));

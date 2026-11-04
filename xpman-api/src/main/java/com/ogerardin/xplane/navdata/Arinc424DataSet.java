@@ -4,6 +4,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.inspection.TrashFileFix;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -25,6 +26,7 @@ import java.util.Optional;
  * </ul>
  */
 @ToString(callSuper = true, includeFieldNames = false)
+@EqualsAndHashCode(callSuper = true)
 public class Arinc424DataSet extends NavDataSet {
 
     /**

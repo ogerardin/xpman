@@ -70,7 +70,7 @@ public class UiAircraft {
     @Label("'Uninstall aircraft'")
     @Confirm(value = """
             'The entire folder "' + xPlane.baseFolder.relativize(aircraft.acfFile.file.parent) + '" will be uninstalled. ' +
-            'This will impact the following aircraft: ' + xPlane.aircraftManager.getAircraftByFolder(aircraft.acfFile.file.parent) +
+            'This will impact the following variants: ' + xPlane.aircraftManager.getAircraftByFolder(aircraft.acfFile.file.parent) +
             '
 
 Press OK to continue.'

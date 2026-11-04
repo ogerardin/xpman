@@ -47,6 +47,8 @@ import java.util.function.Consumer;
  */
 public class PropertiesStage {
 
+    private PropertiesStage() {}
+
     private static final DefaultPropertyEditorFactory DEFAULT_EDITOR_FACTORY = new DefaultPropertyEditorFactory();
 
     @SneakyThrows
