@@ -531,7 +531,9 @@
 }
 
 .aircraft-card-badges {
-    -fx-hgap: 6px;
+    /* badges must fit one row (186px content width): a wrapped row makes the card taller than
+       its row and FlowPane (row height from prefHeight(-1)) lets it float above neighbours */
+    -fx-hgap: 4px;
     -fx-vgap: 6px;
     -fx-padding: 4px 0 0 0;
 }
@@ -539,7 +541,7 @@
 .aircraft-card-badges .label {
     -fx-background-color: -color-accent-subtle;
     -fx-text-fill: -color-fg-muted;
-    -fx-padding: 1px 6px 1px 6px;
+    -fx-padding: 1px 5px 1px 5px;
     -fx-background-radius: 4px;
 }
 
@@ -548,7 +550,7 @@
     -fx-border-color: -color-accent-muted;
     -fx-border-width: 1px;
     -fx-border-radius: 4px;
-    -fx-padding: 1px 6px 1px 6px;
+    -fx-padding: 1px 5px 1px 5px;
     -fx-text-fill: -color-fg-muted;
 }
 
