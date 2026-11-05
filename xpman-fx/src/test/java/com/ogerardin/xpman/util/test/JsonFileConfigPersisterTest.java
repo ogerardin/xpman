@@ -14,11 +14,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 class JsonFileConfigPersisterTest {
 
@@ -114,6 +118,35 @@ class JsonFileConfigPersisterTest {
             XPManPrefs loaded = new JsonFileConfigPersister<>(XPManPrefs.class, file).getConfig();
             assertThat(loaded.getPropertiesPositions().get("aircraft").getX(), is(100.0));
             assertThat(loaded.getPropertiesPositions().get("plugin").getY(), is(400.0));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    void tableColumnWidthsDefaultToEmptyWhenMissingFromPrefs() throws IOException {
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{\"lastXPlanePath\":\"/X-Plane 12\"}");
+            XPManPrefs config = new JsonFileConfigPersister<>(XPManPrefs.class, file).getConfig();
+            assertThat(config.getTableColumnWidths(), notNullValue());
+            assertThat(config.getTableColumnWidths(), anEmptyMap());
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    void tableColumnWidthsRoundTrip() throws IOException {
+        Path file = Files.createTempFile("XPManPrefs", ".json");
+        try {
+            Files.writeString(file, "{}");
+            JsonFileConfigPersister<XPManPrefs> saver = new JsonFileConfigPersister<>(XPManPrefs.class, file);
+            saver.getConfig().setTableColumnWidths(new HashMap<>(Map.of("scenery.nameColumn", 250.0)));
+            saver.save();
+
+            XPManPrefs loaded = new JsonFileConfigPersister<>(XPManPrefs.class, file).getConfig();
+            assertThat(loaded.getTableColumnWidths(), hasEntry("scenery.nameColumn", 250.0));
         } finally {
             Files.deleteIfExists(file);
         }

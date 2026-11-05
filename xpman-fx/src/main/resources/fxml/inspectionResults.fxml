@@ -14,7 +14,7 @@
                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                AnchorPane.topAnchor="0.0">
       <columns>
-          <TableColumn prefWidth="50.0" text="Severity">
+          <TableColumn fx:id="severityColumn" prefWidth="50.0" text="Severity">
               <cellValueFactory>
                   <PropertyValueFactory property="severity"/>
               </cellValueFactory>
@@ -22,12 +22,12 @@
                   <SeverityIconCellFactory showText="true" />
               </cellFactory>
           </TableColumn>
-          <TableColumn prefWidth="100.0" text="Object">
+          <TableColumn fx:id="objectColumn" prefWidth="100.0" text="Object">
               <cellValueFactory>
                   <PropertyValueFactory property="object"/>
               </cellValueFactory>
           </TableColumn>
-          <TableColumn prefWidth="350.0" text="Message">
+          <TableColumn fx:id="messageColumn" prefWidth="350.0" text="Message">
               <cellValueFactory>
                   <PropertyValueFactory property="message"/>
               </cellValueFactory>
@@ -35,7 +35,7 @@
                   <WrappingCellFactory />
               </cellFactory>
           </TableColumn>
-          <TableColumn prefWidth="20.0" text="Details">
+          <TableColumn fx:id="detailsColumn" prefWidth="20.0" text="Details">
               <cellValueFactory>
                   <PropertyValueFactory property="details"/>
               </cellValueFactory>
@@ -43,7 +43,7 @@
                   <DetailsIconCellFactory />
               </cellFactory>
           </TableColumn>
-          <TableColumn prefWidth="200.0" text="Fix">
+          <TableColumn fx:id="fixColumn" prefWidth="200.0" text="Fix">
               <cellValueFactory>
                   <PropertyValueFactory property="fixes"/>
               </cellValueFactory>

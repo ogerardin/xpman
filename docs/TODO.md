@@ -22,11 +22,8 @@
 ## Installer
 - Install from URL
 - Manage update, not just install: report versions instead of only overwrites
-- abstract SkunkInstaller into generic install/update method, and implement additional channels (github, Google Drive, 
-x-plane.org, ...)
 - converge with tools install method
 
 ## Misc
 - X-plane log analyzer
 - Generate flight plan for FMS / ATC
-- memorize column widths

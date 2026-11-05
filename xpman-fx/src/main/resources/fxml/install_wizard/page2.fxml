@@ -21,7 +21,7 @@
                         <SeverityIconCellFactory showText="false"/>
                     </cellFactory>
                 </TableColumn>
-                <TableColumn prefWidth="380.0" text="Message">
+                <TableColumn fx:id="messageColumn" prefWidth="380.0" text="Message">
                     <cellValueFactory>
                         <PropertyValueFactory property="message" />
                     </cellValueFactory>
@@ -29,7 +29,7 @@
                         <WrappingCellFactory />
                     </cellFactory>
                 </TableColumn>
-                <TableColumn prefWidth="20.0" text="Details">
+                <TableColumn fx:id="detailsColumn" prefWidth="20.0" text="Details">
                     <cellValueFactory>
                         <PropertyValueFactory property="details" />
                     </cellValueFactory>

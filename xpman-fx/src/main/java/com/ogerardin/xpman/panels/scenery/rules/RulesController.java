@@ -3,6 +3,7 @@ package com.ogerardin.xpman.panels.scenery.rules;
 import com.ogerardin.xpman.scenery_organizer.RegexSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import com.ogerardin.xpman.util.jfx.cell_factory.ValidatingEditingCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyIntegerProperty;
@@ -42,6 +43,7 @@ public class RulesController {
 
     @FXML
     public void initialize() {
+        TableColumnWidthHelper.setup("sceneryRules", tableView.getColumns());
         ReadOnlyIntegerProperty selectedIndexProperty = tableView.getSelectionModel().selectedIndexProperty();
         upButton.disableProperty().bind(selectedIndexProperty.lessThanOrEqualTo(0));
         downButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {

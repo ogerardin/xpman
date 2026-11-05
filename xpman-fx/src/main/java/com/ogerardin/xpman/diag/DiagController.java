@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.diag;
 
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -21,6 +22,7 @@ public class DiagController {
 
     @FXML
     private void initialize() {
+        TableColumnWidthHelper.setup("inspectionResults", tableView.getColumns());
         tableView.setPlaceholder(PLACEHOLDER);
     }
 

@@ -14,6 +14,7 @@ import com.ogerardin.xpman.scenery_organizer.BuiltinSceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryClass;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.util.jfx.TableViewUtil;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import com.ogerardin.xpman.util.jfx.EmptyState;
 import com.ogerardin.xpman.util.jfx.cell_factory.SwitchCellFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTableRowFactory;
@@ -86,6 +87,8 @@ public class SceneryController extends Controller {
 
     @FXML
     public void initialize() {
+        TableColumnWidthHelper.setup("scenery", sceneryTable.getColumns());
+
         // add context menu to table rows
         sceneryTable.setRowFactory(rowFactory);
         enabledColumn.setCellFactory(new SwitchCellFactory<>(this::refreshTable));

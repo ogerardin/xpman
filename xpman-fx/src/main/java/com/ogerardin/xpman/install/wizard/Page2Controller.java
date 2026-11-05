@@ -5,6 +5,7 @@ import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.install.ArchiveInstallSource;
 import com.ogerardin.xplane.install.GenericInstaller;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import com.ogerardin.xpman.util.jfx.wizard.Validating;
 import javafx.beans.property.BooleanProperty;
@@ -49,6 +50,7 @@ public class Page2Controller implements Validating, PageListener {
 
     @FXML
     public void initialize() {
+        TableColumnWidthHelper.setup("installInspection", tableView.getColumns());
         tableView.setPlaceholder(new Label("No message to display"));
     }
 

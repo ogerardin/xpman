@@ -10,6 +10,7 @@ import com.ogerardin.xpman.XPmanFX;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.panels.Controller;
 import com.ogerardin.xpman.util.jfx.EmptyState;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import com.ogerardin.xpman.util.jfx.cell_factory.SwitchTreeCellFactory;
 import com.ogerardin.xpman.util.jfx.menu.IntrospectingContextMenuTreeTableRowFactory;
 import javafx.application.Platform;
@@ -47,6 +48,7 @@ public class PluginsController extends Controller {
 
     @FXML
     public void initialize() {
+        TableColumnWidthHelper.setup("plugins", pluginTable.getColumns());
         pluginTable.setRoot(new TreeItem<>());
         pluginTable.placeholderProperty().bind(Bindings.when(loading)
                 .then(EmptyState.loading("Loading plugins..."))

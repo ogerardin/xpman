@@ -19,6 +19,7 @@ module xpman.fx.test {
     requires java.logging;
     requires atlantafx.base;
     requires org.mockito;
+    requires java.xml;
 
     opens com.ogerardin.xpman.test to org.junit.platform.commons, spring.expression;
     opens com.ogerardin.xpman.test.scenery_organizer to org.junit.platform.commons, xpman.fx, com.google.gson;

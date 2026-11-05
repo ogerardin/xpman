@@ -21,6 +21,7 @@ import com.ogerardin.xpman.util.JsonFileConfigPersister;
 import com.ogerardin.xpman.util.Logs;
 import com.ogerardin.xpman.util.jfx.JfxApp;
 import com.ogerardin.xpman.util.jfx.JfxAppPrefs;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import com.ogerardin.xpman.util.jfx.ThemeManager;
 import com.ogerardin.xpman.util.jfx.WindowPositionHelper;
 import javafx.application.Platform;
@@ -274,6 +275,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
     private void initialize() {
         updateRecent();
         WindowPositionHelper.initialize(getConfig(), this::saveConfig);
+        TableColumnWidthHelper.initialize(getConfig());
         sidebarController.selectedSectionProperty().addListener((_, _, section) ->
                 Optional.ofNullable(section).ifPresent(this::showSection));
         sidebarController.select(Section.HOME);

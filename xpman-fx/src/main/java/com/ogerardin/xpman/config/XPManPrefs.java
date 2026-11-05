@@ -33,6 +33,9 @@ public class XPManPrefs extends JfxAppPrefs {
 
     Map<String, WindowPosition> propertiesPositions = new HashMap<>();
 
+    /** Saved column widths, keyed by {@code tableId.columnId}. */
+    Map<String, Double> tableColumnWidths = new HashMap<>();
+
     SettingsCategory settingsCategory;
 
     @JsonAdapter(SceneryClassesAdapter.class)

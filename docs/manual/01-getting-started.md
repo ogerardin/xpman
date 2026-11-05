@@ -32,3 +32,7 @@ Click **Light theme** or **Dark theme** in the sidebar footer to toggle. XPman u
 ## Window Position
 
 XPman remembers your window position and size between launches, so you don't have to rearrange it every time.
+
+## Table Column Widths
+
+XPman remembers the column widths you set in its tables — scenery, plugins, scenery classes, aircraft properties, inspection results, and the install wizard — and restores them on the next launch.

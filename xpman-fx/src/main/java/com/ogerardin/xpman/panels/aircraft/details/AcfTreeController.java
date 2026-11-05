@@ -2,6 +2,7 @@ package com.ogerardin.xpman.panels.aircraft.details;
 
 import com.ogerardin.xplane.aircraft.Aircraft;
 import com.ogerardin.xplane.util.AsyncHelper;
+import com.ogerardin.xpman.util.jfx.TableColumnWidthHelper;
 import com.ogerardin.xpman.util.jfx.panels.TreeTableViewLoadTask;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
@@ -16,6 +17,11 @@ import java.util.Map;
 public class AcfTreeController {
     @FXML
     private TreeTableView<UiProperty> treeTableView;
+
+    @FXML
+    private void initialize() {
+        TableColumnWidthHelper.setup("acfTree", treeTableView.getColumns());
+    }
 
     public void setAircraft(Aircraft aircraft) {
         final TreeTableViewLoadTask<UiProperty> loadTask = new TreeTableViewLoadTask<>(
