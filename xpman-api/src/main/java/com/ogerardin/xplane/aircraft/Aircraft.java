@@ -208,15 +208,18 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
     }
 
     @SuppressWarnings("unused")
+    @Getter(lazy = true)
+    private final Map<String, Path> manuals = computeManuals();
+
     @SneakyThrows
-    public Map<String, Path> getManuals() {
-        final HashMap<String, Path> map = new HashMap<>();
-        try (Stream<Path> pathStream = Files.list(getAcfFile().getFile().getParent())) {
-            pathStream
-                    .filter(path -> path.getFileName().toString().toLowerCase().contains("manual"))
-                    .forEach(path -> map.put(path.getFileName().toString(), path));
+    private Map<String, Path> computeManuals() {
+        Map<String, Path> foundManuals = new HashMap<>();
+        try (Stream<Path> paths = Files.walk(getAcfFile().getFile().getParent())) {
+            paths.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".pdf"))
+                    .forEach(p -> foundManuals.put(p.getFileName().toString(), p));
         }
-        return map;
+        return foundManuals;
     }
 
     @Override

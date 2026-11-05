@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.test.aircraft;
 
+import com.ogerardin.test.util.EnableOnAircraftPresent;
 import com.ogerardin.test.util.EnableOnLocalXPlane12;
 import com.ogerardin.test.util.TimingExtension;
 import com.ogerardin.test.util.XPlaneTestUtil;
@@ -38,6 +39,19 @@ class AircraftTest {
         assertThat(aircraft.getAuthor(), is("Alex Unruh"));
         assertThat(aircraft.getManufacturer(), is("Boeing"));
         assertThat(aircraft.getCategory(), Matchers.is(Aircraft.Category.AIRLINER));
+    }
+
+    @Test
+    @EnableOnAircraftPresent("Aircraft/Robin DR401/DR401_CDI155.acf")
+    void manualsSubfolderPdfsAreListedAsIndividualEntries() throws InvalidConfig {
+        Path root = XPlaneTestUtil.getDefaultXPRootFolder();
+        Path acfPath = root.resolve("Aircraft/Robin DR401/DR401_CDI155.acf");
+        Aircraft aircraft = new Aircraft(new XPlane(root), new AcfFile(acfPath));
+
+        assertThat(aircraft.getManuals().keySet(), Matchers.containsInAnyOrder(
+                "DR401 Checklist Normal operation.pdf",
+                "DR401 Flight Manual.pdf",
+                "DR401_Checklist_Emergency_ops.pdf"));
     }
 
 }

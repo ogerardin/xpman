@@ -9,11 +9,7 @@ import com.ogerardin.xplane.util.Urls;
 import lombok.SneakyThrows;
 
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static com.ogerardin.xplane.util.IntrospectionHelper.*;
 
@@ -50,18 +46,6 @@ public class ColimataConcorde extends Aircraft {
                         "Colimata Homepage", Urls.url("http://www.colimata.com")
                 )
         );
-    }
-
-    @Override
-    @SneakyThrows
-    public Map<String, Path> getManuals() {
-        final HashMap<String, Path> manualsMap = new HashMap<>();
-        try (Stream<Path> pathStream = Files.list(getAcfFile().getFile().getParent().resolve("MANUALS"))) {
-            pathStream
-                    .filter(path -> path.getFileName().toString().endsWith(".pdf"))
-                    .forEach(path -> manualsMap.put(path.getFileName().toString(), path));
-        }
-        return manualsMap;
     }
 
 }
