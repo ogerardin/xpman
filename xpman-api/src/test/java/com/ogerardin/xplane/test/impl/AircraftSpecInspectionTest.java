@@ -78,4 +78,23 @@ class AircraftSpecInspectionTest {
         InspectionMessage message = result.get(0);
         assertThat(message.getSeverity(), is(Severity.ERROR));
     }
+
+    @SneakyThrows
+    @Test
+    void inspectLegacySpecComparesNumerically() {
+        // a legacy 3-digit spec like "900" is OLDER than "1200"; lexicographic compare would wrongly rank it newer
+        XPlane xPlane = mock();
+        when(xPlane.getMajorVersion()).thenReturn(XPlaneMajorVersion.XP12);
+
+        AcfFile acfFile = mock();
+        when(acfFile.getFileSpecVersion()).thenReturn("900");
+
+        Aircraft aircraft = mock();
+        when(aircraft.getAcfFile()).thenReturn(acfFile);
+        when(aircraft.getXPlane()).thenReturn(xPlane);
+
+        var result = AircraftSpecInspection.INSTANCE.inspect(aircraft);
+        assertThat(result.getMessages(), hasSize(1));
+        assertThat(result.get(0).getSeverity(), is(Severity.WARN));
+    }
 }

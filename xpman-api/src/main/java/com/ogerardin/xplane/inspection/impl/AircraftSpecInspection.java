@@ -13,9 +13,11 @@ public enum AircraftSpecInspection implements Inspection<Aircraft> {
 
     @Override
     public InspectionResult inspect(@NonNull Aircraft aircraft) {
-        String acfSpec = aircraft.getAcfFile().getFileSpecVersion();
-        String xPlaneSpec = aircraft.getXPlane().getMajorVersion().specString();
-        return switch (acfSpec.compareTo(xPlaneSpec)) {
+        // numeric compare: spec strings are 3-4 digits ("900".."1200"), and String.compareTo
+        // returns a char difference (±8 for "900" vs "1200"), not a sign
+        int acfSpec = Integer.parseInt(aircraft.getAcfFile().getFileSpecVersion());
+        int xPlaneSpec = Integer.parseInt(aircraft.getXPlane().getMajorVersion().specString());
+        return switch (Integer.compare(acfSpec, xPlaneSpec)) {
             case -1 -> InspectionResult.of(InspectionMessage.warn(
                     "Aircraft is intended for a previous version of X-Plane: " + acfSpec));
             case 1 -> InspectionResult.of(InspectionMessage.error(
