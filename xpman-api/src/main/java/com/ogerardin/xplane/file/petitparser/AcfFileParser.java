@@ -3,6 +3,7 @@ package com.ogerardin.xplane.file.petitparser;
 import com.ogerardin.xplane.file.data.Header;
 import com.ogerardin.xplane.file.data.acf.AcfFileData;
 import com.ogerardin.xplane.file.data.acf.AcfProperty;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.petitparser.parser.Parser;
 
@@ -46,6 +47,21 @@ public class AcfFileParser extends XPlaneFileParserBase<AcfFileData> {
      * Required file type for ACF files.
      */
     static final String REQUIRED_TYPE = "ACF";
+
+    /**
+     * Lazily-initialized parser that extracts only the header spec version, e.g. "1200".
+     */
+    @Getter(lazy = true)
+    private final Parser specVersionParser = Header(REQUIRED_TYPE)
+            .map(header -> ((Header) header).getSpecVersion());
+
+    /**
+     * Parses only the ACF header and returns the spec version (e.g. "1100" for X-Plane 11) —
+     * much cheaper than a full parse when only the version matters.
+     */
+    public String parseSpecVersion(String contents) {
+        return (String) getSpecVersionParser().parse(contents).get();
+    }
 
     /**
      * Matches a full X-Plane aircraft file.

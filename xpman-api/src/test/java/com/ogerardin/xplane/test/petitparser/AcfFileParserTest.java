@@ -57,4 +57,14 @@ class AcfFileParserTest extends ParserTest<AcfFileData> {
         assertThat(result.getProperties().get("acf/_descrip"), is("Rafale Solo Display for X-Plane 11"));
     }
 
+    @Test
+    void testParseSpecVersionHeaderOnly() {
+        String contents = """
+                I
+                1200 Version
+                ACF
+                """;
+        assertThat(new AcfFileParser().parseSpecVersion(contents), is("1200"));
+    }
+
 }

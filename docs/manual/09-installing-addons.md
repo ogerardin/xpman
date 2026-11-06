@@ -28,8 +28,11 @@ A table with columns:
 |--------|-------------|
 | **Severity** | Icon indicating severity (info, warning, error) |
 | **Message** | Description of the finding |
+| **Details** | ⓘ icon where present; hover to see additional details in a tooltip |
 
 XPman auto-detects the archive content (aircraft, scenery, plugin, or tool) and runs inspections. If any **ERROR** is present, **Next** is disabled. Warnings are non-blocking — you can proceed past them.
+
+For aircraft, XPman also compares the archive's ACF spec version with your X-Plane version: an aircraft built for a **newer** X-Plane than yours is reported as an error (**Next** is disabled — it will not work), while an aircraft built for an **older** X-Plane only produces a warning you can proceed past (an updated, native build of that aircraft may be available).
 
 ## Page 3 — Installing
 
