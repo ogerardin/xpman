@@ -14,6 +14,13 @@ class XPlaneMajorVersionTest {
     void testReleaseNotesBuilder() {
         assertVersion("12.1.3-b5-f4487de7", "x-plane-12-1-3-release-notes");
         assertVersion("12.04r3", "x-plane-12-00-release-notes/#1204r3");
+        assertVersion("11.55.1", "x-plane-11-55-release-notes");
+    }
+
+    @Test
+    void patchlessVersionHasNoReleaseNotesUrl() {
+        // "12.1" matches no known release-notes URL shape: fail, don't guess
+        assertThat(XPlaneMajorVersion.XP12.getReleaseNotesUrlBuilder().apply("12.1").isEmpty(), is(true));
     }
 
     private void assertVersion(String version, String expectedUrl) {

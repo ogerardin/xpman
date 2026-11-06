@@ -20,13 +20,13 @@ public enum XPlaneMajorVersion {
     XP11(11,
             version -> version.startsWith("11"),
             "https://lookup.x-plane.com/_lookup_11_/server_list_11.txt",
-            XPlaneMajorVersion::xp11ReleaseNotes
+            ReleaseNotesUrlBuilder.XP11
     ),
 
     XP12(12,
             version -> version.startsWith("12"),
             "https://lookup.x-plane.com/_lookup_12_/server_list_12.txt",
-            XPlaneMajorVersion::xp12ReleaseNotes
+            ReleaseNotesUrlBuilder.XP12
     );
 
     public static final Pattern LEGACY_VERSION_PATTERN  = Pattern.compile("^(\\d+)\\.(\\d+)(.*)");
@@ -48,29 +48,42 @@ public enum XPlaneMajorVersion {
                 .orElseThrow();
     }
 
-    private static Optional<String> xp12ReleaseNotes(String version) {
-        Matcher newVersion = NEW_VERSION_PATTERN.matcher(version);
-        if (newVersion.matches()) {
-            String minor = newVersion.group(2);
-            String patch = newVersion.group(3);
-            return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-%s-%s-release-notes",
-                    minor, patch));
-        }
-        Matcher legacyVersion = LEGACY_VERSION_PATTERN.matcher(version);
-        if (legacyVersion.matches()) {
-            return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-00-release-notes/#%s",
-                    version.replace(".", "")));
-        }
-        return Optional.empty();
-    }
+    /** Builds the release-notes URL for a full version string of a given major X-Plane version. */
+    private enum ReleaseNotesUrlBuilder implements Function<String, Optional<String>> {
 
-    private static Optional<String> xp11ReleaseNotes(String version) {
-        Matcher matcher = LEGACY_VERSION_PATTERN.matcher(version);
-        if (matcher.matches()) {
-            String minor = matcher.group(2);
-            return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-11-%s-release-notes", minor));
+        XP11 {
+            @Override
+            public Optional<String> apply(String version) {
+                Matcher matcher = LEGACY_VERSION_PATTERN.matcher(version);
+                if (matcher.matches()) {
+                    String minor = matcher.group(2);
+                    return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-11-%s-release-notes", minor));
+                }
+                return Optional.empty();
+            }
+        },
+
+        XP12 {
+            @Override
+            public Optional<String> apply(String version) {
+                Matcher newVersion = NEW_VERSION_PATTERN.matcher(version);
+                if (newVersion.matches()) {
+                    String minor = newVersion.group(2);
+                    String patch = newVersion.group(3);
+                    if (patch == null) {
+                        return Optional.empty(); // patch-less "12.N" matches no known URL shape — fail, don't guess
+                    }
+                    return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-%s-%s-release-notes",
+                            minor, patch));
+                }
+                Matcher legacyVersion = LEGACY_VERSION_PATTERN.matcher(version);
+                if (legacyVersion.matches()) {
+                    return Optional.of(String.format("https://www.x-plane.com/kb/x-plane-12-00-release-notes/#%s",
+                            version.replace(".", "")));
+                }
+                return Optional.empty();
+            }
         }
-        return Optional.empty();
     }
 
     /** Returns the 4-digit spec string for this version, e.g. "1100" for X-Plane 11. */
