@@ -6,7 +6,11 @@ import com.ogerardin.xplane.laminar.UpdateInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 //@ExtendWith(TimingExtension.class)
@@ -29,5 +33,16 @@ class UpdateInformationTest {
         }
 
 
+    }
+
+    @Test
+    void noVersionHasEmptyReleaseNotesUrl() {
+        XPlaneMajorVersion majorVersion = mock(XPlaneMajorVersion.class);
+        when(majorVersion.getServerListUrl()).thenReturn(null); // fetch impossible -> NO_VERSION returned
+
+        XPlaneReleaseInfo latest = new UpdateInformation(majorVersion).getLatestBeta();
+
+        // must not NPE: NO_VERSION must hold an empty Optional, not null
+        assertThat(latest.releaseNotesUrl().isEmpty(), is(true));
     }
 }

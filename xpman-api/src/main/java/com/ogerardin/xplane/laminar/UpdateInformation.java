@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * Information regarding the latest final and beta versions of a specific X-Plane major version.
@@ -17,7 +18,7 @@ import java.net.URL;
 @Slf4j
 public class UpdateInformation {
 
-    private static final XPlaneReleaseInfo NO_VERSION = new XPlaneReleaseInfo("n/a", null);
+    private static final XPlaneReleaseInfo NO_VERSION = new XPlaneReleaseInfo("n/a", Optional.empty());
 
     @NonNull
     private final XPlaneMajorVersion majorVersion;
