@@ -94,6 +94,85 @@ class SkunkcraftsUpdateProviderTest {
         } finally { SkunkcraftsUpdater.ignoreBetaChannel.set(() -> false); }
     }
 
+    @Test
+    void staleManifestChecksumKeepsDownloadedFileAndCompletesUpdate() throws Exception {
+        try (var server = SkunkcraftsServerFixture.start()) {
+            // file.txt carries a bogus CRC (12345), good.txt follows it in the whitelist:
+            // the update must continue past the failed verification and install both.
+            server.serve("skunkcrafts_updater.cfg", "version|2.0\n")
+                    .serve("skunkcrafts_updater_whitelist.txt", "file.txt|12345|3\ngood.txt||4\n")
+                    .serve("file.txt", "new")
+                    .serve("good.txt", "good");
+            Files.writeString(folder.resolve("skunkcrafts_updater.cfg"), "version|1.0\nmodule|" + server.baseUrl() + "\n");
+            var provider = new SkunkcraftsUpdateProvider(folder, config(server.baseUrl()), null, () -> "1.0", () -> true);
+            provider.checkForUpdates();
+            var action = (UpdateAction.Direct) provider.getStatus().offers().getFirst().action();
+            var finalMessage = new String[1];
+            action.apply((p, m) -> { if (p != null && p == 1.0) finalMessage[0] = m; });
+            assertEquals("new", Files.readString(folder.resolve("file.txt")));
+            assertEquals("good", Files.readString(folder.resolve("good.txt")));
+            assertTrue(finalMessage[0].contains("could not be verified"));
+            assertTrue(Files.readString(folder.resolve("skunkcrafts_updater.cfg")).contains("version|2.0"));
+        }
+    }
+
+    @Test
+    void staleManifestEntryIsRememberedAndResurfacesWhenRepublished() throws Exception {
+        try (var server = SkunkcraftsServerFixture.start()) {
+            server.serve("skunkcrafts_updater.cfg", "version|2.0\n")
+                    .serve("skunkcrafts_updater_whitelist.txt", "file.txt|12345|3\n")
+                    .serve("file.txt", "new");
+            Files.writeString(folder.resolve("skunkcrafts_updater.cfg"), "version|1.0\nmodule|" + server.baseUrl() + "\n");
+            updateViaNewProvider(server);
+            assertEquals("new", Files.readString(folder.resolve("file.txt")));
+            assertTrue(Files.exists(folder.resolve("skunkcrafts_updater_xpman.json")), "stale-entry state file missing");
+
+            // Fresh provider = next XPman launch: the proven-stale entry is remembered and the served
+            // file revalidated (304), so no phantom update is offered despite the stale manifest.
+            var fresh = new SkunkcraftsUpdateProvider(folder, config(server.baseUrl()), null, () -> "2.0", () -> true);
+            fresh.checkForUpdates();
+            assertTrue(fresh.getStatus().offers().isEmpty(), "phantom update offered after completed update");
+
+            // The developer republishes the file (still without fixing the manifest): the revalidation
+            // sees new bytes, the update resurfaces, and afterwards the record is refreshed (clean again).
+            server.serve("file.txt", "newer");
+            var afterRepublish = new SkunkcraftsUpdateProvider(folder, config(server.baseUrl()), null, () -> "2.0", () -> true);
+            afterRepublish.checkForUpdates();
+            assertEquals(1, afterRepublish.getStatus().offers().size());
+            updateViaNewProvider(server);
+            assertEquals("newer", Files.readString(folder.resolve("file.txt")));
+
+            var clean = new SkunkcraftsUpdateProvider(folder, config(server.baseUrl()), null, () -> "2.0", () -> true);
+            clean.checkForUpdates();
+            assertTrue(clean.getStatus().offers().isEmpty(), "phantom update offered after republished update");
+
+            // The developer finally fixes the file list: the update applies, verifies OK,
+            // and the stale proof is forgotten — the state file cleans itself up.
+            server.serve("file.txt", "newest");
+            server.serve("skunkcrafts_updater_whitelist.txt", "file.txt|" + crcOf("newest") + "|6\n");
+            var afterFix = new SkunkcraftsUpdateProvider(folder, config(server.baseUrl()), null, () -> "2.0", () -> true);
+            afterFix.checkForUpdates();
+            assertEquals(1, afterFix.getStatus().offers().size());
+            updateViaNewProvider(server);
+            assertEquals("newest", Files.readString(folder.resolve("file.txt")));
+            assertFalse(Files.exists(folder.resolve("skunkcrafts_updater_xpman.json")), "state file not cleaned up");
+        }
+    }
+
+    private static long crcOf(String content) {
+        var crc = new java.util.zip.CRC32();
+        crc.update(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        return crc.getValue();
+    }
+
+    /** Applies the pending update through a provider built from the current folder state. */
+    private void updateViaNewProvider(SkunkcraftsServerFixture server) throws Exception {
+        var provider = new SkunkcraftsUpdateProvider(folder, config(server.baseUrl()), null, () -> "1.0", () -> true);
+        provider.checkForUpdates();
+        var action = (UpdateAction.Direct) provider.getStatus().offers().getFirst().action();
+        action.apply((p, m) -> {});
+    }
+
     private SkunkcraftsConfig config(String url) {
         return new SkunkcraftsConfig("Addon", "1.0", url, null, false, false, true);
     }

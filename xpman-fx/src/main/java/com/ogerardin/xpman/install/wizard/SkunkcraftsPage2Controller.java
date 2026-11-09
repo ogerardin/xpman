@@ -44,7 +44,6 @@ public class SkunkcraftsPage2Controller implements PageListener {
                 ((com.ogerardin.xplane.update.UpdateAction.Direct) offer.action()).apply(this::updateProgress);
                 Platform.runLater(() -> {
                     progress.setProgress(1.0);
-                    fileLabel.setText("Update complete!");
                     wizard.getOnUpdated().run();
                 });
             } catch (Exception e) {
@@ -61,7 +60,7 @@ public class SkunkcraftsPage2Controller implements PageListener {
                 progress.setProgress(p);
             }
             if (message != null) {
-                fileLabel.setText(p != null && p == 1.0 ? "Done!" : message);
+                fileLabel.setText(message);
             }
         });
     }

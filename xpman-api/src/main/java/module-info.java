@@ -57,6 +57,7 @@ module xpman.api {
     exports com.ogerardin.xplane.update;
 
     opens com.ogerardin.xplane.tools to com.google.gson;
+    opens com.ogerardin.xplane.skunkcrafts to com.google.gson;
     exports com.ogerardin.xplane.exception;
     exports com.ogerardin.xplane.util.zip;
     exports com.ogerardin.xplane.util.progress;

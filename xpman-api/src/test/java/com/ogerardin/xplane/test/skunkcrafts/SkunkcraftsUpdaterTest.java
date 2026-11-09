@@ -177,7 +177,7 @@ class SkunkcraftsUpdaterTest {
         );
         Set<String> ignoreSet = new HashSet<>();
 
-        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, whitelist, ignoreSet);
+        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, "http://localhost:1/", whitelist, ignoreSet);
 
         assertThat(toUpdate, hasSize(1));
         assertThat(toUpdate.get(0).relativePath(), is("missing.txt"));
@@ -193,7 +193,7 @@ class SkunkcraftsUpdaterTest {
         );
         Set<String> ignoreSet = new HashSet<>();
 
-        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, whitelist, ignoreSet);
+        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, "http://localhost:1/", whitelist, ignoreSet);
 
         assertThat(toUpdate, hasSize(1));
     }
@@ -208,7 +208,7 @@ class SkunkcraftsUpdaterTest {
         );
         Set<String> ignoreSet = new HashSet<>();
 
-        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, whitelist, ignoreSet);
+        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, "http://localhost:1/", whitelist, ignoreSet);
 
         assertThat(toUpdate, hasSize(1));
     }
@@ -227,7 +227,7 @@ class SkunkcraftsUpdaterTest {
         );
         Set<String> ignoreSet = new HashSet<>();
 
-        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, whitelist, ignoreSet);
+        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, "http://localhost:1/", whitelist, ignoreSet);
 
         assertThat(toUpdate, is(empty()));
     }
@@ -240,7 +240,7 @@ class SkunkcraftsUpdaterTest {
         );
         Set<String> ignoreSet = Set.of("ignored.txt");
 
-        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, whitelist, ignoreSet);
+        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, "http://localhost:1/", whitelist, ignoreSet);
 
         assertThat(toUpdate, hasSize(1));
         assertThat(toUpdate.get(0).relativePath(), is("normal.txt"));
@@ -257,7 +257,7 @@ class SkunkcraftsUpdaterTest {
         );
         Set<String> ignoreSet = new HashSet<>();
 
-        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, whitelist, ignoreSet);
+        List<WhitelistEntry> toUpdate = SkunkcraftsUpdater.computeFilesToUpdate(tempDir, "http://localhost:1/", whitelist, ignoreSet);
 
         assertThat(toUpdate, is(empty()));
     }

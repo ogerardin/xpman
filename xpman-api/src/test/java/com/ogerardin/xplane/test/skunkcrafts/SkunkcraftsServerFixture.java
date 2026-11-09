@@ -52,8 +52,17 @@ public class SkunkcraftsServerFixture implements AutoCloseable {
             exchange.close();
             return;
         }
+        // ETag derived from the body, honored on If-None-Match: lets tests exercise conditional revalidation
+        String etag = "\"" + Integer.toHexString(body.hashCode()) + "\"";
+        if (etag.equals(exchange.getRequestHeaders().getFirst("If-None-Match"))) {
+            exchange.getResponseHeaders().set("ETag", etag);
+            exchange.sendResponseHeaders(304, -1);
+            exchange.close();
+            return;
+        }
         byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
+        exchange.getResponseHeaders().set("ETag", etag);
         exchange.sendResponseHeaders(200, bytes.length);
         try (OutputStream out = exchange.getResponseBody()) {
             out.write(bytes);

@@ -1,5 +1,6 @@
 package com.ogerardin.xplane.skunkcrafts;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import lombok.experimental.UtilityClass;
 
@@ -15,8 +16,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -56,6 +59,12 @@ public class SkunkcraftsUpdater {
 
     private static final long CRC_SENTINEL_MISSING = 0xFFFFFFFFL;
     private static final long CRC_SENTINEL_SKIP = 0L;
+
+    private static final String STATE_FILENAME = "skunkcrafts_updater_xpman.json";
+    private static final Gson GSON = new Gson();
+
+    /** HTTP validators of a downloaded file, for conditional revalidation. */
+    private record Validator(String etag, String lastModified) {}
 
     /**
      * Global user preference (registered once at UI startup, read live): when true the beta
@@ -273,31 +282,96 @@ public class SkunkcraftsUpdater {
     }
 
     /**
-     * Computes which files need to be downloaded (missing or CRC/size mismatch).
+     * Computes which files need to be downloaded (missing, CRC/size mismatch, or a proven-stale
+     * manifest entry whose served file changed since we recorded it).
      */
     public List<WhitelistEntry> computeFilesToUpdate(
             Path baseFolder,
+            String moduleUrl,
             List<WhitelistEntry> whitelist,
             Set<String> ignoreSet
     ) throws IOException {
+        String baseUrl = normalizeBaseUrl(moduleUrl);
+        Map<String, SkunkcraftsXpmanState.StaleManifestEntry> stale = loadStaleEntries(baseFolder);
         List<WhitelistEntry> toUpdate = new ArrayList<>();
 
         for (WhitelistEntry entry : whitelist) {
             if (!isIgnored(entry.relativePath(), ignoreSet)
-                    && needsUpdate(entry, baseFolder.resolve(entry.relativePath()))) toUpdate.add(entry);
+                    && needsUpdate(entry, baseFolder.resolve(entry.relativePath()), baseUrl, stale)) toUpdate.add(entry);
         }
 
         return toUpdate;
     }
 
-    private boolean needsUpdate(WhitelistEntry entry, Path localFile) throws IOException {
+    private boolean needsUpdate(WhitelistEntry entry, Path localFile, String baseUrl,
+            Map<String, SkunkcraftsXpmanState.StaleManifestEntry> stale) throws IOException {
         if (!Files.exists(localFile)) return true;
         if (entry.expectedCRC() != null) {
             long remoteCRC = entry.expectedCRC();
             if (remoteCRC == CRC_SENTINEL_MISSING || remoteCRC == CRC_SENTINEL_SKIP) return false;
-            return computeCRC32(localFile) != remoteCRC;
+            long localCRC = computeCRC32(localFile);
+            if (localCRC == remoteCRC) return false;
+            // The manifest disagrees with the local file: if we previously proved this entry stale
+            // and the local file still matches what the repository then served, the file is current
+            // unless the repository now serves different bytes.
+            var record = stale.get(staleKey(baseUrl, entry.relativePath()));
+            if (record != null && record.manifestCrc() == remoteCRC && record.servedCrc() == localCRC) {
+                return !servedFileUnchanged(baseUrl + entry.relativePath(), record);
+            }
+            return true;
         }
         return entry.expectedSize() != null && Files.size(localFile) != entry.expectedSize();
+    }
+
+    /** Conditional GET: true when the served file is unchanged (or cannot be revalidated). */
+    private static boolean servedFileUnchanged(String fileUrl, SkunkcraftsXpmanState.StaleManifestEntry record) {
+        // shortcut: without stored validators we suppress without asking — a server that never sends
+        // ETag/Last-Modified could hide a republish until its manifest is fixed; upgrade to a byte-compare then
+        if (record.etag() == null && record.lastModified() == null) return true;
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) encodeUrl(fileUrl).openConnection();
+            if (record.etag() != null) conn.setRequestProperty("If-None-Match", record.etag());
+            if (record.lastModified() != null) conn.setRequestProperty("If-Modified-Since", record.lastModified());
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            conn.setRequestProperty("User-Agent", "XPman/1.0");
+            return conn.getResponseCode() == 304;
+        } catch (Exception e) {
+            log.warn("Failed to revalidate {}: assuming unchanged", fileUrl, e);
+            return true;
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
+
+    private static String staleKey(String baseUrl, String relativePath) {
+        return baseUrl + "|" + relativePath;
+    }
+
+    private static Map<String, SkunkcraftsXpmanState.StaleManifestEntry> loadStaleEntries(Path baseFolder) {
+        Path file = baseFolder.resolve(STATE_FILENAME);
+        if (!Files.exists(file)) return new HashMap<>();
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
+            var state = GSON.fromJson(reader, SkunkcraftsXpmanState.class);
+            if (state != null && state.stale() != null) return new HashMap<>(state.stale());
+        } catch (Exception e) {
+            log.warn("Failed to read {}", file, e);
+        }
+        return new HashMap<>();
+    }
+
+    private static void saveStaleEntries(Path baseFolder, Map<String, SkunkcraftsXpmanState.StaleManifestEntry> stale) {
+        Path file = baseFolder.resolve(STATE_FILENAME);
+        try {
+            if (stale.isEmpty()) {
+                Files.deleteIfExists(file);
+            } else {
+                Files.writeString(file, GSON.toJson(new SkunkcraftsXpmanState(stale)));
+            }
+        } catch (IOException e) {
+            log.warn("Failed to save {}", file, e);
+        }
     }
 
     /**
@@ -339,7 +413,7 @@ public class SkunkcraftsUpdater {
     }
 
     private static List<WhitelistEntry> fetchAndDiff(Path baseFolder, SkunkcraftsConfig config) throws IOException {
-        return computeFilesToUpdate(baseFolder, fetchRemoteWhitelistChecked(config.moduleUrl()), ignoreSet(baseFolder, config));
+        return computeFilesToUpdate(baseFolder, config.moduleUrl(), fetchRemoteWhitelistChecked(config.moduleUrl()), ignoreSet(baseFolder, config));
     }
 
     /** The ignore set of a channel: its remote blacklist, the local user ignores, and liveries when excluded. */
@@ -391,7 +465,7 @@ public class SkunkcraftsUpdater {
         }
 
         List<WhitelistEntry> stableWhitelist = fetchRemoteWhitelistChecked(stableCfg.moduleUrl());
-        boolean stable = !computeFilesToUpdate(baseFolder, stableWhitelist, ignoreSet(baseFolder, stableCfg)).isEmpty();
+        boolean stable = !computeFilesToUpdate(baseFolder, stableCfg.moduleUrl(), stableWhitelist, ignoreSet(baseFolder, stableCfg)).isEmpty();
 
         if (betaCfg == null || betaCfg.moduleUrl() == null) {
             return new SkunkcraftsChannelStatus(stable, false, null);
@@ -402,7 +476,7 @@ public class SkunkcraftsUpdater {
             return new SkunkcraftsChannelStatus(stable, false, null);
         }
 
-        boolean beta = !computeFilesToUpdate(baseFolder, betaWhitelist, ignoreSet(baseFolder, betaCfg)).isEmpty();
+        boolean beta = !computeFilesToUpdate(baseFolder, betaCfg.moduleUrl(), betaWhitelist, ignoreSet(baseFolder, betaCfg)).isEmpty();
         return new SkunkcraftsChannelStatus(stable, beta, null);
     }
 
@@ -418,37 +492,54 @@ public class SkunkcraftsUpdater {
         String baseUrl = normalizeBaseUrl(moduleUrl);
         int total = filesToUpdate.size();
         int done = 0;
+        int failedVerifications = 0;
+        Map<String, SkunkcraftsXpmanState.StaleManifestEntry> stale = loadStaleEntries(baseFolder);
+        boolean staleDirty = false;
 
-        for (WhitelistEntry entry : filesToUpdate) {
-            String filename = Path.of(entry.relativePath()).getFileName().toString();
-            progress.progress((double) done / total, "Downloading " + filename + "...");
+        try {
+            for (WhitelistEntry entry : filesToUpdate) {
+                String filename = Path.of(entry.relativePath()).getFileName().toString();
+                progress.progress((double) done / total, "Downloading " + filename + "...");
 
-            Path localFile = baseFolder.resolve(entry.relativePath());
-            Path parentDir = localFile.getParent();
-            if (parentDir != null) {
-                Files.createDirectories(parentDir);
-            }
+                Path localFile = baseFolder.resolve(entry.relativePath());
+                Path parentDir = localFile.getParent();
+                if (parentDir != null) {
+                    Files.createDirectories(parentDir);
+                }
 
-            String fileUrl = baseUrl + entry.relativePath().replace("\\", "/");
-            downloadFile(fileUrl, localFile);
+                String fileUrl = baseUrl + entry.relativePath().replace("\\", "/");
+                Validator validator = downloadFile(fileUrl, localFile);
 
-            // Post-download validation: verify CRC if expected
-            if (entry.expectedCRC() != null) {
-                long remoteCRC = entry.expectedCRC();
-                if (remoteCRC != CRC_SENTINEL_MISSING && remoteCRC != CRC_SENTINEL_SKIP) {
-                    long actualCRC = computeCRC32(localFile);
-                    if (actualCRC != remoteCRC) {
-                        throw new IOException("Download verification failed for " + entry.relativePath()
-                                + ": expected CRC " + Long.toHexString(remoteCRC)
-                                + " but got " + Long.toHexString(actualCRC));
+                // A CRC mismatch means the repository's manifest is stale, not that the download
+                // is corrupt (the official updater logs "bad CRC32" per file and carries on);
+                // keep what the repository actually serves, remember the proof so the entry stops
+                // resurfacing, and forget it once the manifest agrees again.
+                if (entry.expectedCRC() != null) {
+                    long remoteCRC = entry.expectedCRC();
+                    if (remoteCRC != CRC_SENTINEL_MISSING && remoteCRC != CRC_SENTINEL_SKIP) {
+                        long actualCRC = computeCRC32(localFile);
+                        if (actualCRC != remoteCRC) {
+                            log.warn("Failed to verify {}: expected CRC {} but got {} — keeping the downloaded file; the repository's file list is probably stale",
+                                    entry.relativePath(), Long.toHexString(remoteCRC), Long.toHexString(actualCRC));
+                            failedVerifications++;
+                            stale.put(staleKey(baseUrl, entry.relativePath()), new SkunkcraftsXpmanState.StaleManifestEntry(
+                                    remoteCRC, actualCRC, validator.etag(), validator.lastModified()));
+                            staleDirty = true;
+                        } else if (stale.remove(staleKey(baseUrl, entry.relativePath())) != null) {
+                            staleDirty = true;
+                        }
                     }
                 }
+
+                done++;
             }
 
-            done++;
+            progress.progress(1.0, failedVerifications == 0 ? "Update complete"
+                    : "Update completed, but " + failedVerifications
+                    + " file(s) could not be verified (the repository's file list may be stale)");
+        } finally {
+            if (staleDirty) saveStaleEntries(baseFolder, stale);
         }
-
-        progress.progress(1.0, "Update complete");
     }
 
     /**
@@ -475,7 +566,7 @@ public class SkunkcraftsUpdater {
         }
 
         progress.progress(-1.0, "Computing files to update...");
-        List<WhitelistEntry> filesToUpdate = computeFilesToUpdate(baseFolder, whitelist, ignoreSet);
+        List<WhitelistEntry> filesToUpdate = computeFilesToUpdate(baseFolder, config.moduleUrl(), whitelist, ignoreSet);
 
         if (filesToUpdate.isEmpty()) {
             progress.progress(1.0, "Already up to date");
@@ -560,7 +651,7 @@ public class SkunkcraftsUpdater {
         }
     }
 
-    private void downloadFile(String urlStr, Path destination) throws IOException {
+    private Validator downloadFile(String urlStr, Path destination) throws IOException {
         Path tempFile = destination.resolveSibling(destination.getFileName() + ".tmp");
         try {
             URL url = encodeUrl(urlStr);
@@ -575,6 +666,8 @@ public class SkunkcraftsUpdater {
                 conn.disconnect();
                 throw new IOException("HTTP " + status + " from " + urlStr);
             }
+            String etag = conn.getHeaderField("ETag");
+            String lastModified = conn.getHeaderField("Last-Modified");
 
             try (InputStream is = conn.getInputStream()) {
                 Files.copy(is, tempFile);
@@ -583,6 +676,7 @@ public class SkunkcraftsUpdater {
             }
 
             Files.move(tempFile, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            return new Validator(etag, lastModified);
         } finally {
             Files.deleteIfExists(tempFile);
         }
