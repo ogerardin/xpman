@@ -27,3 +27,4 @@
 ## Misc
 - X-plane log analyzer
 - Generate flight plan for FMS / ATC
+- X-Plane MCP
