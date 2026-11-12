@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,6 +85,19 @@ public interface Platform {
      */
     default String extractPluginVersion(Path xplFile) {
         return null;
+    }
+
+    /** Whether the host running XPman is an Apple Silicon Mac. Returns {@code false} on every other platform. */
+    default boolean isAppleSilicon() { return false; }
+
+    /**
+     * Returns the Mach-O architectures contained in the given binary. An empty list means
+     * the format is unrecognized or the file is unreadable; callers must treat this as
+     * "unknown" and not report a mismatch — permissive on doubt. Returns empty by default
+     * on non-Mac platforms since only macOS plugins ship multiple slices.
+     */
+    default List<Architecture> getBinaryArchitectures(Path binary) {
+        return Collections.emptyList();
     }
 
     /**

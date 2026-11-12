@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +31,10 @@ import static com.ogerardin.xplane.util.IntrospectionHelper.*;
  * (e.g. {@code 64/}) within a parent folder named "FlyWithLua", which also contains a {@code Scripts/}
  * directory. This class detects that layout and exposes the Lua scripts as {@link FlyWithLuaScript} instances.
  * <p>
+ * FlyWithLua ships in three editions — Legacy (XP9–11), NG (XP11), NG+ (XP12) — distinguished by the
+ * {@code PLUGIN_NAME} string compiled into the {@code .xpl} binary. The plugin's display name in the
+ * panel reflects the installed edition.
+ * <p>
  * On Linux, installation requires shared libraries {@code libglut} and {@code libopenal};
  * these are declared as preconditions by {@link FlyWithLuaInstallableType} and checked via
  * {@link MissingSystemLibrariesInspection}.
@@ -46,12 +51,45 @@ public class FlyWithLua extends XPlaneOrgPlugin {
 
     public static final String FLY_WITH_LUA_PLUGIN = "FlyWithLua";
 
+    /** The three editions of FlyWithLua, identified by the {@code PLUGIN_NAME} string in the binary. */
+    public enum Flavor {
+        LEGACY("FlyWithLua"),
+        NG("FlyWithLua NG"),
+        NG_PLUS("FlyWithLua NG+");
+
+        private final String label;
+
+        Flavor(String label) { this.label = label; }
+
+        public String label() { return label; }
+
+        /**
+         * Scans the binary content for the {@code PLUGIN_NAME} marker. Order matters: NG+ contains NG,
+         * so check NG+ first. Unknown or empty content returns LEGACY (old label, no false claims).
+         */
+        public static Flavor of(String binaryContent) {
+            if (binaryContent.contains("FlyWithLua NG+")) return NG_PLUS;
+            if (binaryContent.contains("FlyWithLua NG")) return NG;
+            return LEGACY;
+        }
+    }
+
     @Getter(lazy = true)
     private final List<FlyWithLuaScript> scripts = loadScripts();
 
     public FlyWithLua(XPlane xPlane, Path xplFile) throws InstantiationException {
-        super(xPlane, xplFile, FLY_WITH_LUA_PLUGIN, "Lua scripting plugin for X-Plane", XPLANEORG_URL);
+        super(xPlane, xplFile, detectFlavor(xplFile).label(), "Lua scripting plugin for X-Plane", XPLANEORG_URL);
         require(isFlyWithLua(xplFile));
+    }
+
+    /** Reads the .xpl binary and returns the detected flavor. Defaults to LEGACY on any read failure. */
+    private static Flavor detectFlavor(Path xplFile) {
+        try {
+            return Flavor.of(new String(Files.readAllBytes(xplFile)));
+        } catch (Exception e) {
+            log.warn("Failed to read FlyWithLua .xpl for flavor detection: {}", xplFile, e);
+            return Flavor.LEGACY;
+        }
     }
 
     private boolean isFlyWithLua(Path xplFile) {
@@ -132,6 +170,25 @@ public class FlyWithLua extends XPlaneOrgPlugin {
         @Override
         public String description() {
             return "FlyWithLua plugin";
+        }
+
+        @Override
+        public String description(Archive archive) {
+            return detectFlavorFromArchive(archive).label() + " plugin";
+        }
+
+        private static Flavor detectFlavorFromArchive(Archive archive) {
+            return archive.getPaths().stream()
+                    .filter(path -> path.getFileName().toString().endsWith(".xpl"))
+                    .findFirst()
+                    .map(xpl -> {
+                        try {
+                            return Flavor.of(archive.getAsText(xpl));
+                        } catch (IOException e) {
+                            return Flavor.LEGACY;
+                        }
+                    })
+                    .orElse(Flavor.LEGACY);
         }
 
         @Override

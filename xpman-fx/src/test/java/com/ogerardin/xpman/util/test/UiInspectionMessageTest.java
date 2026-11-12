@@ -31,6 +31,14 @@ class UiInspectionMessageTest {
     }
 
     @Test
+    void searchUrlStripsLineNumberPrefix() {
+        UiInspectionMessage withLinePrefix = new UiInspectionMessage(
+                message("original", "line 42: the actual error message\nline 43: another line"), null);
+
+        assertThat(withLinePrefix.getSearchUrl(), is("https://www.google.com/search?q=the+actual+error+message"));
+    }
+
+    @Test
     void detailsFallbackReturnsMessageWhenDetailsAbsent() {
         UiInspectionMessage withDetails = new UiInspectionMessage(message("m", "details"), null);
         UiInspectionMessage withoutDetails = new UiInspectionMessage(message("m", null), null);

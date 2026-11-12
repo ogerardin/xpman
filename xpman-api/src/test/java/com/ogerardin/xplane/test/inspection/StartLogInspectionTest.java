@@ -280,4 +280,23 @@ class StartLogInspectionTest {
                 .resolve(executable).getParent()).resolve(Path.of(executable).getFileName());
         Files.writeString(path, "");
     }
+
+    @Test
+    void architectureMismatchProducesHumanReadableMessage() throws Exception {
+        copyFixture("xp12-sample.txt");
+        // Create the plugin file at the path referenced in the log (after substitution)
+        Path pluginPath = tempDir.resolve("Resources/plugins/FlyWithLua/64/mac.xpl");
+        Files.createDirectories(pluginPath.getParent());
+        Files.writeString(pluginPath, "");
+        
+        List<InspectionMessage> messages = inspect();
+        
+        List<InspectionMessage> archMismatch = messages.stream()
+                .filter(m -> m.getMessage().contains("FlyWithLua") && m.getMessage().contains("Intel Mac"))
+                .toList();
+        
+        assertThat(archMismatch, hasSize(1));
+        assertThat(archMismatch.getFirst().getMessage(), containsString("Intel Mac"));
+        assertThat(archMismatch.getFirst().getDetails(), containsString("line 20"));
+    }
 }
