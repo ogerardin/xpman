@@ -27,6 +27,8 @@ public class XPManPrefs extends JfxAppPrefs {
 
     WindowPosition settingsPosition;
 
+    WindowPosition diagPosition;
+
     WindowSize wizardSize;
 
     WindowSize skunkcraftsWizardSize;

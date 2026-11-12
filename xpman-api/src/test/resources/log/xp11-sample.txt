@@ -1,0 +1,18 @@
+log.txt for X-Plane 11.32r2 (build 113201 64-bit)
+compiled on Feb 21 2019 10:23:00
+X-Plane started on Fri Apr 19 21:43:02 2019
+Windows 10.0 (build 17763/2)
+X-System folder:'C:/Program Files/Steam/steamapps/common/X-Plane 11/', case sensitive=0
+Fetching plugins for C:/Program Files/Steam/steamapps/common/X-Plane 11/Resources/plugins
+Loaded: C:/Program Files/Steam/steamapps/common/X-Plane 11/Resources/plugins/PluginAdmin/64/win.xpl (xpsdk.examples.pluginadmin).
+2019-04-19 21:43:04 BetterPushback[xplane.c:539]: This is BetterPushback-v0.47 libacfutils-(null)
+I found the following scenery packages (prioritized in this order):
+0 Custom Scenery/Global Airports/
+1 Custom Scenery/KSEA Demo Area/
+0:00:12.731 D/STM: Transitioning from state state_InitialLoading to state_QuickFlightWizard
+0:00:12.731 I/WIN: Showing subscreen Main Menu
+0:00:18.318 I/FCG: Starting new flight in Aircraft/Laminar Research/Cessna 172SP/Cessna_172SP.acf at 4
+0:00:18.401 W/ATC: Found overlapping airports with overlapping controller freqs at KCEA and KIAB!
+0:00:18.401 W/ATC: Found overlapping airports with overlapping controller freqs at WSAC and WSSS!
+0:00:27.633 I/SCN: DSF load time: 757358 for file Custom Scenery/Global Airports/Earth nav data/+40-130/+47-125.dsf (0 tris, 0 skipped for 0.0 m^2)
+0:00:28.100 I/SCN: DSF load time: 42

@@ -35,10 +35,11 @@ module xpman.fx {
     exports com.ogerardin.xpman.panels.plugins to xpman.fx.test;
     exports com.ogerardin.xpman.util.jfx.menu to xpman.fx.test;
     exports com.ogerardin.xpman.util.jfx.menu.annotation to xpman.fx.test;
+    exports com.ogerardin.xpman.diag to xpman.fx.test;
 
     opens com.ogerardin.xpman to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.config to com.google.gson;
-    opens com.ogerardin.xpman.diag to javafx.base, javafx.fxml;
+    opens com.ogerardin.xpman.diag;
     opens com.ogerardin.xpman.install.wizard to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.about to javafx.base, javafx.fxml;
     opens com.ogerardin.xpman.panels.aircraft to javafx.base, javafx.fxml, spring.expression;

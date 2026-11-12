@@ -235,7 +235,7 @@ public class NavDataSetCardView extends VBox {
                     button.setGraphic(icon(Feather.TOOL));
                     button.setMinWidth(Region.USE_PREF_SIZE);
                     button.getStyleClass().add("navdata-card-fix");
-                    button.setOnAction(_ -> FixRunner.run(fix, this));
+                    button.setOnAction(_ -> FixRunner.run(fix, this.getScene().getWindow()));
                     fixes.getChildren().add(button);
                 });
                 messageBox.getChildren().add(fixes);

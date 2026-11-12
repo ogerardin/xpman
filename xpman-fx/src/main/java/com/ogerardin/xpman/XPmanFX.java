@@ -11,6 +11,7 @@ import com.ogerardin.xplane.tools.ToolsManager;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xpman.config.XPManPrefs;
+import com.ogerardin.xpman.diag.DiagUtil;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.scenery_organizer.SceneryOrganizer;
 import com.ogerardin.xpman.settings.SettingsCategory;
@@ -276,6 +277,7 @@ public class XPmanFX extends JfxApp<XPManPrefs> {
         updateRecent();
         WindowPositionHelper.initialize(getConfig(), this::saveConfig);
         TableColumnWidthHelper.initialize(getConfig());
+        DiagUtil.initialize(getConfig(), this::saveConfig);
         sidebarController.selectedSectionProperty().addListener((_, _, section) ->
                 Optional.ofNullable(section).ifPresent(this::showSection));
         sidebarController.select(Section.HOME);

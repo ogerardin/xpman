@@ -7,6 +7,7 @@ import com.ogerardin.xplane.laminar.UpdateInformation;
 import com.ogerardin.xplane.manager.Manager;
 import com.ogerardin.xplane.manager.ManagerEvent;
 import com.ogerardin.xplane.inspection.InspectionMessage;
+import com.ogerardin.xplane.inspection.impl.StartLogInspection;
 import com.ogerardin.xplane.inspection.Severity;
 import com.ogerardin.xplane.navdata.NavDataItem;
 import com.ogerardin.xplane.navdata.NavDataSet;
@@ -20,6 +21,7 @@ import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.util.AsyncHelper;
 import com.ogerardin.xplane.util.platform.Platforms;
 import com.ogerardin.xpman.XPmanFX;
+import com.ogerardin.xpman.diag.DiagUtil;
 import com.ogerardin.xpman.install.wizard.InstallWizard;
 import com.ogerardin.xpman.shell.Section;
 import com.ogerardin.xpman.tools.UiToolUtil;
@@ -64,6 +66,8 @@ public class HomeController {
     private Hyperlink folder;
     @FXML
     private Hyperlink log;
+    @FXML
+    private Button analyzeLogButton;
     @FXML
     private Button startXPlaneButton;
     @FXML
@@ -131,6 +135,8 @@ public class HomeController {
             folder.setText("Select a folder...");
             log.setVisible(false);
             log.setManaged(false);
+            analyzeLogButton.setVisible(false);
+            analyzeLogButton.setManaged(false);
             startXPlaneButton.setDisable(true);
             return;
         }
@@ -139,6 +145,8 @@ public class HomeController {
         log.setText(xPlane.getLogPath().toString());
         log.setVisible(true);
         log.setManaged(true);
+        analyzeLogButton.setVisible(true);
+        analyzeLogButton.setManaged(true);
         // disable "start" button if current platform different from X-Plane detected platform
         startXPlaneButton.setDisable(!xPlane.getVariant().getPlatform().isCurrent());
         trackCounts(xPlane);
@@ -447,6 +455,16 @@ public class HomeController {
         if (xPlane != null) {
             Platforms.getCurrent().openFile(xPlane.getLogPath());
         }
+    }
+
+    @FXML
+    private void analyzeLog() {
+        XPlane xp = xPlane;
+        if (xp == null) return;
+        AsyncHelper.runAsync(() -> {
+            List<InspectionMessage> messages = new StartLogInspection().inspect(xp).getMessages();
+            Platform.runLater(() -> DiagUtil.displayInspectionMessages(messages, log.getScene().getWindow()));
+        });
     }
 
     @FXML

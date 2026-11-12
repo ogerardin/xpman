@@ -1,9 +1,9 @@
 package com.ogerardin.xpman.diag;
 
 import com.ogerardin.xplane.inspection.Fix;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Window;
 import lombok.experimental.UtilityClass;
 
 import java.util.Optional;
@@ -24,12 +24,12 @@ public class FixRunner {
      *
      * @return true only when the fix was applied
      */
-    public static boolean run(Fix fix, Node owner) {
+    public static boolean run(Fix fix, Window owner) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirm");
         confirm.setHeaderText(null);
         confirm.setContentText(fix.label() + "?");
-        confirm.initOwner(owner.getScene().getWindow());
+        confirm.initOwner(owner);
 
         Optional<ButtonType> clicked = confirm.showAndWait();
         if (clicked.isEmpty() || clicked.get() != ButtonType.OK) {
@@ -44,7 +44,7 @@ public class FixRunner {
             error.setTitle("Fix failed");
             error.setHeaderText(fix.label());
             error.setContentText(e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            error.initOwner(owner.getScene().getWindow());
+            error.initOwner(owner);
             error.showAndWait();
             return false;
         }
