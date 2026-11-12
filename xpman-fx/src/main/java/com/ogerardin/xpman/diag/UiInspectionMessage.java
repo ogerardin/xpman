@@ -67,6 +67,8 @@ public class UiInspectionMessage {
         String details = message.getDetails();
         String query = details != null && !details.isBlank()
                 ? details.lines().findFirst().orElse(message.getMessage()) : message.getMessage();
+        // Strip line number prefixes (e.g., "line 42: ") from the query
+        query = query.replaceFirst("^line \\d+: ", "");
         return "https://www.google.com/search?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
     }
 
