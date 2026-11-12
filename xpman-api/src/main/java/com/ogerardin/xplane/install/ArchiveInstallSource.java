@@ -130,7 +130,7 @@ public class ArchiveInstallSource implements InstallSource, Archive {
         InstallableType detectedType = type.get();
         
         InspectionResult typeMessage = InspectionResult.of(
-            InspectionMessage.info("Archive type identified as: " + detectedType.description())
+            InspectionMessage.info("Archive type identified as: " + detectedType.description(archive))
         );
         
         return typeMessage.append(detectedType.preconditions(xPlane, archive));

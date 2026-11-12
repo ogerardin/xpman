@@ -14,6 +14,14 @@ public interface InstallableType {
 
     String description();
 
+    /**
+     * A description tailored to the specific archive, used when reporting "Archive type identified as:".
+     * Defaults to {@link #description()}; override when the archive's contents carry extra flavor.
+     */
+    default String description(Archive archive) {
+        return description();
+    }
+
 
     /**
      * Check if the given archive contains content matching this type.

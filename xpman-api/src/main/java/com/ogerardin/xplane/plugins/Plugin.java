@@ -5,6 +5,7 @@ import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
+import com.ogerardin.xplane.inspection.impl.ArchitectureMismatchInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
 import com.ogerardin.xplane.update.*;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
@@ -152,7 +153,10 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
 
     @Override
     public InspectionResult inspect() {
-        return isEnabled() ? UpdateAvailableInspection.INSTANCE.inspect(this) : InspectionResult.empty();
+        return isEnabled()
+                ? UpdateAvailableInspection.INSTANCE.inspect(this)
+                        .append(ArchitectureMismatchInspection.INSTANCE.inspect(this))
+                : InspectionResult.empty();
     }
 
     @Override

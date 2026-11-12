@@ -30,7 +30,7 @@ Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unreco
 
 | Plugin | Recognized by | What XPman adds |
 |---|---|---|
-| FlyWithLua | `FlyWithLua` folder | Lists its scripts; uninstall warning; Linux library check on install; X-Plane.org and GitHub links; **Inspect** reports newer versions |
+| FlyWithLua | `FlyWithLua` folder | Detects the installed edition (Legacy, NG, or NG+) from the binary and uses it as the display name; lists its scripts; uninstall warning; Linux library check on install; X-Plane.org and GitHub links; **Inspect** reports newer versions |
 | SGES | Its `.lua` file | Version read from the script; Skunkcrafts **Update…** button on the script row; uninstall removes data, docs and updater files; manuals and X-Plane.org link |
 | SimLoad Manager | `SimLoadManager` folder (v5 plugin) or `SimLoadManager.lua` (v4 script) | Name, description and links; X-Plane 12.4.4 check and Linux `libcurl` warning on install; v4 uninstall also removes `SLM-Data` |
 | AutoGate | `AutoGate` folder | Description and X-Plane.org link; **Inspect** reports newer versions |
@@ -93,7 +93,7 @@ Right-click a plugin for:
 - **Remove macOS quarantine** — macOS only, shown only when the plugin is quarantined.
 - **Enable plugin** / **Disable plugin**
 - **Uninstall plugin** — Confirmation dialog with plugin-specific details.
-- **Inspect** — Show inspection results.
+- **Inspect** — Show inspection results: available updates, and on Apple Silicon Macs a warning when an enabled plugin's binary is x86_64-only (X-Plane will not load it unless started with Rosetta; reinstall with a universal or Apple Silicon build).
 - **Properties** — Read-only view of all plugin properties.
 - **Update…** — Shown only for enabled plugins with an update available.
 - **Open download page** — Shown for a pending manual-download update; reload after installing it manually.
