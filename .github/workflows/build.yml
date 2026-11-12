@@ -196,6 +196,8 @@ jobs:
     name: Build manual (PDF + Wiki)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
         with:
@@ -224,12 +226,20 @@ jobs:
           if-no-files-found: error
 
       - name: Publish wiki
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         env:
-          WIKI_TOKEN: ${{ secrets.WIKI_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          LATEST_TAG=$(git tag --sort=version:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -1)
+          if [ "$TAG" != "$LATEST_TAG" ]; then
+            echo "Tag $TAG is not the highest semver tag ($LATEST_TAG); skipping wiki update."
+            exit 0
+          fi
+
           wiki_repo="${RUNNER_TEMP}/xpman-wiki"
-          git clone --depth 1 "https://x-access-token:${WIKI_TOKEN}@github.com/ogerardin/xpman.wiki.git" "$wiki_repo"
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/ogerardin/xpman.wiki.git" "$wiki_repo"
           rsync -a --delete --exclude='/.git/' target/manual-wiki/ "$wiki_repo/"
           git -C "$wiki_repo" config user.name "github-actions[bot]"
           git -C "$wiki_repo" config user.email "github-actions[bot]@users.noreply.github.com"
@@ -245,7 +255,7 @@ jobs:
     name: Publish GitHub Release
     runs-on: ubuntu-24.04
     needs: [linux, windows, mac, docs]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/tags/'))
+    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/tags/'))
     permissions:
       contents: write
     steps:
@@ -292,8 +302,9 @@ jobs:
                 break
               fi
             else
-              # Full release: clean up all pre-releases, then publish
-              gh release list --prerelease --json tagName --jq '.[].tagName' | \
+              # Full release: clean up only this version's snapshot pre-releases, then publish
+              gh release list --json tagName,name,isPrerelease --jq \
+                '.[] | select(.isPrerelease and (.name | startswith("'"$VERSION"'-SNAPSHOT"))) | .tagName' | \
                 xargs -r gh release delete --yes --cleanup-tag
               if gh release create "$VERSION" artifacts/* \
                   --target "$GITHUB_SHA" \
