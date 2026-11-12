@@ -5,7 +5,7 @@
 
 ## X-Plane Header
 
-The header shows `X-Plane {version} ({variant})` for your selected installation, or **"No X-Plane installation selected"** if none is open. The folder path is a hyperlink — click it to reveal the X-Plane executable in Finder / Explorer / Files. The **Log file** hyperlink opens the X-Plane log.
+The header shows `X-Plane {version} ({variant})` for your selected installation, or **"No X-Plane installation selected"** if none is open. The folder path is a hyperlink — click it to reveal the X-Plane executable in Finder / Explorer / Files. The **Log file** hyperlink opens the X-Plane log. **Analyze last session** reads `Log.txt` from the most recent simulator start and opens a report with session statistics (version, timings, flight, plugin counts) and grouped warnings/errors, such as plugin load failures, enabled content not loaded, and an unclean exit. It supports X-Plane 11.3x and 12 logs. Some findings can refer to X-Plane's own data, such as airport data in `apt.dat`, rather than an installed add-on. Select a row to read its full details below the table; use the severity filters to focus on errors, warnings, or information. Right-click a row to search the web for the message or copy the details. Common X-Plane messages include a plain-language explanation and occurrence count. Related adjacent lines (such as FMOD sound errors and their event descriptions) are paired and shown together. Missing plugins and scenery packs are consolidated into single rows with counts, and all detail listings include the original `Log.txt` line numbers for manual reference.
 
 ## Start X-Plane
 

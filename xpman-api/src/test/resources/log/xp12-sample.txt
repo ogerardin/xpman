@@ -1,0 +1,32 @@
+Log.txt for X-Plane 12.4.3-r2-15ff1e4d (build 124311 Apple Silicon, Metal d50c1d1e582274be2ba7099464743271b8900da8)
+Compiled on Jun 24 2026 10:40:40
+X-Plane Started on Fri Oct 23 23:39:14 2026
+
+This log file is generated automatically by Laminar Research applications and contains diagnostics about your graphics hardware, installation, and any error conditions.
+
+macOS: Version 26.6.2 (Build 25G83)
+CPU type: Apple M1 Max - Speed: 0.0-0.4 GHz - Cores: 10 Bus speed (mhz): 0 RAM (MB): 32768
+
+X-System folder:'/Users/testuser/Applications/X-Plane 12/', case sensitive=0
+
+0:00:00.000 I/GFX/MTL: Discovered Metal device: Apple M1 Max, Metal. Score: 1000
+0:00:00.000 E/APT: The airport ETOU (Wiesbaden Erbenheim AAF) has lost some controllers due to bad frequencies.  Each controller needs at least one frequency in the range of 118.00 to 136.990 mhz.
+0:00:00.000 E/APT: The airport ETHB (Bueckeburg AB) has lost some controllers due to bad frequencies.  Each controller needs at least one frequency in the range of 118.00 to 136.990 mhz.
+0:00:00.000 W/OBJ: The object Custom Scenery/KSEA Demo Area/KSEA_objects/ConCSlantRoof.obj has a first LOD near distance of 2000.000000 but it should start at 0!
+Fetching plugins for /Users/testuser/Applications/X-Plane 12/Resources/plugins
+
+Loaded: /Users/testuser/Applications/X-Plane 12/Resources/plugins/Avitab/mac_x64/Avitab.xpl (org.solhost.folko.avitab).
+
+dlerror:dlopen(/Users/testuser/Applications/X-Plane 12/Resources/plugins/FlyWithLua/64/mac.xpl, 0x0006): tried: '/Users/testuser/Applications/X-Plane 12/Resources/plugins/FlyWithLua/64/mac.xpl' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64'))
+
+0:00:08.077 D/STM: Transitioning from state state_InitialLoading to state_QuickFlightWizard
+I found the following scenery packages (prioritized in this order):
+0 Custom Scenery/Global Airports/
+1 Custom Scenery/KSEA Demo Area/
+2 Global Scenery/X-Plane 12 Global Scenery/
+0:00:08.077 I/WIN: Showing subscreen Main Menu
+0:03:46.647 I/FCG: Starting new flight in Aircraft/Laminar Research/McDonnell Douglas MD-82/MD80.acf at Runway 06
+0:03:46.647 I/SCN: DSF load time: 757358 for file Custom Scenery/Global Airports/Earth nav data/+40-130/+47-125.dsf (0 tris, 0 skipped for 0.0 m^2)
+0:03:46.647 I/SCN: DSF load time: 13857771 for file Global Scenery/X-Plane 12 Global Scenery/Earth nav data/+40-130/+47-125.dsf (106058 tris, 0 skipped for 0.0 m^2)
+0:12:26.675 I/SIM: User confirmed they want to quit
+----- X-Plane has shut down -----

@@ -16,7 +16,13 @@
             <VBox styleClass="dashboard-header-info">
                 <Label fx:id="titleLabel" styleClass="dashboard-title" text="No X-Plane installation selected"/>
                 <Hyperlink fx:id="folder" onAction="#showFolder" text="Select a folder..."/>
-                <Hyperlink fx:id="log" onAction="#showLog" text="Log file" visible="false" managed="false"/>
+                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                    <Hyperlink fx:id="log" onAction="#showLog" text="Log file" visible="false" managed="false"/>
+                    <Button fx:id="analyzeLogButton" mnemonicParsing="false" onAction="#analyzeLog"
+                            text="Analyze last session" visible="false" managed="false">
+                        <graphic><FontIcon iconLiteral="fth-activity"/></graphic>
+                    </Button>
+                </HBox>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <VBox styleClass="dashboard-header-actions" spacing="8.0">

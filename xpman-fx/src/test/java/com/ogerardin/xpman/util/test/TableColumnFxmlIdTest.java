@@ -32,6 +32,39 @@ class TableColumnFxmlIdTest {
         }
     }
 
+    @Test
+    void homeAnalyzerButtonIsWiredToItsControllerAction() throws Exception {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                .parse(Path.of("src/main/resources/fxml/panels/home.fxml").toFile());
+        NodeList buttons = document.getElementsByTagName("Button");
+        boolean found = false;
+        for (int i = 0; i < buttons.getLength(); i++) {
+            Element button = (Element) buttons.item(i);
+            if (button.getAttribute("fx:id").equals("analyzeLogButton")) {
+                assertTrue(button.getAttribute("onAction").equals("#analyzeLog"));
+                found = true;
+            }
+        }
+        assertTrue(found, "Home FXML must expose the Analyze last session action");
+    }
+
+    @Test
+    void inspectionDialogHasFilterBarAndDetailsPane() throws Exception {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                .parse(Path.of("src/main/resources/fxml/inspectionResults.fxml").toFile());
+        Set<String> ids = new HashSet<>();
+        NodeList elements = document.getElementsByTagName("*");
+        for (int i = 0; i < elements.getLength(); i++) {
+            Element element = (Element) elements.item(i);
+            String id = element.getAttribute("fx:id");
+            if (!id.isBlank()) ids.add(id);
+        }
+
+        assertTrue(ids.containsAll(Set.of("allButton", "errorButton", "warningButton", "infoButton", "detailsArea")));
+        assertTrue(document.getElementsByTagName("DetailsIconCellFactory").getLength() == 0,
+                "Inspection details must be visible without a hover-only icon");
+    }
+
     private static void assertColumnsHaveUniqueIds(Path fxml) throws Exception {
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fxml.toFile());
         Set<String> ids = new HashSet<>();

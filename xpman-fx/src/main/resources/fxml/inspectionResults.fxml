@@ -1,56 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.ogerardin.xpman.diag.FixButtonsCellFactory?>
 <?import com.ogerardin.xpman.diag.SeverityIconCellFactory?>
-<?import com.ogerardin.xpman.util.jfx.cell_factory.DetailsIconCellFactory?>
 <?import com.ogerardin.xpman.util.jfx.cell_factory.WrappingCellFactory?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ogerardin.xpman.diag.DiagController">
-    <TableView fx:id="tableView" layoutX="163.0" layoutY="77.0" prefHeight="200.0" prefWidth="200.0"
-               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-               AnchorPane.topAnchor="0.0">
-      <columns>
-          <TableColumn fx:id="severityColumn" prefWidth="50.0" text="Severity">
-              <cellValueFactory>
-                  <PropertyValueFactory property="severity"/>
-              </cellValueFactory>
-              <cellFactory>
-                  <SeverityIconCellFactory showText="true" />
-              </cellFactory>
-          </TableColumn>
-          <TableColumn fx:id="objectColumn" prefWidth="100.0" text="Object">
-              <cellValueFactory>
-                  <PropertyValueFactory property="object"/>
-              </cellValueFactory>
-          </TableColumn>
-          <TableColumn fx:id="messageColumn" prefWidth="350.0" text="Message">
-              <cellValueFactory>
-                  <PropertyValueFactory property="message"/>
-              </cellValueFactory>
-              <cellFactory>
-                  <WrappingCellFactory />
-              </cellFactory>
-          </TableColumn>
-          <TableColumn fx:id="detailsColumn" prefWidth="20.0" text="Details">
-              <cellValueFactory>
-                  <PropertyValueFactory property="details"/>
-              </cellValueFactory>
-              <cellFactory>
-                  <DetailsIconCellFactory />
-              </cellFactory>
-          </TableColumn>
-          <TableColumn fx:id="fixColumn" prefWidth="200.0" text="Fix">
-              <cellValueFactory>
-                  <PropertyValueFactory property="fixes"/>
-              </cellValueFactory>
-              <cellFactory>
-                  <FixButtonsCellFactory />
-              </cellFactory>
-          </TableColumn>
-      </columns>
-    </TableView>
-</AnchorPane>
+<VBox spacing="8.0" prefHeight="620.0" prefWidth="900.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ogerardin.xpman.diag.DiagController">
+    <HBox spacing="6.0">
+        <ToggleButton fx:id="allButton" text="All" selected="true"/>
+        <ToggleButton fx:id="errorButton" text="Errors"/>
+        <ToggleButton fx:id="warningButton" text="Warnings"/>
+        <ToggleButton fx:id="infoButton" text="Info"/>
+    </HBox>
+    <SplitPane orientation="VERTICAL" VBox.vgrow="ALWAYS" dividerPositions="0.7">
+        <TableView fx:id="tableView">
+            <columns>
+                <TableColumn fx:id="severityColumn" prefWidth="100.0" text="Severity">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="severity"/>
+                    </cellValueFactory>
+                    <cellFactory>
+                        <SeverityIconCellFactory showText="true"/>
+                    </cellFactory>
+                </TableColumn>
+                <TableColumn fx:id="objectColumn" prefWidth="160.0" text="Object">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="object"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="messageColumn" prefWidth="500.0" text="Message">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="message"/>
+                    </cellValueFactory>
+                    <cellFactory>
+                        <WrappingCellFactory/>
+                    </cellFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+        <TextArea fx:id="detailsArea" editable="false" wrapText="true"
+                  promptText="Select a row to see details"/>
+    </SplitPane>
+</VBox>

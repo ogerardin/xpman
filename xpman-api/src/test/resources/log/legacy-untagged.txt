@@ -1,0 +1,6 @@
+log.txt for X-Plane 10.50 (build 105007 64-bit)
+compiled on Aug 3 2016 20:25:13
+X-Plane started on Tue Aug 9 14:12:54 2016
+X-System folder:'C:/X-Plane 10/', case sensitive=0
+Loaded: C:/X-Plane 10/Resources/plugins/PluginAdmin/64/win.xpl (xpsdk.examples.pluginadmin).
+----- X-Plane has shut down -----
