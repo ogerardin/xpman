@@ -98,9 +98,35 @@ public class StartLogInspection implements Inspection<XPlane> {
             String details = sourceLines.stream()
                     .map(line -> "line " + line + ": " + log.getEntries().get(line - 1).raw())
                     .collect(java.util.stream.Collectors.joining("\n"));
+            
+            // Try to extract human-readable explanation from dlerror details
+            String message = explainDlError(folder, sourceLines.stream()
+                    .map(line -> log.getEntries().get(line - 1).raw())
+                    .collect(java.util.stream.Collectors.joining("\n")));
+            
+            if (message == null) {
+                message = "Plugin failed to load: " + path;
+            }
+            
             messages.add(InspectionMessage.builder().severity(Severity.ERROR).object(folder)
-                    .message("Plugin failed to load: " + path).details(details).build());
+                    .message(message).details(details).build());
         }
+    }
+    
+    /**
+     * Attempts to extract a human-readable explanation from dlerror output.
+     * Returns null if no known pattern is detected.
+     */
+    private static String explainDlError(String pluginName, String dlerrorText) {
+        // Check for architecture mismatch on macOS
+        if (dlerrorText.contains("incompatible architecture")) {
+            if (dlerrorText.contains("have 'x86_64'")) {
+                return pluginName + ": plugin binary is for Intel Macs — reinstall with a universal or Apple Silicon build";
+            } else if (dlerrorText.contains("have 'arm64'")) {
+                return pluginName + ": plugin binary is for Apple Silicon Macs — reinstall with a universal or Intel build";
+            }
+        }
+        return null;
     }
 
     private static void addUnloadedPlugins(XPlane xPlane, SessionLog log, List<InspectionMessage> messages) {

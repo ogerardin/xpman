@@ -16,7 +16,7 @@
 - handle MisterX https://forums.x-plane.org/files/file/28167-misterx-library-and-static-aircraft-extension/
 - hand HandyObjects https://forums.x-plane.org/files/file/24261-the-handy-objects-library/
 
-## Pugins
+## Plugins
 -  inspect plugin binary Mach-O architectures for Apple Silicon (arm64) vs Intel compatibility
 
 ## Installer
@@ -25,6 +25,6 @@
 - converge with tools install method
 
 ## Misc
-- X-plane log analyzer
+- [1.1] X-plane log analyzer
 - Generate flight plan for FMS / ATC
 - X-Plane MCP
