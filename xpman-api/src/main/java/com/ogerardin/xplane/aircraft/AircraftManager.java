@@ -126,7 +126,49 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
 
     @Override
     public void unpack(Archive archive, ProgressListener progressListener) throws IOException {
-        archive.extract(getAircraftFolder(), progressListener);
+        // Detect sim-layout-mirroring archives: if all .acf files sit under an "Aircraft/" element,
+        // extract only the subtree from that element onward (preserves publisher's directory structure).
+        Path aircraftSubpath = findAircraftSubpath(archive);
+        
+        if (aircraftSubpath != null) {
+            archive.extract(getAircraftFolder(), aircraftSubpath, progressListener);
+        } else {
+            // Normal archive: extract everything under Aircraft/
+            archive.extract(getAircraftFolder(), progressListener);
+        }
+    }
+
+    /**
+     * Returns the path prefix up to and including the outermost "Aircraft" folder element if all
+     * .acf files share it (indicating a sim-layout-mirroring archive), or null otherwise.
+     */
+    private Path findAircraftSubpath(Archive archive) {
+        List<Path> acfPaths = archive.getPaths().stream()
+                .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".acf"))
+                .toList();
+        
+        if (acfPaths.isEmpty()) {
+            return null;
+        }
+        
+        // Find the outermost "Aircraft" element in the first .acf path
+        Path samplePath = acfPaths.get(0);
+        for (int i = 0; i < samplePath.getNameCount() - 1; i++) {
+            if (samplePath.getName(i).toString().equalsIgnoreCase("Aircraft")) {
+                Path prefix = samplePath.subpath(0, i + 1);
+                
+                // Verify all .acf paths share this exact prefix
+                boolean allShare = acfPaths.stream()
+                        .allMatch(p -> p.getNameCount() >= prefix.getNameCount() &&
+                                       p.subpath(0, prefix.getNameCount()).equals(prefix));
+                
+                if (allShare) {
+                    return prefix;
+                }
+            }
+        }
+        
+        return null;
     }
 
     @SneakyThrows

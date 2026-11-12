@@ -13,6 +13,7 @@ import com.ogerardin.xplane.util.progress.ProgressListener;
 import com.ogerardin.xplane.util.zip.Archive;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Installable type for aircraft.
@@ -28,21 +29,37 @@ public class AircraftInstallableType implements InstallableType {
 
     @Override
     public boolean recognizes(Archive archive) {
-        // a bundled plugin (e.g. plugins/xlua) does not make the archive a plugin archive
-        return archive.getPaths().stream()
-            .anyMatch(path -> path.getFileName().toString().endsWith(".acf"))
-            && (archive.getPaths().stream()
-                .noneMatch(path -> path.getFileName().toString().endsWith(".xpl"))
-                || hasAcfAtRoot(archive));
+        return isAircraftArchive(archive);
     }
 
     /**
-     * An .acf directly under the archive's root folder means the root folder is an aircraft folder.
+     * An archive is an aircraft archive if it contains .acf files AND every .xpl is nested 
+     * under a "plugins/" directory (aircraft-local plugin convention).
      */
-    static boolean hasAcfAtRoot(Archive archive) {
+    static boolean isAircraftArchive(Archive archive) {
+        boolean hasAcf = archive.getPaths().stream()
+            .anyMatch(path -> path.getFileName().toString().endsWith(".acf"));
+        
+        if (!hasAcf) {
+            return false;
+        }
+        
+        // Check if all .xpl files are under a "plugins/" directory
         return archive.getPaths().stream()
-            .anyMatch(path -> path.getNameCount() == 2
-                && path.getFileName().toString().endsWith(".acf"));
+            .filter(path -> path.getFileName().toString().endsWith(".xpl"))
+            .allMatch(AircraftInstallableType::isAircraftLocalPlugin);
+    }
+
+    /**
+     * Returns true if the .xpl is under a "plugins/" path element (aircraft-local plugin).
+     */
+    private static boolean isAircraftLocalPlugin(Path path) {
+        for (Path element : path) {
+            if (element.toString().equalsIgnoreCase("plugins")) {
+                return true;
+            }
+        }
+        return false;
     }
     
     @Override

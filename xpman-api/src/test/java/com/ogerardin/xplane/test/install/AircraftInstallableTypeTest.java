@@ -71,6 +71,33 @@ class AircraftInstallableTypeTest {
     }
 
     @Test
+    void recognizesAircruiserShapeDeeplyNestedAcfWithAircraftLocalPlugin() throws IOException {
+        // Aircruiser XP12 v1_3.zip: nested .acf + .xpl under plugins/ → aircraft, not plugin
+        Path zip = createAircruiserArchive();
+
+        assertThat(new AircraftInstallableType().recognizes(new ZipArchive(zip)), is(true));
+        assertThat(new PluginInstallableType().recognizes(new ZipArchive(zip)), is(false));
+    }
+
+    @Test
+    void recognizesPluginWithDemoAircraft() throws IOException {
+        // Plugin ships a demo aircraft: root-level .xpl + .acf elsewhere → plugin, not aircraft
+        Path zip = createPluginWithDemoAircraftArchive();
+
+        assertThat(new PluginInstallableType().recognizes(new ZipArchive(zip)), is(true));
+        assertThat(new AircraftInstallableType().recognizes(new ZipArchive(zip)), is(false));
+    }
+
+    @Test
+    void recognizesPluginWhenMixedAircraftLocalAndStandaloneXpl() throws IOException {
+        // .acf + bundled plugins/.xpl AND root-level .xpl → plugin wins (standalone wouldn't land correctly as aircraft)
+        Path zip = createMixedArchive();
+
+        assertThat(new PluginInstallableType().recognizes(new ZipArchive(zip)), is(true));
+        assertThat(new AircraftInstallableType().recognizes(new ZipArchive(zip)), is(false));
+    }
+
+    @Test
     void preconditionsFlagVersionMismatch() throws Exception {
         Path xp12Aircraft = createVersionedAircraftArchive("1200");
         var intoXp11 = new AircraftInstallableType()
@@ -83,6 +110,49 @@ class AircraftInstallableTypeTest {
         assertThat(intoXp12.stream().noneMatch(InspectionMessage::isError), is(true));
         assertThat(intoXp12.stream().anyMatch(m ->
                 m.getSeverity() == Severity.WARN && m.getMessage().contains("intended for")), is(true));
+    }
+
+    @Test
+    void aircruiserArchiveInstallsToCorrectPath() throws Exception {
+        // Aircruiser-shaped archive should install to Aircraft/Hangar 23/Aircruiser/, not double-nested
+        Path zip = createAircruiserArchive();
+        XPlane xplane = new XPlane(tempFolder);
+        
+        new AircraftInstallableType().install(xplane, new ZipArchive(zip), (_, _) -> {});
+        
+        Path expectedAcf = tempFolder.resolve("Aircraft/Hangar 23/Aircruiser/Aircruiser_XP12.acf");
+        Path wrongAcf = tempFolder.resolve("Aircraft/Aircruiser/Aircraft/Hangar 23/Aircruiser/Aircruiser_XP12.acf");
+        
+        assertThat("Expected path should exist", Files.exists(expectedAcf), is(true));
+        assertThat("Double-nested path should not exist", Files.exists(wrongAcf), is(false));
+    }
+
+    @Test
+    void normalAircraftArchiveStillInstallsCorrectly() throws Exception {
+        // Normal archive (no Aircraft/ element) should still extract under Aircraft/
+        Path zip = createAircraftArchive();
+        XPlane xplane = new XPlane(tempFolder);
+        
+        new AircraftInstallableType().install(xplane, new ZipArchive(zip), (_, _) -> {});
+        
+        Path expectedAcf = tempFolder.resolve("Aircraft/Jaguar/Jaguar_GR1.acf");
+        assertThat("Normal aircraft should install under Aircraft/", Files.exists(expectedAcf), is(true));
+    }
+
+    @Test
+    void overwriteDetectionWorksForAircruiserArchive() throws Exception {
+        // Pre-create the expected location
+        Path expectedLocation = tempFolder.resolve("Aircraft/Hangar 23/Aircruiser/Aircruiser_XP12.acf");
+        Files.createDirectories(expectedLocation.getParent());
+        Files.writeString(expectedLocation, "existing file");
+        
+        Path zip = createAircruiserArchive();
+        XPlane xplane = new XPlane(tempFolder);
+        
+        var overwrites = xplane.getAircraftManager().overwrittenFiles(new ZipArchive(zip));
+        
+        assertThat("Should detect overwrite at expected location", 
+                overwrites.stream().anyMatch(p -> p.equals(expectedLocation)), is(true));
     }
 
     // Helper methods to create test archives
@@ -146,6 +216,82 @@ class AircraftInstallableTypeTest {
             out.closeEntry();
 
             out.putNextEntry(new ZipEntry("SomePlugin/mac_x64/plugin.xpl"));
+            out.write("dummy xpl content".getBytes());
+            out.closeEntry();
+        }
+        return zip;
+    }
+
+    /** Aircruiser-style archive: deeply nested .acf + .xpl under plugins/ */
+    private Path createAircruiserArchive() throws IOException {
+        Path zip = Files.createTempFile(tempFolder, "aircruiser", ".zip");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
+            out.putNextEntry(new ZipEntry("Aircruiser/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Aircruiser/Aircraft/Hangar 23/Aircruiser/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Aircruiser/Aircraft/Hangar 23/Aircruiser/Aircruiser_XP12.acf"));
+            out.write("dummy acf content".getBytes());
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Aircruiser/Aircraft/Hangar 23/Aircruiser/plugins/Aircruiser_plugin/mac_x64/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Aircruiser/Aircraft/Hangar 23/Aircruiser/plugins/Aircruiser_plugin/mac_x64/Aircruiser_plugin.xpl"));
+            out.write("dummy xpl content".getBytes());
+            out.closeEntry();
+        }
+        return zip;
+    }
+
+    /** Plugin archive that ships a demo aircraft: root-level .xpl + .acf elsewhere */
+    private Path createPluginWithDemoAircraftArchive() throws IOException {
+        Path zip = Files.createTempFile(tempFolder, "plugin-with-demo", ".zip");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
+            out.putNextEntry(new ZipEntry("PluginWithDemo/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("PluginWithDemo/mac_x64/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("PluginWithDemo/mac_x64/plugin.xpl"));
+            out.write("dummy xpl content".getBytes());
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("PluginWithDemo/demo/DemoAircraft/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("PluginWithDemo/demo/DemoAircraft/Demo.acf"));
+            out.write("dummy acf content".getBytes());
+            out.closeEntry();
+        }
+        return zip;
+    }
+
+    /** Mixed archive: .acf + bundled plugins/.xpl AND root-level .xpl */
+    private Path createMixedArchive() throws IOException {
+        Path zip = Files.createTempFile(tempFolder, "mixed", ".zip");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
+            out.putNextEntry(new ZipEntry("Mixed/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Mixed/Mixed.acf"));
+            out.write("dummy acf content".getBytes());
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Mixed/plugins/bundled/mac_x64/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Mixed/plugins/bundled/mac_x64/bundled.xpl"));
+            out.write("dummy xpl content".getBytes());
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Mixed/Mac_x64/"));
+            out.closeEntry();
+
+            out.putNextEntry(new ZipEntry("Mixed/Mac_x64/standalone.xpl"));
             out.write("dummy xpl content".getBytes());
             out.closeEntry();
         }
