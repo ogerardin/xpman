@@ -278,6 +278,7 @@ public class NavDataManager extends Manager<NavDataSet> implements InstallTarget
 
     @Override
     public void unpack(Archive archive, ProgressListener progressListener) throws IOException {
-        archive.extract(xPlane.getPaths().customData(), progressListener);
+        // Skip root-level files (manuals, readmes) — only extract entries inside the root folder
+        archive.extract(xPlane.getPaths().customData(), p -> p.getNameCount() > 1, progressListener);
     }
 }

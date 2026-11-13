@@ -48,3 +48,5 @@ For aircraft, XPman also compares the archive's ACF spec version with your X-Pla
 The universal installer handles all supported content types transparently. You don't need to know whether an archive contains an aircraft, scenery package, plugin, or tool — XPman detects it automatically.
 
 Archives that mirror the X-Plane folder structure (a versioned folder containing `Aircraft/…`) are installed with their internal structure preserved. For example, an archive containing `Aircruiser XP12 v1_3/Aircraft/Hangar 23/Aircruiser/…` is extracted so the aircraft lands at `Aircraft/Hangar 23/Aircruiser/` — matching the publisher's intended layout — rather than nesting under the versioned wrapper.
+
+Archives must contain a single root folder, but may also include root-level files (manuals, readmes, license files) alongside it. These root-level files are ignored during installation — only the contents of the root folder are extracted.

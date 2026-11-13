@@ -19,6 +19,7 @@ public enum AssertHasSingleRootFolder implements Inspection<Archive> {
     @SneakyThrows
     private static Set<Path> rootFolders(Archive zip) {
         return zip.getPaths().stream()
+                .filter(path -> path.getNameCount() > 1)
                 .map(path -> path.getName(0))
                 .collect(Collectors.toSet());
     }

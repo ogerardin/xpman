@@ -133,8 +133,8 @@ public class AircraftManager extends Manager<Aircraft> implements InstallTarget 
         if (aircraftSubpath != null) {
             archive.extract(getAircraftFolder(), aircraftSubpath, progressListener);
         } else {
-            // Normal archive: extract everything under Aircraft/
-            archive.extract(getAircraftFolder(), progressListener);
+            // Normal archive: extract everything under Aircraft/, skipping root-level files
+            archive.extract(getAircraftFolder(), p -> p.getNameCount() > 1, progressListener);
         }
     }
 

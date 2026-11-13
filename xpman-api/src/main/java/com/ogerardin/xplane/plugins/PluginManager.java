@@ -119,8 +119,16 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         }
         log.debug("Found {} .xpl files: {}", xplFiles.size(), xplFiles);
         
+        // Deduplicate by base folder: when a plugin ships both legacy (root-level) and modern
+        // (platform subfolder) binaries, prefer the modern one whose parent is a platform folder.
         items = xplFiles.stream()
                 .filter(Platforms.getCurrent()::isMatchingPluginPath)
+                .collect(java.util.stream.Collectors.toMap(
+                        Plugin::getBaseFolder,
+                        xpl -> xpl,
+                        (a, b) -> isPlatformChild(a) ? a : b,
+                        java.util.LinkedHashMap::new))
+                .values().stream()
                 .map(xplFile -> {
                     log.debug("Creating plugin for xplFile: {}", xplFile);
                     return maybeGetPlugin(xplFile);
@@ -164,7 +172,8 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         Path targetFolder = pluginsFolder.resolve(pluginRoot.name());
 
         if (pluginRoot.path().getNameCount() == 0) {
-            archive.extract(targetFolder, progressListener);
+            // Plugin files at archive root: skip root-level files (manuals, readmes)
+            archive.extract(targetFolder, p -> p.getNameCount() > 1, progressListener);
         } else {
             archive.extract(targetFolder, pluginRoot.path(), progressListener);
         }
@@ -215,6 +224,10 @@ public class PluginManager extends Manager<Plugin> implements InstallTarget {
         return lower.equals("64") || 
                lower.equals("32") ||
                lower.matches("^(mac|win|lin)_x(64|32)$");
+    }
+    
+    private boolean isPlatformChild(Path xplFile) {
+        return isPlatformFolder(xplFile.getParent().getFileName().toString());
     }
 
     @SneakyThrows

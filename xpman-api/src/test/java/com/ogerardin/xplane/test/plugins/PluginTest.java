@@ -121,4 +121,38 @@ class PluginTest {
         assertThat(plugins.stream().filter(Plugin::isEnabled).count(), is(1L));
         assertThat(plugins.stream().filter(p -> !p.isEnabled()).count(), is(1L));
     }
+
+    @Test
+    void pluginManagerDeduplicatesByBaseFolderPreferringPlatformSubfolder() throws Exception {
+        // LST-shaped plugin: root-level .xpl (legacy) + _x64 subfolder (modern)
+        Path pluginFolder = tempDir.resolve("Resources/plugins/Living Scenery Technology");
+        Files.createDirectories(pluginFolder);
+        
+        // Legacy root-level binaries
+        Files.write(pluginFolder.resolve("mac.xpl"), new byte[0]);
+        Files.write(pluginFolder.resolve("win.xpl"), new byte[0]);
+        Files.write(pluginFolder.resolve("lin.xpl"), new byte[0]);
+        
+        // Modern platform-subfolder binaries
+        Files.createDirectories(pluginFolder.resolve("mac_x64"));
+        Files.createDirectories(pluginFolder.resolve("win_x64"));
+        Files.createDirectories(pluginFolder.resolve("lin_x64"));
+        Files.write(pluginFolder.resolve("mac_x64/Living Scenery Technology.xpl"), new byte[0]);
+        Files.write(pluginFolder.resolve("win_x64/Living Scenery Technology.xpl"), new byte[0]);
+        Files.write(pluginFolder.resolve("lin_x64/Living Scenery Technology.xpl"), new byte[0]);
+        
+        XPlane xPlane = newXPlane();
+        List<Plugin> plugins = xPlane.getPluginManager().getPlugins();
+        
+        // Should see exactly one plugin (deduplicated by base folder)
+        assertThat(plugins, hasSize(1));
+        
+        Plugin plugin = plugins.get(0);
+        assertThat(plugin.getName(), is("Living Scenery Technology"));
+        
+        // The chosen .xpl should be the one in the platform subfolder (modern binary)
+        Path xplFile = plugin.getXplFile();
+        assertThat(xplFile.getParent().getFileName().toString(), 
+                anyOf(is("mac_x64"), is("win_x64"), is("lin_x64")));
+    }
 }

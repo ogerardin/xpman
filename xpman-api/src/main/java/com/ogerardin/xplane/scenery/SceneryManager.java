@@ -388,7 +388,8 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
 
     @Override
     public void unpack(Archive archive, ProgressListener progressListener) throws IOException {
-        archive.extract(getSceneryFolder(), progressListener);
+        // Skip root-level files (manuals, readmes) — only extract entries inside the root folder
+        archive.extract(getSceneryFolder(), p -> p.getNameCount() > 1, progressListener);
     }
 
 }
