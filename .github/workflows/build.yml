@@ -288,12 +288,28 @@ jobs:
             git log --format='- %s' -30 HEAD > "${RUNNER_TEMP}/release-notes.md"
           fi
 
+          delete_releases() {
+            local list
+            if ! list=$(gh release list --json tagName,name,isPrerelease --jq "$1"); then
+              echo "::error::gh release list failed; aborting before publish" >&2; exit 1
+            fi
+            local tag
+            while IFS= read -r tag; do
+              [ -n "$tag" ] || continue
+              echo "Deleting stale release $tag"
+              for try in 1 2 3; do
+                gh release delete --yes --cleanup-tag "$tag" && continue 2
+                sleep $((try * 10))
+              done
+              echo "::error::Failed to delete release $tag after 3 attempts" >&2; exit 1
+            done <<< "$list"
+          }
+
           for attempt in 1 2 3; do
             if [ "${IS_SNAPSHOT:-0}" = "1" ]; then
-              # Pre-release: dedup same-day titles, then create
-              gh release list --json tagName,name,isPrerelease --jq \
-                '.[] | select(.isPrerelease and .name == "'"$VERSION ($DATE)"'") | .tagName' | \
-                xargs -r gh release delete --yes --cleanup-tag
+              # Pre-release: keep at most one snapshot per version — delete previous
+              # snapshots of this version (VERSION already ends in -SNAPSHOT), then create.
+              delete_releases '.[] | select(.isPrerelease and (.name | startswith("'"$VERSION"'"))) | .tagName'
               if gh release create "$GH_VERSION" artifacts/* \
                   --target "$GITHUB_SHA" \
                   --title "$VERSION ($DATE)" \
@@ -302,10 +318,9 @@ jobs:
                 break
               fi
             else
-              # Full release: clean up only this version's snapshot pre-releases, then publish
-              gh release list --json tagName,name,isPrerelease --jq \
-                '.[] | select(.isPrerelease and (.name | startswith("'"$VERSION"'-SNAPSHOT"))) | .tagName' | \
-                xargs -r gh release delete --yes --cleanup-tag
+              # Full release: clean up only this version's snapshot pre-releases, then publish.
+              # Note: VERSION here is the bare semver (no -SNAPSHOT), so the filter appends it.
+              delete_releases '.[] | select(.isPrerelease and (.name | startswith("'"$VERSION"'-SNAPSHOT"))) | .tagName'
               if gh release create "$VERSION" artifacts/* \
                   --target "$GITHUB_SHA" \
                   --title "$VERSION" \
