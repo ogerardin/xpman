@@ -93,6 +93,7 @@ Right-click a plugin for:
 - **Remove macOS quarantine** — macOS only, shown only when the plugin is quarantined.
 - **Enable plugin** / **Disable plugin**
 - **Uninstall plugin** — Confirmation dialog with plugin-specific details.
+- **Trim to [variant]** — Removes platform-specific binaries for other operating systems (e.g., on macOS, removes Windows and Linux binaries). Only shown when non-applicable binaries are detected. Confirmation dialog with details about what will be removed.
 - **Inspect** — Show inspection results: available updates, and on Apple Silicon Macs a warning when an enabled plugin's binary is x86_64-only (X-Plane will not load it unless started with Rosetta; reinstall with a universal or Apple Silicon build).
 - **Properties** — Read-only view of all plugin properties.
 - **Update…** — Shown only for enabled plugins with an update available.

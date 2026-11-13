@@ -3,6 +3,7 @@ package com.ogerardin.xplane.plugins;
 import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
+import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.ArchitectureMismatchInspection;
@@ -162,5 +163,131 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     @Override
     public void uninstall() throws IOException {
         moveToTrash(getBaseFolder());
+    }
+
+    /**
+     * Returns all .xpl files under the plugin's base folder.
+     */
+    @SneakyThrows
+    public java.util.List<Path> getAllXplFiles() {
+        try (Stream<Path> paths = Files.walk(getBaseFolder())) {
+            return paths.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".xpl"))
+                    .toList();
+        }
+    }
+
+    /**
+     * Returns the .xpl files that are applicable for the given X-Plane variant.
+     * Applicable files are:
+     * - Files in platform-neutral folders (64/, 32/)
+     * - Files in platform-specific folders matching the variant (e.g., mac_x64/ for MAC variant)
+     * - Files not in any platform folder (legacy root-level)
+     */
+    @SneakyThrows
+    public java.util.List<Path> getApplicableXplFiles(XPlaneVariant variant) {
+        String platformId = variant.getPlatform().pluginPathIdentifier();
+        return getAllXplFiles().stream()
+                .filter(xpl -> isApplicableForPlatform(xpl, platformId))
+                .toList();
+    }
+
+    /**
+     * Returns the .xpl files that are NOT applicable for the given X-Plane variant.
+     */
+    @SneakyThrows
+    public java.util.List<Path> getNonApplicableXplFiles(XPlaneVariant variant) {
+        String platformId = variant.getPlatform().pluginPathIdentifier();
+        return getAllXplFiles().stream()
+                .filter(xpl -> !isApplicableForPlatform(xpl, platformId))
+                .toList();
+    }
+
+    /**
+     * Checks if an .xpl file is applicable for the given platform identifier.
+     * An .xpl is applicable if:
+     * - It's in a platform-neutral folder (64/, 32/)
+     * - It's in a platform-specific folder matching the platform (e.g., mac_x64/ for "mac")
+     * - It's at the root level with a non-platform-specific name (modern universal binary)
+     */
+    private boolean isApplicableForPlatform(Path xplFile, String platformId) {
+        Path parent = xplFile.getParent();
+        String parentName = parent.getFileName().toString().toLowerCase();
+        String fileName = xplFile.getFileName().toString().toLowerCase();
+
+        // Check if parent is a platform folder
+        if (isPlatformFolder(parentName)) {
+            // Platform-neutral folders (64, 32) are always applicable
+            if (parentName.equals("64") || parentName.equals("32")) {
+                return true;
+            }
+            // Platform-specific folders: check if they match the target platform
+            // Format: <platform>_x<bit> (e.g., mac_x64, win_x64, lin_x32)
+            return parentName.startsWith(platformId + "_x");
+        }
+
+        // Not in a platform folder - check if it's a legacy platform-specific binary at root
+        // Legacy binaries are named after the platform: mac.xpl, win.xpl, lin.xpl
+        String[] legacyNames = {"mac.xpl", "win.xpl", "lin.xpl"};
+        for (String legacyName : legacyNames) {
+            if (fileName.equals(legacyName)) {
+                return false;
+            }
+        }
+
+        // Modern universal binary at root level - applicable to all platforms
+        return true;
+    }
+
+    /**
+     * Checks if a folder name is a recognized platform folder.
+     */
+    private static boolean isPlatformFolder(String folderName) {
+        String lower = folderName.toLowerCase();
+        return lower.equals("64") ||
+               lower.equals("32") ||
+               lower.matches("^(mac|win|lin)_x(64|32)$");
+    }
+
+    /**
+     * Trims the plugin by removing all .xpl files and platform folders that are not applicable
+     * for the given X-Plane variant. Only files in the target platform's folder and platform-neutral
+     * folders are kept. Files are moved to trash.
+     *
+     * @param variant the target X-Plane variant
+     * @return the list of files/folders that were removed
+     */
+    @SneakyThrows
+    public java.util.List<Path> trimToVariant(XPlaneVariant variant) throws IOException {
+        java.util.List<Path> removed = new java.util.ArrayList<>();
+        java.util.List<Path> nonApplicable = getNonApplicableXplFiles(variant);
+
+        // Group non-applicable .xpl files by their parent folder
+        java.util.Map<Path, java.util.List<Path>> filesByParent = new java.util.HashMap<>();
+        for (Path xpl : nonApplicable) {
+            filesByParent.computeIfAbsent(xpl.getParent(), k -> new java.util.ArrayList<>()).add(xpl);
+        }
+
+        // Remove non-applicable .xpl files and their parent folders if they're platform folders
+        for (java.util.Map.Entry<Path, java.util.List<Path>> entry : filesByParent.entrySet()) {
+            Path parent = entry.getKey();
+            String parentName = parent.getFileName().toString().toLowerCase();
+
+            if (isPlatformFolder(parentName)) {
+                // This is a platform folder - remove the entire folder
+                moveToTrash(parent);
+                removed.add(parent);
+                log.debug("Removed platform folder: {}", parent);
+            } else {
+                // Root-level legacy binaries - remove individual files
+                for (Path file : entry.getValue()) {
+                    moveToTrash(file);
+                    removed.add(file);
+                    log.debug("Removed legacy .xpl file: {}", file);
+                }
+            }
+        }
+
+        return removed;
     }
 }

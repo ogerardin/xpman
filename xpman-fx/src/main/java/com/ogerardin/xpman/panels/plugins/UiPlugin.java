@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.panels.plugins;
 
 import com.ogerardin.xplane.Uninstallable;
+import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.plugins.Plugin;
@@ -126,6 +127,31 @@ Press OK to continue.'
                 "This plugin is currently locked by the developer. " +
                 "The developer may be uploading files. Please try again later.")
                 .showAndWait();
+    }
+
+    @SuppressWarnings("unused")
+    @Order(105)
+    @Label("'Trim to ' + xPlane.variant.name()")
+    @EnabledIf("hasNonApplicableBinaries")
+    @Confirm(value = """
+            'This will remove all plugin binaries that are not applicable for X-Plane ' + xPlane.variant.name() + '.
+            
+Non-applicable platform folders and legacy binaries will be moved to trash.
+Files to remove: ' + nonApplicableBinaryCount + '
+
+Press OK to continue.'
+            """, alertType = Alert.AlertType.WARNING)
+    @OnSuccess("reload()")
+    public void trimToVariant() throws IOException {
+        plugin.trimToVariant(plugin.getXPlane().getVariant());
+    }
+
+    public boolean isHasNonApplicableBinaries() {
+        return !plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant()).isEmpty();
+    }
+
+    public int getNonApplicableBinaryCount() {
+        return plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant()).size();
     }
 
     @SuppressWarnings("unused")
