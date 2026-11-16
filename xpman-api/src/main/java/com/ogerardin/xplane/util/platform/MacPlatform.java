@@ -250,6 +250,24 @@ public class MacPlatform implements Platform {
     }
 
     @Override
+    public boolean isPlatformBinary(Path binary) {
+        try (var in = Files.newInputStream(binary)) {
+            byte[] header = in.readNBytes(4);
+            if (header.length < 4) return false;
+
+            int magic = ((header[0] & 0xFF) << 24) | ((header[1] & 0xFF) << 16)
+                      | ((header[2] & 0xFF) << 8) | (header[3] & 0xFF);
+
+            // Check for Mach-O magic numbers (both byte orders)
+            return magic == MACH_O_MAGIC_64 || magic == MACH_O_MAGIC_32
+                || magic == MACH_O_CIGAM_64 || magic == MACH_O_CIGAM_32
+                || magic == FAT_MAGIC_BE || magic == FAT_CIGAM_BE;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    @Override
     @SneakyThrows
     public boolean isQuarantined(Path path) {
         ExecResults results = CommandExecutor.exec("xattr", "-p", "com.apple.quarantine", path.toString());

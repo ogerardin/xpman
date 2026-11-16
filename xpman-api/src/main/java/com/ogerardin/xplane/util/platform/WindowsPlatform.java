@@ -19,7 +19,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -168,5 +171,21 @@ public class WindowsPlatform implements Platform {
     @Override
     public String pluginPathIdentifier() {
         return "win";
+    }
+
+    @Override
+    public boolean isPlatformBinary(Path binary) {
+        try (var file = new RandomAccessFile(binary.toFile(), "r")) {
+            if (file.length() < 0x40 || file.readUnsignedByte() != 'M' || file.readUnsignedByte() != 'Z') {
+                return false;
+            }
+            file.seek(0x3C);
+            long peHeader = Integer.toUnsignedLong(Integer.reverseBytes(file.readInt()));
+            if (peHeader > file.length() - 4) return false;
+            file.seek(peHeader);
+            return file.readInt() == 0x50450000;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

@@ -134,13 +134,12 @@ Press OK to continue.'
     @Label("'Trim to ' + xPlane.variant.name()")
     @EnabledIf("hasNonApplicableBinaries")
     @Confirm(value = """
-            'This will remove all plugin binaries that are not applicable for X-Plane ' + xPlane.variant.name() + '.
-            
-Non-applicable platform folders and legacy binaries will be moved to trash.
-Files to remove: ' + nonApplicableBinaryCount + '
-
-Press OK to continue.'
-            """, alertType = Alert.AlertType.WARNING)
+            'The following files will be removed:\n\n' + nonApplicableFilesList + '\n\n' +
+            (skunkcraftsManaged ?
+                'These files will also be added to skunkcrafts_updater_ignore.txt so the updater does not restore them.\n' +
+                'To restore all files, delete skunkcrafts_updater_ignore.txt and run the updater.\n\n' : '') +
+            'This action cannot be undone.'
+            """, alertType = Alert.AlertType.CONFIRMATION)
     @OnSuccess("reload()")
     public void trimToVariant() throws IOException {
         plugin.trimToVariant(plugin.getXPlane().getVariant());
@@ -150,8 +149,27 @@ Press OK to continue.'
         return !plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant()).isEmpty();
     }
 
+    public boolean isSkunkcraftsManaged() {
+        return plugin.isSkunkcraftsManaged();
+    }
+
     public int getNonApplicableBinaryCount() {
         return plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant()).size();
+    }
+
+    public String getNonApplicableFilesList() {
+        var files = plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant());
+        if (files.isEmpty()) {
+            return "None";
+        }
+        
+        var relativePaths = files.stream()
+                .map(file -> plugin.getBaseFolder().relativize(file).toString())
+                .sorted()
+                .map(path -> "  • " + path)
+                .toList();
+        
+        return String.join("\n", relativePaths);
     }
 
     @SuppressWarnings("unused")

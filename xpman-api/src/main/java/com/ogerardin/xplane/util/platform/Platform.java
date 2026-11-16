@@ -149,6 +149,9 @@ public interface Platform {
         return null;
     }
 
+    /** Returns true only when the binary is positively identified as this platform's executable format. */
+    default boolean isPlatformBinary(Path binary) { return false; }
+
     private static boolean hasAnyPlatformMarker(String path) {
         return path.contains("mac") || path.contains("win") || path.contains("lin");
     }

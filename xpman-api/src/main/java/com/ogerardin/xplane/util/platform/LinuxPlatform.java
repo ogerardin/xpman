@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.fornwall.jelf.ElfFile;
 import net.fornwall.jelf.ElfSection;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -200,5 +201,19 @@ public class LinuxPlatform implements Platform {
     @Override
     public String pluginPathIdentifier() {
         return "lin";
+    }
+
+    @Override
+    public boolean isPlatformBinary(Path binary) {
+        try (var in = Files.newInputStream(binary)) {
+            byte[] header = in.readNBytes(4);
+            if (header.length < 4) return false;
+
+            // Check for ELF magic number: 0x7F 'E' 'L' 'F' (0x7F454C46)
+            return (header[0] & 0xFF) == 0x7F && (header[1] & 0xFF) == 0x45
+                && (header[2] & 0xFF) == 0x4C && (header[3] & 0xFF) == 0x46;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

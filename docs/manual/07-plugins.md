@@ -93,7 +93,7 @@ Right-click a plugin for:
 - **Remove macOS quarantine** — macOS only, shown only when the plugin is quarantined.
 - **Enable plugin** / **Disable plugin**
 - **Uninstall plugin** — Confirmation dialog with plugin-specific details.
-- **Trim to [variant]** — Removes platform-specific binaries for other operating systems (e.g., on macOS, removes Windows and Linux binaries). Only shown when non-applicable binaries are detected. Confirmation dialog with details about what will be removed.
+- **Trim to [variant]** — Removes `.xpl` files whose binary format identifies them as another supported platform (e.g., on macOS, Windows PE and Linux ELF binaries). Unknown formats and all files for an unknown X-Plane variant are kept. Only shown when such binaries are detected; confirmation lists the files to remove. For Skunkcrafts-managed plugins, the removed files are also added to `skunkcrafts_updater_ignore.txt` so the updater does not restore them; to restore all files, delete that file and run the updater.
 - **Inspect** — Show inspection results: available updates, and on Apple Silicon Macs a warning when an enabled plugin's binary is x86_64-only (X-Plane will not load it unless started with Rosetta; reinstall with a universal or Apple Silicon build).
 - **Properties** — Read-only view of all plugin properties.
 - **Update…** — Shown only for enabled plugins with an update available.
