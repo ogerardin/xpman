@@ -8,8 +8,10 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.ArchitectureMismatchInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
-import com.ogerardin.xplane.update.*;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsConfig;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
+import com.ogerardin.xplane.update.*;
 import com.ogerardin.xplane.util.platform.Platform;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.Getter;
@@ -35,9 +37,10 @@ import java.util.stream.Stream;
  * update-available checks, {@link Uninstallable} to move the plugin folder to trash, and
  * {@link Updatable} for provider-based updates.</p>
  *
- * <p>The plugin version is lazily extracted from the {@code .xpl} binary by the current
- * platform. The concrete subclass may be refined at runtime via
- * {@link com.ogerardin.xplane.util.IntrospectionHelper} (e.g. FlyWithLua).</p>
+ * <p>For Skunkcrafts-managed plugins, the updater config provides the version; otherwise
+ * it is extracted from the {@code .xpl} binary by the current platform. The concrete subclass
+ * may be refined at runtime via {@link com.ogerardin.xplane.util.IntrospectionHelper}
+ * (e.g. FlyWithLua).</p>
  */
 @Slf4j
 @Getter
@@ -56,7 +59,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     @Getter(lazy = true)
-    private final String version = Platforms.getCurrent().extractPluginVersion(xplFile);
+    private final String version = computeVersion();
 
     public Plugin(XPlane xPlane, Path xplFile, String name, String desc) {
         super(xPlane);
@@ -99,6 +102,16 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     protected boolean supportsSkunkcrafts() { return true; }
+
+    private String computeVersion() {
+        if (supportsSkunkcrafts()) {
+            SkunkcraftsConfig config = SkunkcraftsUpdater.findConfig(getBaseFolder());
+            if (config != null && config.version() != null) {
+                return config.version();
+            }
+        }
+        return Platforms.getCurrent().extractPluginVersion(xplFile);
+    }
 
     public Map<String, URL> getLinks() {
         return Collections.emptyMap();

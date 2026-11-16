@@ -43,6 +43,21 @@ public class UpdateUtil {
                 .collect(Collectors.joining(" · "));
     }
 
+    public String friendlyUpdateFailureMessage(Throwable failure) {
+        String message = ErrorDialog.rootMessage(failure);
+        if (message == null || message.isBlank()) {
+            return "An unexpected error occurred.";
+        }
+        if (!message.startsWith("HTTP ")) {
+            return message;
+        }
+
+        int statusEnd = message.indexOf(' ', 5);
+        String status = message.substring(5, statusEnd < 0 ? message.length() : statusEnd);
+        return status.isBlank() ? message :
+                "The update server returned an error (HTTP " + status + "). The server may be temporarily unavailable — please try again later.";
+    }
+
     public HBox updateAction(String label, boolean betaAvailable, String tooltip, Runnable action) {
         Button button = new Button(label);
         button.getStyleClass().add("updates-item-button");

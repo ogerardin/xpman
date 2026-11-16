@@ -31,6 +31,18 @@ class PluginTest {
     }
 
     @Test
+    void skunkcraftsVersionTakesPrecedenceOverBinaryVersion() throws Exception {
+        Path xplFile = createPlugin("Foo", "Foo.xpl");
+        Files.writeString(xplFile, "Foo plugin 1.2.3");
+        Files.writeString(xplFile.getParent().resolve("skunkcrafts_updater.cfg"),
+                "module|https://example.com/\nversion|v9.8.7\n");
+
+        Plugin plugin = new Plugin(newXPlane(), xplFile);
+
+        assertThat(plugin.getVersion(), is("v9.8.7"));
+    }
+
+    @Test
     void pluginInPluginsFolderIsEnabled() throws Exception {
         Path xplFile = createPlugin("Foo", "Foo.xpl");
         Plugin plugin = new Plugin(newXPlane(), xplFile);

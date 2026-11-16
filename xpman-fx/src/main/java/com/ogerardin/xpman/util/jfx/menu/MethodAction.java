@@ -50,7 +50,6 @@ public class MethodAction<T, R> implements Runnable {
             }
 
         } catch (Exception e) {
-            log.error("Exception while invoking method", e);
             Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
             Platform.runLater(() -> ErrorDialog.showError(cause, windowSupplier != null ? windowSupplier.get() : null));
         }

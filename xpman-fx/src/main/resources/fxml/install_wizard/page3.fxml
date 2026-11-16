@@ -8,7 +8,7 @@
     <headerText>Installing...</headerText>
     <content>
         <VBox spacing="10.0">
-            <Label fx:id="fileLabel" text="..."/>
+            <Label fx:id="fileLabel" text="..." wrapText="true"/>
             <ProgressBar fx:id="progress" maxWidth="Infinity" progress="0.0"/>
         </VBox>
     </content>

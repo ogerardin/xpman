@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.dialog.WizardPane;
 
+import java.util.Objects;
+
 import static com.ogerardin.xpman.util.jfx.wizard.Wizard.disableButton;
 
 /**
@@ -45,7 +47,13 @@ public class Page3Controller implements PageListener {
                 installer.install(this::updateProgress);
             } catch (InstallationException e) {
                 log.error("Installation failed", e);
-                Platform.runLater(() -> ErrorDialog.showError(e, null));
+                Platform.runLater(() -> {
+                    String message = Objects.requireNonNullElse(ErrorDialog.rootMessage(e), "An unexpected error occurred.");
+                    wizardPane.setHeaderText("Installation failed");
+                    fileLabel.setText(message);
+                    ErrorDialog.showError(e, null, "Installation failed",
+                            "The installation could not be completed.", message);
+                });
             }
         });
         thread.start();

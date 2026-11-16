@@ -74,6 +74,8 @@ If the remote file list cannot be fetched, the review shows an error rather than
 
 - **Preparing update...** label and progress bar.
 
+If a download fails, the page header changes to **Update failed** and the file label keeps the reason visible after the dialog is closed. HTTP server errors include their status code and suggest trying again later; expand the error dialog to inspect technical details.
+
 A downloaded file whose content doesn't match the checksum published in the repository's file list doesn't abort the update: XPman keeps the downloaded file — it is what the repository actually serves — mentions the discrepancy in the final status, and continues with the remaining files, exactly like the official Skunkcrafts Updater. This indicates a stale file list on the developer's side. XPman remembers the proven-stale entry in a `skunkcrafts_updater_xpman.json` file stored beside the addon's other Skunkcrafts files, and revalidates the repository's copy of the file on every check, so the phantom update does not reappear — going beyond the original updater, which re-attempts such files on every run. The file updates normally again as soon as the repository serves different bytes or its file list is fixed.
 
 ## Locked by Developer

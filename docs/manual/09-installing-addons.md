@@ -40,7 +40,7 @@ For aircraft, XPman also compares the archive's ACF spec version with your X-Pla
 
 - Current file label and progress bar.
 - **Previous** and **Finish** are disabled during installation.
-- Errors are shown in an error dialog.
+- On failure, the page header and file label show the failure reason; an error dialog also provides technical details.
 - On success, **"Done!"** is displayed and **Finish** becomes enabled.
 
 ## Notes

@@ -23,12 +23,20 @@ public class ErrorDialog {
     @SneakyThrows
     public void showError(Throwable e, Window owner) {
         log.error("Unhandled exception: ", e);
+        showErrorDialog(e, owner, "Exception", "An unhandled exception occurred.", extractShortMessage(e));
+    }
 
+    /** Shows an already-logged error; the caller owns logging. */
+    public void showError(Throwable e, Window owner, String title, String headerText, String contentText) {
+        showErrorDialog(e, owner, title, headerText, contentText);
+    }
+
+    @SneakyThrows
+    private void showErrorDialog(Throwable e, Window owner, String title, String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Exception");
-        alert.setHeaderText("An unhandled exception occurred.");
-
-        alert.setContentText(extractShortMessage(e));
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -56,10 +64,19 @@ public class ErrorDialog {
     }
 
     private String extractShortMessage(Throwable e) {
+        return rootCause(e).toString();
+    }
+
+    /** Returns the root cause's message, or {@code null} when it has none. */
+    public String rootMessage(Throwable e) {
+        return rootCause(e).getMessage();
+    }
+
+    private Throwable rootCause(Throwable e) {
         while (e.getCause() != null && e.getCause() != e) {
             e = e.getCause();
         }
-        return e.toString();
+        return e;
     }
 
 }

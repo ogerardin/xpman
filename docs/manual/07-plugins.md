@@ -20,7 +20,7 @@ Plugins are displayed as a tree. Columns:
 | **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
 | **Name** | Plugin name |
 | **Description** | Short description |
-| **Version** | Installed version. **Update…** for Skunkcrafts content or **Open download page** for a manual update; hover for offered versions |
+| **Version** | Installed version (the Skunkcrafts updater config for Skunkcrafts-managed plugins; otherwise extracted from the plugin binary). **Update…** for Skunkcrafts content or **Open download page** for a manual update; hover for offered versions |
 
 The **Update…** button opens the Skunkcrafts channel-review wizard (see [Updating Add-ons](10-updating-addons.md)). Plugins with a supported publication-page provider instead show **Open download page** when its version differs from the installed version. That opens the publisher's site, not an automatic installation. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
 

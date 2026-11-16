@@ -1,6 +1,7 @@
 package com.ogerardin.xpman.install.wizard;
 
 import com.ogerardin.xpman.util.jfx.ErrorDialog;
+import com.ogerardin.xpman.util.jfx.UpdateUtil;
 import com.ogerardin.xpman.util.jfx.wizard.PageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -47,8 +48,14 @@ public class SkunkcraftsPage2Controller implements PageListener {
                     wizard.getOnUpdated().run();
                 });
             } catch (Exception e) {
-                log.error("Update failed", e);
-                Platform.runLater(() -> ErrorDialog.showError(e, null));
+                log.error("Skunkcrafts update failed", e);
+                Platform.runLater(() -> {
+                    String message = UpdateUtil.friendlyUpdateFailureMessage(e);
+                    wizardPane.setHeaderText("Update failed");
+                    fileLabel.setText(message);
+                    ErrorDialog.showError(e, null, "Update failed",
+                            "The update of “" + wizard.getAddonName() + "” could not be applied.", message);
+                });
             }
         });
         thread.start();
