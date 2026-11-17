@@ -67,7 +67,7 @@ class IntrospectionHelperTest {
                 .allMatch(method -> method.isAnnotationPresent(Order.class)));
         assertEquals(
                 List.of("reveal", "removeQuarantine", "uninstallVariant", "uninstall", "openLink", "openManual", "inspect",
-                        "details", "update", "showUpdateLock", "properties"),
+                        "details", "update", "trimPluginBinaries", "showUpdateLock", "properties"),
                 IntrospectionHelper.computeRelevantMethods(UiAircraft.class).stream()
                         .map(Method::getName)
                         .toList());

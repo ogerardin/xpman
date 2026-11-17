@@ -136,6 +136,38 @@ Press OK to continue.'
     public String getUpdateActionLabel() { return com.ogerardin.xpman.util.jfx.UpdateUtil.actionLabel(aircraft); }
 
     @SuppressWarnings("unused")
+    @Order(75)
+    @Label("'Trim plugin binaries to ' + xPlane.variant.platform.displayName")
+    @EnabledIf("hasNonApplicableBinaries")
+    @Confirm(value = """
+            'The following files will be removed:\n\n' + nonApplicableFilesList + '\n\n' +
+            (aircraft.skunkcraftsManaged ?
+                'These files will also be added to skunkcrafts_updater_ignore.txt so the updater does not restore them.\n' +
+                'To restore all files, delete skunkcrafts_updater_ignore.txt and run the updater.\n\n' : '') +
+            'This action cannot be undone.'
+            """, alertType = Alert.AlertType.CONFIRMATION)
+    @OnSuccess("reload()")
+    public void trimPluginBinaries() throws IOException {
+        aircraft.trimPluginBinaries(aircraft.getXPlane().getVariant());
+    }
+
+    public boolean isHasNonApplicableBinaries() {
+        return !aircraft.getNonApplicableXplFiles(aircraft.getXPlane().getVariant()).isEmpty();
+    }
+
+    public String getNonApplicableFilesList() {
+        var files = aircraft.getNonApplicableXplFiles(aircraft.getXPlane().getVariant());
+        if (files.isEmpty()) {
+            return "";
+        }
+        return files.stream()
+                .map(path -> aircraft.getAcfFile().getFile().getParent().relativize(path).toString())
+                .sorted()
+                .reduce((a, b) -> a + "\n" + b)
+                .orElse("");
+    }
+
+    @SuppressWarnings("unused")
     @Order(80)
     @Label("'Skunkcrafts: Locked by developer'")
     @EnabledIf("updateLocked")

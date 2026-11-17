@@ -182,13 +182,8 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     /**
      * Returns all .xpl files under the plugin's base folder.
      */
-    @SneakyThrows
     public java.util.List<Path> getAllXplFiles() {
-        try (Stream<Path> paths = Files.walk(getBaseFolder())) {
-            return paths.filter(Files::isRegularFile)
-                    .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".xpl"))
-                    .toList();
-        }
+        return XplTrimmer.allXplFiles(getBaseFolder());
     }
 
     /**
@@ -209,14 +204,8 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
      * Returns the .xpl files that are NOT applicable for the given X-Plane variant.
      * Non-applicable files are those whose binary format is for a different platform.
      */
-    @SneakyThrows
     public java.util.List<Path> getNonApplicableXplFiles(XPlaneVariant variant) {
-        Platform targetPlatform = variant.getPlatform();
-        if (targetPlatform == Platforms.UNKNOWN) return java.util.List.of();
-        return getAllXplFiles().stream()
-                .filter(xpl -> !targetPlatform.isPlatformBinary(xpl)
-                        && isKnownOtherPlatformBinary(xpl, targetPlatform))
-                .toList();
+        return XplTrimmer.nonApplicableXplFiles(getBaseFolder(), variant);
     }
 
     private static boolean isKnownOtherPlatformBinary(Path binary, Platform targetPlatform) {
@@ -235,32 +224,6 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     /**
-     * Appends the given relative paths to the Skunkcrafts ignore file ({@code skunkcrafts_updater_ignore.txt}),
-     * preserving existing entries and comments. Does nothing if all paths are already present.
-     */
-    void addToSkunkcraftsIgnore(java.util.List<Path> files) throws IOException {
-        Path ignoreFile = getBaseFolder().resolve("skunkcrafts_updater_ignore.txt");
-
-        // Normalize to forward-slash relative paths as the updater expects
-        java.util.Set<String> newEntries = files.stream()
-                .map(file -> getBaseFolder().relativize(file).toString().replace("\\", "/"))
-                .collect(java.util.stream.Collectors.toCollection(java.util.LinkedHashSet::new));
-
-        String existing = Files.exists(ignoreFile) ? Files.readString(ignoreFile) : "";
-        for (String line : existing.split("\\R")) {
-            newEntries.remove(line.trim()); // already present
-        }
-        if (newEntries.isEmpty()) return;
-
-        // Append after existing content, preserving comments and entries
-        String content = existing.isEmpty() ? String.join("\n", newEntries)
-                : existing.endsWith("\n") || existing.endsWith("\r")
-                        ? existing + String.join("\n", newEntries)
-                        : existing + "\n" + String.join("\n", newEntries);
-        Files.writeString(ignoreFile, content);
-    }
-
-    /**
      * Trims the plugin by removing all .xpl files that are not applicable
      * for the given X-Plane variant. Files are moved to trash.
      * For Skunkcrafts-managed plugins, the removed files are first added to
@@ -269,55 +232,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
      * @param variant the target X-Plane variant
      * @return the list of files that were removed
      */
-    @SneakyThrows
     public java.util.List<Path> trimToVariant(XPlaneVariant variant) throws IOException {
-        java.util.List<Path> nonApplicable = getNonApplicableXplFiles(variant);
-        if (nonApplicable.isEmpty()) return java.util.List.of();
-
-        // For Skunkcrafts-managed plugins, record exclusions before deleting so the updater
-        // does not offer to restore the trimmed binaries; abort if the ignore file cannot be saved
-        if (isSkunkcraftsManaged()) {
-            addToSkunkcraftsIgnore(nonApplicable);
-        }
-
-        java.util.List<Path> removed = new java.util.ArrayList<>();
-        for (Path file : nonApplicable) {
-            moveToTrash(file);
-            removed.add(file);
-            log.debug("Removed non-applicable .xpl file: {}", file);
-            
-            // Clean up empty parent directories up to the base folder
-            cleanupEmptyDirectories(file.getParent());
-        }
-
-        return removed;
-    }
-    
-    /**
-     * Deletes empty directories starting from the given path up to (but not including) the base folder.
-     */
-    private void cleanupEmptyDirectories(Path directory) throws IOException {
-        Path baseFolder = getBaseFolder();
-        
-        // Walk up the directory tree, deleting empty directories until we reach the base folder
-        while (directory != null && 
-               directory.startsWith(baseFolder) && 
-               !directory.equals(baseFolder)) {
-            
-            // Check if directory is empty
-            try (Stream<Path> contents = Files.list(directory)) {
-                if (contents.findAny().isPresent()) {
-                    // Directory not empty, stop cleanup
-                    break;
-                }
-            }
-            
-            // Directory is empty, delete it
-            Files.delete(directory);
-            log.debug("Deleted empty directory: {}", directory);
-            
-            // Move up to parent
-            directory = directory.getParent();
-        }
+        return XplTrimmer.trim(getBaseFolder(), variant, isSkunkcraftsManaged() ? getBaseFolder() : null);
     }
 }

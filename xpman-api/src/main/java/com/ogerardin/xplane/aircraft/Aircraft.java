@@ -3,11 +3,14 @@ package com.ogerardin.xplane.aircraft;
 import com.ogerardin.xplane.Uninstallable;
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.XPlaneObject;
+import com.ogerardin.xplane.XPlaneVariant;
 import com.ogerardin.xplane.file.AcfFile;
 import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
+import com.ogerardin.xplane.plugins.XplTrimmer;
+import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.update.*;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
 import lombok.*;
@@ -239,6 +242,38 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
                         getAcfDerivedFileIfExists("_icon11_thumb.png"))
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    /**
+     * Returns true if the aircraft folder is managed by Skunkcrafts (has a skunkcrafts_updater.cfg).
+     */
+    public boolean isSkunkcraftsManaged() {
+        return SkunkcraftsUpdater.findConfig(getAcfFile().getFile().getParent()) != null;
+    }
+
+    /**
+     * Returns the .xpl files in the aircraft folder that are NOT applicable for the given X-Plane variant.
+     * Non-applicable files are those whose binary format is for a different platform.
+     */
+    public List<Path> getNonApplicableXplFiles(XPlaneVariant variant) {
+        return XplTrimmer.nonApplicableXplFiles(getAcfFile().getFile().getParent(), variant);
+    }
+
+    /**
+     * Trims the aircraft's plugin binaries by removing all .xpl files that are not applicable
+     * for the given X-Plane variant. Files are moved to trash.
+     * For Skunkcrafts-managed aircraft, the removed files are first added to
+     * {@code skunkcrafts_updater_ignore.txt} so the updater does not restore them.
+     *
+     * @param variant the target X-Plane variant
+     * @return the list of files that were removed
+     */
+    @SneakyThrows
+    public List<Path> trimPluginBinaries(XPlaneVariant variant) {
+        return XplTrimmer.trim(
+                getAcfFile().getFile().getParent(),
+                variant,
+                isSkunkcraftsManaged() ? getAcfFile().getFile().getParent() : null);
     }
 
     /**
