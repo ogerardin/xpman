@@ -137,14 +137,13 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Order(75)
-    @Label("'Trim plugin binaries to ' + xPlane.variant.platform.displayName")
+    @Label("'Trim binaries to ' + xPlane.variant.platform.displayName")
     @EnabledIf("hasNonApplicableBinaries")
     @Confirm(value = """
             'The following files will be removed:\n\n' + nonApplicableFilesList + '\n\n' +
             (aircraft.skunkcraftsManaged ?
                 'These files will also be added to skunkcrafts_updater_ignore.txt so the updater does not restore them.\n' +
-                'To restore all files, delete skunkcrafts_updater_ignore.txt and run the updater.\n\n' : '') +
-            'This action cannot be undone.'
+                'To restore all files, delete skunkcrafts_updater_ignore.txt and run the updater.' : '')
             """, alertType = Alert.AlertType.CONFIRMATION)
     @OnSuccess("reload()")
     public void trimPluginBinaries() throws IOException {
