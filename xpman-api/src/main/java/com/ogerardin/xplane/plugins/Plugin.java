@@ -285,8 +285,39 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
             moveToTrash(file);
             removed.add(file);
             log.debug("Removed non-applicable .xpl file: {}", file);
+            
+            // Clean up empty parent directories up to the base folder
+            cleanupEmptyDirectories(file.getParent());
         }
 
         return removed;
+    }
+    
+    /**
+     * Deletes empty directories starting from the given path up to (but not including) the base folder.
+     */
+    private void cleanupEmptyDirectories(Path directory) throws IOException {
+        Path baseFolder = getBaseFolder();
+        
+        // Walk up the directory tree, deleting empty directories until we reach the base folder
+        while (directory != null && 
+               directory.startsWith(baseFolder) && 
+               !directory.equals(baseFolder)) {
+            
+            // Check if directory is empty
+            try (Stream<Path> contents = Files.list(directory)) {
+                if (contents.findAny().isPresent()) {
+                    // Directory not empty, stop cleanup
+                    break;
+                }
+            }
+            
+            // Directory is empty, delete it
+            Files.delete(directory);
+            log.debug("Deleted empty directory: {}", directory);
+            
+            // Move up to parent
+            directory = directory.getParent();
+        }
     }
 }

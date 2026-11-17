@@ -118,8 +118,9 @@ class PluginTrimTest {
         // Check specific files/folders
         assertThat("mac_x64 folder should exist", Files.exists(pluginFolder.resolve("mac_x64")));
         assertThat("64 folder should exist", Files.exists(pluginFolder.resolve("64")));
-        assertThat("win_x64 folder remains but its binary is removed", Files.notExists(pluginFolder.resolve("win_x64/TestPlugin.xpl")));
-        assertThat("lin_x64 folder remains but its binary is removed", Files.notExists(pluginFolder.resolve("lin_x64/TestPlugin.xpl")));
+        // Empty platform folders should be deleted
+        assertThat("Empty win_x64 folder should be deleted", Files.notExists(pluginFolder.resolve("win_x64")));
+        assertThat("Empty lin_x64 folder should be deleted", Files.notExists(pluginFolder.resolve("lin_x64")));
         assertThat("Legacy mac.xpl should remain", Files.exists(pluginFolder.resolve("mac.xpl")));
         assertThat("Legacy win.xpl should be removed", Files.notExists(pluginFolder.resolve("win.xpl")));
         assertThat("Legacy lin.xpl should be removed", Files.notExists(pluginFolder.resolve("lin.xpl")));
@@ -354,5 +355,95 @@ class PluginTrimTest {
 
         assertThat("Ignore file should NOT be created for non-Skunkcrafts plugins",
                 Files.exists(pluginFolder.resolve("skunkcrafts_updater_ignore.txt")), is(false));
+    }
+
+    @Test
+    void trimDeletesEmptyPlatformFolder() throws Exception {
+        // Create a plugin with only one Windows binary
+        Path pluginFolder = tempDir.resolve("Resources/plugins/SingleBinary");
+        Files.createDirectories(pluginFolder.resolve("win_x64"));
+        Path windowsBinary = pluginFolder.resolve("win_x64/SingleBinary.xpl");
+        createPeBinary(windowsBinary);
+
+        Plugin plugin = new Plugin(new XPlane(tempDir), pluginFolder.resolve("win_x64/SingleBinary.xpl"));
+
+        // Trim for Mac should remove the Windows binary and delete the empty folder
+        plugin.trimToVariant(XPlaneVariant.MAC);
+
+        assertThat("Windows binary should be removed", Files.notExists(windowsBinary));
+        assertThat("Empty win_x64 folder should be deleted", Files.notExists(pluginFolder.resolve("win_x64")));
+        assertThat("Base plugin folder should still exist", Files.exists(pluginFolder));
+    }
+
+    @Test
+    void trimKeepsPlatformFolderWithOtherFiles() throws Exception {
+        // Create a plugin with a Windows binary and a non-.xpl file in the same folder
+        Path pluginFolder = tempDir.resolve("Resources/plugins/MixedContent");
+        Path winFolder = pluginFolder.resolve("win_x64");
+        Files.createDirectories(winFolder);
+        Path windowsBinary = winFolder.resolve("MixedContent.xpl");
+        Path otherFile = winFolder.resolve("README.txt");
+        createPeBinary(windowsBinary);
+        Files.writeString(otherFile, "This file should be preserved");
+
+        Plugin plugin = new Plugin(new XPlane(tempDir), pluginFolder.resolve("win_x64/MixedContent.xpl"));
+
+        // Trim for Mac should remove the Windows binary but keep the folder
+        plugin.trimToVariant(XPlaneVariant.MAC);
+
+        assertThat("Windows binary should be removed", Files.notExists(windowsBinary));
+        assertThat("win_x64 folder should exist because it contains README.txt", Files.exists(winFolder));
+        assertThat("Other file should be preserved", Files.exists(otherFile));
+    }
+
+    @Test
+    void trimDeletesNestedEmptyDirectories() throws Exception {
+        // Create a plugin with multiple platform folders at different nesting levels
+        // Structure:
+        // NestedEmpty/
+        //   mac_x64/
+        //     NestedEmpty.xpl (keep for Mac)
+        //   win_x64/
+        //     x64/
+        //       NestedEmpty.xpl (remove for Mac)
+        //   64/
+        //     plugins/
+        //       NestedEmpty.xpl (remove for Mac - PE binary)
+        Path pluginFolder = tempDir.resolve("Resources/plugins/NestedEmpty");
+        Path macFolder = pluginFolder.resolve("mac_x64");
+        Path winFolder = pluginFolder.resolve("win_x64/x64");
+        Path neutralFolder = pluginFolder.resolve("64/plugins");
+        Files.createDirectories(macFolder);
+        Files.createDirectories(winFolder);
+        Files.createDirectories(neutralFolder);
+        
+        Path macBinary = macFolder.resolve("NestedEmpty.xpl");
+        Path winBinary = winFolder.resolve("NestedEmpty.xpl");
+        Path neutralBinary = neutralFolder.resolve("NestedEmpty.xpl");
+        
+        createMachOBinary(macBinary);
+        createPeBinary(winBinary);
+        createPeBinary(neutralBinary);
+
+        Plugin plugin = new Plugin(new XPlane(tempDir), macBinary);
+
+        // Trim for Mac should remove Windows binaries and clean up empty nested folders
+        plugin.trimToVariant(XPlaneVariant.MAC);
+
+        assertThat("Mac binary should remain", Files.exists(macBinary));
+        assertThat("Windows binary should be removed", Files.notExists(winBinary));
+        assertThat("Neutral PE binary should be removed", Files.notExists(neutralBinary));
+        
+        // Empty nested folders should be deleted
+        assertThat("Empty win_x64/x64 folder should be deleted", Files.notExists(winFolder));
+        assertThat("Empty win_x64 folder should be deleted", Files.notExists(pluginFolder.resolve("win_x64")));
+        assertThat("Empty 64/plugins folder should be deleted", Files.notExists(neutralFolder));
+        assertThat("Empty 64 folder should be deleted", Files.notExists(pluginFolder.resolve("64")));
+        
+        // mac_x64 should remain (contains Mac binary)
+        assertThat("mac_x64 folder should exist", Files.exists(macFolder));
+        
+        // Base plugin folder should still exist
+        assertThat("Base plugin folder should still exist", Files.exists(pluginFolder));
     }
 }
