@@ -8,7 +8,7 @@ organize your aircraft, scenery, plugins, and tools from a single desktop applic
 
 ## Features
 
-- **Aircraft** — Install, delete, and manage aircraft and liveries. Recognizes well-known aircraft (ZIBO 737, Concorde FXP, FlightFactor A350, Eurofighter, XPFR) and adds version detection, links and manuals.
+- **Aircraft** — Install, delete, and manage aircraft and liveries. Recognizes well-known aircraft (ZIBO 737, Calibra A330-200, Concorde FXP, FlightFactor A350, Eurofighter, XPFR) and adds version detection, links and manuals.
 - **Scenery** — Install scenery packages and auto-order `scenery_packs.ini` for optimal load order.
 - **Plugins** — Install, delete, and manage global plugins. System plugins are protected from deletion or disable. XPman recognizes well-known plugins (FlyWithLua, SGES, SimLoad Manager, AutoGate, AviTab, Terrain Radar, X-IvAp) and gives them extra features. PDF manuals supported.
 - **FlyWithLua** — Manage FlyWithLua scripts. SGES and SimLoad Manager scripts are recognized and given extra features.

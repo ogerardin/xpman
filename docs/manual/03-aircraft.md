@@ -29,12 +29,13 @@ Any aircraft with an `.acf` file is listed. For most, XPman shows what the ACF f
 | Aircraft | What XPman adds |
 |----------|-----------------|
 | **ZIBO Mod B737-800X** | Version from the mod's own files; **Inspect** reports newer versions published on the ZIBO download site, and warns if the recommended AviTab and Terrain Radar plugins are missing; community, forum and download links |
+| **Calibra Simulations A330-200** | Version from the aircraft's own files; warns when the installed X-Plane is older than 12.4.4 (it will probably not work until X-Plane is updated); website, release notes, forum, bug-report and Discord links |
 | **Colimata Concorde FXP** | Version, Colimata and forum links, and the manuals bundled with the aircraft |
 | **FlightFactor A350 XWB** | Version and a link to the briefing |
 | **Dmax3D Eurofighter Typhoon** | Version and a link to the manufacturer's page |
 | **XPFR aircraft** | Version and a link to the aircraft's page on xpfr.org |
 
-For the Concorde, A350 and Eurofighter, the aircraft name is fixed and can't be edited in **Properties**.
+For the Calibra A330-200, Concorde, A350 and Eurofighter, the aircraft name is fixed and can't be edited in **Properties**.
 
 Newer versions of supported aircraft that aren't distributed through Skunkcrafts (such as ZIBO) appear in **Inspect**, on the dashboard, and as an **Open download page** action on the card. Download and install these updates manually (see [Updating Add-ons](10-updating-addons.md)).
 
