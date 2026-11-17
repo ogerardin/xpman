@@ -252,11 +252,12 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
     }
 
     /**
-     * Returns the .xpl files in the aircraft folder that are NOT applicable for the given X-Plane variant.
-     * Non-applicable files are those whose binary format is for a different platform.
+     * Returns the platform-specific binary files in the aircraft folder that are NOT applicable for the given X-Plane variant.
+     * Non-applicable files are those whose platform is different from the variant's platform.
+     * Includes .xpl files, .dylib (macOS), .dll (Windows), and .so (Linux) files.
      */
-    public List<Path> getNonApplicableXplFiles(XPlaneVariant variant) {
-        return XplTrimmer.nonApplicableXplFiles(getAcfFile().getFile().getParent(), variant);
+    public List<Path> getNonApplicablePlatformBinaries(XPlaneVariant variant) {
+        return XplTrimmer.nonApplicablePlatformBinaries(getAcfFile().getFile().getParent(), variant);
     }
 
     /**

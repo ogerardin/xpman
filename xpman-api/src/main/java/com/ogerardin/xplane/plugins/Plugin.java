@@ -180,38 +180,65 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
     }
 
     /**
-     * Returns all .xpl files under the plugin's base folder.
+     * Returns all platform-specific binary files under the plugin's base folder.
+     * Includes .xpl files, .dylib (macOS), .dll (Windows), and .so (Linux) files.
      */
-    public java.util.List<Path> getAllXplFiles() {
-        return XplTrimmer.allXplFiles(getBaseFolder());
+    public java.util.List<Path> getAllPlatformBinaries() {
+        return XplTrimmer.allPlatformBinaries(getBaseFolder());
     }
 
     /**
-     * Returns the .xpl files that are applicable for the given X-Plane variant.
-     * Applicable files are those whose binary format matches the variant's platform.
+     * Returns the platform-specific binary files that are applicable for the given X-Plane variant.
+     * Applicable files are those whose platform matches the variant's platform.
      */
     @SneakyThrows
-    public java.util.List<Path> getApplicableXplFiles(XPlaneVariant variant) {
+    public java.util.List<Path> getApplicablePlatformBinaries(XPlaneVariant variant) {
         Platform targetPlatform = variant.getPlatform();
-        if (targetPlatform == Platforms.UNKNOWN) return getAllXplFiles();
-        return getAllXplFiles().stream()
-                .filter(xpl -> targetPlatform.isPlatformBinary(xpl)
-                        || !isKnownOtherPlatformBinary(xpl, targetPlatform))
+        if (targetPlatform == Platforms.UNKNOWN) return getAllPlatformBinaries();
+        return getAllPlatformBinaries().stream()
+                .filter(file -> isApplicableToPlatform(file, targetPlatform))
                 .toList();
     }
 
     /**
-     * Returns the .xpl files that are NOT applicable for the given X-Plane variant.
-     * Non-applicable files are those whose binary format is for a different platform.
+     * Returns the platform-specific binary files that are NOT applicable for the given X-Plane variant.
+     * Non-applicable files are those whose platform is different from the variant's platform.
      */
-    public java.util.List<Path> getNonApplicableXplFiles(XPlaneVariant variant) {
-        return XplTrimmer.nonApplicableXplFiles(getBaseFolder(), variant);
+    public java.util.List<Path> getNonApplicablePlatformBinaries(XPlaneVariant variant) {
+        return XplTrimmer.nonApplicablePlatformBinaries(getBaseFolder(), variant);
     }
 
-    private static boolean isKnownOtherPlatformBinary(Path binary, Platform targetPlatform) {
-        return java.util.Arrays.stream(Platforms.values())
-                .filter(platform -> platform != Platforms.UNKNOWN && platform != targetPlatform)
-                .anyMatch(platform -> platform.isPlatformBinary(binary));
+    /**
+     * Checks if a binary file is applicable to the target platform.
+     * For .xpl files, checks by content inspection.
+     * For native libraries, checks by file extension.
+     * Returns true if the file is not a recognized platform binary (unknown format).
+     */
+    private boolean isApplicableToPlatform(Path file, Platform targetPlatform) {
+        String filename = file.getFileName().toString().toLowerCase();
+
+        // Native libraries: check by extension - definitive platform identification
+        if (filename.endsWith(".dylib")) return targetPlatform == Platforms.MAC;
+        if (filename.endsWith(".dll")) return targetPlatform == Platforms.WINDOWS;
+        if (filename.endsWith(".so")) return targetPlatform == Platforms.LINUX;
+
+        // .xpl files: check by content inspection
+        if (filename.endsWith(".xpl")) {
+            // Check if this is a known platform binary by content
+            boolean isKnownPlatformBinary = java.util.Arrays.stream(Platforms.values())
+                    .filter(platform -> platform != Platforms.UNKNOWN)
+                    .anyMatch(platform -> platform.isPlatformBinary(file));
+            
+            // If not a recognized platform binary, leave it alone (don't trim unknown formats)
+            if (!isKnownPlatformBinary) {
+                return true;
+            }
+            
+            // It's a known platform binary - check if it matches the target platform
+            return targetPlatform.isPlatformBinary(file);
+        }
+
+        return true; // Should not reach here if called on a platform binary
     }
 
     /**

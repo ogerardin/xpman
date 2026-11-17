@@ -101,7 +101,7 @@ class AircraftPluginTrimTest {
         Aircraft aircraft = new Aircraft(xplane, new AcfFile(acfFile));
 
         // Verify initial state
-        List<Path> allXpls = aircraft.getNonApplicableXplFiles(XPlaneVariant.MAC);
+        List<Path> allXpls = aircraft.getNonApplicablePlatformBinaries(XPlaneVariant.MAC);
         assertThat("Should have 2 non-applicable .xpl files initially", allXpls.size(), is(2));
 
         // Trim to MAC variant
@@ -111,7 +111,7 @@ class AircraftPluginTrimTest {
         assertThat("Should remove 2 binaries for other platforms", removed.size(), is(2));
 
         // Verify what remains
-        List<Path> remainingXpls = aircraft.getNonApplicableXplFiles(XPlaneVariant.MAC);
+        List<Path> remainingXpls = aircraft.getNonApplicablePlatformBinaries(XPlaneVariant.MAC);
         assertThat("Should have no non-applicable .xpl files remaining", remainingXpls.size(), is(0));
 
         // Check specific files/folders
@@ -197,7 +197,7 @@ class AircraftPluginTrimTest {
     }
 
     @Test
-    void getNonApplicableXplFilesReturnsCorrectFiles() throws Exception {
+    void getNonApplicablePlatformBinariesReturnsCorrectFiles() throws Exception {
         // Create aircraft with plugins
         Path aircraftFolder = createAircraftWithPlugins("TestAircraft", false);
         Path acfFile = aircraftFolder.resolve("TestAircraft.acf");
@@ -205,7 +205,7 @@ class AircraftPluginTrimTest {
         XPlane xplane = new XPlane(tempDir);
         Aircraft aircraft = new Aircraft(xplane, new AcfFile(acfFile));
 
-        List<Path> nonApplicable = aircraft.getNonApplicableXplFiles(XPlaneVariant.MAC);
+        List<Path> nonApplicable = aircraft.getNonApplicablePlatformBinaries(XPlaneVariant.MAC);
 
         assertThat("Should have 2 non-applicable .xpl files", nonApplicable.size(), is(2));
 
@@ -243,5 +243,57 @@ class AircraftPluginTrimTest {
         Aircraft aircraft = new Aircraft(xplane, new AcfFile(acfFile));
 
         assertThat("Aircraft should not be skunkcrafts-managed", !aircraft.isSkunkcraftsManaged());
+    }
+
+    @Test
+    void trimPluginBinariesRemovesNonApplicableNativeLibraries() throws Exception {
+        // Create aircraft with native libraries in a plugin folder
+        Path aircraftFolder = tempDir.resolve("TestAircraft");
+        Files.createDirectories(aircraftFolder);
+
+        // Create a minimal ACF file
+        Path acfFile = aircraftFolder.resolve("TestAircraft.acf");
+        Files.writeString(acfFile, "AIRCRAFT\n");
+
+        // Create plugin folder with native libraries for all platforms
+        Path pluginFolder = aircraftFolder.resolve("plugins/myplugin");
+        Files.createDirectories(pluginFolder);
+
+        Path macLib = pluginFolder.resolve("libpdfium.dylib");
+        Path winLib = pluginFolder.resolve("pdfium.dll");
+        Path linLib = pluginFolder.resolve("libpdfium.so");
+        Path txtFile = pluginFolder.resolve("LICENSE.txt");
+
+        Files.writeString(macLib, "fake dylib");
+        Files.writeString(winLib, "fake dll");
+        Files.writeString(linLib, "fake so");
+        Files.writeString(txtFile, "license text");
+
+        XPlane xplane = new XPlane(tempDir);
+        Aircraft aircraft = new Aircraft(xplane, new AcfFile(acfFile));
+
+        // Verify all files exist initially
+        assertThat("macOS lib should exist", Files.exists(macLib));
+        assertThat("Windows lib should exist", Files.exists(winLib));
+        assertThat("Linux lib should exist", Files.exists(linLib));
+        assertThat("License file should exist", Files.exists(txtFile));
+
+        // Verify detection works correctly
+        List<Path> nonApplicable = aircraft.getNonApplicablePlatformBinaries(XPlaneVariant.MAC);
+        assertThat("Should have 2 non-applicable native libraries", nonApplicable.size(), is(2));
+        assertThat("Should include Windows lib", nonApplicable, hasItem(winLib));
+        assertThat("Should include Linux lib", nonApplicable, hasItem(linLib));
+        assertThat("Should not include macOS lib", nonApplicable, not(hasItem(macLib)));
+        assertThat("Should not include text file", nonApplicable, not(hasItem(txtFile)));
+
+        // Trim to macOS
+        List<Path> removed = aircraft.trimPluginBinaries(XPlaneVariant.MAC);
+
+        // Verify removal
+        assertThat("Should remove 2 native libraries", removed.size(), is(2));
+        assertThat("macOS lib should still exist", Files.exists(macLib));
+        assertThat("Windows lib should be removed", Files.notExists(winLib));
+        assertThat("Linux lib should be removed", Files.notExists(linLib));
+        assertThat("License file should still exist", Files.exists(txtFile));
     }
 }

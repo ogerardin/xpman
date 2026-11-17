@@ -10,14 +10,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Utility for trimming platform-specific .xpl binaries from a plugin folder.
+ * Utility for trimming platform-specific binaries from a plugin folder.
+ * Handles both .xpl plugin files (detected by content) and native libraries
+ * (.dylib, .dll, .so detected by extension).
  * Used by both {@link Plugin} (for global plugins) and {@link com.ogerardin.xplane.aircraft.Aircraft}
  * (for aircraft-local plugins).
  */
@@ -26,40 +30,93 @@ import java.util.stream.Stream;
 public class XplTrimmer {
 
     /**
-     * Returns all .xpl files under the given folder.
+     * Map of native library file extensions to their target platforms.
+     * These are detected by extension, not by content inspection.
      */
-    public List<Path> allXplFiles(Path folder) {
+    private static final Map<String, Platforms> NATIVE_LIBRARY_EXTENSIONS;
+    static {
+        Map<String, Platforms> map = new LinkedHashMap<>();
+        map.put(".dylib", Platforms.MAC);
+        map.put(".dll", Platforms.WINDOWS);
+        map.put(".so", Platforms.LINUX);
+        NATIVE_LIBRARY_EXTENSIONS = Map.copyOf(map);
+    }
+
+    /**
+     * Returns all platform-specific binary files under the given folder.
+     * Includes .xpl files, .dylib (macOS), .dll (Windows), and .so (Linux) files.
+     */
+    public List<Path> allPlatformBinaries(Path folder) {
         try (Stream<Path> paths = Files.walk(folder)) {
             return paths.filter(Files::isRegularFile)
-                    .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".xpl"))
+                    .filter(XplTrimmer::isPlatformBinary)
                     .toList();
         } catch (IOException e) {
-            log.warn("Failed to scan for .xpl files in {}", folder, e);
+            log.warn("Failed to scan for platform binaries in {}", folder, e);
             return List.of();
         }
     }
 
     /**
-     * Returns the .xpl files that are NOT applicable for the given X-Plane variant.
-     * Non-applicable files are those whose binary format is for a different platform.
+     * Checks if a file is a platform-specific binary (.xpl, .dylib, .dll, or .so).
      */
-    public List<Path> nonApplicableXplFiles(Path folder, XPlaneVariant variant) {
-        Platform targetPlatform = variant.getPlatform();
-        if (targetPlatform == Platforms.UNKNOWN) return List.of();
-        return allXplFiles(folder).stream()
-                .filter(xpl -> !targetPlatform.isPlatformBinary(xpl)
-                        && isKnownOtherPlatformBinary(xpl, targetPlatform))
-                .toList();
-    }
-
-    private static boolean isKnownOtherPlatformBinary(Path binary, Platform targetPlatform) {
-        return java.util.Arrays.stream(Platforms.values())
-                .filter(platform -> platform != Platforms.UNKNOWN && platform != targetPlatform)
-                .anyMatch(platform -> platform.isPlatformBinary(binary));
+    private boolean isPlatformBinary(Path file) {
+        String filename = file.getFileName().toString().toLowerCase();
+        return filename.endsWith(".xpl") ||
+               filename.endsWith(".dylib") ||
+               filename.endsWith(".dll") ||
+               filename.endsWith(".so");
     }
 
     /**
-     * Trims the plugin by removing all .xpl files that are not applicable for the given variant.
+     * Returns the platform-specific binary files that are NOT applicable for the given X-Plane variant.
+     * Includes .xpl files (detected by content) and native libraries (detected by extension).
+     */
+    public List<Path> nonApplicablePlatformBinaries(Path folder, XPlaneVariant variant) {
+        Platform targetPlatform = variant.getPlatform();
+        if (targetPlatform == Platforms.UNKNOWN) return List.of();
+        return allPlatformBinaries(folder).stream()
+                .filter(file -> !isApplicableToPlatform(file, targetPlatform))
+                .toList();
+    }
+
+    /**
+     * Checks if a binary file is applicable to the target platform.
+     * For .xpl files, checks by content inspection.
+     * For native libraries, checks by file extension.
+     * Returns true if the file is not a recognized platform binary (unknown format).
+     */
+    private boolean isApplicableToPlatform(Path file, Platform targetPlatform) {
+        String filename = file.getFileName().toString().toLowerCase();
+
+        // Native libraries: check by extension - definitive platform identification
+        for (Map.Entry<String, Platforms> entry : NATIVE_LIBRARY_EXTENSIONS.entrySet()) {
+            if (filename.endsWith(entry.getKey())) {
+                return entry.getValue() == targetPlatform;
+            }
+        }
+
+        // .xpl files: check by content inspection
+        if (filename.endsWith(".xpl")) {
+            // Check if this is a known platform binary by content
+            boolean isKnownPlatformBinary = java.util.Arrays.stream(Platforms.values())
+                    .filter(platform -> platform != Platforms.UNKNOWN)
+                    .anyMatch(platform -> platform.isPlatformBinary(file));
+            
+            // If not a recognized platform binary, leave it alone (don't trim unknown formats)
+            if (!isKnownPlatformBinary) {
+                return true;
+            }
+            
+            // It's a known platform binary - check if it matches the target platform
+            return targetPlatform.isPlatformBinary(file);
+        }
+
+        return true; // Should not reach here if isPlatformBinary() was called first
+    }
+
+    /**
+     * Trims the plugin by removing all platform-specific binary files that are not applicable for the given variant.
      * Files are moved to trash. For Skunkcrafts-managed plugins, the removed files are first
      * added to {@code skunkcrafts_updater_ignore.txt} so the updater does not restore them.
      *
@@ -70,7 +127,7 @@ public class XplTrimmer {
      * @return the list of files that were removed
      */
     public List<Path> trim(Path folder, XPlaneVariant variant, Path skunkcraftsBaseFolder) throws IOException {
-        List<Path> nonApplicable = nonApplicableXplFiles(folder, variant);
+        List<Path> nonApplicable = nonApplicablePlatformBinaries(folder, variant);
         if (nonApplicable.isEmpty()) return List.of();
 
         // For Skunkcrafts-managed folders, record exclusions before deleting so the updater

@@ -47,7 +47,7 @@ Right-click a card or livery for additional actions:
 
 - **Reveal in Finder** / **Show in Explorer** / **Show in Files** (platform-dependent label)
 - **Remove macOS quarantine** — macOS only, shown only when the aircraft folder is quarantined. Removes the macOS quarantine attribute recursively, allowing any bundled plugins to load.
-- **Trim plugin binaries to {platform}** — Removes the aircraft's bundled plugin binaries for other platforms; shown only when such binaries are detected. For Skunkcrafts-managed aircraft, the removed files are also added to `skunkcrafts_updater_ignore.txt` so the updater does not restore them; to restore everything, delete that file and run the updater.
+- **Trim plugin binaries to {platform}** — Removes the aircraft's bundled plugin binaries and native libraries (.dylib, .dll, .so) for other platforms; shown only when such binaries are detected. For Skunkcrafts-managed aircraft, the removed files are also added to `skunkcrafts_updater_ignore.txt` so the updater does not restore them; to restore everything, delete that file and run the updater.
 - **Uninstall this variant** — Only shown when several variants of the same aircraft share the folder. Uninstalls just the selected variant (its `.acf` and icon files), leaving the folder and files shared with the other variants — including liveries — in place.
 - **Uninstall aircraft** — Shows a confirmation dialog listing the aircraft that will be removed.
 - **Inspect** — Opens the Inspection results window showing the outcome of all inspections.

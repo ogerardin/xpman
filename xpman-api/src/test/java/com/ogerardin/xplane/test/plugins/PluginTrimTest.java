@@ -102,7 +102,7 @@ class PluginTrimTest {
         Plugin plugin = new Plugin(xplane, xplFile);
 
         // Verify initial state
-        List<Path> allXpls = plugin.getAllXplFiles();
+        List<Path> allXpls = plugin.getAllPlatformBinaries();
         assertThat("Should have 9 .xpl files initially", allXpls.size(), is(9));
 
         // Trim to MAC variant
@@ -112,7 +112,7 @@ class PluginTrimTest {
         assertThat("Should remove 6 binaries for other platforms", removed.size(), is(6));
 
         // Verify what remains
-        List<Path> remainingXpls = plugin.getAllXplFiles();
+        List<Path> remainingXpls = plugin.getAllPlatformBinaries();
         assertThat("Should retain the three Mach-O binaries", remainingXpls.size(), is(3));
 
         // Check specific files/folders
@@ -144,7 +144,7 @@ class PluginTrimTest {
         assertThat("Should remove 6 binaries for other platforms", removed.size(), is(6));
 
         // Verify what remains
-        List<Path> remainingXpls = plugin.getAllXplFiles();
+        List<Path> remainingXpls = plugin.getAllPlatformBinaries();
         assertThat("Should retain the three PE binaries", remainingXpls.size(), is(3));
 
         assertThat("win_x64 folder should exist", Files.exists(pluginFolder.resolve("win_x64")));
@@ -167,7 +167,7 @@ class PluginTrimTest {
         assertThat("Should remove 6 binaries for other platforms", removed.size(), is(6));
 
         // Verify what remains
-        List<Path> remainingXpls = plugin.getAllXplFiles();
+        List<Path> remainingXpls = plugin.getAllPlatformBinaries();
         assertThat("Should retain the three ELF binaries", remainingXpls.size(), is(3));
 
         assertThat("lin_x64 folder should exist", Files.exists(pluginFolder.resolve("lin_x64")));
@@ -177,14 +177,14 @@ class PluginTrimTest {
     }
 
     @Test
-    void getNonApplicableXplFilesReturnsCorrectFiles() throws Exception {
+    void getNonApplicablePlatformBinariesReturnsCorrectFiles() throws Exception {
         Path pluginFolder = createLstStylePlugin("TestPlugin");
         Path xplFile = pluginFolder.resolve("mac_x64/TestPlugin.xpl");
 
         XPlane xplane = new XPlane(tempDir);
         Plugin plugin = new Plugin(xplane, xplFile);
 
-        List<Path> nonApplicable = plugin.getNonApplicableXplFiles(XPlaneVariant.MAC);
+        List<Path> nonApplicable = plugin.getNonApplicablePlatformBinaries(XPlaneVariant.MAC);
 
         assertThat("Should have 6 non-applicable .xpl files", nonApplicable.size(), is(6));
 
@@ -200,14 +200,14 @@ class PluginTrimTest {
     }
 
     @Test
-    void getApplicableXplFilesReturnsCorrectFiles() throws Exception {
+    void getApplicablePlatformBinariesReturnsCorrectFiles() throws Exception {
         Path pluginFolder = createLstStylePlugin("TestPlugin");
         Path xplFile = pluginFolder.resolve("mac_x64/TestPlugin.xpl");
 
         XPlane xplane = new XPlane(tempDir);
         Plugin plugin = new Plugin(xplane, xplFile);
 
-        List<Path> applicable = plugin.getApplicableXplFiles(XPlaneVariant.MAC);
+        List<Path> applicable = plugin.getApplicablePlatformBinaries(XPlaneVariant.MAC);
 
         assertThat("Should have 3 applicable .xpl files", applicable.size(), is(3));
 
@@ -250,7 +250,7 @@ class PluginTrimTest {
 
         Plugin plugin = new Plugin(new XPlane(tempDir), macBinary);
 
-        assertThat(plugin.getNonApplicableXplFiles(XPlaneVariant.MAC), not(hasItem(unknownBinary)));
+        assertThat(plugin.getNonApplicablePlatformBinaries(XPlaneVariant.MAC), not(hasItem(unknownBinary)));
         assertThat(plugin.trimToVariant(XPlaneVariant.MAC), not(hasItem(unknownBinary)));
         assertThat(Files.exists(unknownBinary), is(true));
     }
@@ -268,7 +268,7 @@ class PluginTrimTest {
 
         Plugin plugin = new Plugin(new XPlane(tempDir), macBinary);
 
-        assertThat(plugin.getNonApplicableXplFiles(XPlaneVariant.UNKNOWN), is(empty()));
+        assertThat(plugin.getNonApplicablePlatformBinaries(XPlaneVariant.UNKNOWN), is(empty()));
         assertThat(plugin.trimToVariant(XPlaneVariant.UNKNOWN), is(empty()));
         assertThat(Files.exists(macBinary) && Files.exists(windowsBinary) && Files.exists(linuxBinary), is(true));
     }
@@ -286,7 +286,7 @@ class PluginTrimTest {
 
         Plugin plugin = new Plugin(new XPlane(tempDir), macBinary);
 
-        assertThat(plugin.getNonApplicableXplFiles(XPlaneVariant.MAC), containsInAnyOrder(linuxBinary, windowsBinary));
+        assertThat(plugin.getNonApplicablePlatformBinaries(XPlaneVariant.MAC), containsInAnyOrder(linuxBinary, windowsBinary));
         assertThat(plugin.trimToVariant(XPlaneVariant.MAC), containsInAnyOrder(linuxBinary, windowsBinary));
         assertThat("The only Mac binary must not be deleted", Files.exists(macBinary), is(true));
     }

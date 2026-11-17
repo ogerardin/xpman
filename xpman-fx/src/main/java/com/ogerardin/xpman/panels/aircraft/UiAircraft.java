@@ -152,11 +152,11 @@ Press OK to continue.'
     }
 
     public boolean isHasNonApplicableBinaries() {
-        return !aircraft.getNonApplicableXplFiles(aircraft.getXPlane().getVariant()).isEmpty();
+        return !aircraft.getNonApplicablePlatformBinaries(aircraft.getXPlane().getVariant()).isEmpty();
     }
 
     public String getNonApplicableFilesList() {
-        var files = aircraft.getNonApplicableXplFiles(aircraft.getXPlane().getVariant());
+        var files = aircraft.getNonApplicablePlatformBinaries(aircraft.getXPlane().getVariant());
         if (files.isEmpty()) {
             return "";
         }

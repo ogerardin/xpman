@@ -146,7 +146,7 @@ Press OK to continue.'
     }
 
     public boolean isHasNonApplicableBinaries() {
-        return !plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant()).isEmpty();
+        return !plugin.getNonApplicablePlatformBinaries(plugin.getXPlane().getVariant()).isEmpty();
     }
 
     public boolean isSkunkcraftsManaged() {
@@ -154,11 +154,11 @@ Press OK to continue.'
     }
 
     public int getNonApplicableBinaryCount() {
-        return plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant()).size();
+        return plugin.getNonApplicablePlatformBinaries(plugin.getXPlane().getVariant()).size();
     }
 
     public String getNonApplicableFilesList() {
-        var files = plugin.getNonApplicableXplFiles(plugin.getXPlane().getVariant());
+        var files = plugin.getNonApplicablePlatformBinaries(plugin.getXPlane().getVariant());
         if (files.isEmpty()) {
             return "None";
         }
