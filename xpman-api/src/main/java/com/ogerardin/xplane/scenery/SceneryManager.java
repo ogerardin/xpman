@@ -410,8 +410,11 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
 
     @SneakyThrows
     public void uninstallSceneryPackage(SceneryPackage sceneryPackage) {
+        String folderName = sceneryPackage.getFolder().getFileName().toString();
         sceneryPackage.uninstall();
-        reload();
+        // Remove the dangling ini entry (if any) and refresh the entry list in all paths.
+        // removeFromIni handles both the present-ini and absent-ini cases, so no separate reload is needed.
+        removeFromIni(folderName);
     }
 
     @Override

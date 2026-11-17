@@ -2,6 +2,7 @@ package com.ogerardin.xplane.test.scenery;
 
 import com.ogerardin.xplane.XPlane;
 import com.ogerardin.xplane.scenery.SceneryManager;
+import com.ogerardin.xplane.scenery.SceneryPackage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -213,6 +214,68 @@ class SceneryManagerIniTest {
         assertThat(after, is(before)); // no repositioning
     }
 
+    // uninstallSceneryPackage
+
+    @Test
+    void uninstallRemovesIniEntryAndFolder() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(
+                "SCENERY_PACK Custom Scenery/Some Airport/",
+                LIBRARY,
+                GLOBAL_AIRPORTS);
+        Path libraryFolder = createSceneryFolder(xPlane, "openSAM_Library");
+        SceneryPackage pack = new SceneryPackage(libraryFolder) {
+            @Override
+            public void uninstall() throws IOException {
+                deleteFolder(libraryFolder);
+            }
+        };
+
+        xPlane.getSceneryManager().uninstallSceneryPackage(pack);
+
+        assertFalse(Files.exists(libraryFolder), "folder should be deleted");
+        assertFalse(iniLines(xPlane).contains(LIBRARY), "ini entry should be removed");
+        assertFalse(hasEntryFor(xPlane.getSceneryManager(), "openSAM_Library"),
+                "entry list should be refreshed");
+    }
+
+    @Test
+    void uninstallWorksWhenSceneryWasNotListed() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(GLOBAL_AIRPORTS);
+        Path libraryFolder = createSceneryFolder(xPlane, "openSAM_Library");
+        SceneryPackage pack = new SceneryPackage(libraryFolder) {
+            @Override
+            public void uninstall() throws IOException {
+                deleteFolder(libraryFolder);
+            }
+        };
+
+        xPlane.getSceneryManager().uninstallSceneryPackage(pack);
+
+        assertFalse(Files.exists(libraryFolder), "folder should be deleted");
+        List<String> after = iniLines(xPlane);
+        assertFalse(after.contains(LIBRARY));
+        assertThat(after.size(), is(1)); // only GLOBAL_AIRPORTS
+    }
+
+    @Test
+    void uninstallWorksWhenNoIni() throws Exception {
+        XPlane xPlane = newXPlane();
+        Path libraryFolder = createSceneryFolder(xPlane, "openSAM_Library");
+        SceneryPackage pack = new SceneryPackage(libraryFolder) {
+            @Override
+            public void uninstall() throws IOException {
+                deleteFolder(libraryFolder);
+            }
+        };
+        assertTrue(hasEntryFor(xPlane.getSceneryManager(), "openSAM_Library"));
+
+        xPlane.getSceneryManager().uninstallSceneryPackage(pack);
+
+        assertFalse(Files.exists(libraryFolder), "folder should be deleted");
+        assertFalse(hasEntryFor(xPlane.getSceneryManager(), "openSAM_Library"),
+                "entry list should be refreshed even without an ini");
+    }
+
     // helpers
 
     private static boolean hasEntryFor(SceneryManager manager, String folderName) {
@@ -239,10 +302,11 @@ class SceneryManagerIniTest {
         return newXPlane();
     }
 
-    private void createSceneryFolder(XPlane xPlane, String name) throws IOException {
+    private Path createSceneryFolder(XPlane xPlane, String name) throws IOException {
         Path folder = xPlane.getPaths().customScenery().resolve(name);
         Files.createDirectories(folder);
         Files.writeString(folder.resolve("library.txt"), "EXPORT dummy");
+        return folder;
     }
 
     private List<String> iniLines(XPlane xPlane) throws IOException {
