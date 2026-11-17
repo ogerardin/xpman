@@ -242,6 +242,34 @@ public class SceneryManager extends Manager<SceneryEntry> implements InstallTarg
     }
 
     /**
+     * Adds the given Custom Scenery folder to the end of scenery_packs.ini and saves. An
+     * already-listed folder is left untouched. The entry list is refreshed even when
+     * scenery_packs.ini does not exist, so a freshly installed package shows up in the Scenery
+     * panel. Returns false — with nothing written — if the folder is neither on disk nor listed,
+     * or if scenery_packs.ini does not exist.
+     */
+    public boolean addToIniEnd(String folderName) {
+        loadPackages();
+        if (getSceneryPacksIniFile() == null) {
+            return false;
+        }
+        SceneryEntry entry = getSceneryEntries().stream()
+                .filter(e -> isFolder(e, folderName) || designatesFolder(e, folderName))
+                .findFirst().orElse(null);
+        if (entry == null) {
+            return false;
+        }
+        if (entry.getIniItem() != null) {
+            return true; // already listed
+        }
+        if (!addToIni(entry)) {
+            return false;
+        }
+        saveAndFireLoaded();
+        return true;
+    }
+
+    /**
      * Adds the given Custom Scenery folder to scenery_packs.ini above the first entry that
      * designates one of the given anchor folders (e.g. global airports, a legacy library), or
      * at the top when no anchor is listed, and saves. An already-listed folder is repositioned;

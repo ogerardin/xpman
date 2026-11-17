@@ -3,7 +3,8 @@
 ## Aircraft
 - restore the "disabled aircraft" concept (by using disabled folder, similar to plugins)
 - Improve property browser: shortcuts to common items, help, sort, filter
-- Fly aircraft directly
+- Fly aircraft directly?
+- single aircraft panel (aircraft zoom in)  
 
 ## Liveries
 - Install livery from ZIP
@@ -15,6 +16,7 @@
 ## Scenery
 - handle MisterX https://forums.x-plane.org/files/file/28167-misterx-library-and-static-aircraft-extension/
 - hand HandyObjects https://forums.x-plane.org/files/file/24261-the-handy-objects-library/
+- R2 https://r2.flightsim.cz/
 
 ## Plugins
 -  inspect plugin binary Mach-O architectures for Apple Silicon (arm64) vs Intel compatibility
@@ -25,7 +27,7 @@
 - converge with tools install method
 
 ## Misc
-- [1.1] X-plane log analyzer
-- [1.2] XPman self-update
-- Generate flight plan for FMS / ATC
+- X-plane log analyzer
+- XPman self-update?
+- Generate flight plan for FMS / ATC (simbrief integration?)
 - X-Plane MCP

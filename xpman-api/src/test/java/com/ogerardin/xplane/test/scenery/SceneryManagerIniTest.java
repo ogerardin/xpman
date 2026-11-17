@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -162,6 +164,53 @@ class SceneryManagerIniTest {
 
         assertFalse(removed); // nothing to remove without an ini
         assertFalse(hasEntryFor(manager, "openSAM_Library")); // but the row is refreshed away
+    }
+
+    // addToIniEnd
+
+    @Test
+    void addsOnDiskFolderToTheEndOfTheIni() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(
+                "SCENERY_PACK Custom Scenery/Some Airport/",
+                GLOBAL_AIRPORTS);
+        createSceneryFolder(xPlane, "openSAM_Library");
+
+        assertTrue(xPlane.getSceneryManager().addToIniEnd("openSAM_Library"));
+
+        List<String> lines = iniLines(xPlane);
+        assertThat(lines.get(lines.size() - 1), is(LIBRARY));
+    }
+
+    @Test
+    void addToIniEndDoesNothingWhenIniIsAbsent() throws Exception {
+        XPlane xPlane = newXPlane();
+        createSceneryFolder(xPlane, "openSAM_Library");
+
+        assertFalse(xPlane.getSceneryManager().addToIniEnd("openSAM_Library"));
+    }
+
+    @Test
+    void addToIniEndDoesNothingWhenFolderIsNotOnDisk() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(GLOBAL_AIRPORTS);
+
+        assertFalse(xPlane.getSceneryManager().addToIniEnd("openSAM_Library"));
+        assertFalse(iniLines(xPlane).contains(LIBRARY));
+    }
+
+    @Test
+    void addToIniEndDoesNotDuplicateAnAlreadyListedFolder() throws Exception {
+        XPlane xPlane = newXPlaneWithIni(
+                LIBRARY,
+                "SCENERY_PACK Custom Scenery/Some Airport/",
+                GLOBAL_AIRPORTS);
+        createSceneryFolder(xPlane, "openSAM_Library");
+        List<String> before = iniLines(xPlane);
+
+        assertTrue(xPlane.getSceneryManager().addToIniEnd("openSAM_Library"));
+
+        List<String> after = iniLines(xPlane);
+        assertThat(after.stream().filter(l -> l.contains("openSAM_Library")).count(), is(1L));
+        assertThat(after, is(before)); // no repositioning
     }
 
     // helpers

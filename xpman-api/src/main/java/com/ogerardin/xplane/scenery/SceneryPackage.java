@@ -93,10 +93,29 @@ public class SceneryPackage implements Inspectable, Uninstallable, Updatable {
         return Files.exists(folder.resolve("library.txt"));
     }
 
-    /** The scenery version, falling back to its Skunkcrafts config when present. */
+    /** The scenery version, preferring its Skunkcrafts config and falling back to version.txt. */
     public String getVersion() {
         SkunkcraftsConfig config = SkunkcraftsUpdater.findConfig(folder);
-        return config != null ? config.version() : null;
+        if (config != null) {
+            return config.version();
+        }
+        return readVersionFile();
+    }
+
+    private String readVersionFile() {
+        Path versionFile = folder.resolve("version.txt");
+        if (!Files.exists(versionFile)) {
+            return null;
+        }
+        try {
+            String firstLine = Files.readAllLines(versionFile).stream()
+                    .filter(line -> !line.isBlank())
+                    .findFirst()
+                    .orElse(null);
+            return firstLine != null ? firstLine.trim() : null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Getter(lazy = true)
