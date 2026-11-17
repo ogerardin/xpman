@@ -43,6 +43,18 @@ public class UiAircraft {
         Platforms.getCurrent().reveal(aircraft.getAcfFile().getFile());
     }
 
+    public boolean isQuarantined() {
+        return Platforms.getCurrent().isQuarantined(aircraft.getAcfFile().getFile().getParent());
+    }
+
+    @SuppressWarnings("unused")
+    @Order(12)
+    @Label("'Remove macOS quarantine'")
+    @EnabledIf("quarantined")
+    public void removeQuarantine() {
+        Platforms.getCurrent().removeQuarantine(aircraft.getAcfFile().getFile().getParent());
+    }
+
     @SuppressWarnings("unused")
     @Order(15)
     @Label("'Uninstall this variant'")

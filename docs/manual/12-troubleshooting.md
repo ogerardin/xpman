@@ -16,9 +16,9 @@ macOS may block the app because it is not signed with an Apple Developer ID. Go 
 
 See [Installation](00-introduction.md#macos) for details.
 
-## macOS Quarantine on Plugins
+## macOS Quarantine on Plugins and Aircraft
 
-Some plugins downloaded from the internet are quarantined by macOS and will not load. Right-click the plugin in the Plugins panel and choose **Remove macOS quarantine** to allow it to run.
+Plugins and aircraft downloaded from the internet may be quarantined by macOS and will not load (for aircraft with bundled plugins) or show as damaged. Right-click the plugin in the Plugins panel, or the aircraft card in the Aircraft panel, and choose **Remove macOS quarantine** to allow it to run.
 
 ## Submitting Issues
 

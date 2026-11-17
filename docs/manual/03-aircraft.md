@@ -46,6 +46,7 @@ More aircraft will be recognized in future releases. If your favorite aircraft i
 Right-click a card or livery for additional actions:
 
 - **Reveal in Finder** / **Show in Explorer** / **Show in Files** (platform-dependent label)
+- **Remove macOS quarantine** — macOS only, shown only when the aircraft folder is quarantined. Removes the macOS quarantine attribute recursively, allowing any bundled plugins to load.
 - **Uninstall this variant** — Only shown when several variants of the same aircraft share the folder. Uninstalls just the selected variant (its `.acf` and icon files), leaving the folder and files shared with the other variants — including liveries — in place.
 - **Uninstall aircraft** — Shows a confirmation dialog listing the aircraft that will be removed.
 - **Inspect** — Opens the Inspection results window showing the outcome of all inspections.
