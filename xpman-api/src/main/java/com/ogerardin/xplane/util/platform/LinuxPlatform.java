@@ -69,6 +69,9 @@ public class LinuxPlatform implements Platform {
     }
 
     @Override
+    public String displayName() { return "Linux"; }
+
+    @Override
     public String revealLabel() {
         return "Show in Files";
     }

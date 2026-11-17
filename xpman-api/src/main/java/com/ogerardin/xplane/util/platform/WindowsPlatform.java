@@ -69,6 +69,9 @@ public class WindowsPlatform implements Platform {
     }
 
     @Override
+    public String displayName() { return "Windows"; }
+
+    @Override
     public String revealLabel() {
         return "Show in Explorer";
     }

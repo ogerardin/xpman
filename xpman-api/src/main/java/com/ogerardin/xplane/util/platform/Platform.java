@@ -29,6 +29,9 @@ public interface Platform {
         return getOsType() == com.sun.jna.Platform.getOSType();
     }
 
+    /** The user-friendly name of this platform as displayed in the UI. */
+    default String displayName() { return "Unknown"; }
+
     /** The platform-specific text corresponding to the action "reveal in Finder" or "show in Explorer" or equivalent */
     default String revealLabel() {
         return "Show in files";

@@ -131,7 +131,7 @@ Press OK to continue.'
 
     @SuppressWarnings("unused")
     @Order(105)
-    @Label("'Trim to ' + xPlane.variant.name()")
+    @Label("'Trim to ' + xPlane.variant.platform.displayName")
     @EnabledIf("hasNonApplicableBinaries")
     @Confirm(value = """
             'The following files will be removed:\n\n' + nonApplicableFilesList + '\n\n' +

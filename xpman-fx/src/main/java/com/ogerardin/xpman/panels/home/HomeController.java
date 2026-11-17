@@ -140,7 +140,7 @@ public class HomeController {
             startXPlaneButton.setDisable(true);
             return;
         }
-        titleLabel.setText(String.format("X-Plane %s (%s)", xPlane.getVersion(), xPlane.getVariant().name()));
+        titleLabel.setText(String.format("X-Plane %s (%s)", xPlane.getVersion(), xPlane.getVariant().getPlatform().displayName()));
         folder.setText(xPlane.getBaseFolder().toString());
         log.setText(xPlane.getLogPath().toString());
         log.setVisible(true);

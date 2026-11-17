@@ -49,6 +49,9 @@ public class MacPlatform implements Platform {
     }
 
     @Override
+    public String displayName() { return "macOS"; }
+
+    @Override
     public String revealLabel() {
         return "Reveal in Finder";
     }
