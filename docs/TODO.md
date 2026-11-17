@@ -26,5 +26,6 @@
 
 ## Misc
 - [1.1] X-plane log analyzer
+- [1.2] XPman self-update
 - Generate flight plan for FMS / ATC
 - X-Plane MCP
