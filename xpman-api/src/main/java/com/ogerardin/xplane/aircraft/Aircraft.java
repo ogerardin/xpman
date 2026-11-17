@@ -9,7 +9,7 @@ import com.ogerardin.xplane.inspection.Inspectable;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.impl.AircraftSpecInspection;
 import com.ogerardin.xplane.inspection.impl.UpdateAvailableInspection;
-import com.ogerardin.xplane.plugins.XplTrimmer;
+import com.ogerardin.xplane.plugins.PlatformTrimmer;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdater;
 import com.ogerardin.xplane.update.*;
 import com.ogerardin.xplane.skunkcrafts.SkunkcraftsUpdateProvider;
@@ -257,7 +257,7 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
      * Includes .xpl files, .dylib (macOS), .dll (Windows), and .so (Linux) files.
      */
     public List<Path> getNonApplicablePlatformBinaries(XPlaneVariant variant) {
-        return XplTrimmer.nonApplicablePlatformBinaries(getAcfFile().getFile().getParent(), variant);
+        return PlatformTrimmer.nonApplicablePlatformBinaries(getAcfFile().getFile().getParent(), variant);
     }
 
     /**
@@ -271,7 +271,7 @@ public class Aircraft extends XPlaneObject implements Inspectable, Uninstallable
      */
     @SneakyThrows
     public List<Path> trimPluginBinaries(XPlaneVariant variant) {
-        return XplTrimmer.trim(
+        return PlatformTrimmer.trim(
                 getAcfFile().getFile().getParent(),
                 variant,
                 isSkunkcraftsManaged() ? getAcfFile().getFile().getParent() : null);

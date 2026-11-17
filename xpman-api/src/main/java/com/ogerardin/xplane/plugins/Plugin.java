@@ -184,7 +184,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
      * Includes .xpl files, .dylib (macOS), .dll (Windows), and .so (Linux) files.
      */
     public java.util.List<Path> getAllPlatformBinaries() {
-        return XplTrimmer.allPlatformBinaries(getBaseFolder());
+        return PlatformTrimmer.allPlatformBinaries(getBaseFolder());
     }
 
     /**
@@ -205,7 +205,7 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
      * Non-applicable files are those whose platform is different from the variant's platform.
      */
     public java.util.List<Path> getNonApplicablePlatformBinaries(XPlaneVariant variant) {
-        return XplTrimmer.nonApplicablePlatformBinaries(getBaseFolder(), variant);
+        return PlatformTrimmer.nonApplicablePlatformBinaries(getBaseFolder(), variant);
     }
 
     /**
@@ -260,6 +260,6 @@ public class Plugin extends XPlaneObject implements Inspectable, Uninstallable, 
      * @return the list of files that were removed
      */
     public java.util.List<Path> trimToVariant(XPlaneVariant variant) throws IOException {
-        return XplTrimmer.trim(getBaseFolder(), variant, isSkunkcraftsManaged() ? getBaseFolder() : null);
+        return PlatformTrimmer.trim(getBaseFolder(), variant, isSkunkcraftsManaged() ? getBaseFolder() : null);
     }
 }

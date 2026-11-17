@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.plugins;
 
 import com.ogerardin.xplane.XPlaneVariant;
+import com.ogerardin.xplane.util.Maps;
 import com.ogerardin.xplane.util.platform.Platform;
 import com.ogerardin.xplane.util.platform.Platforms;
 import lombok.experimental.UtilityClass;
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +27,17 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @UtilityClass
-public class XplTrimmer {
+public class PlatformTrimmer {
 
     /**
      * Map of native library file extensions to their target platforms.
      * These are detected by extension, not by content inspection.
      */
-    private static final Map<String, Platforms> NATIVE_LIBRARY_EXTENSIONS;
-    static {
-        Map<String, Platforms> map = new LinkedHashMap<>();
-        map.put(".dylib", Platforms.MAC);
-        map.put(".dll", Platforms.WINDOWS);
-        map.put(".so", Platforms.LINUX);
-        NATIVE_LIBRARY_EXTENSIONS = Map.copyOf(map);
-    }
+    private static final Map<String, Platforms> NATIVE_LIBRARY_EXTENSIONS = Maps.mapOf(
+            ".dylib", Platforms.MAC,
+            ".dll", Platforms.WINDOWS,
+            ".so", Platforms.LINUX
+    );
 
     /**
      * Returns all platform-specific binary files under the given folder.
@@ -49,7 +46,7 @@ public class XplTrimmer {
     public List<Path> allPlatformBinaries(Path folder) {
         try (Stream<Path> paths = Files.walk(folder)) {
             return paths.filter(Files::isRegularFile)
-                    .filter(XplTrimmer::isPlatformBinary)
+                    .filter(PlatformTrimmer::isPlatformBinary)
                     .toList();
         } catch (IOException e) {
             log.warn("Failed to scan for platform binaries in {}", folder, e);
