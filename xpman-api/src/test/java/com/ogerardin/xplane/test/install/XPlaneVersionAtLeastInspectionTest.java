@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.test.install;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.inspections.AssertXPlaneVersionAtLeast;
+import com.ogerardin.xplane.install.inspections.XPlaneVersionAtLeastInspection;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.util.zip.Archive;
 import org.junit.jupiter.api.Test;
@@ -10,14 +10,14 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for the AssertXPlaneVersionAtLeast inspection.
+ * Tests for the XPlaneVersionAtLeastInspection inspection.
  */
-class AssertXPlaneVersionAtLeastTest {
+class XPlaneVersionAtLeastInspectionTest {
 
     @ParameterizedTest(name = "{0} passes the {1} minimum")
     @CsvSource({
@@ -31,13 +31,13 @@ class AssertXPlaneVersionAtLeastTest {
     }
 
     @Test
-    void blocksWhenVersionBelowMinimum() {
+    void warnsWhenVersionBelowMinimum() {
         InspectionResult result = inspect("12.4.3", "12.4.4");
 
         assertThat(result.isEmpty(), is(false));
         assertThat(result.getMessages().size(), is(1));
-        assertThat(result.getMessages().get(0).getSeverity(), is(com.ogerardin.xplane.inspection.Severity.ERROR));
-        assertTrue(result.getMessages().get(0).isAbort());
+        assertThat(result.getMessages().get(0).getSeverity(), is(com.ogerardin.xplane.inspection.Severity.WARN));
+        assertFalse(result.getMessages().get(0).isAbort());
     }
 
     @Test
@@ -52,6 +52,6 @@ class AssertXPlaneVersionAtLeastTest {
         when(mockXPlane.getVersion()).thenReturn(version);
 
         Archive archive = mock(Archive.class);
-        return new AssertXPlaneVersionAtLeast(mockXPlane, minimum).inspect(archive);
+        return new XPlaneVersionAtLeastInspection(mockXPlane, minimum).inspect(archive);
     }
 }

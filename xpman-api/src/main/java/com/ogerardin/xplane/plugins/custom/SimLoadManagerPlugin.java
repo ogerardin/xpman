@@ -1,7 +1,7 @@
 package com.ogerardin.xplane.plugins.custom;
 
 import com.ogerardin.xplane.XPlane;
-import com.ogerardin.xplane.install.inspections.AssertXPlaneVersionAtLeast;
+import com.ogerardin.xplane.install.inspections.XPlaneVersionAtLeastInspection;
 import com.ogerardin.xplane.install.inspections.MissingSystemLibrariesInspection;
 import com.ogerardin.xplane.install.inspections.MissingSystemLibrariesInspection.SystemLibraryRequirement;
 import com.ogerardin.xplane.install.types.PluginInstallableType;
@@ -88,7 +88,7 @@ public class SimLoadManagerPlugin extends Plugin {
         @Override
         public InspectionResult preconditions(XPlane xPlane, Archive archive) {
             return super.preconditions(xPlane, archive)
-                    .append(new AssertXPlaneVersionAtLeast(xPlane, MIN_XPLANE_VERSION).inspect(archive))
+                    .append(new XPlaneVersionAtLeastInspection(xPlane, MIN_XPLANE_VERSION).inspect(archive))
                     .append(new MissingSystemLibrariesInspection(List.of(
                             new SystemLibraryRequirement(
                                     Platforms.LINUX,

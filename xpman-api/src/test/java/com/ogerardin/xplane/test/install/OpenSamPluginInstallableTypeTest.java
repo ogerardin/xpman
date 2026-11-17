@@ -477,7 +477,7 @@ class OpenSamPluginInstallableTypeTest {
 
     /**
      * A mocked X-Plane reporting the given version, delegating paths and managers to a real
-     * temp install — the AssertXPlaneVersionAtLeastTest idiom, extended for the
+     * temp install — the XPlaneVersionAtLeastInspectionTest idiom, extended for the
      * plugin-manager-aware preconditions chain.
      */
     private XPlane versionMock(String version, XPlaneMajorVersion major) throws Exception {
