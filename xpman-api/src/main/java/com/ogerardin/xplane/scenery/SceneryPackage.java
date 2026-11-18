@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * A scenery package within an X-Plane installation (a folder under Custom Scenery or
@@ -148,5 +149,22 @@ public class SceneryPackage implements Inspectable, Uninstallable, Updatable {
     @Override
     public void uninstall() throws IOException {
         com.sun.jna.platform.FileUtils.getInstance().moveToTrash(folder.toFile());
+    }
+
+    /**
+     * Lombok's generated toString bakes in the declaring class's literal name, misrepresenting
+     * specialized subclasses (e.g. XpfrScenery); hand-written to use the runtime class name.
+     */
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", getClass().getSimpleName() + "(", ")")
+                .add("folder=" + getFolder())
+                .add("tileCount=" + getTileCount())
+                .add("objCount=" + getObjCount())
+                .add("enabled=" + enabled)
+                .add("system=" + system)
+                .add("rank=" + rank)
+                .add("updateProvider=" + getUpdateProvider())
+                .toString();
     }
 }

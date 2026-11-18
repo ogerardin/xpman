@@ -1,6 +1,7 @@
 package com.ogerardin.xplane.test.scenery;
 
 import com.ogerardin.xplane.scenery.SceneryPackage;
+import com.ogerardin.xplane.scenery.custom.XpfrScenery;
 import com.ogerardin.xplane.util.IntrospectionHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -12,6 +13,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class XpfrSceneryTest {
+
+    @Test
+    void toStringDisplaysRuntimeClass(@TempDir Path folder) throws Exception {
+        Files.createDirectories(folder.resolve("Earth nav data"));
+        Files.createFile(folder.resolve("FCHALOI.v.25-360_(146)_179.txt"));
+        var scenery = IntrospectionHelper.getBestSubclassInstance(SceneryPackage.class, folder);
+        assertEquals(XpfrScenery.class, scenery.getClass());
+        assertTrue(scenery.toString().startsWith("XpfrScenery("));
+        assertTrue(scenery.toString().contains("folder=" + folder));
+    }
 
     @Test
     void recognizesMultiLetterIdWithTrailingSuffix(@TempDir Path folder) throws Exception {
