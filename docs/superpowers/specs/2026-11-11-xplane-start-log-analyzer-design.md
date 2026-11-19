@@ -58,3 +58,23 @@ The user selected approach 1. The analyzer will be invoked on demand from Home a
 - Exact parser/result type names and package-private helpers are for the implementer, following existing XPman parser conventions.
 - The precise normalization strategy should be conservative: group only messages that differ in obvious per-occurrence values (such as line numbers), preserving a representative original message and count.
 - If an installed-plugin-to-log identity match cannot be done reliably from existing APIs, omit that cross-check in v1 rather than add a fragile heuristic.
+
+## Enhanced diagnostics (v1.1)
+
+The analyzer includes specialized diagnostics for critical failure modes:
+
+### Crash detection
+- Detects explicit crash indicators in the log: "This application has crashed", "Fatal signal: SIGSEGV/SIGBUS/SIGABRT/EXC_BAD_ACCESS", "terminated with signal"
+- Extracts full backtraces from the log, including frames after "Backtrace:" or "Stack dump:" headers, and directly after crash indicators
+- Reports the offending plugin when explicitly mentioned in the crash message
+- Provides safe web search queries (e.g., "X-Plane crash SIGSEGV") without including raw log details or local paths
+- Suppresses the "unclean exit" warning when a crash is detected to avoid duplicate reporting
+- Uses line consumption tracking to prevent duplicate generic diagnostics
+
+### Scenery asset diagnostics
+- Identifies missing or unloadable scenery assets referenced in the log
+- Groups failures by scenery pack name (extracted from paths like "Custom Scenery/PackName/...")
+- Classifies asset types by extension: 3D Object (.obj), Terrain Mesh (.dsf), Terrain (.ter), Polygon (.pol), Facade (.fac), Forest (.for), Texture (.png/.dds/.jpg/.jpeg)
+- Distinguishes between "missing" (file not found) and "could not be loaded" (file present but unloadable)
+- Uses "Unknown scenery pack" for assets that cannot be attributed to a specific pack
+- Preserves all occurrences with line numbers in the details pane, preventing information loss from deduplication

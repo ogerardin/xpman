@@ -39,6 +39,16 @@ class UiInspectionMessageTest {
     }
 
     @Test
+    void explicitSearchQueryDoesNotUseRawDetails() {
+        String details = "line 42: frame #0: /Users/test/Private/plugin.xpl";
+        UiInspectionMessage withExplicitQuery = new UiInspectionMessage(
+                message("original", details, List.of(), "X-Plane crash SIGSEGV"), null);
+
+        assertThat(withExplicitQuery.getSearchUrl(), is("https://www.google.com/search?q=X-Plane+crash+SIGSEGV"));
+        assertThat(withExplicitQuery.getDetailsText(), is(details));
+    }
+
+    @Test
     void detailsFallbackReturnsMessageWhenDetailsAbsent() {
         UiInspectionMessage withDetails = new UiInspectionMessage(message("m", "details"), null);
         UiInspectionMessage withoutDetails = new UiInspectionMessage(message("m", null), null);
@@ -92,5 +102,9 @@ class UiInspectionMessageTest {
 
     private static InspectionMessage message(String message, String details, java.util.List<com.ogerardin.xplane.inspection.Fix> fixes) {
         return InspectionMessage.builder().message(message).details(details).fixes(fixes).build();
+    }
+
+    private static InspectionMessage message(String message, String details, java.util.List<com.ogerardin.xplane.inspection.Fix> fixes, String searchQuery) {
+        return InspectionMessage.builder().message(message).details(details).fixes(fixes).searchQuery(searchQuery).build();
     }
 }

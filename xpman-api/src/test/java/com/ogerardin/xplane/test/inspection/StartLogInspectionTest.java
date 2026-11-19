@@ -264,6 +264,117 @@ class StartLogInspectionTest {
         assertThat(row.getDetails(), containsString("snd error in file"));
     }
 
+    @Test
+    void untaggedCrashOnlyLogIsRecognized() throws Exception {
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "This application has crashed because of the plugin: Sample Plugin\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> crashes = messages.stream()
+                .filter(m -> m.getMessage().contains("crashed") && m.getMessage().contains("Sample Plugin"))
+                .toList();
+        assertThat(crashes, hasSize(1));
+        assertThat(crashes.getFirst().getSeverity(), is(Severity.ERROR));
+        assertThat(crashes.getFirst().getMessage(), containsString("Sample Plugin"));
+    }
+
+    @Test
+    void cleanExitAfterGraphicsErrorIsNotACrash() throws Exception {
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/GFX: Metal device error: out of memory\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        assertThat(messages.stream().filter(m -> m.getMessage().contains("crashed")).toList(), empty());
+        assertThat(messages.stream().filter(m -> m.getMessage().contains("unclean")).toList(), empty());
+        assertThat(messages.stream().filter(m -> m.getMessage().contains("Session:") && m.getMessage().contains("clean exit")).toList(),
+                hasSize(1));
+    }
+
+    @Test
+    void longCrashTraceIsPreservedInDetailsOnly() throws Exception {
+        StringBuilder log = new StringBuilder("Log.txt for X-Plane 12\n");
+        log.append("0:00:01.000 F/SYS: This application has crashed because of the plugin: TestPlugin\n");
+        log.append("0:00:01.001 E/SYS: Backtrace:\n");
+        for (int i = 0; i < 35; i++) {
+            log.append("0:00:01.").append(String.format("%03d", i + 2)).append(" E/SYS: frame #").append(i).append(": 0x12345678 in function\n");
+        }
+        log.append("0:00:02.000 W/APT: Unrelated airport warning\n");
+        for (int i = 0; i < 300; i++) {
+            log.append("0:00:03.000 I/SYS: Filler line ").append(i).append("\n");
+        }
+        log.append("dlerror:dlopen(/path/to/plugin.xpl, 0x0006): failed\n");
+        Files.writeString(tempDir.resolve("Log.txt"), log.toString());
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> crashes = messages.stream()
+                .filter(m -> m.getMessage().contains("crashed")).toList();
+        assertThat(crashes, hasSize(1));
+
+        List<String> details = crashes.getFirst().getDetails().lines().toList();
+        assertThat(details.size(), greaterThanOrEqualTo(35));
+        for (int i = 0; i < 35; i++) {
+            assertThat(details.get(i), containsString("frame #" + i));
+        }
+
+        String searchQuery = crashes.getFirst().getSearchQuery();
+        assertThat(searchQuery, not(containsString("frame")));
+        assertThat(searchQuery, not(containsString("plugin.xpl")));
+
+        List<InspectionMessage> aptWarnings = messages.stream()
+                .filter(m -> "APT".equals(m.getObject())).toList();
+        assertThat(aptWarnings, hasSize(1));
+    }
+
+    @Test
+    void nearbyLoadedPluginIsNotBlamedForFatalSignal() throws Exception {
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 I/PLG: Loaded: /path/to/AviTab.xpl (org.xplane.avitab).\n"
+                + "0:00:02.000 F/SYS: Fatal signal: SIGSEGV\n"
+                + "0:00:02.001 F/SYS: frame #0: 0x12345678 in OtherPlugin_function\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> crashes = messages.stream()
+                .filter(m -> m.getMessage().contains("SIGSEGV")).toList();
+        assertThat(crashes, hasSize(1));
+        assertThat(crashes.getFirst().getMessage(), not(containsString("AviTab")));
+        assertThat(crashes.getFirst().getMessage(), not(containsString("OtherPlugin")));
+        assertThat(crashes.getFirst().getDetails(), containsString("SIGSEGV"));
+        assertThat(crashes.getFirst().getDetails(), containsString("frame #0"));
+
+        List<InspectionMessage> sigsegvHandlers = messages.stream()
+                .filter(m -> m.getMessage().contains("Installing SIGSEGV handler")).toList();
+        assertThat(sigsegvHandlers, empty());
+    }
+
+    @Test
+    void relatedTerminationMarkersProduceOneFinding() throws Exception {
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 I/PLG: Loaded: /path/to/Plugin1.xpl (test.plugin1).\n"
+                + "0:00:02.000 F/SYS: This application has crashed because of the plugin: BadPlugin\n"
+                + "0:00:02.001 F/SYS: terminated with signal SIGABRT\n"
+                + "0:00:02.002 F/SYS: Backtrace:\n"
+                + "0:00:02.003 F/SYS: frame #0: 0x12345678 in BadPlugin_function\n"
+                + "0:00:02.004 F/SYS: frame #1: 0x87654321 in BadPlugin_init\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> crashes = messages.stream()
+                .filter(m -> m.getMessage().contains("crashed") || m.getMessage().contains("SIGABRT")).toList();
+        assertThat(crashes, hasSize(1));
+        assertThat(crashes.getFirst().getMessage(), containsString("BadPlugin"));
+        assertThat(crashes.getFirst().getDetails(), containsString("SIGABRT"));
+        assertThat(crashes.getFirst().getDetails(), containsString("frame #0"));
+        assertThat(crashes.getFirst().getDetails(), containsString("frame #1"));
+
+        assertThat(messages.stream().filter(m -> m.getMessage().contains("unclean")).toList(), empty());
+    }
+
+
     private List<InspectionMessage> inspect() throws Exception {
         return new StartLogInspection().inspect(new XPlane(tempDir)).getMessages();
     }
@@ -298,5 +409,26 @@ class StartLogInspectionTest {
         assertThat(archMismatch, hasSize(1));
         assertThat(archMismatch.getFirst().getMessage(), containsString("Intel Mac"));
         assertThat(archMismatch.getFirst().getDetails(), containsString("line 20"));
+    }
+
+    @Test
+    void sceneryDiagnosticsDetected() throws Exception {
+        String content = """
+            Log.txt for X-Plane 12.1.1
+            0:00:00.000 E/SCN: Failed to find resource: 'Custom Scenery/Test Pack/objects/building.obj'
+            0:00:01.000 E/SCN: Missing object: 'Custom Scenery/Test Pack/meshes/terrain.dsf'
+            ----- X-Plane has shut down -----
+            """;
+        Files.writeString(tempDir.resolve("Log.txt"), content);
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> scenery = messages.stream()
+                .filter(m -> m.getObject() != null && m.getObject().equals("Test Pack"))
+                .toList();
+
+        assertThat(scenery, hasSize(1));
+        assertThat(scenery.getFirst().getSeverity(), is(Severity.ERROR));
+        assertThat(scenery.getFirst().getMessage(), containsString("2 missing assets"));
     }
 }

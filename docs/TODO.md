@@ -30,4 +30,5 @@
 - X-plane log analyzer
 - XPman self-update?
 - Generate flight plan for FMS / ATC (simbrief integration?)
-- X-Plane MCP
+- X-Plane MCP?
+- Expert mode: tree-based explorer

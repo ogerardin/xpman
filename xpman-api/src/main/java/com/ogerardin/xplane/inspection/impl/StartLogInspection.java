@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,35 +46,56 @@ public class StartLogInspection implements Inspection<XPlane> {
             return InspectionResult.of(InspectionMessage.builder().severity(Severity.ERROR)
                     .message("Could not read Log.txt: " + e.getMessage()).build());
         }
+
+        // Run specialized diagnostics first to mark consumed lines
+        Set<Integer> consumedLines = new HashSet<>();
+        var messages = new ArrayList<InspectionMessage>();
+
+        // Task 2: Crash detection
+        List<InspectionMessage> crashFindings = CrashLogDiagnostics.collect(log, consumedLines);
+        boolean hasCrash = !crashFindings.isEmpty();
+        messages.addAll(crashFindings);
+
+        // Task 3: Scenery asset diagnostics
+        List<InspectionMessage> sceneryFindings = MissingSceneryLogDiagnostics.collect(log, consumedLines);
+        messages.addAll(sceneryFindings);
+
+        // Check if log is recognized
         boolean recognized = log.getVersionLine() != null || log.getCompiledLine() != null || log.getStartedAt() != null
                 || log.getEntries().stream().anyMatch(entry -> entry.level() != null
                 || entry.raw().startsWith("Loaded:") || entry.raw().startsWith("dlerror:dlopen(")
                 || entry.raw().equals("----- X-Plane has shut down -----")
                 || entry.raw().startsWith("I found the following scenery packages"));
-        if (!recognized) {
+
+        if (!recognized && !hasCrash) {
             return InspectionResult.of(InspectionMessage.builder().severity(Severity.WARN)
                     .message("Log.txt is empty or unrecognized").build());
         }
 
-        var messages = new ArrayList<InspectionMessage>();
-        addStatistics(log, messages);
+        addStatistics(log, messages, hasCrash);
         addFailedPlugins(log, messages);
         addUnloadedPlugins(xPlane, log, messages);
-        addTaggedDiagnostics(log, messages);
+        addTaggedDiagnostics(log, messages, consumedLines);
         addUnloadedScenery(xPlane, log, messages);
-        if (!log.hasCleanExit()) {
+
+        // Only show unclean exit warning if no crash was detected
+        if (!hasCrash && !log.hasCleanExit()) {
             messages.add(InspectionMessage.builder().severity(Severity.WARN)
                     .message("No clean shutdown marker — X-Plane crashed, is still running, or the session hung").build());
         }
+
         return InspectionResult.of(messages);
     }
 
-    private static void addStatistics(SessionLog log, List<InspectionMessage> messages) {
+    private static void addStatistics(SessionLog log, List<InspectionMessage> messages, boolean hasCrash) {
         StringBuilder session = new StringBuilder("Session: ")
                 .append(log.getVersionLine() == null ? "unknown X-Plane version" : log.getVersionLine());
         if (log.getStartedAt() != null) session.append(" — started ").append(log.getStartedAt());
         log.lastElapsed().ifPresent(time -> session.append(", covered ").append(formatDuration(time)));
-        session.append(", ").append(log.hasCleanExit() ? "clean" : "unclean").append(" exit");
+        // Only mention exit status if no crash was detected (crash explains the termination)
+        if (!hasCrash) {
+            session.append(", ").append(log.hasCleanExit() ? "clean" : "unclean").append(" exit");
+        }
         log.aircraftPath().ifPresent(path -> session.append(", flight ").append(path)
                 .append(" at ").append(log.flightStartedAt().map(StartLogInspection::formatDuration).orElse("unknown time")));
         log.menuShownAt().ifPresent(time -> session.append(", main menu at ").append(formatDuration(time)));
@@ -147,24 +169,33 @@ public class StartLogInspection implements Inspection<XPlane> {
                 .message(message).details(details).build());
     }
 
-    private static void addTaggedDiagnostics(SessionLog log, List<InspectionMessage> messages) {
+    private static void addTaggedDiagnostics(SessionLog log, List<InspectionMessage> messages, Set<Integer> consumedLines) {
         Map<String, List<SourceEntry>> grouped = new LinkedHashMap<>();
         Map<String, KnownLogIssue> knownIssues = new LinkedHashMap<>();
         Set<String> pairedKeys = new java.util.HashSet<>();
         for (int i = 0; i < log.getEntries().size(); i++) {
+            int lineNumber = i + 1;
+
+            // Skip lines already consumed by specialized diagnostics
+            if (consumedLines.contains(lineNumber)) continue;
+
             LogEntry entry = log.getEntries().get(i);
             if (entry.level() != LogEntry.Level.ERROR && entry.level() != LogEntry.Level.WARN) continue;
             if (KnownLogIssue.isNoise(entry.message())) continue;
 
             // Pair snd-error + following SOUN line if adjacent
             if (SND_ERROR_PATTERN.matcher(entry.message()).matches() && i + 1 < log.getEntries().size()) {
+                int nextLineNumber = i + 2;
+                if (consumedLines.contains(nextLineNumber)) {
+                    continue; // Skip if the pair partner is consumed
+                }
                 LogEntry next = log.getEntries().get(i + 1);
                 if (next.level() == LogEntry.Level.ERROR && "SOUN".equals(next.subsystem())) {
                     KnownLogIssue knownIssue = KnownLogIssue.matching(next.message()).orElse(null);
                     String key = knownIssue == null ? "PAIR|" + entry.message() + "|" + next.message() : knownIssue.name();
                     grouped.computeIfAbsent(key, _ -> new ArrayList<>())
-                            .add(new SourceEntry(i + 1, entry));
-                    grouped.get(key).add(new SourceEntry(i + 2, next));
+                            .add(new SourceEntry(lineNumber, entry));
+                    grouped.get(key).add(new SourceEntry(nextLineNumber, next));
                     if (knownIssue != null) knownIssues.put(key, knownIssue);
                     pairedKeys.add(key);
                     i++; // skip next entry
@@ -176,7 +207,7 @@ public class StartLogInspection implements Inspection<XPlane> {
             KnownLogIssue knownIssue = KnownLogIssue.matching(entry.message()).orElse(null);
             String key = knownIssue == null ? entry.level() + "|" + entry.subsystem() + "|" + entry.message()
                     : knownIssue.name();
-            grouped.computeIfAbsent(key, _ -> new ArrayList<>()).add(new SourceEntry(i + 1, entry));
+            grouped.computeIfAbsent(key, _ -> new ArrayList<>()).add(new SourceEntry(lineNumber, entry));
             if (knownIssue != null) knownIssues.put(key, knownIssue);
         }
         grouped.entrySet().stream()

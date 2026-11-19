@@ -64,6 +64,13 @@ public class UiInspectionMessage {
     }
 
     public String getSearchUrl() {
+        // Prefer explicit search query when provided (for specialized diagnostics)
+        String explicitQuery = message.getSearchQuery();
+        if (explicitQuery != null && !explicitQuery.isBlank()) {
+            return "https://www.google.com/search?q=" + URLEncoder.encode(explicitQuery, StandardCharsets.UTF_8);
+        }
+
+        // Otherwise, fall back to first line of details or message
         String details = message.getDetails();
         String query = details != null && !details.isBlank()
                 ? details.lines().findFirst().orElse(message.getMessage()) : message.getMessage();

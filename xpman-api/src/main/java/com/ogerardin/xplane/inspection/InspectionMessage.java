@@ -31,6 +31,9 @@ public class InspectionMessage {
     @Builder.Default
     private final boolean abort = false;
 
+    /** Optional explicit search query to override the auto-derived search URL. */
+    private final String searchQuery;
+
     public boolean isError() {
         return severity == Severity.ERROR;
     }
