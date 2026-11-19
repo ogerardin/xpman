@@ -393,6 +393,68 @@ class StartLogInspectionTest {
     }
 
     @Test
+    void backtraceAloneIsNotACrash() throws Exception {
+        // A plugin can log a stack dump for a handled error; X-Plane can then shut down cleanly.
+        // This should NOT be reported as a crash.
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/SYS: Backtrace:\n"
+                + "0:00:01.001 E/SYS: frame #0: 0x12345678 in SomeFunction\n"
+                + "0:00:01.002 E/SYS: frame #1: 0x87654321 in AnotherFunction\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        // No crash error should be reported
+        assertThat(messages.stream().filter(m -> m.getMessage().contains("crashed")).toList(), empty());
+        // Should show clean exit
+        assertThat(messages.stream().filter(m -> m.getMessage().contains("clean exit")).toList(), hasSize(1));
+    }
+
+    @Test
+    void taggedCrashLineIsConsumed() throws Exception {
+        // An E/SYS crash line should be consumed and not appear again in generic diagnostics
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/SYS: This application has crashed because of the plugin: BadPlugin\n"
+                + "0:00:01.001 E/SYS: Backtrace:\n"
+                + "0:00:01.002 E/SYS: frame #0: 0x12345678 in BadPlugin_function\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        // Should have exactly one crash finding
+        List<InspectionMessage> crashes = messages.stream()
+                .filter(m -> m.getMessage().contains("crashed")).toList();
+        assertThat(crashes, hasSize(1));
+
+        // No generic diagnostic should duplicate the crash message
+        List<InspectionMessage> genericSysErrors = messages.stream()
+                .filter(m -> "SYS".equals(m.getObject()))
+                .filter(m -> m.getMessage().contains("crashed"))
+                .toList();
+        assertThat(genericSysErrors, empty());
+    }
+
+    @Test
+    void bareHexAddressIsNotABacktraceFrame() throws Exception {
+        // A dlerror line with 0x0006 flag should not be mistaken for a frame
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 F/SYS: This application has crashed\n"
+                + "dlerror:dlopen(/path/to/plugin.xpl, 0x0006): failed\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> crashes = messages.stream()
+                .filter(m -> m.getMessage().contains("crashed")).toList();
+        assertThat(crashes, hasSize(1));
+
+        // The dlerror line should NOT appear in crash details
+        String details = crashes.getFirst().getDetails();
+        assertThat(details, not(containsString("dlerror")));
+        assertThat(details, not(containsString("0x0006")));
+    }
+
+    @Test
     void architectureMismatchProducesHumanReadableMessage() throws Exception {
         copyFixture("xp12-sample.txt");
         // Create the plugin file at the path referenced in the log (after substitution)
@@ -409,6 +471,80 @@ class StartLogInspectionTest {
         assertThat(archMismatch, hasSize(1));
         assertThat(archMismatch.getFirst().getMessage(), containsString("Intel Mac"));
         assertThat(archMismatch.getFirst().getDetails(), containsString("line 20"));
+    }
+
+    @Test
+    void aircraftAssetsAreNotReportedAsMissingScenery() throws Exception {
+        // E/ACF: Unable to load 'Aircraft/MyPlane/panel.png' should NOT be reported as scenery
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/ACF: Unable to load 'Aircraft/MyPlane/panel.png'\n"
+                + "0:00:02.000 E/SCN: Failed to find resource: 'Custom Scenery/Pack/obj.obj'\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        // Should only have the scenery error, not the aircraft error
+        List<InspectionMessage> scenery = messages.stream()
+                .filter(m -> m.getMessage().contains("missing asset") || m.getMessage().contains("could not be loaded"))
+                .toList();
+        assertThat(scenery, hasSize(1));
+        assertThat(scenery.getFirst().getMessage(), containsString("Pack"));
+        assertThat(scenery.getFirst().getDetails(), containsString("obj.obj"));
+    }
+
+    @Test
+    void sceneryPathsAreCaseInsensitiveAndSupportWindowsSeparators() throws Exception {
+        // Should handle case-insensitive phrases and Windows backslashes
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/SCN: FAILED TO FIND RESOURCE: 'CUSTOM SCENERY\\TestPack\\objects\\sign.obj'\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> scenery = messages.stream()
+                .filter(m -> m.getMessage().contains("missing asset") || m.getMessage().contains("could not be loaded"))
+                .toList();
+        assertThat(scenery, hasSize(1));
+        assertThat(scenery.getFirst().getMessage(), containsString("TestPack"));
+        assertThat(scenery.getFirst().getDetails(), containsString("sign.obj"));
+    }
+
+    @Test
+    void mixedLoadAndMissingAreReportedSeparately() throws Exception {
+        // One pack has one missing file and one file that exists but has invalid format
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/SCN: Failed to find resource: 'Custom Scenery/Pack/missing.obj'\n"
+                + "0:00:02.000 E/SCN: Unable to load 'Custom Scenery/Pack/invalid.dsf': invalid format\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        // Should have two separate findings
+        List<InspectionMessage> scenery = messages.stream()
+                .filter(m -> m.getMessage().contains("Pack"))
+                .toList();
+        assertThat(scenery, hasSize(2));
+
+        // One should say "missing"
+        assertThat(scenery.stream().filter(m -> m.getMessage().contains("missing")).toList(), hasSize(1));
+        // One should say "could not be loaded"
+        assertThat(scenery.stream().filter(m -> m.getMessage().contains("could not be loaded")).toList(), hasSize(1));
+    }
+
+    @Test
+    void unquotedPathsAreParsedCorrectly() throws Exception {
+        // Paths don't always have quotes
+        Files.writeString(tempDir.resolve("Log.txt"), "Log.txt for X-Plane 12\n"
+                + "0:00:01.000 E/SCN: Failed to find resource: Custom Scenery/Pack/obj.obj\n"
+                + "----- X-Plane has shut down -----\n");
+
+        List<InspectionMessage> messages = inspect();
+
+        List<InspectionMessage> scenery = messages.stream()
+                .filter(m -> m.getMessage().contains("Pack"))
+                .toList();
+        assertThat(scenery, hasSize(1));
+        assertThat(scenery.getFirst().getDetails(), containsString("obj.obj"));
     }
 
     @Test

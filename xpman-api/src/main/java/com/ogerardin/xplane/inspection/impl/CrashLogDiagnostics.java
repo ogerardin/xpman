@@ -25,7 +25,12 @@ class CrashLogDiagnostics {
     );
 
     private static final Pattern FRAME_PATTERN = Pattern.compile(
-            "(?i)frame #\\d+.*|0x[0-9a-fA-F]+"
+            "(?i)frame\\s+#\\d+.*|0x[0-9a-fA-F]+\\s+\\S+"
+    );
+
+    // Stricter pattern for backtrace frames: must have "frame #N:" or "0xADDR in" context
+    private static final Pattern STRICT_FRAME_PATTERN = Pattern.compile(
+            "(?i)(?:frame\\s+#\\d+\\s*:.*|0x[0-9a-fA-F]+\\s+in\\s+\\S+)"
     );
 
     private static final Pattern SIGNAL_PATTERN = Pattern.compile(
@@ -64,7 +69,7 @@ class CrashLogDiagnostics {
                 // Collect frames after backtrace header
                 for (int j = i + 1; j < log.getEntries().size(); j++) {
                     LogEntry frameEntry = log.getEntries().get(j);
-                    if (FRAME_PATTERN.matcher(frameEntry.raw()).find()) {
+                    if (STRICT_FRAME_PATTERN.matcher(frameEntry.raw()).find()) {
                         backtraceLines.add(frameEntry);
                         backtraceLineNumbers.add(j + 1);
                         processedLineIndices.add(j + 1);
@@ -84,11 +89,11 @@ class CrashLogDiagnostics {
                     if (CRASH_PATTERN.matcher(frameRaw).find() || BACKTRACE_PATTERN.matcher(frameRaw).find()) {
                         break;
                     }
-                    if (FRAME_PATTERN.matcher(frameRaw).find() && !backtraceLineNumbers.contains(j + 1)) {
+                    if (STRICT_FRAME_PATTERN.matcher(frameRaw).find() && !backtraceLineNumbers.contains(j + 1)) {
                         backtraceLines.add(frameEntry);
                         backtraceLineNumbers.add(j + 1);
                         processedLineIndices.add(j + 1);
-                    } else if (!FRAME_PATTERN.matcher(frameRaw).find()) {
+                    } else if (!STRICT_FRAME_PATTERN.matcher(frameRaw).find()) {
                         break; // Stop at first non-frame line
                     }
                 }
@@ -101,7 +106,8 @@ class CrashLogDiagnostics {
         }
 
         // Create crash findings
-        if (!crashLines.isEmpty() || !backtraceLines.isEmpty()) {
+        // Only create a crash finding if we have explicit crash evidence
+        if (!crashLines.isEmpty()) {
             findings.add(createCrashFinding(crashLines, crashLineNumbers, backtraceLines, backtraceLineNumbers,
                     signals, processedLineIndices, consumedLines));
         }
@@ -165,6 +171,11 @@ class CrashLogDiagnostics {
         // Sort by line number
         allLines.sort((a, b) -> Integer.compare(a.lineNumber(), b.lineNumber()));
 
+        // Mark ALL crash evidence lines as consumed (before filtering for details)
+        for (EntryWithLine entryWithLine : allLines) {
+            consumedLines.add(entryWithLine.lineNumber());
+        }
+
         // Build details - include signal info and frames (exclude Backtrace: header and crash message)
         for (EntryWithLine entryWithLine : allLines) {
             String raw = entryWithLine.entry().raw();
@@ -179,7 +190,6 @@ class CrashLogDiagnostics {
             }
             details.append("line ").append(entryWithLine.lineNumber()).append(": ")
                     .append(raw).append("\n");
-            consumedLines.add(entryWithLine.lineNumber());
         }
 
         if (details.length() > 0) {
