@@ -12,4 +12,12 @@ public interface Fix {
     String label();
 
     void apply();
+
+    /**
+     * Whether the UI should ask the user to confirm before applying this fix.
+     * Fixes that are purely informational (e.g. opening a download page) should return false.
+     */
+    default boolean needsConfirmation() {
+        return true;
+    }
 }
