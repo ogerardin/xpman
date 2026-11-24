@@ -29,7 +29,7 @@ Any aircraft with an `.acf` file is listed. For most, XPman shows what the ACF f
 | Aircraft | What XPman adds |
 |----------|-----------------|
 | **ZIBO Mod B737-800X** | Version from the mod's own files; **Inspect** reports newer versions published on the ZIBO download site, and warns if the recommended AviTab and Terrain Radar plugins are missing; community, forum and download links |
-| **Calibra Simulations A330-200** | Version from the aircraft's own files; warns when the installed X-Plane is older than 12.4.4 (it will probably not work until X-Plane is updated); warns when a Carda engine mod (GE or PW) is required by at least one livery but not installed (the sim shows a "CARDA MOD MISSING" box for 30s on first load — expected until the mod is copied in); website, release notes, forum, bug-report and Discord links |
+| **Calibra Simulations A330-200** | Version from the aircraft's own files; warns when the installed X-Plane is older than 12.4.4 (it will probably not work until X-Plane is updated); warns when a Carda engine mod (GE or PW) is required by at least one livery but not installed (the sim shows a "CARDA MOD MISSING" box for 30s on first load — expected until the mod is copied in), offering to open the mod download page or remove the livery; website, release notes, forum, bug-report and Discord links |
 | **Colimata Concorde FXP** | Version, Colimata and forum links, and the manuals bundled with the aircraft |
 | **FlightFactor A350 XWB** | Version and a link to the briefing |
 | **Dmax3D Eurofighter Typhoon** | Version and a link to the manufacturer's page |

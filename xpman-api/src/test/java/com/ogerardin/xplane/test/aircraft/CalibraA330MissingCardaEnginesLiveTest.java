@@ -45,11 +45,13 @@ class CalibraA330MissingCardaEnginesLiveTest {
         assertThat(result.stream().map(InspectionMessage::getSeverity).toList(),
                 everyItem(is(Severity.WARN)));
 
-        // Each message is keyed by a livery folder name and carries exactly one download fix.
+        // Each message is keyed by a livery folder name and carries two fixes: download link (no confirm) and remove livery (with confirm).
         for (InspectionMessage msg : result.getMessages()) {
             assertThat(msg.getObject(), startsWith("livery ["));
-            assertThat(msg.getFixes().size(), is(1));
+            assertThat(msg.getFixes().size(), is(2));
             assertThat(msg.getFixes().get(0).needsConfirmation(), is(false));
+            assertThat(msg.getFixes().get(1).label(), is("remove livery"));
+            assertThat(msg.getFixes().get(1).needsConfirmation(), is(true));
         }
 
         // The number of warnings matches the number of tagged liveries whose mod folder is

@@ -8,6 +8,7 @@
 
 ## Liveries
 - Install livery from ZIP
+- install Carda add-on engines from ZIP (warning: designed for JAR330, can also be used by Calibra A330-200)
 
 ## Nav data
 - Automatically update navdata set?

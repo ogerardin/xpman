@@ -9,6 +9,7 @@ import com.ogerardin.xplane.inspection.InspectionMessage;
 import com.ogerardin.xplane.inspection.InspectionResult;
 import com.ogerardin.xplane.inspection.OpenUrlFix;
 import com.ogerardin.xplane.inspection.Severity;
+import com.ogerardin.xplane.inspection.TrashFolderFix;
 import com.ogerardin.xplane.install.inspections.XPlaneVersionAtLeastInspection;
 import com.ogerardin.xplane.install.types.AircraftInstallableType;
 import com.ogerardin.xplane.util.Maps;
@@ -173,6 +174,7 @@ public class CalibraA330 extends Aircraft {
                 if (!m.find()) continue;
                 CardaEngineMod mod = CardaEngineMod.valueOf(m.group(1));
                 if (modPresent.get(mod)) continue;
+                Path liveryFolder = target.getLiveriesFolder().resolve(livery.getFolder());
                 messages.add(InspectionMessage.builder()
                         .severity(Severity.WARN)
                         .object("livery " + livery.getName())
@@ -181,6 +183,7 @@ public class CalibraA330 extends Aircraft {
                         .fix(new OpenUrlFix(
                                 "open Carda " + mod.label + " download page (requires login)",
                                 mod.downloadUrl))
+                        .fix(new TrashFolderFix(liveryFolder))
                         .build());
             }
             return InspectionResult.of(messages);

@@ -67,10 +67,13 @@ class CalibraA330MissingCardaEnginesInspectionTest {
 
         assertThat(result.size(), is(1));
         InspectionMessage msg = result.get(0);
-        assertThat(msg.getFixes().size(), is(1));
+        assertThat(msg.getFixes().size(), is(2));
         assertThat(msg.getFixes().get(0).label(),
                 is("open Carda PW4000 download page (requires login)"));
         assertThat(msg.getFixes().get(0).needsConfirmation(), is(false));
+        assertThat(msg.getFixes().get(1).label(),
+                is("remove livery"));
+        assertThat(msg.getFixes().get(1).needsConfirmation(), is(true));
     }
 
     @Test
@@ -136,9 +139,9 @@ class CalibraA330MissingCardaEnginesInspectionTest {
                 "livery [A332 GE] British Airways",
                 "livery [A332 PW] SWISS HB-IQA"));
 
-        // Each GE livery references the GE fix; the PW livery references the PW fix.
+        // Each livery message carries both a download link and a remove-livery fix.
         for (InspectionMessage msg : result.getMessages()) {
-            assertThat(msg.getFixes().size(), is(1));
+            assertThat(msg.getFixes().size(), is(2));
             if (msg.getObject().contains("GE")) {
                 assertThat(msg.getMessage(), containsString("GE CF6-80E1"));
                 assertThat(msg.getFixes().get(0).label(), containsString("GE CF6-80E1"));
@@ -146,6 +149,7 @@ class CalibraA330MissingCardaEnginesInspectionTest {
                 assertThat(msg.getMessage(), containsString("PW4000"));
                 assertThat(msg.getFixes().get(0).label(), containsString("PW4000"));
             }
+            assertThat(msg.getFixes().get(1).label(), is("remove livery"));
         }
     }
 
@@ -170,6 +174,7 @@ class CalibraA330MissingCardaEnginesInspectionTest {
                 .map(name -> {
                     Livery livery = mock(Livery.class);
                     when(livery.getName()).thenReturn(name);
+                    when(livery.getFolder()).thenReturn(Path.of(name));
                     return livery;
                 })
                 .toList();
@@ -177,6 +182,7 @@ class CalibraA330MissingCardaEnginesInspectionTest {
         Aircraft aircraft = mock(Aircraft.class);
         when(aircraft.getAcfFile()).thenReturn(acfFile);
         when(aircraft.getLiveries()).thenReturn(liveries);
+        when(aircraft.getLiveriesFolder()).thenReturn(aircraftFolder.resolve("liveries"));
         return aircraft;
     }
 }
