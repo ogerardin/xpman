@@ -15,8 +15,6 @@
 - navigraph utilities as tools?
 
 ## Scenery
-- handle MisterX https://forums.x-plane.org/files/file/28167-misterx-library-and-static-aircraft-extension/
-- hand HandyObjects https://forums.x-plane.org/files/file/24261-the-handy-objects-library/
 - R2 https://r2.flightsim.cz/
 
 ## Plugins
@@ -28,7 +26,6 @@
 - converge with tools install method
 
 ## Misc
-- X-plane log analyzer
 - XPman self-update?
 - Generate flight plan for FMS / ATC (simbrief integration?)
 - X-Plane MCP
