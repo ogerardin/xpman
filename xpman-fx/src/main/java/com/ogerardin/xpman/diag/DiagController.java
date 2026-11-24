@@ -38,6 +38,13 @@ public class DiagController {
 
     public void setItems(List<UiInspectionMessage> items) {
         messages.setAll(items);
+        long errors = items.stream().filter(i -> i.getSeverity() == Severity.ERROR).count();
+        long warns  = items.stream().filter(i -> i.getSeverity() == Severity.WARN).count();
+        long infos  = items.stream().filter(i -> i.getSeverity() == Severity.INFO).count();
+        allButton.setText("All (" + items.size() + ")");
+        errorButton.setText("Errors (" + errors + ")");
+        warningButton.setText("Warnings (" + warns + ")");
+        infoButton.setText("Info (" + infos + ")");
     }
 
     @FXML

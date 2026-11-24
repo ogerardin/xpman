@@ -52,4 +52,6 @@ The inspection results table (accessible from aircraft, plugin, and scenery pane
 - **Details** — Icon; hover for additional details.
 - **Fix** — One button per available fix. Click to apply; the row is removed on success.
 
+Use the **All**, **Errors**, **Warnings**, and **Info** buttons above the table to filter by severity; each button shows the number of messages of that severity.
+
 On navdata cards, problems are shown inline; the inspection dialog is no longer opened from the navdata panel.
