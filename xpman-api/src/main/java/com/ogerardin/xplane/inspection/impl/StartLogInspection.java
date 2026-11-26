@@ -195,7 +195,8 @@ public class StartLogInspection implements Inspection<XPlane> {
                             .collect(java.util.stream.Collectors.joining("\n"));
                     messages.add(InspectionMessage.builder()
                             .severity(knownIssue == null ? severity(first.level()) : knownIssue.getSeverity())
-                            .object(first.subsystem()).message(message).details(details).build());
+                            .object(first.subsystem()).message(message).details(details)
+                            .webSearchable(knownIssue == null).build());
                 });
     }
 

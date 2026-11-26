@@ -142,6 +142,7 @@ class StartLogInspectionTest {
 
         assertThat(aptMessages, hasSize(1));
         assertThat(aptMessages.getFirst().getMessage(), containsString("(300 occurrences)"));
+        assertThat(aptMessages.getFirst().isWebSearchable(), is(false));
         List<String> lines = aptMessages.getFirst().getDetails().lines().toList();
         assertThat(lines, hasSize(300));
         assertThat(lines, everyItem(startsWith("line ")));
@@ -175,6 +176,7 @@ class StartLogInspectionTest {
         assertThat(scenery, hasSize(2));
         assertThat(scenery.getFirst().getMessage(), startsWith(first));
         assertThat(scenery.getFirst().getMessage(), not(containsString("(+")));
+        assertThat(scenery.getFirst().isWebSearchable(), is(true));
         assertThat(scenery.get(1).getMessage(), is(second));
         assertThat(scenery.stream().map(InspectionMessage::getDetails).toList(),
                 allOf(hasItem(containsString("line 2: ")), hasItem(containsString("line 3: "))));

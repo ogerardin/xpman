@@ -31,6 +31,10 @@ public class InspectionMessage {
     @Builder.Default
     private final boolean abort = false;
 
+    /** True when the message text is raw X-Plane output rather than XPman-generated text. */
+    @Builder.Default
+    private final boolean webSearchable = false;
+
     public boolean isError() {
         return severity == Severity.ERROR;
     }

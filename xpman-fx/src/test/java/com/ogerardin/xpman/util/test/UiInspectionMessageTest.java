@@ -66,6 +66,16 @@ class UiInspectionMessageTest {
     }
 
     @Test
+    void searchWebIsEnabledOnlyForRawXPlaneMessages() {
+        InspectionMessage raw = InspectionMessage.builder().message("Failed to load tile").webSearchable(true).build();
+        UiInspectionMessage searchable = new UiInspectionMessage(raw, null);
+        UiInspectionMessage synthetic = new UiInspectionMessage(message("m", null), null);
+
+        assertThat(SpelUtil.eval("webSearchable", searchable), is(true));
+        assertThat(SpelUtil.eval("webSearchable", synthetic), is(false));
+    }
+
+    @Test
     void hasFixReturnsTrueWhenFixesExist() {
         UiInspectionMessage withFix = new UiInspectionMessage(message("m", null, List.of(new TestFix())), null);
         UiInspectionMessage withoutFix = new UiInspectionMessage(message("m", null), null);

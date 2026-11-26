@@ -38,6 +38,7 @@ public class UiInspectionMessage {
     }
 
     @Order(10)
+    @EnabledIf("webSearchable")
     @Label("'Search the web for this message'")
     public void searchWeb() {
         Platforms.getCurrent().openUrl(getSearchUrl());
