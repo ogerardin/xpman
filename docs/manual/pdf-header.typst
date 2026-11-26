@@ -11,4 +11,9 @@
 ]
 #pagebreak()
 
+#set table(
+  align: left,
+  stroke: 0.5pt + rgb("#9AA4B2"),
+)
+
 #show heading.where(level: 1): it => { pagebreak(weak: true); it }

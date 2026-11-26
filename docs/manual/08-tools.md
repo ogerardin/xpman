@@ -1,43 +1,18 @@
 # Tools
 
-![Tools](assets/screenshots/tools.png)
-*The Tools panel.*
+![Tools manager showing available and installed utilities](assets/screenshots/tools.png)
+*The Tools manager.*
 
-Tools are applications that provide additional X-Plane related functionalities, such as:
-- updating X-Plane (the official X-Plane installer)
-- installing/updating online traffic models
-- installing/updating scenery packs
-- installing/updating add-ons
-- etc.
+Tools are utility applications for X-Plane, such as installers, scenery tools, and add-on updaters. Open the manager from **Tools → Manage tools** or **File → Settings → Tools**. Choose **Reload** to rescan available tools.
 
+## Install or remove a tool
 
-## Toolbar
+1. In the Tools manager, choose **Available** to browse tools or **Installed** to see the tools already installed.
+2. Select a tool to review its description, platform and X-Plane compatibility, install location, and homepage.
+3. Choose **Install** or **Uninstall** on the tool card and follow the progress in the operation dialog.
 
-- **Reload** — Re-scan available tools.
-- **Install...** — Open the universal install wizard for tools.
+If an operation fails, review the message and output log in the dialog before closing it.
 
-## Tools Manager
+## Launch a tool
 
-Open via **Tools → Manage tools...** or **File → Settings... → Tools**.
-
-The dialog has a segmented filter (**Available** / **Installed**) and two panes:
-
-- **Left** — Tool cards showing name, version, status (`Installed` / `Available`), and an **Install** or **Uninstall** action button.
-- **Right** — Detail view with icon, name, version, status, description, platform, X-Plane version compatibility, install path, and a **Tool homepage** link.
-
-## Install / Uninstall
-
-Installing or uninstalling a tool opens the **Console dialog**:
-
-- Title: "Installing/Uninstalling {tool}"
-- Progress indicator and message
-- Progress bar
-- Output log
-
-Buttons: **Cancel** (during the operation) or **Close** (after completion).
-
-## Running Tools
-
-Each installed tool appears as an item in the **Tools** menu. Clicking a tool launches it.
-
-If you try to run a tool that is not installed, XPman asks: *"{tool} is not installed. Do you want to install and run it now?"*
+After installation, open the **Tools** menu and choose the tool. If you choose a tool that isn't installed, XPman offers to install it and then launch it.

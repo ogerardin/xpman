@@ -1,72 +1,24 @@
 # Scenery
 
-![Scenery management](assets/screenshots/scenery.png)
+![Scenery panel showing package load order and enabled status](assets/screenshots/scenery.png)
 *The Scenery panel.*
 
-The scenery panel allows you to view sceneries and manage the entries of your `scenery_packs.ini` file. 
-Control order, enable or disable them, or let the wizard re-order them.
+The Scenery panel manages scenery packages and their entries in `scenery_packs.ini`. Choose **Reload** to rescan packages. Changes to the file are not saved automatically.
 
-Note: changes are never saved automatically; whenever a change is made, the message "UNSAVED CHANGES" appears, and 
-you will need to press the "Save" button to save the changes to `scenery_packs.ini`.
+## Change scenery load order
 
-## Toolbar
+Drag a row or select it and use **▲** or **▼** to change its rank. Choose **Organize scenery_pack.ini** to add unlisted packages, remove invalid entries, and sort packages by their scenery class. Review the proposed changes, then choose **Save** to write them to `scenery_packs.ini`. Until you save, the **UNSAVED CHANGES** indicator is shown.
 
-- **Reload** — Re-scan scenery packages.
-- **▲ / ▼** — Move the selected scenery pack up or down one rank in `scenery_packs.ini`.
-- **Install...** — Open the universal install wizard for scenery packages.
-- **Scenery classes...** — Open the Scenery classes window (see [Scenery Classes](05-scenery-classes.md)).
-- **Organize scenery_pack.ini** — Automatically reorder `scenery_packs.ini` by class rank (see below).
-- **Open scenery_packs.ini** — Open the file in your system text editor.
+To customize how automatic ordering works, choose **Scenery classes**. See [Scenery classes](05-scenery-classes.md).
 
-## Table
+## Enable or remove a scenery entry
 
-The table lists all discovered scenery packages. Columns:
+Use the **Enabled** switch to disable or enable a package in `scenery_packs.ini`. Disabling keeps the entry but tells X-Plane not to load it. Choose **Save** to keep the change.
 
-| Column | Description |
-|--------|-------------|
-| Icon | Package type indicator |
-| **Rank** | Position in `scenery_packs.ini` |
-| **Enabled** | Toggle switch (only for entries listed in `scenery_packs.ini`) |
-| **Name** | Package name |
-| **Version** | Package version; **Update…** appears when an update is available; hover for offered channel versions, then click to review the channel before updating |
-| **Has airport?** | Pill shown if the package contains an airport |
-| **Library?** | Pill shown if the package is a library |
-| **Tile count** | Number of terrain tiles |
-| **Obj count** | Number of OBJ objects |
-| **Class** | Organizer class (e.g. Airport, Library, X-Plane Landmark); shows `Folder missing` when the directory no longer exists |
+To remove an entry from `scenery_packs.ini`, right-click it and choose **Remove from scenery_packs.ini**. This removes the entry, not the package files; choose **Save** to write the change. If the folder remains in `Custom Scenery`, X-Plane adds the package back to `scenery_packs.ini` the next time it starts. To delete the package files, choose **Uninstall** and review the confirmation.
 
-Hover over a column header for a tooltip explaining its purpose.
+## Install and review scenery
 
-## Reordering
+Choose **Install** to install a scenery package from an archive. Installed packages are added to the scenery list; use **Organize scenery_pack.ini** to sort them. See [Installing add-ons](09-installing-addons.md).
 
-Drag rows to reorder (ini-listed entries only), or use the **▲** / **▼** toolbar buttons. A drop-target highlight shows the insertion point.
-
-## Enable / Disable
-
-Toggle the **Enabled** switch to include or exclude a package from `scenery_packs.ini`. Disabled entries are styled differently. Entries whose folder is missing are also visually distinct.
-
-## Context Menu
-
-Right-click a row for:
-
-- **Reveal**
-- **Enable Scenery Package** / **Disable Scenery Package**
-- **Add to scenery_packs.ini** / **Remove from scenery_packs.ini**
-- **Uninstall** — Confirmation dialog with details.
-- **Inspect** — Opens Inspection results.
-- **Properties** — Shows a read-only Properties window with all object properties.
-- **Update…** — Available only for enabled packages that have an update available.
-- **Skunkcrafts: Locked by developer**
-- **Links** — Dynamic submenu.
-
-## Organize Workflow
-
-1. Click **Organize scenery_pack.ini**.
-2. A confirmation dialog appears: *"This will add unlisted scenery packages, remove invalid entries, and sort scenery packages by class rank. No change will be saved until you click on the 'Save' button."*
-3. After organizing, the **UNSAVED CHANGES** indicator appears in the toolbar.
-4. Review the new order in the table.
-5. Click **Save** to persist the changes to `scenery_packs.ini`.
-
-## Empty State
-
-When no scenery packages are found, the panel shows **"No scenery to show"**.
+The table shows each package's rank, enabled status, version, scenery class, and useful content indicators such as whether it contains an airport or library. Use **Inspect** in the context menu to review findings. Choose **Open scenery_packs.ini** to open the file in your text editor.

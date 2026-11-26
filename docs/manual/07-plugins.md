@@ -1,116 +1,22 @@
 # Plugins
 
-![Plugin management](assets/screenshots/plugins.png)
+![Plugins panel showing installed plugins and FlyWithLua scripts](assets/screenshots/plugins.png)
 *The Plugins panel.*
 
-The Plugins panel lists everything installed in `Resources/plugins`, lets you enable, disable and uninstall plugins, and shows when updates are available.
+The Plugins panel lists plugins installed for the selected X-Plane installation. Choose **Reload** to rescan or **Install** to install a plugin from an archive.
 
-## Toolbar
+## Manage plugins
 
-- **Reload** — Re-scan plugins.
-- **Install...** — Open the universal install wizard (see [Installing Add-ons](09-installing-addons.md)).
+Use the **Enabled** switch to enable or disable a plugin. Disabled plugins are not loaded by X-Plane and are excluded from update offers. Built-in system plugins cannot be disabled or uninstalled.
 
-## Plugin List
+Choose **Inspect** to review checks and available updates. Choose **Reveal** to open a plugin's folder. To remove a plugin, right-click it and choose **Uninstall plugin**; review the confirmation before proceeding. XPman moves the plugin folder to the Trash.
 
-Plugins are displayed as a tree. Columns:
+## Manage FlyWithLua scripts
 
-| Column | Description |
-|--------|-------------|
-| Icon | Package for regular plugins; shield for built-in system plugins (they can be neither disabled nor uninstalled); code symbol for FlyWithLua scripts |
-| **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
-| **Name** | Plugin name |
-| **Description** | Short description |
-| **Version** | Installed version (the Skunkcrafts updater config for Skunkcrafts-managed plugins; otherwise extracted from the plugin binary). **Update…** for Skunkcrafts content or **Open download page** for a manual update; hover for offered versions |
+Expand FlyWithLua to see its scripts. You can enable or disable a script independently, or quarantine it to move it out of the active scripts folder. To restore a quarantined script, choose **Unquarantine script** from its context menu. Scripts are hidden while FlyWithLua itself is disabled.
 
-The **Update…** button opens the Skunkcrafts channel-review wizard (see [Updating Add-ons](10-updating-addons.md)). Plugins with a supported publication-page provider instead show **Open download page** when its version differs from the installed version. That opens the publisher's site, not an automatic installation. Disabled plugins and disabled or quarantined scripts are excluded from update markers and cannot be updated.
+FlyWithLua must be installed and enabled before you can install its scripts. Available script updates appear on each script's row. Uninstalling FlyWithLua also removes its scripts; review the confirmation before proceeding.
 
-## Recognized Plugins
+## Other actions
 
-Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unrecognized plugins are named after their folder, with no description. XPman **recognizes** a few popular ones and gives them a proper name, description, links, tailored install and uninstall checks, and — for some — automatic detection of newer versions.
-
-| Plugin | Recognized by | What XPman adds |
-|---|---|---|
-| FlyWithLua | `FlyWithLua` folder | Detects the installed edition (Legacy, NG, or NG+) from the binary and uses it as the display name; lists its scripts; uninstall warning; Linux library check on install; X-Plane.org and GitHub links; **Inspect** reports newer versions |
-| SGES | Its `.lua` file | Version read from the script; Skunkcrafts **Update…** button on the script row; uninstall removes data, docs and updater files; manuals and X-Plane.org link |
-| SimLoad Manager | `SimLoadManager` folder (v5 plugin) or `SimLoadManager.lua` (v4 script) | Name, description and links; X-Plane 12.4.4 check and Linux `libcurl` warning on install; v4 uninstall also removes `SLM-Data` |
-| AutoGate | `AutoGate` folder | Description and X-Plane.org link; **Inspect** reports newer versions |
-| AviTab | `Avitab.xpl` | Description and X-Plane.org, GitHub and Wiki links; **Inspect** reports newer versions |
-| Terrain Radar | `TerrainRadar` folder | Version read from its readme; X-Plane.org link; **Inspect** reports newer versions |
-| X-IvAp | `X-IvAp-64.xpl` | Links to the IVAO home page and manual; **Inspect** reports newer versions from the IVAO site |
-| PluginAdmin | Folder name | Description; system plugin: can be neither disabled nor uninstalled |
-| openSAM | `openSAM` folder | Installs the plugin **and** the `openSAM_Library` scenery from the same archive, with scenery ordering; version/flavor checks and conflict warnings on install; uninstall removes both halves |
-
-More plugins will be recognized in future releases. If your favorite plugin is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.
-
-For publication-based plugins, the comparison runs against X-Plane.org, or the IVAO site for X-IvAp. The same pending update appears in **Inspect**, the dashboard, and the **Open download page** action. Skunkcrafts-managed plugins use their Skunkcrafts provider instead, including when locked.
-
-## FlyWithLua
-
-The FlyWithLua node expands to show its Lua scripts, plus two groups: **Disabled scripts (n)** and **Quarantined scripts (n)**. Scripts are hidden while FlyWithLua itself is disabled.
-
-Each script can be enabled, disabled or quarantined individually. Quarantining moves the script to a separate `Scripts (Quarantine)` folder, next to the regular `Scripts` and `Scripts (disabled)` folders.
-
-Installing any FlyWithLua script (including SGES and the v4 SimLoad Manager script) is blocked if FlyWithLua is missing or disabled. On Linux, installing the FlyWithLua plugin itself warns when `libglut` or `libopenal` is missing.
-
-Updates for scripts such as SGES appear on the **script's own row**, not on the FlyWithLua row.
-
-### SGES
-
-Simple Ground Equipment & Services ships a Skunkcrafts updater config; XPman installs it into the `FlyWithLua` folder, which is the addon base folder the protocol expects. SGES is therefore the updatable addon: the **Update…** button appears on the **SGES script row**, not on the FlyWithLua plugin row. Uninstalling SGES removes the config as well as its data and documentation folders.
-
-Use **Inspect** on the SGES row to see available updates or failed update checks. Disabling FlyWithLua also invalidates any update action still visible on an old SGES row while the panel reloads.
-
-### SimLoad Manager
-
-SimLoad Manager is recognized in two forms:
-
-- **v5+** — a standalone plugin installed in `Resources/plugins/SimLoadManager`.
-- **v4** — a FlyWithLua script (`SimLoadManager.lua`) in `FlyWithLua/Scripts`.
-
-The install wizard detects the archive format automatically. XPman enforces X-Plane 12.4.4 or later for the v5 plugin and blocks installation on older versions. On Linux, it warns when `libcurl.so.4` is missing (needed for SimBrief).
-
-Uninstalling the v4 script also removes the `SLM-Data` folder next to it.
-
-## openSAM
-
-openSAM is recognized in two archive flavors: **v5+** (X-Plane 12 only) and **v4 and earlier** (X-Plane 11 and 12 — XPman blocks installing the wrong XP11/XP12 flavor when it can tell them apart).
-
-Its archive contains the plugin and the `openSAM_Library` scenery; the install wizard installs both, positions the library correctly in `scenery_packs.ini`, and warns about conflicting plugins (SAM, the SAM Seasons emulator, and AutoDGS on v5+).
-
-Uninstalling openSAM from the Plugins panel removes the plugin and the `openSAM_Library` scenery; uninstalling the library from the Scenery panel removes just the library.
-
-## Uninstall
-
-Uninstalling a plugin moves its entire folder to the trash. For FlyWithLua, the confirmation dialog warns that all its scripts will also be deleted; for openSAM, that the `openSAM_Library` scenery and its `scenery_packs.ini` entry will also be removed.
-
-## Context Menus
-
-### Plugins
-
-Right-click a plugin for:
-
-- **Reveal** — Show the plugin folder in your file manager.
-- **Remove macOS quarantine** — macOS only, shown only when the plugin is quarantined.
-- **Enable plugin** / **Disable plugin**
-- **Uninstall plugin** — Confirmation dialog with plugin-specific details.
-- **Trim binaries to {platform}** — Removes `.xpl` files whose binary format identifies them as another supported platform (e.g., on macOS, Windows PE and Linux ELF binaries). Unknown formats and all files for an unknown X-Plane variant are kept. Only shown when such binaries are detected; confirmation lists the files to remove. For Skunkcrafts-managed plugins, the removed files are also added to `skunkcrafts_updater_ignore.txt` so the updater does not restore them; to restore all files, delete that file and run the updater.
-- **Inspect** — Show inspection results: available updates, and on Apple Silicon Macs a warning when an enabled plugin's binary is x86_64-only (X-Plane will not load it unless started with Rosetta; reinstall with a universal or Apple Silicon build).
-- **Properties** — Read-only view of all plugin properties.
-- **Update…** — Shown only for enabled plugins with an update available.
-- **Open download page** — Shown for a pending manual-download update; reload after installing it manually.
-- **Skunkcrafts: Locked by developer** — Shown when the developer has disabled remote updates.
-- **Links** and **Manuals** — Submenus, shown when available.
-
-### Scripts (FlyWithLua)
-
-Right-click a script for:
-
-- **Enable script** / **Disable script**
-- **Quarantine script** / **Unquarantine script**
-- **Reveal**
-- **Open in text editor**
-- **Uninstall script** — Confirmation dialog.
-- **Properties**
-- **Inspect** — For updatable scripts such as SGES; shows update offers and discovery failures.
-- **Update…** / **Skunkcrafts: Locked by developer** — For scripts that support it (e.g. SGES).
-- **Links** and **Manuals** — Submenus, shown when available.
+Right-click a plugin or script for actions such as **Inspect**, **Properties**, **Links**, and **Manuals** when available. On macOS, **Remove macOS quarantine** can allow a quarantined plugin to load.

@@ -1,56 +1,31 @@
 # Troubleshooting
 
-## Invalid X-Plane Folder
+## XPman says the X-Plane folder is invalid
 
-If you select a folder that is not a valid X-Plane installation, XPman shows the error **"Invalid X-Plane folder"**. Ensure you select the top-level X-Plane directory — the one containing the X-Plane executable.
+Select the top-level X-Plane folder—the one containing the X-Plane executable. See [Getting started](01-getting-started.md).
 
-## Windows SmartScreen
+## Windows blocks XPman
 
-When running the EXE or MSI installer, Windows SmartScreen may display a warning. Click **More info** then **Run anyway** — XPman is 100% open source and all build code is public and auditable.
+If SmartScreen appears when you run the installer, select **More info**, then **Run anyway**. XPman is open source; its build code is available in the [GitHub repository](https://github.com/ogerardin/xpman).
 
-See [Installation](00-introduction.md#windows) for details.
+## macOS blocks XPman
 
-## macOS Gatekeeper
+If macOS prevents XPman from opening, go to **System Settings → Privacy & Security** and select **Open Anyway**.
 
-macOS may block the app because it is not signed with an Apple Developer ID. Go to **System Settings > Privacy & Security** and click **Open Anyway** to allow it to run.
+## A plugin or aircraft doesn't load on macOS
 
-See [Installation](00-introduction.md#macos) for details.
+Downloaded plugins and aircraft may carry a macOS quarantine attribute. In XPman's Plugins panel or Aircraft panel, right-click the affected item and choose **Remove macOS quarantine**.
 
-## macOS Quarantine on Plugins and Aircraft
+## Find logs and report a problem
 
-Plugins and aircraft downloaded from the internet may be quarantined by macOS and will not load (for aircraft with bundled plugins) or show as damaged. Right-click the plugin in the Plugins panel, or the aircraft card in the Aircraft panel, and choose **Remove macOS quarantine** to allow it to run.
+To diagnose a problem, choose **Help → Debug logging** to enable detailed logging for the current session. The setting resets the next time XPman starts.
 
-## Submitting Issues
-
-If you encounter a bug or unexpected behavior, use **Help → Submit issue…** to open the GitHub issues page. Please include:
-
-- Your X-Plane version
-- XPman version (from **Help → About XPman**)
-- Steps to reproduce the issue
-- An exported XPman log archive (**Help → Export logs…**)
-
-## Logs
-
-XPman writes logs to a rotating file by default:
+XPman log files are stored in:
 
 - macOS: `~/Library/Logs/XPman/`
-- Windows: `%LOCALAPPDATA%\XPman\logs\` (usually under `AppData\Local`)
-- Linux: `$XDG_STATE_HOME/XPman/logs/`, or `~/.local/state/XPman/logs/` when `XDG_STATE_HOME` is not set
+- Windows: `%LOCALAPPDATA%\XPman\logs\`
+- Linux: `$XDG_STATE_HOME/XPman/logs/`, or `~/.local/state/XPman/logs/` if `XDG_STATE_HOME` is not set
 
-Log files are limited to 10 MB each; XPman keeps up to seven days of history, capped at 50 MB total.
+Choose **Help → Export logs** to create a ZIP archive to attach to a report. The X-Plane `Log.txt` is available from the **Log file** link on the Home dashboard.
 
-To temporarily enable detailed logging for the current session, select **Help → Debug logging**. Debug logging resets to its default level the next time XPman starts.
-
-To share logs with support, choose **Help → Export logs…** and attach the resulting ZIP archive to your issue. The X-Plane log is accessible via the **Log file** hyperlink on the Home dashboard.
-
-## About XPman
-
-**Help → About XPman** shows:
-
-- Version: `X-Plane Manager {version}`
-- Build: `{number} (commit #{hash} on {branch})`
-- Runtime: `{java} {version} {arch}`
-- VM: `{vm} by {vendor}`
-- CPU: `{type} ({n} cores)`
-- Link to the GitHub repository
-- License: GPLv3
+To report a bug, choose **Help → Submit issue**. Include the steps to reproduce it, your X-Plane and XPman versions, and the exported XPman logs. Find the XPman version in **Help → About XPman**.

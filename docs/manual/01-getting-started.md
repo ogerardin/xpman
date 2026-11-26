@@ -1,38 +1,25 @@
-# Getting Started
+# Getting started
 
-## Selecting Your X-Plane Folder
+## Select an X-Plane installation
 
-On first launch, XPman prompts you to select your X-Plane installation directory. Use **File → Select X-Plane folder...** at any time to switch installations. If you select a folder that is not a valid X-Plane installation, XPman shows the error **"Invalid X-Plane folder"** — make sure you select the top-level directory containing the X-Plane executable.
+On first launch, select the top-level folder of your X-Plane installation—the folder containing the X-Plane executable. To switch installations later, choose **File → Select X-Plane folder**. XPman reopens the last selected installation on startup.
 
-XPman remembers your last folder and reopens it automatically on startup.
+To switch to another recently used installation, choose **File → Open Recent**. If a folder has moved or been deleted, XPman offers to remove it from the list.
 
-## Recent Folders
+## Find your way around
 
-**File → Open Recent** lists recently opened X-Plane installations. If a folder no longer exists (e.g. you moved or deleted it), XPman offers to remove it from the list.
+Use the sidebar to open **Home**, **Aircraft**, **Scenery**, **Nav data**, or **Plugins**. The **Home** panel summarizes your installation and links to the main management panels. Open **Tools → Manage tools** to manage utility applications.
 
-## Main Window Layout
-
-The main window is divided into two areas:
-
-- **Sidebar** (left) — Navigation panels: Home, Aircraft, Scenery, Nav data, Plugins. The sidebar footer has a Light/Dark theme toggle, Settings, and About buttons, plus a version label.
-- **Content area** (right) — Shows the selected panel.
-
-## Keyboard Shortcuts
+Use these shortcuts to navigate and control XPman:
 
 | Shortcut | Action |
-|----------|--------|
-| `Cmd/Ctrl + 1..5` | Jump to panel (Home, Aircraft, Scenery, Nav data, Plugins) |
+|:---------|:-------|
+| `Cmd/Ctrl + 1..5` | Open Home, Aircraft, Scenery, Nav data, or Plugins |
 | `Cmd/Ctrl + ,` | Open Settings |
-| `Cmd/Ctrl + Q` | Quit |
+| `Cmd/Ctrl + Q` | Quit XPman |
 
-## Theme
+Choose **Light theme** or **Dark theme** in the sidebar footer to switch themes. XPman remembers your theme, window size and position, and table column widths.
 
-Click **Light theme** or **Dark theme** in the sidebar footer to toggle. XPman uses the AtlantaFX Primer theme for both modes.
+## Open the manual
 
-## Window Position
-
-XPman remembers your window position and size between launches, so you don't have to rearrange it every time.
-
-## Table Column Widths
-
-XPman remembers the column widths you set in its tables — scenery, plugins, scenery classes, aircraft properties, inspection results, and the install wizard — and restores them on the next launch.
+Choose **Help → ? Help** to open the online manual.
