@@ -39,12 +39,22 @@ public class LuaHeaderParser {
         "ver\\.?\\s+(\\d+(?:\\.\\d+){0,3})\\b", Pattern.CASE_INSENSITIVE
     );
 
+    // Matches a date-only first line used as a version by older scripts (e.g. "July 22 2018").
+    private static final Pattern DATE_PATTERN = Pattern.compile(
+        "^[A-Za-z]{3,9}\\s++\\d{1,2},?\\s++\\d{4}$"
+    );
+
+    // Matches a "Build: 2012-10-04" or "build 2013-01-31" line used by older scripts.
+    private static final Pattern BUILD_PATTERN = Pattern.compile(
+        "^\\s*+@?build\\s*:?\\s++(\\d{4}-\\d{2}-\\d{2})\\s*+$", Pattern.CASE_INSENSITIVE
+    );
+
     private static final Pattern DESC_PATTERN = Pattern.compile(
         "^\\s*+@?description[:\\s]*+(.*)$", Pattern.CASE_INSENSITIVE
     );
 
     // Strips a leading "--" prefix (and optional whitespace) from a line.
-    private static final Pattern COMMENT_PREFIX = Pattern.compile("^\\s*+--\\s?+(.*)$");
+    private static final Pattern COMMENT_PREFIX = Pattern.compile("^\\s*+--(?:-*)\\s?+(.*)$");
 
     // Strips the inner comment prefix "--" (and optional single space) from block comment lines.
     private static final Pattern INNER_COMMENT_PREFIX = Pattern.compile("^--\\s?");
@@ -112,6 +122,10 @@ public class LuaHeaderParser {
         }
 
         private boolean acceptCommentLine(String raw) {
+            // A date header is followed by a blank line before its description.
+            if (raw.isBlank() && metadata.dateVersion != null && metadata.description.isEmpty()) {
+                return true;
+            }
             Matcher open = BLOCK_OPEN.matcher(raw);
             if (open.matches()) {
                 openBlock(open.group(1));
@@ -171,6 +185,8 @@ public class LuaHeaderParser {
     private static class HeaderMetadata {
         private String name;
         private String version;
+        private String dateVersion;
+        private String buildVersion;
         private final StringBuilder description = new StringBuilder();
 
         // True while we're accumulating continuation lines of an explicit @description.
@@ -186,10 +202,28 @@ public class LuaHeaderParser {
             commentLineCount++;
             String trimmed = text.trim();
 
-            // Empty comment line ends description continuation (acts as paragraph break).
+            // Empty comment line ends description continuation (acts as paragraph break),
+            // except right after a date header, where the description comes later.
             if (trimmed.isEmpty()) {
-                inDescription = false;
+                if (dateVersion == null || !description.isEmpty()) {
+                    inDescription = false;
+                }
                 return;
+            }
+
+            if (commentLineCount == 1 && version == null && dateVersion == null
+                    && DATE_PATTERN.matcher(trimmed).matches()) {
+                dateVersion = trimmed;
+                inDescription = true;
+                return;
+            }
+
+            if (version == null && buildVersion == null) {
+                String b = firstGroup(BUILD_PATTERN, trimmed);
+                if (b != null) {
+                    buildVersion = b;
+                    return;
+                }
             }
 
             if (acceptNameOrVersion(trimmed)) {
@@ -283,7 +317,8 @@ public class LuaHeaderParser {
             if (desc != null && desc.endsWith(".")) {
                 desc = desc.substring(0, desc.length() - 1);
             }
-            return new LuaMetadata(name, desc, version);
+            String parsedVersion = version != null ? version : (dateVersion != null ? dateVersion : buildVersion);
+            return new LuaMetadata(name, desc, parsedVersion);
         }
 
         private static String firstGroup(Pattern pattern, String line) {

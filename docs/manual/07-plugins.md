@@ -16,7 +16,7 @@ Plugins are displayed as a tree. Columns:
 
 | Column | Description |
 |--------|-------------|
-| Icon | Shield for built-in system plugins (they can be neither disabled nor uninstalled); code symbol for FlyWithLua scripts |
+| Icon | Package for regular plugins; shield for built-in system plugins (they can be neither disabled nor uninstalled); code symbol for FlyWithLua scripts |
 | **Enabled** | Toggle switch. A disabled plugin is moved out of the active plugins folder, so X-Plane no longer loads it |
 | **Name** | Plugin name |
 | **Description** | Short description |
@@ -37,7 +37,7 @@ Any plugin with an `.xpl` file is listed, even if XPman does not know it. Unreco
 | AviTab | `Avitab.xpl` | Description and X-Plane.org, GitHub and Wiki links; **Inspect** reports newer versions |
 | Terrain Radar | `TerrainRadar` folder | Version read from its readme; X-Plane.org link; **Inspect** reports newer versions |
 | X-IvAp | `X-IvAp-64.xpl` | Links to the IVAO home page and manual; **Inspect** reports newer versions from the IVAO site |
-| PluginAdmin | Folder name | System plugin: can be neither disabled nor uninstalled |
+| PluginAdmin | Folder name | Description; system plugin: can be neither disabled nor uninstalled |
 | openSAM | `openSAM` folder | Installs the plugin **and** the `openSAM_Library` scenery from the same archive, with scenery ordering; version/flavor checks and conflict warnings on install; uninstall removes both halves |
 
 More plugins will be recognized in future releases. If your favorite plugin is missing, you are welcome to [submit a pull request on GitHub](https://github.com/ogerardin/xpman) to add it.

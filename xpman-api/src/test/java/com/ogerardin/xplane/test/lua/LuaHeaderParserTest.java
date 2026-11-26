@@ -131,6 +131,65 @@ class LuaHeaderParserTest {
     }
 
     @Test
+    void extraCommentDashesAreStrippedWithoutEatingBullets() throws IOException {
+        Path docComment = tempDir.resolve("doc_comment.lua");
+        Files.writeString(docComment, """
+                --- Fmod Demo For X-Plane Fmod SDK
+                --- Ver 0.4
+                """);
+        Path bullets = tempDir.resolve("bullets.lua");
+        Files.writeString(bullets, """
+                -- - first item
+                -- second line
+                """);
+
+        assertThat(LuaHeaderParser.parse(docComment).description(), is("Fmod Demo For X-Plane Fmod SDK"));
+        assertThat(LuaHeaderParser.parse(bullets).description(), is("- first item"));
+    }
+
+    @Test
+    void dateHeaderBecomesVersionAndFollowingCommentsBecomeDescription() throws IOException {
+        Path script = tempDir.resolve("floating_wnd_graphics_test.lua");
+        Files.writeString(script, """
+                -- July 22 2018
+
+                -- This is the original graphics test.lua in the Scripts (disabled) folder
+                -- modified to work with floating wondows
+                """);
+
+        LuaHeaderParser.LuaMetadata metadata = LuaHeaderParser.parse(script);
+
+        assertThat(metadata.version(), is("July 22 2018"));
+        assertThat(metadata.description(), is("This is the original graphics test.lua in the Scripts (disabled) folder modified to work with floating wondows"));
+    }
+
+    @Test
+    void buildDateBecomesVersionWhenNoExplicitVersion() throws IOException {
+        Path script = tempDir.resolve("call ATC on airport.lua");
+        Files.writeString(script, """
+                -- script: call ATC on airport
+                -- build:  2012-10-04
+                """);
+
+        LuaHeaderParser.LuaMetadata metadata = LuaHeaderParser.parse(script);
+
+        assertThat(metadata.version(), is("2012-10-04"));
+    }
+
+    @Test
+    void buildDateWithoutColonBecomesVersion() throws IOException {
+        Path script = tempDir.resolve("Joystick_Sensitivity.lua");
+        Files.writeString(script, """
+                -- Joystick Sensitivity
+                -- build 2013-01-31
+                """);
+
+        LuaHeaderParser.LuaMetadata metadata = LuaHeaderParser.parse(script);
+
+        assertThat(metadata.version(), is("2013-01-31"));
+    }
+
+    @Test
     void trailingPeriodIsStrippedFromDescription() throws IOException {
         Path script = tempDir.resolve("period.lua");
         Files.writeString(script, """

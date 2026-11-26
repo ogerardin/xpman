@@ -8,7 +8,7 @@ import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
- * Factory for a {@code TreeTableCell<PluginRow, Boolean>} that displays icons for system plugins and scripts.
+ * Factory for a {@code TreeTableCell<PluginRow, Boolean>} that displays an icon for every plugin row.
  */
 public class PluginIconTreeCellFactory implements TreeTableCellFactory<PluginRow, Boolean> {
 
@@ -28,8 +28,14 @@ public class PluginIconTreeCellFactory implements TreeTableCellFactory<PluginRow
                 }
 
                 PluginRow row = getTableRow() != null ? getTableRow().getItem() : null;
-                
-                if (row != null && row.isScript()) {
+
+                if (row == null || row.isGroupHeader()) {
+                    setGraphic(null);
+                    setTooltip(null);
+                    return;
+                }
+
+                if (row.isScript()) {
                     FontIcon icon = new FontIcon(Feather.CODE);
                     icon.setIconSize((int) ICON_SIZE);
                     setGraphic(icon);
@@ -40,8 +46,10 @@ public class PluginIconTreeCellFactory implements TreeTableCellFactory<PluginRow
                     setGraphic(icon);
                     setTooltip(new Tooltip("System plugin"));
                 } else {
-                    setGraphic(null);
-                    setTooltip(null);
+                    FontIcon icon = new FontIcon(Feather.PACKAGE);
+                    icon.setIconSize((int) ICON_SIZE);
+                    setGraphic(icon);
+                    setTooltip(new Tooltip("Plugin"));
                 }
             }
         };

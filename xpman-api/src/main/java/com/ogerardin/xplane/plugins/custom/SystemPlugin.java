@@ -19,7 +19,7 @@ public class SystemPlugin extends Plugin {
     private static final Set<String> SYSTEM_PLUGIN_NAMES = Set.of("PluginAdmin");
 
     public SystemPlugin(XPlane xPlane, Path xplFile) throws InstantiationException {
-        super(xPlane, xplFile);
+        super(xPlane, xplFile, "PluginAdmin", "X-Plane's built-in utility for viewing, enabling, disabling, and reloading plugins during a flight session");
         require(isKnownSystemPlugin(xplFile));
     }
 
